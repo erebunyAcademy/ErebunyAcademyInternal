@@ -1,0 +1,72 @@
+{
+  "root": true,
+  "extends": "next",
+  "parser": "@typescript-eslint/parser",
+  "plugins": [
+    "import",
+    "unused-imports",
+    "@typescript-eslint",
+    "prettier",
+    "react-hooks"
+  ],
+  "overrides": [
+    {
+      "files": "*",
+      "rules": {
+        "@typescript-eslint/no-unused-vars": "off",
+        "react/no-unescaped-entities": "off",
+        "@typescript-eslint/no-shadow": "off",
+        "unused-imports/no-unused-imports": "error",
+        "react-hooks/rules-of-hooks": "error",
+        "react-hooks/exhaustive-deps": "error",
+        "unused-imports/no-unused-vars": [
+          "error",
+          {
+            "vars": "all",
+            "varsIgnorePattern": "^_",
+            "args": "after-used",
+            "argsIgnorePattern": "^_"
+          }
+        ],
+        "no-shadow": "off",
+        "no-undef": "off",
+        "import/no-cycle": "error",
+        "sort-imports": [
+          "error",
+          {
+            "ignoreCase": true,
+            "ignoreDeclarationSort": true
+          }
+        ],
+        "import/order": [
+          "error",
+          {
+            "groups": [
+              ["external", "builtin"],
+              "internal",
+              ["sibling", "parent"],
+              "index"
+            ],
+            "pathGroups": [
+              {
+                "pattern": "@(next|react)",
+                "group": "external",
+                "position": "before"
+              },
+              {
+                "pattern": "@src/**",
+                "group": "internal"
+              }
+            ],
+            "pathGroupsExcludedImportTypes": ["internal", "react"],
+            "newlines-between": "never",
+            "alphabetize": {
+              "order": "asc",
+              "caseInsensitive": true
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
