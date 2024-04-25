@@ -9,7 +9,7 @@ import {
 import { SessionProvider } from "next-auth/react";
 import { colors, components, space } from "@/utils/constants/chakra";
 import { ReactNode } from "react";
-import { Header } from "@/components/organisms";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const theme: ThemeConfig = extendTheme({
   config: {
@@ -31,7 +31,11 @@ const Providers = ({ children }: { children: ReactNode }) => {
             defaultOptions: { position: "bottom-right", isClosable: true },
           }}
         >
-          <LightMode>{children}</LightMode>
+          <LightMode>
+            <QueryClientProvider client={new QueryClient()}>
+              {children}
+            </QueryClientProvider>
+          </LightMode>
         </ChakraProvider>
       </CacheProvider>
     </SessionProvider>

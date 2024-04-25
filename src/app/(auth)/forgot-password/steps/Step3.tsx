@@ -1,15 +1,11 @@
-'use client';
-import { memo, useCallback } from 'react';
-import { VStack } from '@chakra-ui/react';
-import { classValidatorResolver } from '@hookform/resolvers/class-validator';
-import { useMutation } from '@tanstack/react-query';
-import { useRouter } from 'next/navigation';
-import { Controller, SubmitHandler, useForm } from 'react-hook-form';
-import { AuthService } from '@/api/services/AuthService';
-import { Button, FormInput } from '@/components/atoms';
-import { useAuth } from '@/contexts/AuthContext';
-import { SIGN_IN_ROUTE } from '@/utils/constants/routes';
-import { ForgotPasswordStep3Validation } from '@/utils/validation';
+import { VStack } from "@chakra-ui/react";
+import { classValidatorResolver } from "@hookform/resolvers/class-validator";
+import { useRouter } from "next/navigation";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { Button, FormInput } from "@/components/atoms";
+import { useAuth } from "@/contexts/AuthContext";
+import { SIGN_IN_ROUTE } from "@/utils/constants/routes";
+import { ForgotPasswordStep3Validation } from "@/utils/validation";
 
 const resolver = classValidatorResolver(ForgotPasswordStep3Validation);
 
@@ -22,29 +18,27 @@ const Step3 = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<ForgotPasswordStep3Validation>({
-    defaultValues: { newPassword: '', confirmPassword: '', confirmationCode },
+    defaultValues: { newPassword: "", confirmPassword: "", confirmationCode },
     resolver,
   });
 
-  const { mutate, isLoading } = useMutation<
-    boolean,
-    { message: string },
-    ForgotPasswordStep3Validation
-  >(AuthService.forgotPasswordStep3, { onSuccess: () => push(SIGN_IN_ROUTE) });
+  // const { mutate, isLoading } = useMutation<
+  //   boolean,
+  //   { message: string },
+  //   ForgotPasswordStep3Validation
+  // >(AuthService.forgotPasswordStep3, { onSuccess: () => push(SIGN_IN_ROUTE) });
 
-  const onSubmit: SubmitHandler<ForgotPasswordStep3Validation> = useCallback(
-    data => {
-      mutate(data);
-    },
-    [mutate],
-  );
+  const onSubmit: SubmitHandler<ForgotPasswordStep3Validation> = (data) => {
+    // mutate(data);
+    console.log(data);
+  };
 
   return (
     <VStack spacing={32}>
       <Controller
         name="newPassword"
         control={control}
-        rules={{ required: 'This field is required' }}
+        rules={{ required: "This field is required" }}
         render={({ field: { onChange, value } }) => (
           <FormInput
             isRequired
@@ -61,7 +55,7 @@ const Step3 = () => {
       <Controller
         name="confirmPassword"
         control={control}
-        rules={{ required: 'This field is required' }}
+        rules={{ required: "This field is required" }}
         render={({ field: { onChange, value } }) => (
           <FormInput
             isRequired
@@ -75,11 +69,11 @@ const Step3 = () => {
           />
         )}
       />
-      <Button width={'100%'} onClick={handleSubmit(onSubmit)} isLoading={isLoading}>
+      <Button width={"100%"} onClick={handleSubmit(onSubmit)} isLoading={false}>
         Verify
       </Button>
     </VStack>
   );
 };
 
-export default memo(Step3);
+export default Step3;

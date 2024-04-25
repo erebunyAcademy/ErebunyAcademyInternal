@@ -2,13 +2,7 @@
   "root": true,
   "extends": "next",
   "parser": "@typescript-eslint/parser",
-  "plugins": [
-    "import",
-    "unused-imports",
-    "@typescript-eslint",
-    "prettier",
-    "react-hooks"
-  ],
+  "plugins": ["import", "unused-imports", "@typescript-eslint", "prettier", "react-hooks"],
   "overrides": [
     {
       "files": "*",
@@ -41,12 +35,7 @@
         "import/order": [
           "error",
           {
-            "groups": [
-              ["external", "builtin"],
-              "internal",
-              ["sibling", "parent"],
-              "index"
-            ],
+            "groups": [["external", "builtin"], "internal", ["sibling", "parent"], "index"],
             "pathGroups": [
               {
                 "pattern": "@(next|react)",

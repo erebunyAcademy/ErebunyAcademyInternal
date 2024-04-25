@@ -1,4 +1,4 @@
-import React, { FC, memo, useState } from 'react';
+import React, { FC, memo, useState } from "react";
 import {
   FormControl,
   FormErrorMessage,
@@ -9,8 +9,8 @@ import {
   InputProps,
   InputRightElement,
   Text,
-} from '@chakra-ui/react';
-import Image from 'next/image';
+} from "@chakra-ui/react";
+import Image from "next/image";
 
 interface FormInputProps extends InputProps {
   isInvalid?: boolean;
@@ -46,7 +46,13 @@ const FormInput: FC<FormInputProps> = ({
 
   return (
     <FormControl isInvalid={isInvalid} id={name}>
-      <FormLabel fontWeight={600} marginBottom={4} lineHeight="20px" fontSize={14} color="#222">
+      <FormLabel
+        fontWeight={600}
+        marginBottom={4}
+        lineHeight="20px"
+        fontSize={14}
+        color="#222"
+      >
         {formLabelName}
         {isRequired && (
           <Text as="span" color="#222">
@@ -56,7 +62,7 @@ const FormInput: FC<FormInputProps> = ({
       </FormLabel>
       <InputGroup>
         <Input
-          type={isPasswordType ? type : 'text'}
+          type={isPasswordType ? type : "text"}
           value={value}
           onChange={handleInputChange}
           placeholder={placeholder}
@@ -68,29 +74,29 @@ const FormInput: FC<FormInputProps> = ({
           bg="#fff"
           boxShadow="0px 1px 2px 0px rgba(0, 0, 0, 0.05)"
           _focus={{
-            border: '1px solid #3cb4e7',
+            border: "1px solid #3cb4e7",
           }}
           _focusVisible={{
-            border: '1px solid #3cb4e7',
+            border: "1px solid #3cb4e7",
           }}
           _readOnly={{
-            bg: 'violet.50',
-            color: 'violet.200',
-            border: '1px solid grey.100',
+            bg: "violet.50",
+            color: "violet.200",
+            border: "1px solid grey.100",
           }}
           _placeholder={{
-            color: 'grey.100',
+            color: "grey.100",
             fontSize: 16,
             fontWeight: 400,
-            fontStyle: 'normal',
+            fontStyle: "normal",
           }}
           _invalid={{
-            border: '1px solid #DF1414',
+            border: "1px solid #DF1414",
           }}
           {...inputProps}
           {...rest}
         />
-        {type === 'password' && (
+        {type === "password" && (
           <InputRightElement>
             {isPasswordType ? (
               <Image
@@ -98,9 +104,9 @@ const FormInput: FC<FormInputProps> = ({
                 height={20}
                 alt="eye"
                 style={{
-                  cursor: 'pointer',
+                  cursor: "pointer",
                 }}
-                src={'/icons/eye_open.svg'}
+                src={"/icons/eye_open.svg"}
                 onClick={() => setIsPasswordType(false)}
               />
             ) : (
@@ -109,9 +115,9 @@ const FormInput: FC<FormInputProps> = ({
                 height={20}
                 alt="eye"
                 style={{
-                  cursor: 'pointer',
+                  cursor: "pointer",
                 }}
-                src={'/icons/eye_closed.svg'}
+                src={"/icons/eye_closed.svg"}
                 onClick={() => setIsPasswordType(true)}
               />
             )}

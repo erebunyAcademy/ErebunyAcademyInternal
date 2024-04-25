@@ -1,0 +1,239 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id               Int          @id @default(autoincrement())
+  email            String       @unique
+  firstName        String?      @db.VarChar(45)
+  lastName         String?      @db.VarChar(45)
+  password         String       @db.VarChar(60)
+  isVerified       Boolean      @default(false)
+  isAdminVerified  Boolean      @default(false)
+  phone            String?      @db.VarChar(60)
+  isPhoneVerified  Boolean      @default(false)
+  address          String?      @db.VarChar(60)
+  country          String?      @db.VarChar(60)
+  state            String?      @db.VarChar(60)
+  city             String?      @db.VarChar(60)
+  confirmationCode Int?         @unique
+  file             String?
+  avatar           String?
+  role             UserRoleEnum
+  teacher          Teacher?
+  student          Student?
+
+  createdAt DateTime @default(now()) @db.Timestamp(0)
+  updatedAt DateTime @updatedAt @db.Timestamp(0)
+}
+
+model Teacher {
+  id                 Int              @id @default(autoincrement())
+  profession         String?          @db.VarChar(60)
+  workPlace          String?          @db.VarChar(60)
+  teachingSubject    String?          @db.VarChar(60)
+  scientificActivity String?          @db.VarChar(60)
+  user               User             @relation(fields: [userId], references: [id])
+  userId             Int              @unique
+  schedules          Schedule[]
+  subjectTeachers    SubjectTeacher[]
+
+  createdAt DateTime @default(now()) @db.Timestamp(0)
+  updatedAt DateTime @updatedAt @db.Timestamp(0)
+}
+
+model Schedule {
+  id                Int               @id @default(autoincrement())
+  title             String?           @db.VarChar(60)
+  description       String?           @db.Text
+  academicYear      String?           @db.VarChar(60)
+  place             String?           @db.VarChar(60)
+  teacherId         Int
+  classDurationHour Float
+  examType          ExamTypeEnum
+  teacher           Teacher[]
+  scheduleSubjects  ScheduleSubject[]
+
+  createdAt DateTime @default(now()) @db.Timestamp(0)
+  updatedAt DateTime @updatedAt @db.Timestamp(0)
+}
+
+model ScheduleSubject {
+  id         Int       @id @default(autoincrement())
+  scheduleId Int
+  schedule   Schedule  @relation(fields: [scheduleId], references: [id])
+  subjectId  Int
+  subject    Subject[]
+
+  createdAt DateTime @default(now()) @db.Timestamp(0)
+  updatedAt DateTime @updatedAt @db.Timestamp(0)
+
+  @@unique([scheduleId, subjectId], name: "scheduleSubjectId")
+}
+
+model Student {
+  id            Int           @id @default(autoincrement())
+  studentGrade  StudentGrade? @relation(fields: [studentGradeId], references: [id])
+  faculty       Faculty       @relation(fields: [facultyId], references: [id])
+  group         CourseGroup   @relation(fields: [courseGroupId], references: [id])
+  user          User          @relation(fields: [userId], references: [id])
+  userId        Int           @unique
+  courseGroupId Int
+  facultyId     Int
+
+  createdAt      DateTime @default(now()) @db.Timestamp(0)
+  updatedAt      DateTime @updatedAt @db.Timestamp(0)
+  studentGradeId Int?
+}
+
+model Faculty {
+  id          Int       @id @default(autoincrement())
+  title       String?   @db.VarChar(60)
+  description String?   @db.VarChar(60)
+  students    Student[]
+
+  createdAt DateTime @default(now()) @db.Timestamp(0)
+  updatedAt DateTime @updatedAt @db.Timestamp(0)
+}
+
+model CourseSubject {
+  id             Int          @id @default(autoincrement())
+  studentGradeId Int
+  subjectId      Int
+  studentGrade   StudentGrade @relation(fields: [studentGradeId], references: [id])
+  subject        Subject      @relation(fields: [subjectId], references: [id])
+
+  createdAt DateTime @default(now()) @db.Timestamp(0)
+  updatedAt DateTime @updatedAt @db.Timestamp(0)
+
+  @@unique([studentGradeId, subjectId], name: "courseSubjectId")
+}
+
+model StudentGrade {
+  id             Int             @id @default(autoincrement())
+  title          String?         @db.VarChar(60)
+  description    String?         @db.VarChar(60)
+  groups         CourseGroup[]
+  courseSubjects CourseSubject[]
+  students       Student[]
+
+  createdAt DateTime @default(now()) @db.Timestamp(0)
+  updatedAt DateTime @updatedAt @db.Timestamp(0)
+}
+
+model CourseGroup {
+  id             Int           @id @default(autoincrement())
+  title          String?       @db.VarChar(60)
+  description    String?       @db.VarChar(60)
+  studentGradeId Int?
+  course         StudentGrade? @relation(fields: [studentGradeId], references: [id])
+  students       Student[]
+
+  createdAt DateTime @default(now()) @db.Timestamp(0)
+  updatedAt DateTime @updatedAt @db.Timestamp(0)
+}
+
+model Subject {
+  id              Int               @id @default(autoincrement())
+  title           String?           @db.VarChar(60)
+  description     String?           @db.VarChar(60)
+  courseSubjects  CourseSubject[]
+  subjectTeacher  SubjectTeacher[]
+  attachments     Attachments[]
+  scheduleSubject ScheduleSubject[]
+
+  createdAt DateTime @default(now()) @db.Timestamp(0)
+  updatedAt DateTime @updatedAt @db.Timestamp(0)
+}
+
+model SubjectTeacher {
+  id        Int     @id @default(autoincrement())
+  teacherId Int
+  teacher   Teacher @relation(fields: [teacherId], references: [id])
+  subjectId Int
+  subject   Subject @relation(fields: [subjectId], references: [id])
+
+  createdAt DateTime @default(now()) @db.Timestamp(0)
+  updatedAt DateTime @updatedAt @db.Timestamp(0)
+
+  @@unique([teacherId, subjectId], name: "subjectTeacherId")
+}
+
+model Attachments {
+  id          Int      @id @default(autoincrement())
+  title       String   @db.VarChar(60)
+  description String?  @db.VarChar(60)
+  key         String   @db.VarChar(60)
+  subjectId   Int?
+  subject     Subject? @relation(fields: [subjectId], references: [id])
+  mimetype    String   @db.VarChar(60)
+
+  createdAt DateTime @default(now()) @db.Timestamp(0)
+  updatedAt DateTime @updatedAt @db.Timestamp(0)
+}
+
+model Exam {
+  id          Int        @id @default(autoincrement())
+  title       String     @db.VarChar(60)
+  description String?    @db.VarChar(60)
+  testExams   TestExam[]
+
+  updatedAt DateTime @updatedAt @db.Timestamp(0)
+  createdAt DateTime @default(now()) @db.Timestamp(0)
+}
+
+model TestExam {
+  id     Int  @id @default(autoincrement())
+  testId Int
+  examId Int
+  exam   Exam @relation(fields: [examId], references: [id])
+
+  createdAt DateTime @default(now()) @db.Timestamp(0)
+  updatedAt DateTime @updatedAt @db.Timestamp(0)
+
+  @@unique([testId, examId], name: "testExamId")
+}
+
+model TestQuestion {
+  id          Int                  @id @default(autoincrement())
+  title       String               @db.VarChar(60)
+  description String?              @db.VarChar(60)
+  type        TestQuestionTypeEnum
+  options     Option[]
+
+  createdAt DateTime @default(now()) @db.Timestamp(0)
+  updatedAt DateTime @updatedAt @db.Timestamp(0)
+}
+
+model Option {
+  id             Int          @id @default(autoincrement())
+  title          String       @db.VarChar(60)
+  isRightAnswer  Boolean      @default(false)
+  testquestion   TestQuestion @relation(fields: [testQuestionId], references: [id])
+  testQuestionId Int
+
+  createdAt DateTime @default(now()) @db.Timestamp(0)
+  updatedAt DateTime @updatedAt @db.Timestamp(0)
+}
+
+enum UserRoleEnum {
+  STUDENT
+  TEACHER
+  ADMIN
+}
+
+enum ExamTypeEnum {
+  VERBAL
+  TEST
+}
+
+enum TestQuestionTypeEnum {
+  RADIO
+  INPUT
+  CHECKBOX
+}

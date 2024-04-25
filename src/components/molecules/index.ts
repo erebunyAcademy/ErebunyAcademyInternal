@@ -1,6 +1,4 @@
-'use client';
-import ArticleItem from './ArticleItem';
-import AuthBox from './AuthBox';
-import TrainerCard from './TrainerCard';
+"use client";
+import AuthBox from "./AuthBox";
 
-export { AuthBox, ArticleItem, TrainerCard };
+export { AuthBox };

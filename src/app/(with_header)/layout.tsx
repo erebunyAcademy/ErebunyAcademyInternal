@@ -1,5 +1,5 @@
 import { Header } from "@/components/organisms";
-import { serverSession } from "../api/auth/[...nextauth]/route";
+import { serverSession } from "@/pages/api/auth/[...nextauth]";
 
 export default async function HeaderLayout({
   children,
