@@ -1,13 +1,13 @@
+import { Exam } from '@prisma/client';
 import { NotFoundException } from 'next-api-decorators';
 import prisma from '..';
-import { Exam, StudentGrade, Subject } from '@prisma/client';
 
 export class ExamResolver {
-  static createExam(data: Pick<Exam, 'title' | 'description'>) {
+  static async createExam(data: Pick<Exam, 'title' | 'description'>) {
     return prisma.exam.create({ data });
   }
 
-  static getExamById(id: number) {
+  static async getExamById(id: number) {
     return prisma.exam
       .findUnique({
         where: { id },
@@ -20,7 +20,7 @@ export class ExamResolver {
       });
   }
 
-  static getExamList() {
+  static async getExamList() {
     return prisma.exam.findMany();
   }
 

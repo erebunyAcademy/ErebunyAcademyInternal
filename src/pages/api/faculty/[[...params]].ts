@@ -1,3 +1,4 @@
+import { Faculty } from '@prisma/client';
 import {
   Body,
   Catch,
@@ -10,8 +11,7 @@ import {
   ValidationPipe,
 } from 'next-api-decorators';
 import { exceptionHandler } from '@/lib/prisma/error';
-import { Faculty } from '@prisma/client';
-import { FacultyResolver } from '@/lib/prisma/resolvers/faculty';
+import { FacultyResolver } from '@/lib/prisma/resolvers/faculty.resolver';
 
 @Catch(exceptionHandler)
 class FacultyHandler {

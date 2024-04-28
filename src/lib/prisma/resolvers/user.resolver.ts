@@ -1,12 +1,7 @@
-import bcrypt from "bcrypt";
-import { BadRequestException, ConflictException } from "next-api-decorators";
-import { User } from "next-auth";
-import { ERROR_MESSAGES } from "@/utils/constants/common";
-
-import prisma from "../index";
-import { AWSService } from "../services/AWS.service";
-import { TwilioService } from "../services/Twillio.service";
-import { generateRandomNumber } from "../utils/common";
+import bcrypt from 'bcrypt';
+import { BadRequestException, ConflictException } from 'next-api-decorators';
+import { User } from 'next-auth';
+import { ERROR_MESSAGES } from '@/utils/constants/common';
 import {
   ChangePasswordValidation,
   GetPresignedUrlInput,
@@ -14,7 +9,11 @@ import {
   VerifyPhoneValidation,
   VerifySMSCodeValidation,
   VerifyUserEmailInput,
-} from "@/utils/validation/user";
+} from '@/utils/validation/user';
+import prisma from '../index';
+import { AWSService } from '../services/AWS.service';
+import { TwilioService } from '../services/Twillio.service';
+import { generateRandomNumber } from '../utils/common';
 
 export class UserResolver {
   static async findUserWithEmail(email: string) {
@@ -38,10 +37,7 @@ export class UserResolver {
     });
   }
 
-  static async updateUserProfile(
-    input: UserProfileFormValidation,
-    user: NonNullable<User>
-  ) {
+  static async updateUserProfile(input: UserProfileFormValidation, user: NonNullable<User>) {
     return (
       await prisma.user.update({
         where: { id: user.id },
@@ -50,10 +46,7 @@ export class UserResolver {
     ).id;
   }
 
-  static async sendVerificationSMS(
-    input: VerifyPhoneValidation,
-    user: NonNullable<User>
-  ) {
+  static async sendVerificationSMS(input: VerifyPhoneValidation, user: NonNullable<User>) {
     const twilioService = new TwilioService();
     const confirmationCode = generateRandomNumber(4);
 
@@ -72,7 +65,7 @@ export class UserResolver {
 
   static async changeUserPassword(
     { confirmPassword, newPassword, currentPassword }: ChangePasswordValidation,
-    user: NonNullable<User>
+    user: NonNullable<User>,
   ) {
     const isValid = await bcrypt.compare(currentPassword, user.password);
 
@@ -94,14 +87,11 @@ export class UserResolver {
     ).id;
   }
 
-  static async verifySMSCode(
-    input: VerifySMSCodeValidation,
-    user: NonNullable<User>
-  ) {
+  static async verifySMSCode(input: VerifySMSCodeValidation, user: NonNullable<User>) {
     console.log(input.code, user);
 
     if (user.confirmationCode !== +input.code) {
-      throw new BadRequestException("Confirmation code is wrong");
+      throw new BadRequestException('Confirmation code is wrong');
     }
 
     await prisma.user.update({
@@ -136,7 +126,7 @@ export class UserResolver {
     });
 
     if (!user) {
-      throw new ConflictException("Confirmation code is not valid");
+      throw new ConflictException('Confirmation code is not valid');
     }
 
     await prisma.user.update({

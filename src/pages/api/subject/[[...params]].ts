@@ -10,7 +10,7 @@ import {
   ValidationPipe,
 } from 'next-api-decorators';
 import { exceptionHandler } from '@/lib/prisma/error';
-import { SubjectResolver } from '@/lib/prisma/resolvers/subject';
+import { SubjectResolver } from '@/lib/prisma/resolvers/subject.resolver';
 import { Subject } from '@prisma/client';
 
 @Catch(exceptionHandler)

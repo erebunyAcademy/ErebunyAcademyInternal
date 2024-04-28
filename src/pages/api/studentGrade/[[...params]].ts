@@ -1,3 +1,4 @@
+import { StudentGrade } from '@prisma/client';
 import {
   Body,
   Catch,
@@ -10,8 +11,7 @@ import {
   ValidationPipe,
 } from 'next-api-decorators';
 import { exceptionHandler } from '@/lib/prisma/error';
-import { StudentGradeResolver } from '@/lib/prisma/resolvers/studentGrade';
-import { StudentGrade } from '@prisma/client';
+import { StudentGradeResolver } from '@/lib/prisma/resolvers/studentGrade.resolver';
 
 @Catch(exceptionHandler)
 class StudentGradeHandler {

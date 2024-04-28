@@ -1,6 +1,6 @@
+import { Subject } from '@prisma/client';
 import { NotFoundException } from 'next-api-decorators';
 import prisma from '..';
-import { Subject } from '@prisma/client';
 
 export class SubjectResolver {
   static createSubject(data: Pick<Subject, 'title' | 'description'>) {

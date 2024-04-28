@@ -10,10 +10,8 @@ import {
   ValidationPipe,
 } from 'next-api-decorators';
 import { exceptionHandler } from '@/lib/prisma/error';
-import { SubjectResolver } from '@/lib/prisma/resolvers/subject';
-import { Subject } from '@prisma/client';
-import { ScheduleResolver } from '@/lib/prisma/resolvers/schedule';
-import type { ScheduleUpdateableType } from '@/lib/prisma/resolvers/schedule';
+import { ScheduleResolver } from '@/lib/prisma/resolvers/schedule.resolver';
+import type { ScheduleUpdateableType } from '@/lib/prisma/resolvers/schedule.resolver';
 
 @Catch(exceptionHandler)
 class ScheduleHandler {

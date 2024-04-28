@@ -1,6 +1,6 @@
+import { StudentGrade, Subject } from '@prisma/client';
 import { NotFoundException } from 'next-api-decorators';
 import prisma from '..';
-import { StudentGrade, Subject } from '@prisma/client';
 
 export class StudentGradeResolver {
   static createStudentGrade(data: Pick<StudentGrade, 'title' | 'description'>) {

@@ -1,6 +1,6 @@
+import { Faculty } from '@prisma/client';
 import { NotFoundException } from 'next-api-decorators';
 import prisma from '..';
-import { Faculty, Subject } from '@prisma/client';
 
 export class FacultyResolver {
   static createFaculty(data: Pick<Faculty, 'title' | 'description'>) {

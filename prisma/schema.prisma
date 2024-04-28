@@ -8,22 +8,21 @@ datasource db {
 }
 
 model User {
-  id               Int          @id @default(autoincrement())
-  email            String       @unique
-  firstName        String?      @db.VarChar(45)
-  lastName         String?      @db.VarChar(45)
-  password         String       @db.VarChar(60)
-  isVerified       Boolean      @default(false)
-  isAdminVerified  Boolean      @default(false)
-  phone            String?      @db.VarChar(60)
-  isPhoneVerified  Boolean      @default(false)
-  address          String?      @db.VarChar(60)
-  country          String?      @db.VarChar(60)
-  state            String?      @db.VarChar(60)
-  city             String?      @db.VarChar(60)
-  confirmationCode Int?         @unique
-  file             String?
-  avatar           String?
+  id               Int           @id @default(autoincrement())
+  email            String        @unique
+  firstName        String?       @db.VarChar(45)
+  lastName         String?       @db.VarChar(45)
+  password         String        @db.VarChar(60)
+  isVerified       Boolean       @default(false)
+  isAdminVerified  Boolean       @default(false)
+  phone            String?       @db.VarChar(60)
+  isPhoneVerified  Boolean       @default(false)
+  address          String?       @db.VarChar(60)
+  country          String?       @db.VarChar(60)
+  state            String?       @db.VarChar(60)
+  city             String?       @db.VarChar(60)
+  confirmationCode Int?          @unique
+  attachment       Attachments[]
   role             UserRoleEnum
   teacher          Teacher?
   student          Student?
@@ -34,12 +33,11 @@ model User {
 
 model Teacher {
   id                 Int              @id @default(autoincrement())
-  profession         String?          @db.VarChar(60)
-  workPlace          String?          @db.VarChar(60)
-  teachingSubject    String?          @db.VarChar(60)
+  profession         String           @db.VarChar(60)
+  workPlace          String           @db.VarChar(60)
   scientificActivity String?          @db.VarChar(60)
-  user               User             @relation(fields: [userId], references: [id])
   userId             Int              @unique
+  user               User             @relation(fields: [userId], references: [id])
   schedules          Schedule[]
   subjectTeachers    SubjectTeacher[]
 
@@ -64,11 +62,11 @@ model Schedule {
 }
 
 model ScheduleSubject {
-  id         Int       @id @default(autoincrement())
+  id         Int      @id @default(autoincrement())
   scheduleId Int
-  schedule   Schedule  @relation(fields: [scheduleId], references: [id])
   subjectId  Int
-  subject    Subject[]
+  schedule   Schedule @relation(fields: [scheduleId], references: [id])
+  subject    Subject  @relation(fields: [subjectId], references: [id])
 
   createdAt DateTime @default(now()) @db.Timestamp(0)
   updatedAt DateTime @updatedAt @db.Timestamp(0)
@@ -77,31 +75,32 @@ model ScheduleSubject {
 }
 
 model Student {
-  id            Int           @id @default(autoincrement())
-  studentGrade  StudentGrade? @relation(fields: [studentGradeId], references: [id])
-  faculty       Faculty       @relation(fields: [facultyId], references: [id])
-  group         CourseGroup   @relation(fields: [courseGroupId], references: [id])
-  user          User          @relation(fields: [userId], references: [id])
-  userId        Int           @unique
-  courseGroupId Int
-  facultyId     Int
-
-  createdAt      DateTime @default(now()) @db.Timestamp(0)
-  updatedAt      DateTime @updatedAt @db.Timestamp(0)
-  studentGradeId Int?
-}
-
-model Faculty {
-  id          Int       @id @default(autoincrement())
-  title       String?   @db.VarChar(60)
-  description String?   @db.VarChar(60)
-  students    Student[]
+  id                Int               @id @default(autoincrement())
+  studentGrade      StudentGrade?     @relation(fields: [studentGradeId], references: [id])
+  faculty           Faculty           @relation(fields: [facultyId], references: [id])
+  studentGradeGroup StudentGradeGroup @relation(fields: [courseGroupId], references: [id])
+  user              User              @relation(fields: [userId], references: [id])
+  userId            Int               @unique
+  courseGroupId     Int
+  facultyId         Int
+  studentGradeId    Int?
 
   createdAt DateTime @default(now()) @db.Timestamp(0)
   updatedAt DateTime @updatedAt @db.Timestamp(0)
 }
 
-model CourseSubject {
+model Faculty {
+  id            Int            @id @default(autoincrement())
+  title         String?        @db.VarChar(60)
+  description   String?        @db.VarChar(60)
+  students      Student[]
+  studentGrades StudentGrade[]
+
+  createdAt DateTime @default(now()) @db.Timestamp(0)
+  updatedAt DateTime @updatedAt @db.Timestamp(0)
+}
+
+model StudentGradeSubject {
   id             Int          @id @default(autoincrement())
   studentGradeId Int
   subjectId      Int
@@ -115,23 +114,25 @@ model CourseSubject {
 }
 
 model StudentGrade {
-  id             Int             @id @default(autoincrement())
-  title          String?         @db.VarChar(60)
-  description    String?         @db.VarChar(60)
-  groups         CourseGroup[]
-  courseSubjects CourseSubject[]
-  students       Student[]
+  id                   Int                   @id @default(autoincrement())
+  title                String?               @db.VarChar(60)
+  description          String?               @db.VarChar(60)
+  groups               StudentGradeGroup[]
+  studentGradeSubjects StudentGradeSubject[]
+  students             Student[]
+  faculty              Faculty?              @relation(fields: [facultyId], references: [id])
+  facultyId            Int?
 
   createdAt DateTime @default(now()) @db.Timestamp(0)
   updatedAt DateTime @updatedAt @db.Timestamp(0)
 }
 
-model CourseGroup {
+model StudentGradeGroup {
   id             Int           @id @default(autoincrement())
   title          String?       @db.VarChar(60)
   description    String?       @db.VarChar(60)
   studentGradeId Int?
-  course         StudentGrade? @relation(fields: [studentGradeId], references: [id])
+  studentGrade   StudentGrade? @relation(fields: [studentGradeId], references: [id])
   students       Student[]
 
   createdAt DateTime @default(now()) @db.Timestamp(0)
@@ -139,13 +140,13 @@ model CourseGroup {
 }
 
 model Subject {
-  id              Int               @id @default(autoincrement())
-  title           String?           @db.VarChar(60)
-  description     String?           @db.VarChar(60)
-  courseSubjects  CourseSubject[]
-  subjectTeacher  SubjectTeacher[]
-  attachments     Attachments[]
-  scheduleSubject ScheduleSubject[]
+  id                   Int                   @id @default(autoincrement())
+  title                String?               @db.VarChar(60)
+  description          String?               @db.VarChar(60)
+  studentGradeSubjects StudentGradeSubject[]
+  subjectTeacher       SubjectTeacher[]
+  attachments          Attachments[]
+  scheduleSubject      ScheduleSubject[]
 
   createdAt DateTime @default(now()) @db.Timestamp(0)
   updatedAt DateTime @updatedAt @db.Timestamp(0)
@@ -165,13 +166,16 @@ model SubjectTeacher {
 }
 
 model Attachments {
-  id          Int      @id @default(autoincrement())
-  title       String   @db.VarChar(60)
-  description String?  @db.VarChar(60)
-  key         String   @db.VarChar(60)
+  id          Int                @id @default(autoincrement())
+  title       String?            @db.VarChar(60)
+  description String?            @db.VarChar(60)
+  key         String             @db.VarChar(60)
   subjectId   Int?
-  subject     Subject? @relation(fields: [subjectId], references: [id])
-  mimetype    String   @db.VarChar(60)
+  subject     Subject?           @relation(fields: [subjectId], references: [id])
+  user        User?              @relation(fields: [userId], references: [id])
+  mimetype    String             @db.VarChar(60)
+  userId      Int?
+  type        AttachmentTypeEnum
 
   createdAt DateTime @default(now()) @db.Timestamp(0)
   updatedAt DateTime @updatedAt @db.Timestamp(0)
@@ -224,7 +228,6 @@ model Option {
 enum UserRoleEnum {
   STUDENT
   TEACHER
-  ADMIN
 }
 
 enum ExamTypeEnum {
@@ -236,4 +239,17 @@ enum TestQuestionTypeEnum {
   RADIO
   INPUT
   CHECKBOX
+}
+
+enum AttachmentTypeEnum {
+  AVATAR
+  FILE
+}
+
+enum AdminRolesEnum {
+  SYS_ADMIN
+  RECTORAT
+  ACCOUNTANT
+  OPERATOR
+  HEAD_OF_DEPARTMENT
 }
