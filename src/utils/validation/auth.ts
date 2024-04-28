@@ -1,62 +1,74 @@
-import {
-  IsEmail,
-  IsNotEmpty,
-  IsNumber,
-  IsOptional,
-  IsString,
-  Length,
-} from "class-validator";
-import { UserRoleEnum } from "@prisma/client";
+import { IsEmail, IsNotEmpty, IsNumber, IsString, Length } from 'class-validator';
 
-export class SignUpValidation {
+export class TeacherSignUpValidation {
   @IsString()
-  @IsNotEmpty({ message: "First name is required" })
+  @IsNotEmpty({ message: 'First name is required' })
   firstName: string;
 
   @IsString()
-  @IsNotEmpty({ message: "Last name is required" })
+  @IsNotEmpty({ message: 'Last name is required' })
   lastName: string;
 
   @IsEmail()
   @IsString()
-  @IsNotEmpty({ message: "Email is required" })
+  @IsNotEmpty({ message: 'Email is required' })
   email: string;
 
   @IsString()
-  @IsNotEmpty({ message: "Password is required" })
+  @IsNotEmpty({ message: 'Password is required' })
   @Length(6, 20)
   password: string;
 
   @IsString()
-  @IsNotEmpty({ message: "Confirm password is required" })
+  @IsNotEmpty({ message: 'Confirm password is required' })
   @Length(6, 20)
   confirmPassword: string;
 
   @IsString()
-  @IsNotEmpty({ message: "Password is required" })
+  @IsNotEmpty({ message: 'Profession is required' })
+  profession: string;
+
+  @IsString()
+  @IsNotEmpty({ message: 'Profession is required' })
+  faculty: string;
+
+  @IsString()
+  @IsNotEmpty({ message: 'Working place is required' })
+  workPlace: string;
+
+  @IsString()
+  @IsNotEmpty({ message: 'Scientific activity is required' })
+  scientificActivity: string;
+}
+
+export class StudentSignUpValidation {
+  @IsString()
+  @IsNotEmpty({ message: 'First name is required' })
+  firstName: string;
+
+  @IsString()
+  @IsNotEmpty({ message: 'Last name is required' })
+  lastName: string;
+
+  @IsEmail()
+  @IsString()
+  @IsNotEmpty({ message: 'Email is required' })
+  email: string;
+
+  @IsString()
+  @IsNotEmpty({ message: 'Password is required' })
   @Length(6, 20)
-  //  TODO solve this issue exclude admin type from enum
-  userType: UserRoleEnum;
+  password: string;
 
   @IsString()
-  @IsOptional()
-  @IsNotEmpty({ message: "Profession is required" })
-  profession?: string;
-
-  @IsString()
-  @IsOptional()
-  @IsNotEmpty({ message: "Working place is required" })
-  workPlace?: string;
-
-  @IsString()
-  @IsOptional()
-  @IsNotEmpty({ message: "Scientific activity is required" })
-  scientificActivity?: string;
+  @IsNotEmpty({ message: 'Confirm password is required' })
+  @Length(6, 20)
+  confirmPassword: string;
 }
 
 export class ForgotPasswordStep1Validation {
   @IsEmail()
-  @IsNotEmpty({ message: "Email is required" })
+  @IsNotEmpty({ message: 'Email is required' })
   email: string;
 }
 
@@ -69,7 +81,7 @@ export class ForgotPasswordStep2Validation {
 
 export class ResendEmailValidation extends ForgotPasswordStep1Validation {
   @IsString()
-  @IsNotEmpty({ message: "First name is required" })
+  @IsNotEmpty({ message: 'First name is required' })
   firstName: string;
 }
 

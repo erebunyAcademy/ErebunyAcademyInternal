@@ -1,12 +1,12 @@
-import React, { FC, memo } from "react";
-import { FormControl, FormLabel, Select } from "@chakra-ui/react";
+import React, { FC, memo } from 'react';
+import { FormControl, FormLabel, Select } from '@chakra-ui/react';
 
 type SelectLabelProps = {
   options: any[];
   valueLabel: string;
   nameLabel: string;
   labelName: string;
-  onChange: (e: any) => void;
+  onChange?: React.ChangeEventHandler<HTMLSelectElement>;
   value: string;
   name?: string;
 };
@@ -22,13 +22,7 @@ const SelectLabel: FC<SelectLabelProps> = ({
 }) => {
   return (
     <FormControl>
-      <FormLabel
-        fontWeight={600}
-        marginBottom={4}
-        lineHeight="20px"
-        fontSize={14}
-        color="#222"
-      >
+      <FormLabel fontWeight={600} marginBottom={4} lineHeight="20px" fontSize={14} color="#222">
         {labelName}
       </FormLabel>
       <Select onChange={onChange} value={value} name={name}>
