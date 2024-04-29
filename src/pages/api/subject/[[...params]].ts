@@ -1,3 +1,4 @@
+import { Subject } from '@prisma/client';
 import {
   Body,
   Catch,
@@ -11,18 +12,17 @@ import {
 } from 'next-api-decorators';
 import { exceptionHandler } from '@/lib/prisma/error';
 import { SubjectResolver } from '@/lib/prisma/resolvers/subject.resolver';
-import { Subject } from '@prisma/client';
 
 @Catch(exceptionHandler)
 class SubjectHandler {
-  @Get('/:id')
-  getSubjectById(@Param('id') id: string) {
-    return SubjectResolver.getSubjectById(+id);
-  }
-
   @Get('/list')
   getSubjects() {
     return SubjectResolver.getSubjects();
+  }
+
+  @Get('/:id')
+  getSubjectById(@Param('id') id: string) {
+    return SubjectResolver.getSubjectById(+id);
   }
 
   @Delete('/:id')

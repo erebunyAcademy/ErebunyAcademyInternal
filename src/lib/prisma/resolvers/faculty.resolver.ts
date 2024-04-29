@@ -10,7 +10,7 @@ export class FacultyResolver {
   static getFacultyById(id: number) {
     return prisma.faculty
       .findUnique({
-        where: { id: +id },
+        where: { id },
       })
       .then(res => {
         if (!res) {
@@ -21,7 +21,12 @@ export class FacultyResolver {
   }
 
   static getFacultyList() {
-    return prisma.faculty.findMany();
+    return prisma.faculty.findMany({
+      select: {
+        id: true,
+        title: true,
+      },
+    });
   }
 
   static async updateFacultyById(facultyId: number, data: Partial<Faculty>) {

@@ -21,7 +21,12 @@ export class SubjectResolver {
   }
 
   static getSubjects() {
-    return prisma.subject.findMany();
+    return prisma.subject.findMany({
+      select: {
+        id: true,
+        title: true,
+      },
+    });
   }
 
   static async updateSubjectById(id: number, data: Partial<Subject>) {

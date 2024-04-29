@@ -1,26 +1,21 @@
-import React, { memo } from 'react';
+import React from 'react';
 import { HStack, VStack } from '@chakra-ui/react';
 import { classValidatorResolver } from '@hookform/resolvers/class-validator';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
+import { SubjectService } from '@/api/subject.service';
 import { UserService } from '@/api/user.service';
-import { StudentSignUpValidation } from '@/utils/validation';
-import { Button, FormInput } from '../atoms';
+import { TeacherSignUpValidation } from '@/utils/validation';
+import { Button, FormInput, SelectLabel } from '../../atoms';
 
-const resolver = classValidatorResolver(StudentSignUpValidation);
+const resolver = classValidatorResolver(TeacherSignUpValidation);
 
-const StudentSignUp = () => {
-  const studentSignUp = useMutation({ mutationFn: UserService.studentSignUp });
-
-  const onStudentSubmit: SubmitHandler<any> = data => {
-    studentSignUp.mutate(data);
-  };
-
+const TeacherSignUp = () => {
   const {
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm<StudentSignUpValidation>({
+  } = useForm<TeacherSignUpValidation>({
     resolver,
     defaultValues: {
       firstName: '',
@@ -28,8 +23,23 @@ const StudentSignUp = () => {
       email: '',
       password: '',
       confirmPassword: '',
+      profession: '',
+      workPlace: '',
+      scientificActivity: '',
+      teachingSubject: '',
     },
   });
+
+  const { data } = useQuery({
+    queryFn: SubjectService.getSubjectList,
+    queryKey: [],
+  });
+
+  const onTeacherSubmit: SubmitHandler<TeacherSignUpValidation> = data => {
+    teacherSignUp.mutate(data);
+  };
+
+  const teacherSignUp = useMutation({ mutationFn: UserService.teacherSignUp });
 
   return (
     <>
@@ -120,9 +130,73 @@ const StudentSignUp = () => {
             )}
           />
         </HStack>
+
+        <Controller
+          name="profession"
+          control={control}
+          render={({ field: { onChange, value } }) => (
+            <FormInput
+              isRequired
+              placeholder="Profession"
+              isInvalid={!!errors.firstName?.message}
+              name="firstName"
+              type="text"
+              formLabelName="Profession"
+              value={value}
+              handleInputChange={onChange}
+            />
+          )}
+        />
+        <Controller
+          name="workPlace"
+          control={control}
+          render={({ field: { onChange, value, name } }) => (
+            <FormInput
+              isRequired
+              placeholder="Working place"
+              isInvalid={!!errors.firstName?.message}
+              name={name}
+              type="text"
+              formLabelName="Working place"
+              value={value}
+              handleInputChange={onChange}
+            />
+          )}
+        />
+        <Controller
+          name="scientificActivity"
+          control={control}
+          render={({ field: { onChange, value, name } }) => (
+            <FormInput
+              isRequired
+              placeholder="Scientific activity"
+              isInvalid={!!errors.firstName?.message}
+              name={name}
+              type="text"
+              formLabelName="Scientific activity"
+              value={value}
+              handleInputChange={onChange}
+            />
+          )}
+        />
+        <Controller
+          name="teachingSubject"
+          control={control}
+          render={({ field: { onChange, value, name } }) => (
+            <SelectLabel
+              name={name}
+              options={data || []}
+              labelName="Teaching Subject"
+              valueLabel="id"
+              nameLabel="title"
+              onChange={onChange}
+              value={value}
+            />
+          )}
+        />
       </VStack>
       <VStack spacing={16} paddingTop={48}>
-        <Button w={'50%'} onClick={handleSubmit(onStudentSubmit)}>
+        <Button w={'50%'} onClick={handleSubmit(onTeacherSubmit)}>
           Sign up
         </Button>
       </VStack>
@@ -130,4 +204,4 @@ const StudentSignUp = () => {
   );
 };
 
-export default memo(StudentSignUp);
+export default TeacherSignUp;

@@ -4,7 +4,7 @@ import prisma from '..';
 
 export class StudentGradeResolver {
   static createStudentGrade(data: Pick<StudentGrade, 'title' | 'description'>) {
-    return prisma.subject.create({ data });
+    return prisma.studentGrade.create({ data });
   }
 
   static getStudentGradeById(id: number) {
@@ -21,7 +21,12 @@ export class StudentGradeResolver {
   }
 
   static getStudentGradeList() {
-    return prisma.studentGrade.findMany();
+    return prisma.studentGrade.findMany({
+      select: {
+        id: true,
+        title: true,
+      },
+    });
   }
 
   static async updateStudentGradeById(id: number, data: Partial<Subject>) {

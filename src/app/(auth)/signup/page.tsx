@@ -5,6 +5,7 @@ import { UserRoleEnum } from '@prisma/client';
 import { Button, SelectLabel } from '@/components/atoms';
 import { AuthBox } from '@/components/molecules';
 import { TeacherSignUp } from '@/components/organisms';
+import StudentSignUp from '@/components/organisms/StudentSignup';
 import { SIGN_IN_ROUTE, SIGN_UP_ROUTE } from '@/utils/constants/routes';
 import CheckIcon from '/public/icons/check.svg';
 
@@ -17,7 +18,7 @@ const authBoxProps = {
 };
 
 const Signup = () => {
-  const [userType, setUserType] = useState<UserRoleEnum>(UserRoleEnum.TEACHER);
+  const [userType, setUserType] = useState<UserRoleEnum>(UserRoleEnum.STUDENT);
 
   return (
     <>
@@ -56,7 +57,7 @@ const Signup = () => {
             />
           </Box>
           {userType === 'TEACHER' ? <TeacherSignUp /> : null}
-          {userType === 'STUDENT' ? <TeacherSignUp /> : null}
+          {userType === 'STUDENT' ? <StudentSignUp /> : null}
         </AuthBox>
       )}
     </>

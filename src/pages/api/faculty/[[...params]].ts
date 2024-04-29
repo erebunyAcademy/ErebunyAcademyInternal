@@ -15,14 +15,14 @@ import { FacultyResolver } from '@/lib/prisma/resolvers/faculty.resolver';
 
 @Catch(exceptionHandler)
 class FacultyHandler {
-  @Get('/:id')
-  getFacultyById(@Param('id') id: string) {
-    return FacultyResolver.getFacultyById(+id);
-  }
-
   @Get('/list')
   getFacultyList() {
     return FacultyResolver.getFacultyList();
+  }
+
+  @Get('/:id')
+  getFacultyById(@Param('id') id: string) {
+    return FacultyResolver.getFacultyById(+id);
   }
 
   @Delete('/:id')

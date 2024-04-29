@@ -1,12 +1,7 @@
-import { redirect } from "next/navigation";
-import { AuthProvider } from "@/contexts/AuthContext";
-import { AuthWrapper } from "@/components/organisms";
+import { AuthWrapper } from '@/components/organisms';
+import { AuthProvider } from '@/contexts/AuthContext';
 
-export default async function AuthLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default async function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
     <AuthProvider>
       <AuthWrapper>{children}</AuthWrapper>

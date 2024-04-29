@@ -11,18 +11,18 @@ import {
   ValidationPipe,
 } from 'next-api-decorators';
 import { exceptionHandler } from '@/lib/prisma/error';
-import { StudentGradeResolver } from '@/lib/prisma/resolvers/studentGrade.resolver';
+import { StudentGradeResolver } from '@/lib/prisma/resolvers/student-grade.resolver';
 
 @Catch(exceptionHandler)
 class StudentGradeHandler {
-  @Get('/:id')
-  getStudentGradeById(@Param('id') id: string) {
-    return StudentGradeResolver.getStudentGradeById(+id);
-  }
-
   @Get('/list')
   getStudentGradeList() {
     return StudentGradeResolver.getStudentGradeList();
+  }
+
+  @Get('/:id')
+  getStudentGradeById(@Param('id') id: string) {
+    return StudentGradeResolver.getStudentGradeById(+id);
   }
 
   @Delete('/:id')

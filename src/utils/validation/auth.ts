@@ -39,6 +39,10 @@ export class TeacherSignUpValidation {
   @IsString()
   @IsNotEmpty({ message: 'Scientific activity is required' })
   scientificActivity: string;
+
+  @IsString()
+  @IsNotEmpty()
+  teachingSubject: string;
 }
 
 export class StudentSignUpValidation {
@@ -64,6 +68,18 @@ export class StudentSignUpValidation {
   @IsNotEmpty({ message: 'Confirm password is required' })
   @Length(6, 20)
   confirmPassword: string;
+
+  @IsString()
+  @IsNotEmpty({ message: 'Student grade is required' })
+  studentGradeId: string;
+
+  @IsString()
+  @IsNotEmpty({ message: 'Course group is required' })
+  studentGradeGroupId: string;
+
+  @IsString()
+  @IsNotEmpty({ message: 'Faculty is required' })
+  facultyId: string;
 }
 
 export class ForgotPasswordStep1Validation {

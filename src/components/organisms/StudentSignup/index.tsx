@@ -1,0 +1,270 @@
+import React, { ChangeEvent, memo, useState } from 'react';
+import { Box, Button as ChakraButton, HStack, Input, VStack } from '@chakra-ui/react';
+import { classValidatorResolver } from '@hookform/resolvers/class-validator';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { Controller, SubmitHandler, useForm } from 'react-hook-form';
+import { FacultyService } from '@/api/faculty.service';
+import { StudentGradeGroupService } from '@/api/student-grade-group.service';
+import { StudentGradeService } from '@/api/student-grade.service';
+import { UserService } from '@/api/user.service';
+import { StudentSignUpValidation } from '@/utils/validation';
+import { Button, FormInput, SelectLabel } from '../../atoms';
+
+const resolver = classValidatorResolver(StudentSignUpValidation);
+
+const StudentSignUp = () => {
+  const [localImage, setLocalImage] = useState<{ file: File; localUrl: string } | null>(null);
+  const studentSignUp = useMutation({ mutationFn: UserService.studentSignUp });
+
+  const onStudentSubmit: SubmitHandler<any> = data => {
+    studentSignUp.mutate(data);
+  };
+
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<StudentSignUpValidation>({
+    resolver,
+    defaultValues: {
+      firstName: '',
+      lastName: '',
+      email: '',
+      password: '',
+      confirmPassword: '',
+      studentGrade: '',
+    },
+  });
+
+  const { data: studentGradeList } = useQuery({
+    queryKey: ['student-grade'],
+    queryFn: StudentGradeService.getStudentGradeList,
+  });
+
+  const { data: studentGradeGroupList } = useQuery({
+    queryKey: ['student-grade-group'],
+    queryFn: StudentGradeGroupService.getStudentGradeGroupList,
+  });
+
+  const { data: facultyList } = useQuery({
+    queryKey: ['faculty'],
+    queryFn: FacultyService.facultyList,
+  });
+
+  const onFileSelect = (e: ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files?.length) {
+      setLocalImage({ file: files[0], localUrl: URL.createObjectURL(files[0]) });
+    }
+  };
+
+  return (
+    <>
+      <VStack spacing={32} display="grid" gridTemplateColumns={{ base: '1fr' }}>
+        <HStack>
+          <Controller
+            name="firstName"
+            control={control}
+            render={({ field: { onChange, value } }) => (
+              <FormInput
+                isRequired
+                placeholder="First name"
+                isInvalid={!!errors.firstName?.message}
+                name="firstName"
+                type="text"
+                formLabelName="First Name"
+                value={value}
+                handleInputChange={onChange}
+              />
+            )}
+          />
+          <Controller
+            name="lastName"
+            control={control}
+            render={({ field: { onChange, value } }) => (
+              <FormInput
+                isRequired
+                isInvalid={!!errors.lastName?.message}
+                name="lastName"
+                type="text"
+                placeholder="Last name"
+                formLabelName="Last name"
+                value={value}
+                handleInputChange={onChange}
+              />
+            )}
+          />
+        </HStack>
+        <Controller
+          name="email"
+          control={control}
+          render={({ field: { onChange, value } }) => (
+            <FormInput
+              isRequired
+              isInvalid={!!errors.email?.message}
+              name="email"
+              type="email"
+              placeholder="Email"
+              formLabelName="Email"
+              value={value}
+              handleInputChange={onChange}
+            />
+          )}
+        />
+        <HStack>
+          <Controller
+            name="password"
+            control={control}
+            render={({ field: { onChange, value } }) => (
+              <FormInput
+                isRequired
+                isInvalid={!!errors.password?.message}
+                name="password"
+                formLabelName="Password"
+                placeholder="Password"
+                value={value}
+                handleInputChange={onChange}
+                type="password"
+                formHelperText="Your password must be less than 6 characters."
+              />
+            )}
+          />
+          <Controller
+            name="confirmPassword"
+            control={control}
+            render={({ field: { onChange, value } }) => (
+              <FormInput
+                isRequired
+                isInvalid={!!errors.password?.message}
+                name="password"
+                formLabelName="Confirm passoword"
+                placeholder="Confirm password"
+                value={value}
+                handleInputChange={onChange}
+                type="password"
+                formHelperText="Your password must be less than 6 characters."
+              />
+            )}
+          />
+        </HStack>
+        <HStack>
+          <Box
+            cursor="pointer"
+            position="relative"
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            height="22px">
+            <ChakraButton
+              height="100%"
+              cursor="pointer"
+              color="#1F1646"
+              backgroundColor="#fff"
+              _hover={{
+                color: '#1F1646',
+                backgroundColor: '#fff',
+              }}
+              _focus={{
+                color: '#1F1646',
+                backgroundColor: '#fff',
+              }}>
+              <Controller
+                name="avatar"
+                control={control}
+                rules={{ required: 'This field is required' }}
+                render={({ field: { onChange, name } }) => (
+                  <Input
+                    as="input"
+                    name={name}
+                    type="file"
+                    width="100%"
+                    position="absolute"
+                    left={0}
+                    right={0}
+                    bottom={0}
+                    opacity={0}
+                    cursor="pointer"
+                    onChange={e => {
+                      onFileSelect(e);
+                      onChange(e);
+                    }}
+                    color="#1F1646"
+                    backgroundColor="#fff"
+                    _hover={{
+                      color: '#1F1646',
+                      backgroundColor: '#fff',
+                    }}
+                    _focus={{
+                      color: '#1F1646',
+                      backgroundColor: '#fff',
+                    }}
+                  />
+                )}
+              />
+              Upload document
+            </ChakraButton>
+          </Box>
+        </HStack>
+
+        <HStack>
+          <Controller
+            name="studentGradeId"
+            control={control}
+            render={({ field: { onChange, value, name } }) => (
+              <SelectLabel
+                name={name}
+                options={studentGradeList || []}
+                labelName="Student grade"
+                valueLabel="id"
+                nameLabel="title"
+                onChange={onChange}
+                value={value}
+              />
+            )}
+          />
+        </HStack>
+        <HStack>
+          <Controller
+            name="studentGradeGroupId"
+            control={control}
+            render={({ field: { onChange, value, name } }) => (
+              <SelectLabel
+                name={name}
+                options={studentGradeGroupList || []}
+                labelName="Course group"
+                valueLabel="id"
+                nameLabel="title"
+                onChange={onChange}
+                value={value}
+              />
+            )}
+          />
+        </HStack>
+        <HStack>
+          <Controller
+            name="facultyId"
+            control={control}
+            render={({ field: { onChange, value, name } }) => (
+              <SelectLabel
+                name={name}
+                options={facultyList || []}
+                labelName="Faculty"
+                valueLabel="id"
+                nameLabel="title"
+                onChange={onChange}
+                value={value}
+              />
+            )}
+          />
+        </HStack>
+      </VStack>
+      <VStack spacing={16} paddingTop={48}>
+        <Button w={'50%'} onClick={handleSubmit(onStudentSubmit)}>
+          Sign up
+        </Button>
+      </VStack>
+    </>
+  );
+};
+
+export default memo(StudentSignUp);
