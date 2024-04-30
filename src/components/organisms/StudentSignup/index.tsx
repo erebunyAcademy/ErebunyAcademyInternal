@@ -2,6 +2,7 @@ import React, { ChangeEvent, memo, useState } from 'react';
 import { Box, Button as ChakraButton, HStack, Input, Stack, VStack } from '@chakra-ui/react';
 import { classValidatorResolver } from '@hookform/resolvers/class-validator';
 import { useMutation, useQuery } from '@tanstack/react-query';
+import axios from 'axios';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { FacultyService } from '@/api/faculty.service';
 import { StudentGradeGroupService } from '@/api/student-grade-group.service';
@@ -16,8 +17,21 @@ const StudentSignUp = () => {
   const [localImage, setLocalImage] = useState<{ file: File; localUrl: string } | null>(null);
   const studentSignUp = useMutation({ mutationFn: UserService.studentSignUp });
 
-  const onStudentSubmit: SubmitHandler<any> = data => {
-    studentSignUp.mutate(data);
+  const onStudentSubmit: SubmitHandler<StudentSignUpValidation> = async data => {
+    console.log({ data, localImage });
+    const key = `/students/attachments/${Date.now()}_${localImage?.file.name}`;
+    if (localImage) {
+      const { url } = await UserService.getPreSignedUrl(key);
+      await axios.put(url, localImage.file);
+      studentSignUp.mutate({
+        ...data,
+        attachment: {
+          mimetype: localImage.file.name.split('.').at(1),
+          title: localImage.file.name,
+          key,
+        },
+      });
+    }
   };
 
   const {
@@ -33,6 +47,11 @@ const StudentSignUp = () => {
       password: '',
       confirmPassword: '',
       studentGradeId: '',
+      attachment: {
+        mimetype: '',
+        key: '',
+        title: '',
+      },
     },
   });
 
@@ -164,66 +183,6 @@ const StudentSignUp = () => {
             )}
           />
         </Stack>
-        <HStack>
-          <Box
-            cursor="pointer"
-            position="relative"
-            display="flex"
-            justifyContent="center"
-            alignItems="center"
-            height="22px"
-            ml="5px">
-            <ChakraButton
-              fontWeight={500}
-              height="100%"
-              cursor="pointer"
-              color="#1F1646"
-              backgroundColor="#fff"
-              _hover={{
-                color: '#1F1646',
-                backgroundColor: '#fff',
-              }}
-              _focus={{
-                color: '#1F1646',
-                backgroundColor: '#fff',
-              }}>
-              <Controller
-                name="a"
-                control={control}
-                rules={{ required: 'This field is required' }}
-                render={({ field: { onChange, name } }) => (
-                  <Input
-                    as="input"
-                    name={name}
-                    type="file"
-                    width="100%"
-                    position="absolute"
-                    left={0}
-                    right={0}
-                    bottom={0}
-                    opacity={0}
-                    cursor="pointer"
-                    onChange={e => {
-                      onFileSelect(e);
-                      onChange(e);
-                    }}
-                    color="#1F1646"
-                    backgroundColor="#fff"
-                    _hover={{
-                      color: '#1F1646',
-                      backgroundColor: '#fff',
-                    }}
-                    _focus={{
-                      color: '#1F1646',
-                      backgroundColor: '#fff',
-                    }}
-                  />
-                )}
-              />
-              Upload document
-            </ChakraButton>
-          </Box>
-        </HStack>
 
         <Stack direction={{ base: 'column', md: 'row' }} gap={{ base: '16px', sm: '8px' }}>
           <Controller
@@ -260,6 +219,56 @@ const StudentSignUp = () => {
             )}
           />
         </Stack>
+        <HStack>
+          <Box
+            cursor="pointer"
+            position="relative"
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            height="22px"
+            ml="5px">
+            <ChakraButton
+              fontWeight={500}
+              height="100%"
+              cursor="pointer"
+              color="#1F1646"
+              backgroundColor="#fff"
+              _hover={{
+                color: '#1F1646',
+                backgroundColor: '#fff',
+              }}
+              _focus={{
+                color: '#1F1646',
+                backgroundColor: '#fff',
+              }}>
+              <Input
+                as="input"
+                name="attachments"
+                type="file"
+                width="100%"
+                position="absolute"
+                left={0}
+                right={0}
+                bottom={0}
+                opacity={0}
+                cursor="pointer"
+                onChange={onFileSelect}
+                color="#1F1646"
+                backgroundColor="#fff"
+                _hover={{
+                  color: '#1F1646',
+                  backgroundColor: '#fff',
+                }}
+                _focus={{
+                  color: '#1F1646',
+                  backgroundColor: '#fff',
+                }}
+              />
+              Upload document
+            </ChakraButton>
+          </Box>
+        </HStack>
       </VStack>
       <VStack spacing={16} paddingTop={48}>
         <Button w={'50%'} onClick={handleSubmit(onStudentSubmit)}>

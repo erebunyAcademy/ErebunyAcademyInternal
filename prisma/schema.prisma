@@ -8,21 +8,21 @@ datasource db {
 }
 
 model User {
-  id               Int           @id @default(autoincrement())
-  email            String        @unique
-  firstName        String?       @db.VarChar(45)
-  lastName         String?       @db.VarChar(45)
-  password         String        @db.VarChar(60)
-  isVerified       Boolean       @default(false)
-  isAdminVerified  Boolean       @default(false)
-  phone            String?       @db.VarChar(60)
-  isPhoneVerified  Boolean       @default(false)
-  address          String?       @db.VarChar(60)
-  country          String?       @db.VarChar(60)
-  state            String?       @db.VarChar(60)
-  city             String?       @db.VarChar(60)
-  confirmationCode Int?          @unique
-  attachment       Attachments[]
+  id               Int          @id @default(autoincrement())
+  email            String       @unique
+  firstName        String?      @db.VarChar(45)
+  lastName         String?      @db.VarChar(45)
+  password         String       @db.VarChar(60)
+  isVerified       Boolean      @default(false)
+  isAdminVerified  Boolean      @default(false)
+  phone            String?      @db.VarChar(60)
+  isPhoneVerified  Boolean      @default(false)
+  address          String?      @db.VarChar(60)
+  country          String?      @db.VarChar(60)
+  state            String?      @db.VarChar(60)
+  city             String?      @db.VarChar(60)
+  confirmationCode Int?         @unique
+  attachment       Attachment[]
   role             UserRoleEnum
   teacher          Teacher?
   student          Student?
@@ -145,7 +145,7 @@ model Subject {
   description          String?               @db.VarChar(60)
   studentGradeSubjects StudentGradeSubject[]
   subjectTeacher       SubjectTeacher[]
-  attachments          Attachments[]
+  attachments          Attachment[]
   scheduleSubject      ScheduleSubject[]
 
   createdAt DateTime @default(now()) @db.Timestamp(0)
@@ -165,7 +165,7 @@ model SubjectTeacher {
   @@unique([teacherId, subjectId], name: "subjectTeacherId")
 }
 
-model Attachments {
+model Attachment {
   id          Int                @id @default(autoincrement())
   title       String?            @db.VarChar(60)
   description String?            @db.VarChar(60)

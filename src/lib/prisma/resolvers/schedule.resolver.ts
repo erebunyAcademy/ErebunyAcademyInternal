@@ -1,6 +1,6 @@
+import { Schedule } from '@prisma/client';
 import { NotFoundException } from 'next-api-decorators';
 import prisma from '..';
-import { Schedule } from '@prisma/client';
 
 export type ScheduleUpdateableType = Omit<Schedule, 'id'>;
 

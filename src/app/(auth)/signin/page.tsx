@@ -1,10 +1,13 @@
 'use client';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { Link, useToast, VStack } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { signIn, SignInResponse } from 'next-auth/react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
+import { Button, FormInput } from '@/components/atoms';
+import { AuthBox } from '@/components/molecules';
+import { ERROR_MESSAGES } from '@/utils/constants/common';
 import {
   FORGOT_PASSWORD_ROUTE,
   HOMEPAGE_ROUTE,
@@ -12,9 +15,6 @@ import {
   SIGN_UP_ROUTE,
 } from '@/utils/constants/routes';
 import { SignInFormData } from '@/utils/models/auth';
-import { AuthBox } from '@/components/molecules';
-import { Button, FormInput } from '@/components/atoms';
-import { ERROR_MESSAGES } from '@/utils/constants/common';
 
 const SignIn = () => {
   const toast = useToast();

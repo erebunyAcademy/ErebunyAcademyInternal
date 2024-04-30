@@ -79,10 +79,10 @@ CREATE TABLE "ScheduleSubject" (
 -- CreateTable
 CREATE TABLE "Student" (
     "id" SERIAL NOT NULL,
+    "studentGradeId" INTEGER NOT NULL,
+    "facultyId" INTEGER NOT NULL,
     "userId" INTEGER NOT NULL,
     "courseGroupId" INTEGER NOT NULL,
-    "facultyId" INTEGER NOT NULL,
-    "studentGradeId" INTEGER,
     "createdAt" TIMESTAMP(0) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(0) NOT NULL,
 
@@ -158,7 +158,7 @@ CREATE TABLE "SubjectTeacher" (
 );
 
 -- CreateTable
-CREATE TABLE "Attachments" (
+CREATE TABLE "Attachment" (
     "id" SERIAL NOT NULL,
     "title" VARCHAR(60),
     "description" VARCHAR(60),
@@ -170,7 +170,7 @@ CREATE TABLE "Attachments" (
     "createdAt" TIMESTAMP(0) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(0) NOT NULL,
 
-    CONSTRAINT "Attachments_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "Attachment_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -265,7 +265,7 @@ ALTER TABLE "ScheduleSubject" ADD CONSTRAINT "ScheduleSubject_scheduleId_fkey" F
 ALTER TABLE "ScheduleSubject" ADD CONSTRAINT "ScheduleSubject_subjectId_fkey" FOREIGN KEY ("subjectId") REFERENCES "Subject"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Student" ADD CONSTRAINT "Student_studentGradeId_fkey" FOREIGN KEY ("studentGradeId") REFERENCES "StudentGrade"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "Student" ADD CONSTRAINT "Student_studentGradeId_fkey" FOREIGN KEY ("studentGradeId") REFERENCES "StudentGrade"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Student" ADD CONSTRAINT "Student_facultyId_fkey" FOREIGN KEY ("facultyId") REFERENCES "Faculty"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -295,10 +295,10 @@ ALTER TABLE "SubjectTeacher" ADD CONSTRAINT "SubjectTeacher_teacherId_fkey" FORE
 ALTER TABLE "SubjectTeacher" ADD CONSTRAINT "SubjectTeacher_subjectId_fkey" FOREIGN KEY ("subjectId") REFERENCES "Subject"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Attachments" ADD CONSTRAINT "Attachments_subjectId_fkey" FOREIGN KEY ("subjectId") REFERENCES "Subject"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "Attachment" ADD CONSTRAINT "Attachment_subjectId_fkey" FOREIGN KEY ("subjectId") REFERENCES "Subject"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Attachments" ADD CONSTRAINT "Attachments_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "Attachment" ADD CONSTRAINT "Attachment_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "TestExam" ADD CONSTRAINT "TestExam_examId_fkey" FOREIGN KEY ("examId") REFERENCES "Exam"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

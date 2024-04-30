@@ -12,7 +12,6 @@ import {
 } from '@/utils/validation/user';
 import prisma from '../index';
 import { AWSService } from '../services/AWS.service';
-import { TwilioService } from '../services/Twillio.service';
 import { generateRandomNumber } from '../utils/common';
 
 export class UserResolver {
@@ -47,7 +46,6 @@ export class UserResolver {
   }
 
   static async sendVerificationSMS(input: VerifyPhoneValidation, user: NonNullable<User>) {
-    const twilioService = new TwilioService();
     const confirmationCode = generateRandomNumber(4);
 
     await prisma.user.update({
@@ -60,7 +58,7 @@ export class UserResolver {
       },
     });
 
-    return twilioService.sendVerificationSMS(input.phone, confirmationCode);
+    return '';
   }
 
   static async changeUserPassword(

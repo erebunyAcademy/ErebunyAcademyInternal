@@ -5,11 +5,10 @@ import { usePathname } from 'next/navigation';
 import { User } from 'next-auth';
 import { Button } from '@/components/atoms';
 import { SIGN_IN_ROUTE, SIGN_UP_ROUTE } from '@/utils/constants/routes';
-import { NavItem } from '@/utils/models/header';
 import MobileNavItem from '../MobileNavItem';
 
 interface MobileNavProps {
-  navItems: NavItem[];
+  navItems: any[];
   user: User | null;
   onClose: () => void;
 }
@@ -20,7 +19,7 @@ const MobileNav: FC<MobileNavProps> = ({ navItems, user, onClose }) => {
     <Stack>
       <Accordion allowToggle>
         <Box px={16}>
-          {navItems.map((navItem: NavItem, i: number) => (
+          {navItems.map((navItem: any, i: number) => (
             <MobileNavItem key={i} {...navItem} onClose={onClose} />
           ))}
           {!user && (

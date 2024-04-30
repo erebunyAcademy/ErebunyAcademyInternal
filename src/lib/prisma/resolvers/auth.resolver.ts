@@ -1,4 +1,4 @@
-import { UserRoleEnum } from '@prisma/client';
+import { Attachments, AttachmentTypeEnum, UserRoleEnum } from '@prisma/client';
 import bcrypt from 'bcrypt';
 import { BadRequestException } from 'next-api-decorators';
 import { ERROR_MESSAGES } from '@/utils/constants/common';
@@ -7,7 +7,12 @@ import prisma from '..';
 import { Email } from '../services/Sendgrid.service';
 import { generateRandomNumber } from '../utils/common';
 
-const createUser = async (email: string, password: string, role: UserRoleEnum) => {
+const createUser = async (
+  input: TeacherSignUpValidation | StudentSignUpValidation,
+  role: UserRoleEnum,
+  attachment?: Attachments,
+) => {
+  const { email, firstName, lastName, password } = input;
   const existingUser = await prisma.user.findUnique({ where: { email } });
 
   if (existingUser) {
@@ -18,7 +23,23 @@ const createUser = async (email: string, password: string, role: UserRoleEnum) =
   const confirmationCode = generateRandomNumber(6);
 
   const user = await prisma.user.create({
-    data: { email, password: hashedPassword, confirmationCode, role },
+    data: {
+      email,
+      firstName,
+      lastName,
+      password: hashedPassword,
+      confirmationCode,
+      role,
+      ...(attachment
+        ? {
+            attachment: {
+              connect: {
+                id: attachment.id,
+              },
+            },
+          }
+        : {}),
+    },
   });
 
   return user;
@@ -26,21 +47,19 @@ const createUser = async (email: string, password: string, role: UserRoleEnum) =
 
 export class AuthResolver {
   static async teacherSignUp(input: TeacherSignUpValidation) {
-    const { email, password, ...rest } = input;
-
-    const user = await createUser(email, password, 'TEACHER');
+    const user = await createUser(input, UserRoleEnum.TEACHER);
 
     await prisma.teacher.create({
       data: {
-        profession: rest.profession,
-        workPlace: rest.workPlace,
-        scientificActivity: rest.scientificActivity,
+        profession: input.profession,
+        workPlace: input.workPlace,
+        scientificActivity: input.scientificActivity,
         user: { connect: { id: user.id } },
       },
     });
 
     if (user.confirmationCode && user.firstName) {
-      Email.sendConfirmationCodeEmail(user.email, user.confirmationCode, rest.firstName)
+      Email.sendConfirmationCodeEmail(user.email, user.confirmationCode, user.firstName)
         .then(res => console.log({ res }))
         .catch(err => console.log({ err }));
     }
@@ -49,26 +68,28 @@ export class AuthResolver {
   }
 
   static async studentSignUp(input: StudentSignUpValidation) {
-    const { email, password, facultyId, studentGradeGroupId, studentGradeId } = input;
+    const { facultyId, studentGradeGroupId, studentGradeId } = input;
 
-    const user = await createUser(email, password, UserRoleEnum.STUDENT);
+    const attachment = await prisma.attachments.create({
+      data: { ...input.attachment, type: AttachmentTypeEnum.FILE },
+    });
+
+    const user = await createUser(input, UserRoleEnum.STUDENT, attachment);
 
     const createdStudent = await prisma.student.create({
       data: {
         user: { connect: { id: user.id } },
-        facultyId: 1,
-        studentGradeGroupId: +studentGradeGroupId,
-        studentGradeId: +studentGradeId,
+        faculty: facultyId ? { connect: { id: +facultyId } } : (undefined as any),
+        studentGradeGroup: { connect: { id: +studentGradeGroupId } },
+        studentGrade: { connect: { id: +studentGradeId } },
       },
     });
 
     await prisma.student.update({
-      where: {
-        id: createdStudent.id,
-      },
+      where: { id: createdStudent.id },
       data: {
-        studentGradeGroup: { connect: { id: +studentGradeGroupId } },
         studentGrade: { connect: { id: +studentGradeId } },
+        studentGradeGroup: { connect: { id: +studentGradeGroupId } },
         faculty: { connect: { id: +facultyId } },
       },
     });

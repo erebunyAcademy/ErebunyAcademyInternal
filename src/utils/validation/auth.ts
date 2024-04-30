@@ -1,6 +1,20 @@
-import { IsEmail, IsNotEmpty, IsNumber, IsString, Length } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsEmail, IsNotEmpty, IsNumber, IsString, Length, ValidateNested } from 'class-validator';
 
-export class TeacherSignUpValidation {
+export class AttachmentValidation {
+  @IsNotEmpty({ message: 'Mime type is required' })
+  mimetype: string;
+
+  @IsString()
+  @IsNotEmpty({ message: 'Title is required' })
+  title: string;
+
+  @IsString()
+  @IsNotEmpty({ message: 'Key is required' })
+  key: string;
+}
+
+export class UserSignupValidation {
   @IsString()
   @IsNotEmpty({ message: 'First name is required' })
   firstName: string;
@@ -23,7 +37,9 @@ export class TeacherSignUpValidation {
   @IsNotEmpty({ message: 'Confirm password is required' })
   @Length(6, 20)
   confirmPassword: string;
+}
 
+export class TeacherSignUpValidation extends UserSignupValidation {
   @IsString()
   @IsNotEmpty({ message: 'Profession is required' })
   profession: string;
@@ -45,30 +61,7 @@ export class TeacherSignUpValidation {
   teachingSubject: string;
 }
 
-export class StudentSignUpValidation {
-  @IsString()
-  @IsNotEmpty({ message: 'First name is required' })
-  firstName: string;
-
-  @IsString()
-  @IsNotEmpty({ message: 'Last name is required' })
-  lastName: string;
-
-  @IsEmail()
-  @IsString()
-  @IsNotEmpty({ message: 'Email is required' })
-  email: string;
-
-  @IsString()
-  @IsNotEmpty({ message: 'Password is required' })
-  @Length(6, 20)
-  password: string;
-
-  @IsString()
-  @IsNotEmpty({ message: 'Confirm password is required' })
-  @Length(6, 20)
-  confirmPassword: string;
-
+export class StudentSignUpValidation extends UserSignupValidation {
   @IsString()
   @IsNotEmpty({ message: 'Student grade is required' })
   studentGradeId: string;
@@ -80,6 +73,10 @@ export class StudentSignUpValidation {
   @IsString()
   @IsNotEmpty({ message: 'Faculty is required' })
   facultyId: string;
+
+  @ValidateNested()
+  @Type(() => AttachmentValidation)
+  attachment: AttachmentValidation;
 }
 
 export class ForgotPasswordStep1Validation {
