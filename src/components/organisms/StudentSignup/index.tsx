@@ -32,7 +32,7 @@ const StudentSignUp = () => {
       email: '',
       password: '',
       confirmPassword: '',
-      studentGrade: '',
+      studentGradeId: '',
     },
   });
 
@@ -169,7 +169,7 @@ const StudentSignUp = () => {
                 backgroundColor: '#fff',
               }}>
               <Controller
-                name="avatar"
+                name="a"
                 control={control}
                 rules={{ required: 'This field is required' }}
                 render={({ field: { onChange, name } }) => (

@@ -76,14 +76,14 @@ model ScheduleSubject {
 
 model Student {
   id                Int               @id @default(autoincrement())
-  studentGrade      StudentGrade?     @relation(fields: [studentGradeId], references: [id])
+  studentGrade      StudentGrade      @relation(fields: [studentGradeId], references: [id])
+  studentGradeId    Int
   faculty           Faculty           @relation(fields: [facultyId], references: [id])
+  facultyId         Int
   studentGradeGroup StudentGradeGroup @relation(fields: [courseGroupId], references: [id])
   user              User              @relation(fields: [userId], references: [id])
   userId            Int               @unique
   courseGroupId     Int
-  facultyId         Int
-  studentGradeId    Int?
 
   createdAt DateTime @default(now()) @db.Timestamp(0)
   updatedAt DateTime @updatedAt @db.Timestamp(0)
@@ -119,9 +119,9 @@ model StudentGrade {
   description          String?               @db.VarChar(60)
   groups               StudentGradeGroup[]
   studentGradeSubjects StudentGradeSubject[]
-  students             Student[]
   faculty              Faculty?              @relation(fields: [facultyId], references: [id])
   facultyId            Int?
+  students             Student[]
 
   createdAt DateTime @default(now()) @db.Timestamp(0)
   updatedAt DateTime @updatedAt @db.Timestamp(0)

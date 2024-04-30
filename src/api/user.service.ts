@@ -8,4 +8,7 @@ export class UserService {
   static studentSignUp(data: any) {
     return $apiClient.post('/user/student-signup', data);
   }
+  static getPreSignedUrl(imageKey: string): Promise<{ url: string }> {
+    return $apiClient.post('user/get-presigned-url', { imageKey });
+  }
 }

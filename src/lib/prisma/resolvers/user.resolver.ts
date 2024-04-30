@@ -106,13 +106,9 @@ export class UserResolver {
     return true;
   }
 
-  static async getPreSignedUrl(input: GetPresignedUrlInput, user: User) {
+  static async getPreSignedUrl(input: GetPresignedUrlInput) {
     const { imageKey } = input;
     const awsService = new AWSService();
-
-    if (user?.avatar) {
-      awsService.deleteAttachment(user.avatar);
-    }
 
     return awsService.getUploadUrl(imageKey);
   }

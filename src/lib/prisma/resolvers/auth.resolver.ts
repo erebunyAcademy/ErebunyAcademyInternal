@@ -49,14 +49,27 @@ export class AuthResolver {
   }
 
   static async studentSignUp(input: StudentSignUpValidation) {
-    const { email, password } = input;
+    const { email, password, facultyId, studentGradeGroupId, studentGradeId } = input;
 
-    const user = await createUser(email, password, 'STUDENT');
+    const user = await createUser(email, password, UserRoleEnum.STUDENT);
 
-    await prisma.student.create({
+    const createdStudent = await prisma.student.create({
       data: {
-        // need to add data
         user: { connect: { id: user.id } },
+        facultyId: 1,
+        studentGradeGroupId: +studentGradeGroupId,
+        studentGradeId: +studentGradeId,
+      },
+    });
+
+    await prisma.student.update({
+      where: {
+        id: createdStudent.id,
+      },
+      data: {
+        studentGradeGroup: { connect: { id: +studentGradeGroupId } },
+        studentGrade: { connect: { id: +studentGradeId } },
+        faculty: { connect: { id: +facultyId } },
       },
     });
 

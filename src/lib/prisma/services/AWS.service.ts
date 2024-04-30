@@ -32,9 +32,7 @@ export class AWSService {
       }),
       { expiresIn: 3600 },
     )
-      .then(url => {
-        return { url };
-      })
+      .then(url => ({ url }))
       .catch(err => {
         console.log({ err });
 
