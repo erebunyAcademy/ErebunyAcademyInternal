@@ -45,7 +45,7 @@ const Signup = () => {
         </Flex>
       ) : (
         <AuthBox data={authBoxProps.data} boxProps={authBoxProps.boxProps}>
-          <Box pb={32}>
+          <Box pb={{ base: '20px', sm: '32px' }}>
             <SelectLabel
               name={'userType'}
               options={[{ name: UserRoleEnum.STUDENT }, { name: UserRoleEnum.TEACHER }]}
