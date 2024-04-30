@@ -1,5 +1,5 @@
 import React, { ChangeEvent, memo, useState } from 'react';
-import { Box, Button as ChakraButton, HStack, Input, VStack } from '@chakra-ui/react';
+import { Box, Button as ChakraButton, HStack, Input, Stack, VStack } from '@chakra-ui/react';
 import { classValidatorResolver } from '@hookform/resolvers/class-validator';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
@@ -60,15 +60,18 @@ const StudentSignUp = () => {
 
   return (
     <>
-      <VStack spacing={32} display="grid" gridTemplateColumns={{ base: '1fr' }}>
-        <HStack>
+      <VStack
+        spacing={{ base: '16px', sm: '32px' }}
+        display="grid"
+        gridTemplateColumns={{ base: '1fr' }}>
+        <Stack direction={{ base: 'column', md: 'row' }} gap={{ base: '16px', sm: '8px' }}>
           <Controller
             name="firstName"
             control={control}
             render={({ field: { onChange, value } }) => (
               <FormInput
                 isRequired
-                placeholder="First name"
+                placeholder="First Name"
                 isInvalid={!!errors.firstName?.message}
                 name="firstName"
                 type="text"
@@ -87,66 +90,80 @@ const StudentSignUp = () => {
                 isInvalid={!!errors.lastName?.message}
                 name="lastName"
                 type="text"
-                placeholder="Last name"
-                formLabelName="Last name"
+                placeholder="Last Name"
+                formLabelName="Last Name"
                 value={value}
                 handleInputChange={onChange}
               />
             )}
           />
-        </HStack>
-        <Controller
-          name="email"
-          control={control}
-          render={({ field: { onChange, value } }) => (
-            <FormInput
-              isRequired
-              isInvalid={!!errors.email?.message}
-              name="email"
-              type="email"
-              placeholder="Email"
-              formLabelName="Email"
-              value={value}
-              handleInputChange={onChange}
-            />
-          )}
-        />
-        <HStack>
+        </Stack>
+        <Stack direction={{ base: 'column', md: 'row' }} gap={{ base: '16px', sm: '8px' }}>
           <Controller
-            name="password"
+            name="email"
             control={control}
             render={({ field: { onChange, value } }) => (
               <FormInput
                 isRequired
-                isInvalid={!!errors.password?.message}
-                name="password"
-                formLabelName="Password"
-                placeholder="Password"
+                isInvalid={!!errors.email?.message}
+                name="email"
+                type="email"
+                placeholder="Email"
+                formLabelName="Email"
                 value={value}
                 handleInputChange={onChange}
-                type="password"
-                formHelperText="Your password must be less than 6 characters."
               />
             )}
           />
           <Controller
-            name="confirmPassword"
+            name="studentGradeId"
             control={control}
-            render={({ field: { onChange, value } }) => (
-              <FormInput
-                isRequired
-                isInvalid={!!errors.password?.message}
-                name="password"
-                formLabelName="Confirm passoword"
-                placeholder="Confirm password"
+            render={({ field: { onChange, value, name } }) => (
+              <SelectLabel
+                name={name}
+                options={studentGradeList || []}
+                labelName="Student grade"
+                valueLabel="id"
+                nameLabel="title"
+                onChange={onChange}
                 value={value}
-                handleInputChange={onChange}
-                type="password"
-                formHelperText="Your password must be less than 6 characters."
               />
             )}
           />
-        </HStack>
+        </Stack>
+
+        <Stack direction={{ base: 'column', md: 'row' }} gap={{ base: '16px', sm: '8px' }}>
+          <Controller
+            name="studentGradeGroupId"
+            control={control}
+            render={({ field: { onChange, value, name } }) => (
+              <SelectLabel
+                name={name}
+                options={studentGradeGroupList || []}
+                labelName="Course group"
+                valueLabel="id"
+                nameLabel="title"
+                onChange={onChange}
+                value={value}
+              />
+            )}
+          />
+          <Controller
+            name="facultyId"
+            control={control}
+            render={({ field: { onChange, value, name } }) => (
+              <SelectLabel
+                name={name}
+                options={facultyList || []}
+                labelName="Faculty"
+                valueLabel="id"
+                nameLabel="title"
+                onChange={onChange}
+                value={value}
+              />
+            )}
+          />
+        </Stack>
         <HStack>
           <Box
             cursor="pointer"
@@ -154,8 +171,10 @@ const StudentSignUp = () => {
             display="flex"
             justifyContent="center"
             alignItems="center"
-            height="22px">
+            height="22px"
+            ml="5px">
             <ChakraButton
+              fontWeight={500}
               height="100%"
               cursor="pointer"
               color="#1F1646"
@@ -206,57 +225,41 @@ const StudentSignUp = () => {
           </Box>
         </HStack>
 
-        <HStack>
+        <Stack direction={{ base: 'column', md: 'row' }} gap={{ base: '16px', sm: '8px' }}>
           <Controller
-            name="studentGradeId"
+            name="password"
             control={control}
-            render={({ field: { onChange, value, name } }) => (
-              <SelectLabel
-                name={name}
-                options={studentGradeList || []}
-                labelName="Student grade"
-                valueLabel="id"
-                nameLabel="title"
-                onChange={onChange}
+            render={({ field: { onChange, value } }) => (
+              <FormInput
+                isRequired
+                isInvalid={!!errors.password?.message}
+                name="password"
+                formLabelName="Password"
+                placeholder="Password"
                 value={value}
+                handleInputChange={onChange}
+                type="password"
+                formHelperText="Your password must not be less than 6 characters."
               />
             )}
           />
-        </HStack>
-        <HStack>
           <Controller
-            name="studentGradeGroupId"
+            name="confirmPassword"
             control={control}
-            render={({ field: { onChange, value, name } }) => (
-              <SelectLabel
-                name={name}
-                options={studentGradeGroupList || []}
-                labelName="Course group"
-                valueLabel="id"
-                nameLabel="title"
-                onChange={onChange}
+            render={({ field: { onChange, value } }) => (
+              <FormInput
+                isRequired
+                isInvalid={!!errors.password?.message}
+                name="password"
+                formLabelName="Confirm password"
+                placeholder="Confirm password"
                 value={value}
+                handleInputChange={onChange}
+                type="password"
               />
             )}
           />
-        </HStack>
-        <HStack>
-          <Controller
-            name="facultyId"
-            control={control}
-            render={({ field: { onChange, value, name } }) => (
-              <SelectLabel
-                name={name}
-                options={facultyList || []}
-                labelName="Faculty"
-                valueLabel="id"
-                nameLabel="title"
-                onChange={onChange}
-                value={value}
-              />
-            )}
-          />
-        </HStack>
+        </Stack>
       </VStack>
       <VStack spacing={16} paddingTop={48}>
         <Button w={'50%'} onClick={handleSubmit(onStudentSubmit)}>
