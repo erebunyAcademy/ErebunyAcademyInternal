@@ -26,7 +26,7 @@ const TeacherSignUp = () => {
       profession: '',
       workPlace: '',
       scientificActivity: '',
-      teachingSubject: '',
+      teachingSubjectId: '',
     },
   });
 
@@ -35,11 +35,13 @@ const TeacherSignUp = () => {
     queryKey: [],
   });
 
+  const { mutate } = useMutation({ mutationFn: UserService.teacherSignUp });
+
   const onTeacherSubmit: SubmitHandler<TeacherSignUpValidation> = data => {
-    teacherSignUp.mutate(data);
+    mutate(data);
   };
 
-  const teacherSignUp = useMutation({ mutationFn: UserService.teacherSignUp });
+  console.log({ errors });
 
   return (
     <>
@@ -149,7 +151,7 @@ const TeacherSignUp = () => {
           />
         </Stack>
         <Controller
-          name="teachingSubject"
+          name="teachingSubjectId"
           control={control}
           render={({ field: { onChange, value, name } }) => (
             <SelectLabel

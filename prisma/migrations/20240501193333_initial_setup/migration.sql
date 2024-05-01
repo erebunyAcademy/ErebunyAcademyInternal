@@ -29,6 +29,7 @@ CREATE TABLE "User" (
     "state" VARCHAR(60),
     "city" VARCHAR(60),
     "confirmationCode" INTEGER,
+    "attachmentId" TEXT,
     "role" "UserRoleEnum" NOT NULL,
     "createdAt" TIMESTAMP(0) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(0) NOT NULL,
@@ -81,8 +82,8 @@ CREATE TABLE "Student" (
     "id" SERIAL NOT NULL,
     "studentGradeId" INTEGER NOT NULL,
     "facultyId" INTEGER NOT NULL,
+    "studentGradeGroupId" INTEGER NOT NULL,
     "userId" INTEGER NOT NULL,
-    "courseGroupId" INTEGER NOT NULL,
     "createdAt" TIMESTAMP(0) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(0) NOT NULL,
 
@@ -232,6 +233,9 @@ CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 CREATE UNIQUE INDEX "User_confirmationCode_key" ON "User"("confirmationCode");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "User_attachmentId_key" ON "User"("attachmentId");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "Teacher_userId_key" ON "Teacher"("userId");
 
 -- CreateIndex
@@ -271,7 +275,7 @@ ALTER TABLE "Student" ADD CONSTRAINT "Student_studentGradeId_fkey" FOREIGN KEY (
 ALTER TABLE "Student" ADD CONSTRAINT "Student_facultyId_fkey" FOREIGN KEY ("facultyId") REFERENCES "Faculty"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Student" ADD CONSTRAINT "Student_courseGroupId_fkey" FOREIGN KEY ("courseGroupId") REFERENCES "StudentGradeGroup"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Student" ADD CONSTRAINT "Student_studentGradeGroupId_fkey" FOREIGN KEY ("studentGradeGroupId") REFERENCES "StudentGradeGroup"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Student" ADD CONSTRAINT "Student_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

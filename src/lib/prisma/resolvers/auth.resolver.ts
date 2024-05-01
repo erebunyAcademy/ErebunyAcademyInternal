@@ -1,4 +1,4 @@
-import { Attachments, AttachmentTypeEnum, UserRoleEnum } from '@prisma/client';
+import { AttachmentTypeEnum, UserRoleEnum } from '@prisma/client';
 import bcrypt from 'bcrypt';
 import { BadRequestException } from 'next-api-decorators';
 import { ERROR_MESSAGES } from '@/utils/constants/common';
@@ -8,9 +8,8 @@ import { Email } from '../services/Sendgrid.service';
 import { generateRandomNumber } from '../utils/common';
 
 const createUser = async (
-  input: TeacherSignUpValidation | StudentSignUpValidation,
+  input: TeacherSignUpValidation | StudentSignUpValidation, // Use union type here
   role: UserRoleEnum,
-  attachment?: Attachments,
 ) => {
   const { email, firstName, lastName, password } = input;
   const existingUser = await prisma.user.findUnique({ where: { email } });
@@ -30,13 +29,11 @@ const createUser = async (
       password: hashedPassword,
       confirmationCode,
       role,
-      ...(attachment
+      ...((input as StudentSignUpValidation).attachment?.attachmentKey
         ? {
-            attachment: {
-              connect: {
-                id: attachment.id,
-              },
-            },
+            ...((input as StudentSignUpValidation).attachment.attachmentKey && {
+              attachmentId: (input as StudentSignUpValidation).attachment.attachmentKey,
+            }),
           }
         : {}),
     },
@@ -44,9 +41,9 @@ const createUser = async (
 
   return user;
 };
-
 export class AuthResolver {
   static async teacherSignUp(input: TeacherSignUpValidation) {
+    console.log({ input });
     const user = await createUser(input, UserRoleEnum.TEACHER);
 
     await prisma.teacher.create({
@@ -54,7 +51,7 @@ export class AuthResolver {
         profession: input.profession,
         workPlace: input.workPlace,
         scientificActivity: input.scientificActivity,
-        user: { connect: { id: user.id } },
+        userId: user.id,
       },
     });
 
@@ -68,29 +65,26 @@ export class AuthResolver {
   }
 
   static async studentSignUp(input: StudentSignUpValidation) {
-    const { facultyId, studentGradeGroupId, studentGradeId } = input;
+    const { facultyId, studentGradeGroupId, studentGradeId, attachment } = input;
 
-    const attachment = await prisma.attachments.create({
-      data: { ...input.attachment, type: AttachmentTypeEnum.FILE },
-    });
+    const user = await createUser(input, UserRoleEnum.STUDENT);
 
-    const user = await createUser(input, UserRoleEnum.STUDENT, attachment);
-
-    const createdStudent = await prisma.student.create({
+    await prisma.attachment.create({
       data: {
-        user: { connect: { id: user.id } },
-        faculty: facultyId ? { connect: { id: +facultyId } } : (undefined as any),
-        studentGradeGroup: { connect: { id: +studentGradeGroupId } },
-        studentGrade: { connect: { id: +studentGradeId } },
+        userId: user.id,
+        mimetype: attachment.mimetype,
+        type: AttachmentTypeEnum.FILE,
+        title: attachment.title,
+        key: attachment.key,
       },
     });
 
-    await prisma.student.update({
-      where: { id: createdStudent.id },
+    await prisma.student.create({
       data: {
-        studentGrade: { connect: { id: +studentGradeId } },
-        studentGradeGroup: { connect: { id: +studentGradeGroupId } },
-        faculty: { connect: { id: +facultyId } },
+        userId: user.id,
+        facultyId: +facultyId,
+        studentGradeId: +studentGradeId,
+        studentGradeGroupId: +studentGradeGroupId,
       },
     });
 

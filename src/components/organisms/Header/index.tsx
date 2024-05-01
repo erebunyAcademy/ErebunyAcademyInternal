@@ -81,7 +81,7 @@ const Header: FC<HeaderProps> = ({ user }) => {
 
   return (
     <Box
-      borderBottom={1}
+      borderBottom={2}
       borderStyle={'solid'}
       borderColor="#F9FAFB"
       position="fixed"

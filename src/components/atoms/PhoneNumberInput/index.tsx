@@ -2,7 +2,6 @@ import React, { FC, memo } from 'react';
 import { FormControl, FormLabel, Text } from '@chakra-ui/react';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
-import { segoe } from '@/utils/constants/fonts';
 
 type PhoneNumberInputProps = {
   value: string;
@@ -23,13 +22,7 @@ const PhoneNumberInput: FC<PhoneNumberInputProps> = ({
 }) => {
   return (
     <FormControl>
-      <FormLabel
-        fontWeight={600}
-        marginBottom={4}
-        lineHeight="20px"
-        fontSize={14}
-        color="#222"
-        className={segoe.className}>
+      <FormLabel fontWeight={600} marginBottom={4} lineHeight="20px" fontSize={14} color="#222">
         {formLabelName}
         {isRequired && (
           <Text as="span" color="#222">

@@ -4,6 +4,7 @@ import { classValidatorResolver } from '@hookform/resolvers/class-validator';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
+import { v4 as uuid } from 'uuid';
 import { FacultyService } from '@/api/faculty.service';
 import { StudentGradeGroupService } from '@/api/student-grade-group.service';
 import { StudentGradeService } from '@/api/student-grade.service';
@@ -15,20 +16,21 @@ const resolver = classValidatorResolver(StudentSignUpValidation);
 
 const StudentSignUp = () => {
   const [localImage, setLocalImage] = useState<{ file: File; localUrl: string } | null>(null);
-  const studentSignUp = useMutation({ mutationFn: UserService.studentSignUp });
+  const { mutate } = useMutation({ mutationFn: UserService.studentSignUp });
 
   const onStudentSubmit: SubmitHandler<StudentSignUpValidation> = async data => {
-    console.log({ data, localImage });
-    const key = `/students/attachments/${Date.now()}_${localImage?.file.name}`;
     if (localImage) {
+      const attachmentId = uuid();
+      const key = `students/${attachmentId}/attachments/${Date.now()}_${localImage.file.name}`;
       const { url } = await UserService.getPreSignedUrl(key);
       await axios.put(url, localImage.file);
-      studentSignUp.mutate({
+      mutate({
         ...data,
         attachment: {
-          mimetype: localImage.file.name.split('.').at(1),
+          mimetype: localImage.file.type,
           title: localImage.file.name,
           key,
+          attachmentKey: attachmentId,
         },
       });
     }

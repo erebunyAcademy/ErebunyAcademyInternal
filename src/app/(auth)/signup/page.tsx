@@ -1,7 +1,7 @@
 'use client';
+import { UserRoleEnum } from '@prisma/client';
 import { useState } from 'react';
 import { Box, Flex, Text } from '@chakra-ui/react';
-import { UserRoleEnum } from '@prisma/client';
 import { Button, SelectLabel } from '@/components/atoms';
 import { AuthBox } from '@/components/molecules';
 import { TeacherSignUp } from '@/components/organisms';
@@ -22,7 +22,7 @@ const Signup = () => {
 
   return (
     <>
-      {false ? (
+      {0 > 1 ? (
         <Flex flexDirection="column" marginTop="137px" padding="32px" gap="12px">
           <Flex justifyContent="center" mb="12px">
             <CheckIcon />

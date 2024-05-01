@@ -1,4 +1,3 @@
-import { Type } from 'class-transformer';
 import { IsEmail, IsNotEmpty, IsNumber, IsString, Length, ValidateNested } from 'class-validator';
 
 export class AttachmentValidation {
@@ -12,6 +11,10 @@ export class AttachmentValidation {
   @IsString()
   @IsNotEmpty({ message: 'Key is required' })
   key: string;
+
+  @IsString()
+  @IsNotEmpty({ message: 'Key is required' })
+  attachmentKey: string;
 }
 
 export class UserSignupValidation {
@@ -45,10 +48,6 @@ export class TeacherSignUpValidation extends UserSignupValidation {
   profession: string;
 
   @IsString()
-  @IsNotEmpty({ message: 'Profession is required' })
-  faculty: string;
-
-  @IsString()
   @IsNotEmpty({ message: 'Working place is required' })
   workPlace: string;
 
@@ -58,7 +57,7 @@ export class TeacherSignUpValidation extends UserSignupValidation {
 
   @IsString()
   @IsNotEmpty()
-  teachingSubject: string;
+  teachingSubjectId: string;
 }
 
 export class StudentSignUpValidation extends UserSignupValidation {
@@ -75,7 +74,6 @@ export class StudentSignUpValidation extends UserSignupValidation {
   facultyId: string;
 
   @ValidateNested()
-  @Type(() => AttachmentValidation)
   attachment: AttachmentValidation;
 }
 

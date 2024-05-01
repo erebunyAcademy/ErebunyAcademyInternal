@@ -1,7 +1,7 @@
-import { NextApiRequest } from "next";
-import { NextResponse } from "next/server";
-import { getToken } from "next-auth/jwt";
-import { SIGN_IN_ROUTE } from "./utils/constants/routes";
+import { NextApiRequest } from 'next';
+import { NextResponse } from 'next/server';
+import { getToken } from 'next-auth/jwt';
+import { SIGN_IN_ROUTE } from './utils/constants/routes';
 
 export async function middleware(req: NextApiRequest) {
   const url = process.env.BASE_URL + SIGN_IN_ROUTE;
@@ -17,5 +17,5 @@ export async function middleware(req: NextApiRequest) {
 }
 
 export const config = {
-  matcher: ["/profile"],
+  matcher: ['/'],
 };
