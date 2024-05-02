@@ -5,10 +5,10 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { v4 as uuid } from 'uuid';
-import { FacultyService } from '@/api/faculty.service';
-import { StudentGradeGroupService } from '@/api/student-grade-group.service';
-import { StudentGradeService } from '@/api/student-grade.service';
-import { UserService } from '@/api/user.service';
+import { FacultyService } from '@/api/services/faculty.service';
+import { StudentGradeGroupService } from '@/api/services/student-grade-group.service';
+import { StudentGradeService } from '@/api/services/student-grade.service';
+import { UserService } from '@/api/services/user.service';
 import { StudentSignUpValidation } from '@/utils/validation';
 import { Button, FormInput, SelectLabel } from '../../atoms';
 

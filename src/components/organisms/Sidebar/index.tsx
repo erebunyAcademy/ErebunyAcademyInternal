@@ -2,8 +2,6 @@
 import React, { FC, memo, PropsWithChildren } from 'react';
 import { Box, Drawer, DrawerContent, useDisclosure } from '@chakra-ui/react';
 import { IconType } from 'react-icons';
-import { FiHome, FiTrendingUp } from 'react-icons/fi';
-import { OFFLINE_COURSES_ROUTE, ONLINE_COURSES_ROUTE } from '@/utils/constants/routes';
 import MobileNav from './MobileNav';
 import SidebarContent from './SidebarContent';
 
@@ -17,32 +15,11 @@ export interface LinkItemProps {
   children: LinkItemChildren[];
 }
 
-const linkItems: LinkItemProps[] = [
-  {
-    name: 'Common',
-    icon: FiHome,
-    children: [
-      { title: 'All Users', href: '' },
-      { title: 'Jobs', href: '' },
-    ],
-  },
-  {
-    name: 'Courses',
-    icon: FiTrendingUp,
-    children: [
-      { title: 'Online', href: ONLINE_COURSES_ROUTE },
-      { title: 'Offline', href: OFFLINE_COURSES_ROUTE },
-      { title: 'Instructors', href: '' },
-    ],
-  },
-  {
-    name: 'Form',
-    icon: FiTrendingUp,
-    children: [{ title: 'Applicants', href: '' }],
-  },
-];
+type SidebarProps = {
+  linkItems: any[];
+};
 
-const Sidebar: FC<PropsWithChildren> = ({ children }) => {
+const Sidebar: FC<PropsWithChildren<SidebarProps>> = ({ children, linkItems }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   return (
     <Box minH="100vh" bg="#ffffff">

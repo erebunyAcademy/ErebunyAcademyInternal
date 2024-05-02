@@ -1,4 +1,4 @@
-import $apiClient from './axiosClient';
+import $apiClient from '../axiosClient';
 
 export class FacultyService {
   static facultyList() {

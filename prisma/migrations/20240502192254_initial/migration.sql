@@ -1,5 +1,5 @@
 -- CreateEnum
-CREATE TYPE "UserRoleEnum" AS ENUM ('STUDENT', 'TEACHER');
+CREATE TYPE "UserRoleEnum" AS ENUM ('STUDENT', 'TEACHER', 'ADMIN');
 
 -- CreateEnum
 CREATE TYPE "ExamTypeEnum" AS ENUM ('VERBAL', 'TEST');
@@ -11,7 +11,7 @@ CREATE TYPE "TestQuestionTypeEnum" AS ENUM ('RADIO', 'INPUT', 'CHECKBOX');
 CREATE TYPE "AttachmentTypeEnum" AS ENUM ('AVATAR', 'FILE');
 
 -- CreateEnum
-CREATE TYPE "AdminRolesEnum" AS ENUM ('SYS_ADMIN', 'RECTORAT', 'ACCOUNTANT', 'OPERATOR', 'HEAD_OF_DEPARTMENT');
+CREATE TYPE "AdminRoleEnum" AS ENUM ('SYS_ADMIN', 'RECTORAT', 'ACCOUNTANT', 'OPERATOR', 'HEAD_OF_DEPARTMENT');
 
 -- CreateTable
 CREATE TABLE "User" (
@@ -30,7 +30,7 @@ CREATE TABLE "User" (
     "city" VARCHAR(60),
     "confirmationCode" INTEGER,
     "attachmentId" TEXT,
-    "role" "UserRoleEnum" NOT NULL,
+    "role" "UserRoleEnum",
     "createdAt" TIMESTAMP(0) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(0) NOT NULL,
 
@@ -48,6 +48,17 @@ CREATE TABLE "Teacher" (
     "updatedAt" TIMESTAMP(0) NOT NULL,
 
     CONSTRAINT "Teacher_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Admin" (
+    "id" SERIAL NOT NULL,
+    "userId" INTEGER NOT NULL,
+    "role" "AdminRoleEnum" NOT NULL,
+    "createdAt" TIMESTAMP(0) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(0) NOT NULL,
+
+    CONSTRAINT "Admin_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -161,9 +172,9 @@ CREATE TABLE "SubjectTeacher" (
 -- CreateTable
 CREATE TABLE "Attachment" (
     "id" SERIAL NOT NULL,
-    "title" VARCHAR(60),
+    "title" TEXT,
     "description" VARCHAR(60),
-    "key" VARCHAR(60) NOT NULL,
+    "key" TEXT NOT NULL,
     "subjectId" INTEGER,
     "mimetype" VARCHAR(60) NOT NULL,
     "userId" INTEGER,
@@ -239,6 +250,9 @@ CREATE UNIQUE INDEX "User_attachmentId_key" ON "User"("attachmentId");
 CREATE UNIQUE INDEX "Teacher_userId_key" ON "Teacher"("userId");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "Admin_userId_key" ON "Admin"("userId");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "ScheduleSubject_scheduleId_subjectId_key" ON "ScheduleSubject"("scheduleId", "subjectId");
 
 -- CreateIndex
@@ -261,6 +275,9 @@ CREATE INDEX "_ScheduleToTeacher_B_index" ON "_ScheduleToTeacher"("B");
 
 -- AddForeignKey
 ALTER TABLE "Teacher" ADD CONSTRAINT "Teacher_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Admin" ADD CONSTRAINT "Admin_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "ScheduleSubject" ADD CONSTRAINT "ScheduleSubject_scheduleId_fkey" FOREIGN KEY ("scheduleId") REFERENCES "Schedule"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

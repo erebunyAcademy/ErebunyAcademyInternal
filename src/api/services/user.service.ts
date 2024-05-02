@@ -1,8 +1,13 @@
+import { UsersListModel } from '@/utils/models/user';
 import { TeacherSignUpValidation } from '@/utils/validation';
 import { ChangePasswordValidation, UserProfileFormValidation } from '@/utils/validation/user';
-import $apiClient from './axiosClient';
+import $apiClient from '../axiosClient';
+import { QueryParams } from '../types/common';
 
 export class UserService {
+  static getAllUsers(params: QueryParams) {
+    return $apiClient.get<UsersListModel>('/users/list', { params });
+  }
   static teacherSignUp(data: TeacherSignUpValidation) {
     return $apiClient.post('/user/teacher-signup', data);
   }

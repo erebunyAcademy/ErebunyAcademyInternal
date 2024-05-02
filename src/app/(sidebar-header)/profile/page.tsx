@@ -1,5 +1,5 @@
 'use client';
-import React, { ChangeEvent, FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { ChangeEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Avatar, Box, Button as ChakraButton, Flex, Input, Text, useToast } from '@chakra-ui/react';
 import { classValidatorResolver } from '@hookform/resolvers/class-validator';
 import { useMutation } from '@tanstack/react-query';
@@ -8,7 +8,7 @@ import { Country } from 'country-state-city';
 import { useRouter } from 'next/navigation';
 import { User } from 'next-auth';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
-import { UserService } from '@/api/user.service';
+import { UserService } from '@/api/services/user.service';
 import { Button, FormInput, Loading } from '@/components/atoms';
 import PhoneNumberInput from '@/components/atoms/PhoneNumberInput';
 import SelectLabel from '@/components/atoms/SelectLabel';
@@ -18,12 +18,10 @@ import { ChangePasswordValidation, UserProfileFormValidation } from '@/utils/val
 const resolver = classValidatorResolver(UserProfileFormValidation);
 const changePasswordResolver = classValidatorResolver(ChangePasswordValidation);
 
-type Props = {
-  sessionUser: User;
-};
-
-const Profile: FC<Props> = ({ sessionUser }) => {
+const Profile = () => {
   const toast = useToast();
+
+  const sessionUser: User = {};
 
   const [localImage, setLocalImage] = useState<{ file: File; localUrl: string } | null>(null);
   const [isLoading, setIsLoading] = useState(false);

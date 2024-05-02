@@ -1,8 +1,9 @@
 import { AttachmentTypeEnum, UserRoleEnum } from '@prisma/client';
 import bcrypt from 'bcrypt';
-import { BadRequestException } from 'next-api-decorators';
+import { BadRequestException, ConflictException, UnauthorizedException } from 'next-api-decorators';
 import { ERROR_MESSAGES } from '@/utils/constants/common';
 import { StudentSignUpValidation, TeacherSignUpValidation } from '@/utils/validation';
+import { UserResolver } from './user.resolver';
 import prisma from '..';
 import { Email } from '../services/Sendgrid.service';
 import { generateRandomNumber } from '../utils/common';
@@ -19,7 +20,7 @@ const createUser = async (
   }
 
   const hashedPassword = await bcrypt.hash(password, 10);
-  const confirmationCode = generateRandomNumber(6);
+  const confirmationCode = generateRandomNumber(12);
 
   const user = await prisma.user.create({
     data: {
@@ -43,7 +44,6 @@ const createUser = async (
 };
 export class AuthResolver {
   static async teacherSignUp(input: TeacherSignUpValidation) {
-    console.log({ input });
     const user = await createUser(input, UserRoleEnum.TEACHER);
 
     await prisma.teacher.create({
@@ -95,5 +95,28 @@ export class AuthResolver {
     }
 
     return user;
+  }
+  static async signin(email: string, password: string) {
+    try {
+      const user = await UserResolver.findUserByEmail(email);
+
+      if (!user) {
+        throw new UnauthorizedException(ERROR_MESSAGES.invalidCredentials);
+      }
+
+      const isValid = await bcrypt.compare(password, user.password);
+
+      if (!isValid) {
+        throw new UnauthorizedException(ERROR_MESSAGES.invalidCredentials);
+      }
+
+      if (!user.isVerified) {
+        throw new ConflictException(ERROR_MESSAGES.verifyYourEmail);
+      }
+
+      return user;
+    } catch (e) {
+      throw new Error(e as string);
+    }
   }
 }

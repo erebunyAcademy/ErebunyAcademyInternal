@@ -1,3 +1,0 @@
--- AlterTable
-ALTER TABLE "Attachment" ALTER COLUMN "title" SET DATA TYPE TEXT,
-ALTER COLUMN "key" SET DATA TYPE TEXT;

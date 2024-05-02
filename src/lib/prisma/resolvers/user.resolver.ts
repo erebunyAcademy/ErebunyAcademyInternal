@@ -1,6 +1,7 @@
 import bcrypt from 'bcrypt';
 import { BadRequestException, ConflictException } from 'next-api-decorators';
 import { User } from 'next-auth';
+import { SortingType } from '@/api/types/common';
 import { ERROR_MESSAGES } from '@/utils/constants/common';
 import {
   ChangePasswordValidation,
@@ -10,12 +11,63 @@ import {
   VerifySMSCodeValidation,
   VerifyUserEmailInput,
 } from '@/utils/validation/user';
+import { orderBy } from './utils/common';
 import prisma from '../index';
 import { AWSService } from '../services/AWS.service';
 import { generateRandomNumber } from '../utils/common';
 
 export class UserResolver {
+  static async list(skip: number, take: number, search: string, sorting: SortingType[]) {
+    const [count, users] = await Promise.all([
+      prisma.user.count({
+        where: {
+          OR: [
+            { firstName: { contains: search, mode: 'insensitive' } },
+            { lastName: { contains: search, mode: 'insensitive' } },
+            { email: { contains: search, mode: 'insensitive' } },
+          ],
+        },
+      }),
+      prisma.user.findMany({
+        where: {
+          OR: [
+            { firstName: { contains: search, mode: 'insensitive' } },
+            { lastName: { contains: search, mode: 'insensitive' } },
+            { email: { contains: search, mode: 'insensitive' } },
+          ],
+        },
+        select: { id: true, email: true, firstName: true, lastName: true, createdAt: true },
+        orderBy: orderBy(sorting),
+        skip,
+        take,
+      }),
+    ]);
+
+    return {
+      count,
+      users,
+    };
+  }
+
   static async findUserWithEmail(email: string) {
+    return prisma.user.findUnique({
+      where: { email },
+      select: {
+        admin: {
+          select: {
+            role: true,
+            id: true,
+          },
+        },
+        email: true,
+        firstName: true,
+        lastName: true,
+        role: true,
+      },
+    });
+  }
+
+  static async findUserByEmail(email: string) {
     return prisma.user.findUnique({
       where: { email },
     });
@@ -86,8 +138,6 @@ export class UserResolver {
   }
 
   static async verifySMSCode(input: VerifySMSCodeValidation, user: NonNullable<User>) {
-    console.log(input.code, user);
-
     if (user.confirmationCode !== +input.code) {
       throw new BadRequestException('Confirmation code is wrong');
     }

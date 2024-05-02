@@ -3,8 +3,8 @@ import { Stack, VStack } from '@chakra-ui/react';
 import { classValidatorResolver } from '@hookform/resolvers/class-validator';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
-import { SubjectService } from '@/api/subject.service';
-import { UserService } from '@/api/user.service';
+import { SubjectService } from '@/api/services/subject.service';
+import { UserService } from '@/api/services/user.service';
 import { TeacherSignUpValidation } from '@/utils/validation';
 import { Button, FormInput, SelectLabel } from '../../atoms';
 
@@ -40,8 +40,6 @@ const TeacherSignUp = () => {
   const onTeacherSubmit: SubmitHandler<TeacherSignUpValidation> = data => {
     mutate(data);
   };
-
-  console.log({ errors });
 
   return (
     <>

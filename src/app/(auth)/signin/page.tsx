@@ -2,7 +2,7 @@
 import { useCallback, useMemo } from 'react';
 import { Link, useToast, VStack } from '@chakra-ui/react';
 import NextLink from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { signIn, SignInResponse } from 'next-auth/react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { Button, FormInput } from '@/components/atoms';
@@ -10,18 +10,16 @@ import { AuthBox } from '@/components/molecules';
 import { ERROR_MESSAGES } from '@/utils/constants/common';
 import {
   FORGOT_PASSWORD_ROUTE,
-  HOMEPAGE_ROUTE,
+  PROFILE_ROUTE,
   SIGN_IN_ROUTE,
   SIGN_UP_ROUTE,
 } from '@/utils/constants/routes';
 import { SignInFormData } from '@/utils/models/auth';
 
-const SignIn = () => {
+const SignIn = ({ searchParams }: { searchParams: string }) => {
+  console.log({ searchParams });
   const toast = useToast();
-  const searchParams = useSearchParams();
   const router = useRouter();
-
-  const route = useMemo(() => searchParams?.get('callback_url'), [searchParams]);
 
   const authBoxProps = useMemo(
     () => ({
@@ -39,7 +37,7 @@ const SignIn = () => {
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<SignInFormData>({
-    defaultValues: { email: '', password: '', rememberMe: false },
+    defaultValues: { email: '', password: '', rememberMe: true },
   });
 
   const onSubmit: SubmitHandler<SignInFormData> = useCallback(
@@ -48,9 +46,10 @@ const SignIn = () => {
         const res: SignInResponse | undefined = await signIn('credentials', {
           email,
           password,
-          callbackUrl: route || HOMEPAGE_ROUTE,
+          callbackUrl: PROFILE_ROUTE,
           redirect: false,
         });
+        console.log({ res });
         if (res?.ok && res.url) {
           router.push(res.url);
           router.refresh();
@@ -61,7 +60,7 @@ const SignIn = () => {
         toast({ title: ERROR_MESSAGES.invalidCredentials, status: 'error' });
       }
     },
-    [route, router, toast],
+    [router, toast],
   );
 
   return (

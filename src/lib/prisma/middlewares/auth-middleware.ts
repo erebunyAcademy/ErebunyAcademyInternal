@@ -5,7 +5,7 @@ import {
   UnauthorizedException,
 } from 'next-api-decorators';
 import { getToken } from 'next-auth/jwt';
-import { UserResolver } from '../resolvers';
+import { UserResolver } from '../resolvers/user.resolver';
 
 export const AuthMiddleware = createMiddlewareDecorator(
   async (req: NextApiRequest, res: NextApiResponse, next: NextFunction) => {
@@ -15,7 +15,7 @@ export const AuthMiddleware = createMiddlewareDecorator(
       throw new UnauthorizedException();
     }
 
-    const user = await UserResolver.findUserWithEmail(token.email);
+    const user = await UserResolver.findUserByEmail(token.email);
 
     if (!user) {
       throw new UnauthorizedException();
