@@ -1,9 +1,8 @@
 import { ReactNode } from 'react';
-import { Box } from '@chakra-ui/react';
+import { Flex } from '@chakra-ui/react';
 import { UserRoleEnum } from '@prisma/client';
 import { redirect } from 'next/navigation';
-import { Header } from '@/components/organisms';
-import Sidebar from '@/components/organisms/Sidebar';
+import { Header, SimpleSidebar } from '@/components/organisms';
 import { serverSession } from '@/pages/api/auth/[...nextauth]';
 import { adminLinkItems, studentLinkItems, teacherLinkItems } from '@/utils/helpers/sidebar';
 
@@ -34,9 +33,8 @@ export default async function HeaderLayout({
   return (
     <>
       <Header user={session?.user} />
-      <Box marginTop="60px">
-        <Sidebar linkItems={linkItems()}>{children}</Sidebar>
-      </Box>
+      <SimpleSidebar />
+      <Flex marginLeft={{ base: 0, md: '360px' }}>{children}</Flex>
     </>
   );
 }
