@@ -1,10 +1,10 @@
 import { ReactNode } from 'react';
 import { Flex } from '@chakra-ui/react';
-import { UserRoleEnum } from '@prisma/client';
 import { redirect } from 'next/navigation';
-import { Header, SimpleSidebar } from '@/components/organisms';
+import SidebarContent from '@/components/molecules/SidebarContent';
+import { Header } from '@/components/organisms';
 import { serverSession } from '@/pages/api/auth/[...nextauth]';
-import { adminLinkItems, studentLinkItems, teacherLinkItems } from '@/utils/helpers/sidebar';
+import { linkItems } from '@/utils/helpers/permissionRoutes';
 
 export default async function HeaderLayout({
   children,
@@ -17,23 +17,14 @@ export default async function HeaderLayout({
     redirect('/signin');
   }
 
-  const linkItems = () => {
-    switch (session?.user.role) {
-      case UserRoleEnum.ADMIN:
-        return adminLinkItems(session.user);
-      case UserRoleEnum.STUDENT:
-        return studentLinkItems(session.user);
-      case UserRoleEnum.TEACHER:
-        return teacherLinkItems(session.user);
-      default:
-        return studentLinkItems(session.user);
-    }
-  };
-
   return (
     <>
-      <Header user={session?.user} />
-      <SimpleSidebar />
+      <Header user={session?.user} linkItems={linkItems(session.user)} />
+      <SidebarContent
+        display={{ base: 'none', md: 'block' }}
+        width="360px"
+        linkItems={linkItems(session.user)}
+      />
       <Flex marginLeft={{ base: 0, md: '360px' }}>{children}</Flex>
     </>
   );

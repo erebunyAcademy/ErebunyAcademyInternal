@@ -1,15 +1,16 @@
-import { memo, useCallback } from 'react';
+'use client';
+import { memo, ReactNode, useCallback } from 'react';
 import { Box, Flex, FlexProps } from '@chakra-ui/react';
 import Link from 'next/link';
 import { signOut } from 'next-auth/react';
 import { HOMEPAGE_ROUTE } from '@/utils/constants/routes';
 
 interface NavItemProps extends FlexProps {
-  icon: string;
+  icon: ReactNode;
   children: React.ReactNode;
   href: string | undefined;
 }
-const NavItem = ({ href, icon: Icon, children, ...rest }: NavItemProps) => {
+const NavItem = ({ href, icon, children, ...rest }: NavItemProps) => {
   const signOutHandler = useCallback(() => signOut({ callbackUrl: HOMEPAGE_ROUTE }), []);
 
   return (
@@ -38,7 +39,7 @@ const NavItem = ({ href, icon: Icon, children, ...rest }: NavItemProps) => {
         display="flex"
         gap="10px"
         {...rest}>
-        <Icon />
+        {icon}
         {children}
       </Flex>
     </Box>
