@@ -20,7 +20,7 @@ const AuthBox: FC<Props> = ({ data, children, boxProps = {}, linkProps = {} }) =
       background={'white'}
       borderRadius={{ base: 'unset', md: 12 }}
       paddingY={{ base: 'unset', md: 32 }}
-      paddingX={{ base: 16, md: 32 }}
+      paddingX={{ base: 16, sm: 32 }}
       width={{ base: 375, sm: 700 }}
       {...boxProps}>
       <HStack spacing="20px" paddingBottom={32} {...linkProps}>

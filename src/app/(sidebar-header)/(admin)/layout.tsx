@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { Box } from '@chakra-ui/react';
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -10,5 +11,5 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return children;
+  return <Box marginTop="60px">{children}</Box>;
 }

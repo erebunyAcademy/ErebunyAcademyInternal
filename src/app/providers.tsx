@@ -22,9 +22,7 @@ const Providers = ({ children }: { children: ReactNode }) => {
       <CacheProvider>
         <ChakraProvider
           theme={theme}
-          toastOptions={{
-            defaultOptions: { position: 'bottom-right', isClosable: true },
-          }}>
+          toastOptions={{ defaultOptions: { position: 'bottom-right', isClosable: true } }}>
           <LightMode>
             <QueryClientProvider client={new QueryClient()}>{children}</QueryClientProvider>
           </LightMode>

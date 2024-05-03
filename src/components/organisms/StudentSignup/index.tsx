@@ -1,5 +1,13 @@
 import React, { ChangeEvent, memo, useState } from 'react';
-import { Box, Button as ChakraButton, HStack, Input, Stack, VStack } from '@chakra-ui/react';
+import {
+  Box,
+  Button as ChakraButton,
+  HStack,
+  Input,
+  Stack,
+  useToast,
+  VStack,
+} from '@chakra-ui/react';
 import { classValidatorResolver } from '@hookform/resolvers/class-validator';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import axios from 'axios';
@@ -15,8 +23,20 @@ import { Button, FormInput, SelectLabel } from '../../atoms';
 const resolver = classValidatorResolver(StudentSignUpValidation);
 
 const StudentSignUp = () => {
+  const toast = useToast();
   const [localImage, setLocalImage] = useState<{ file: File; localUrl: string } | null>(null);
-  const { mutate } = useMutation({ mutationFn: UserService.studentSignUp });
+  const { mutate } = useMutation({
+    mutationFn: UserService.studentSignUp,
+    onSuccess() {
+      toast({
+        title: 'Account created.',
+        description: "We've created your account for you.",
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+      });
+    },
+  });
 
   const onStudentSubmit: SubmitHandler<StudentSignUpValidation> = async data => {
     if (localImage) {
