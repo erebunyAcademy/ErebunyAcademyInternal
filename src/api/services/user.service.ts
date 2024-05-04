@@ -1,23 +1,23 @@
-import { UsersListModel } from '@/utils/models/user';
 import { ChangePasswordValidation, UserProfileFormValidation } from '@/utils/validation/user';
 import $apiClient from '../axiosClient';
-import { QueryParams } from '../types/common';
 
 export class UserService {
-  static getAllUsers(params: QueryParams) {
-    return $apiClient.get<UsersListModel>('/users/list', { params });
-  }
-
   static getPreSignedUrl(imageKey: string): Promise<{ url: string }> {
-    return $apiClient.post('user/get-presigned-url', { imageKey });
+    return $apiClient.post('users/get-presigned-url', { imageKey });
   }
   static updateUserProfile(input: UserProfileFormValidation): Promise<number> {
-    return $apiClient.post('user/update-profile', input);
+    return $apiClient.post('users/update-profile', input);
   }
   static changeUserPassword(input: ChangePasswordValidation): Promise<number> {
-    return $apiClient.post('user/update-password', input);
+    return $apiClient.post('users/update-password', input);
   }
   static confirmUserEmail(code: string): Promise<boolean> {
-    return $apiClient.post('user/confirm-user-email', { code });
+    return $apiClient.post('users/confirm-user-email', { code });
+  }
+  static deleteStudentById(id: number) {
+    return $apiClient.delete(`/users/${id}`);
+  }
+  static confirmUserVerificationById(id: number) {
+    return $apiClient.post(`/users/${id}`);
   }
 }

@@ -1,55 +1,18 @@
 import { AttachmentTypeEnum } from '@prisma/client';
 import bcrypt from 'bcrypt';
-import { BadRequestException, ConflictException } from 'next-api-decorators';
+import { BadRequestException, ConflictException, NotFoundException } from 'next-api-decorators';
 import { User } from 'next-auth';
-import { SortingType } from '@/api/types/common';
 import { ERROR_MESSAGES } from '@/utils/constants/common';
 import {
   ChangePasswordValidation,
   GetPresignedUrlInput,
   UserProfileFormValidation,
-  VerifyPhoneValidation,
-  VerifySMSCodeValidation,
   VerifyUserEmailInput,
 } from '@/utils/validation/user';
-import { orderBy } from './utils/common';
 import prisma from '../index';
 import { AWSService } from '../services/AWS.service';
-import { generateRandomNumber } from '../utils/common';
 
 export class UserResolver {
-  static async list(skip: number, take: number, search: string, sorting: SortingType[]) {
-    const [count, users] = await Promise.all([
-      prisma.user.count({
-        where: {
-          OR: [
-            { firstName: { contains: search, mode: 'insensitive' } },
-            { lastName: { contains: search, mode: 'insensitive' } },
-            { email: { contains: search, mode: 'insensitive' } },
-          ],
-        },
-      }),
-      prisma.user.findMany({
-        where: {
-          OR: [
-            { firstName: { contains: search, mode: 'insensitive' } },
-            { lastName: { contains: search, mode: 'insensitive' } },
-            { email: { contains: search, mode: 'insensitive' } },
-          ],
-        },
-        select: { id: true, email: true, firstName: true, lastName: true, createdAt: true },
-        orderBy: orderBy(sorting),
-        skip,
-        take,
-      }),
-    ]);
-
-    return {
-      count,
-      users,
-    };
-  }
-
   static async findUserWithEmail(email: string) {
     return prisma.user.findUnique({
       where: { email },
@@ -109,22 +72,6 @@ export class UserResolver {
     ).id;
   }
 
-  static async sendVerificationSMS(input: VerifyPhoneValidation, user: NonNullable<User>) {
-    const confirmationCode = generateRandomNumber(4);
-
-    await prisma.user.update({
-      where: {
-        id: user.id,
-      },
-      data: {
-        phone: input.phone,
-        confirmationCode,
-      },
-    });
-
-    return '';
-  }
-
   static async changeUserPassword(
     { confirmPassword, newPassword, currentPassword }: ChangePasswordValidation,
     user: NonNullable<User>,
@@ -147,23 +94,6 @@ export class UserResolver {
         data: { password: hashedPassword },
       })
     ).id;
-  }
-
-  static async verifySMSCode(input: VerifySMSCodeValidation, user: NonNullable<User>) {
-    if (user.confirmationCode !== +input.code) {
-      throw new BadRequestException('Confirmation code is wrong');
-    }
-
-    await prisma.user.update({
-      where: {
-        id: user.id,
-      },
-      data: {
-        isPhoneVerified: true,
-      },
-    });
-
-    return true;
   }
 
   static async getPreSignedUrl(input: GetPresignedUrlInput) {
@@ -196,5 +126,42 @@ export class UserResolver {
     });
 
     return true;
+  }
+
+  static async confirmuser(id: number) {
+    const user = await prisma.user.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    if (!user) {
+      throw new NotFoundException('User with provided id was not found');
+    }
+    return prisma.user.update({
+      where: {
+        id,
+      },
+      data: {
+        isAdminVerified: true,
+      },
+    });
+  }
+  static async deleteUser(id: number) {
+    const user = await prisma.user.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    if (!user) {
+      throw new NotFoundException('User with provided id was not found');
+    }
+
+    return prisma.user.delete({
+      where: {
+        id,
+      },
+    });
   }
 }

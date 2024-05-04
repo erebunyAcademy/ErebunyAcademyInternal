@@ -1,5 +1,14 @@
-import { FC, memo, useCallback, useEffect, useRef } from 'react';
-import { Accordion, Avatar, Box, Collapse, Flex, Stack, useDisclosure } from '@chakra-ui/react';
+import { FC, memo, useCallback, useRef } from 'react';
+import {
+  Accordion,
+  Avatar,
+  Box,
+  Collapse,
+  Flex,
+  Stack,
+  useDisclosure,
+  useOutsideClick,
+} from '@chakra-ui/react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -27,26 +36,14 @@ const Header: FC<HeaderProps> = ({ user, linkItems }) => {
   const pathname = usePathname();
   const userCollapseRef = useRef<HTMLDivElement>(null);
 
-  const handleClick = useCallback(
-    (event: any) => {
-      if (
-        userCollapseRef.current &&
-        !userCollapseRef.current.contains(event.target) &&
-        isUserProfileOpen
-      ) {
+  useOutsideClick({
+    ref: userCollapseRef,
+    handler: () => {
+      if (isUserProfileOpen) {
         closeUserProfile();
       }
     },
-    [closeUserProfile, isUserProfileOpen],
-  );
-
-  useEffect(() => {
-    document.addEventListener('click', handleClick);
-
-    return () => {
-      document.removeEventListener('click', handleClick);
-    };
-  }, [handleClick]);
+  });
 
   const toggleUserProfile = useCallback(() => {
     toggleUserDropdown();
@@ -134,7 +131,7 @@ const Header: FC<HeaderProps> = ({ user, linkItems }) => {
         </Flex>
       </Flex>
 
-      <Collapse in={isUserProfileOpen} animateOpacity ref={userCollapseRef}>
+      <Collapse in={isUserProfileOpen} animateOpacity>
         <Accordion allowToggle defaultIndex={0}>
           <ProfileNavItem
             user={user || data?.user || null}
