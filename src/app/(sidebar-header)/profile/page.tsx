@@ -155,7 +155,7 @@ const Profile = () => {
       <Box
         width="700px"
         margin="0 auto"
-        p={{ base: '36px 16px 36px 16px', md: '96px 16px 159px 16px', xl: '96px 0 159px 0' }}>
+        p={{ base: '30px 20px 36px 20px', md: '96px 16px 159px 16px', xl: '96px 0 159px 0' }}>
         <Text
           display={{ base: 'none', sm: 'block' }}
           textAlign="center"

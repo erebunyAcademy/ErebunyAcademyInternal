@@ -11,5 +11,5 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return <Box marginTop="60px">{children}</Box>;
+  return <Box p="30px 0 0 30px">{children}</Box>;
 }
