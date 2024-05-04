@@ -1,7 +1,8 @@
 'use client';
-import React, { ChangeEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { ChangeEvent, useCallback, useEffect, useRef, useState } from 'react';
 import { Avatar, Box, Button as ChakraButton, Flex, Input, Text, useToast } from '@chakra-ui/react';
 import { classValidatorResolver } from '@hookform/resolvers/class-validator';
+import { User } from '@prisma/client';
 import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
 import { Country } from 'country-state-city';
@@ -12,7 +13,6 @@ import { Button, FormInput, Loading } from '@/components/atoms';
 import SelectLabel from '@/components/atoms/SelectLabel';
 import { generateAWSUrl } from '@/utils/helpers/aws';
 import { ChangePasswordValidation, UserProfileFormValidation } from '@/utils/validation/user';
-import { User } from '@prisma/client';
 
 const resolver = classValidatorResolver(UserProfileFormValidation);
 const changePasswordResolver = classValidatorResolver(ChangePasswordValidation);
@@ -37,7 +37,7 @@ const Profile = ({ sessionUser }: { sessionUser: User }) => {
       city: sessionUser?.city || '',
       country: sessionUser?.country || 'Armenia',
       address: sessionUser?.address || '',
-      avatar: sessionUser?.avatar || localImage?.localUrl || '',
+      avatar: localImage?.localUrl || '',
     },
     resolver,
   });
@@ -75,7 +75,7 @@ const Profile = ({ sessionUser }: { sessionUser: User }) => {
         try {
           let avatar = data.avatar;
           if (localImage) {
-            avatar = `${sessionUser?.}/${sessionUser?.id}/${localImage?.file.name}`;
+            avatar = `${sessionUser?.role}/${sessionUser?.id}/${localImage?.file.name}`;
             const { url } = await UserService.getPreSignedUrl(avatar);
             await axios.put(url, localImage.file);
           }
@@ -90,7 +90,14 @@ const Profile = ({ sessionUser }: { sessionUser: User }) => {
         }
       })();
     },
-    [localImage, router, sessionUser?.id, toast, updateUserProfileMutation],
+    [
+      localImage,
+      router.refresh,
+      sessionUser?.id,
+      sessionUser?.role,
+      toast,
+      updateUserProfileMutation,
+    ],
   );
 
   const onFileSelect = useCallback(async (e: ChangeEvent<HTMLInputElement>) => {
@@ -120,15 +127,11 @@ const Profile = ({ sessionUser }: { sessionUser: User }) => {
     };
   }, []);
 
-  const avatarSrc = useMemo(
-    () =>
-      localImage?.localUrl
-        ? localImage.localUrl
-        : sessionUser?.avatar
-          ? generateAWSUrl(sessionUser.avatar)
-          : '',
-    [localImage?.localUrl, sessionUser?.avatar],
-  );
+  const avatarSrc = localImage?.localUrl
+    ? localImage.localUrl
+    : sessionUser?.firstName
+      ? generateAWSUrl(sessionUser.firstName)
+      : '';
 
   return (
     <>

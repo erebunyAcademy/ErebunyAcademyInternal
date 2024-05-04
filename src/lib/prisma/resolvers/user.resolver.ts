@@ -1,3 +1,4 @@
+import { AttachmentTypeEnum } from '@prisma/client';
 import bcrypt from 'bcrypt';
 import { BadRequestException, ConflictException } from 'next-api-decorators';
 import { User } from 'next-auth';
@@ -61,8 +62,19 @@ export class UserResolver {
         },
         email: true,
         firstName: true,
+        country: true,
+        state: true,
+        address: true,
         lastName: true,
         role: true,
+        attachment: {
+          where: {
+            type: AttachmentTypeEnum.AVATAR,
+          },
+          select: {
+            key: true,
+          },
+        },
       },
     });
   }
