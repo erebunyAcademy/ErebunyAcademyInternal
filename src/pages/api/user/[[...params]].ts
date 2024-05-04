@@ -1,10 +1,8 @@
 import { Body, Catch, createHandler, Get, Post, Query, ValidationPipe } from 'next-api-decorators';
 import { SortingType } from '@/api/types/common';
 import { exceptionHandler } from '@/lib/prisma/error';
-import { AuthResolver } from '@/lib/prisma/resolvers/auth.resolver';
 import { UserResolver } from '@/lib/prisma/resolvers/user.resolver';
-import { StudentSignUpValidation, TeacherSignUpValidation } from '@/utils/validation';
-import { GetPresignedUrlInput } from '@/utils/validation/user';
+import { GetPresignedUrlInput, VerifyUserEmailInput } from '@/utils/validation/user';
 
 @Catch(exceptionHandler)
 class UserHandler {
@@ -18,19 +16,13 @@ class UserHandler {
     return UserResolver.list(+skip, +take, search, sorting);
   }
 
-  @Post('/student-signup')
-  _studentSignUp(@Body(ValidationPipe) body: StudentSignUpValidation) {
-    return AuthResolver.studentSignUp(body);
-  }
-
-  @Post('/teacher-signup')
-  _teacherSignUp(@Body(ValidationPipe) body: TeacherSignUpValidation) {
-    return AuthResolver.teacherSignUp(body);
-  }
-
   @Post('/get-presigned-url')
   _getPreSignedUrl(@Body(ValidationPipe) input: GetPresignedUrlInput) {
     return UserResolver.getPreSignedUrl(input);
+  }
+  @Post('/confirm-user-email')
+  confirmUserEmail(@Body(ValidationPipe) input: VerifyUserEmailInput) {
+    return UserResolver.verifyUserEmail(input);
   }
 }
 

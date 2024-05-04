@@ -11,30 +11,35 @@ import {
 import { classValidatorResolver } from '@hookform/resolvers/class-validator';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import axios from 'axios';
+import { useRouter } from 'next/navigation';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { v4 as uuid } from 'uuid';
+import { AuthService } from '@/api/services/auth.service';
 import { FacultyService } from '@/api/services/faculty.service';
 import { StudentGradeGroupService } from '@/api/services/student-grade-group.service';
 import { StudentGradeService } from '@/api/services/student-grade.service';
 import { UserService } from '@/api/services/user.service';
+import { SIGN_IN_ROUTE } from '@/utils/constants/routes';
 import { StudentSignUpValidation } from '@/utils/validation';
 import { Button, FormInput, SelectLabel } from '../../atoms';
 
 const resolver = classValidatorResolver(StudentSignUpValidation);
 
 const StudentSignUp = () => {
+  const router = useRouter();
   const toast = useToast();
   const [localImage, setLocalImage] = useState<{ file: File; localUrl: string } | null>(null);
   const { mutate } = useMutation({
-    mutationFn: UserService.studentSignUp,
+    mutationFn: AuthService.studentSignUp,
     onSuccess() {
       toast({
-        title: 'Account created.',
-        description: "We've created your account for you.",
+        title: 'You have successfully signed up.',
+        description: 'Please verify your email.',
         status: 'success',
-        duration: 3000,
-        isClosable: true,
+        duration: 4000,
+        isClosable: false,
       });
+      router.push(SIGN_IN_ROUTE);
     },
   });
 

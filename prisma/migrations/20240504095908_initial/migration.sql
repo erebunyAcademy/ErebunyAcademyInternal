@@ -17,8 +17,8 @@ CREATE TYPE "AdminRoleEnum" AS ENUM ('SYS_ADMIN', 'RECTORAT', 'ACCOUNTANT', 'OPE
 CREATE TABLE "User" (
     "id" SERIAL NOT NULL,
     "email" TEXT NOT NULL,
-    "firstName" VARCHAR(45),
-    "lastName" VARCHAR(45),
+    "firstName" VARCHAR(45) NOT NULL,
+    "lastName" VARCHAR(45) NOT NULL,
     "password" VARCHAR(60) NOT NULL,
     "isVerified" BOOLEAN NOT NULL DEFAULT false,
     "isAdminVerified" BOOLEAN NOT NULL DEFAULT false,
@@ -30,7 +30,7 @@ CREATE TABLE "User" (
     "city" VARCHAR(60),
     "confirmationCode" INTEGER,
     "attachmentId" TEXT,
-    "role" "UserRoleEnum",
+    "role" "UserRoleEnum" NOT NULL,
     "createdAt" TIMESTAMP(0) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(0) NOT NULL,
 

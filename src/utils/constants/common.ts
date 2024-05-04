@@ -7,6 +7,8 @@ export const ERROR_MESSAGES = {
   invalidNumber: 'Invalid number',
   passwordDontMatch: "Password don't match",
   invalidPassword: 'Invalid password',
+  contactCollegeRepresentative:
+    'Please contact college representative to allow confirm your account',
 };
 
 export const ITEMS_PER_PAGE = 20;

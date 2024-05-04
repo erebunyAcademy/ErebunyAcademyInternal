@@ -1,16 +1,21 @@
 import React from 'react';
-import { Stack, VStack } from '@chakra-ui/react';
+import { Stack, useToast, VStack } from '@chakra-ui/react';
 import { classValidatorResolver } from '@hookform/resolvers/class-validator';
 import { useMutation, useQuery } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
+import { AuthService } from '@/api/services/auth.service';
 import { SubjectService } from '@/api/services/subject.service';
-import { UserService } from '@/api/services/user.service';
+import { SIGN_IN_ROUTE } from '@/utils/constants/routes';
 import { TeacherSignUpValidation } from '@/utils/validation';
 import { Button, FormInput, SelectLabel } from '../../atoms';
 
 const resolver = classValidatorResolver(TeacherSignUpValidation);
 
 const TeacherSignUp = () => {
+  const toast = useToast();
+  const router = useRouter();
+
   const {
     control,
     handleSubmit,
@@ -35,7 +40,19 @@ const TeacherSignUp = () => {
     queryKey: [],
   });
 
-  const { mutate } = useMutation({ mutationFn: UserService.teacherSignUp });
+  const { mutate } = useMutation({
+    mutationFn: AuthService.teacherSignUp,
+    onSuccess() {
+      toast({
+        title: 'You have successfully signed up.',
+        description: 'Please verify your email.',
+        status: 'success',
+        duration: 4000,
+        isClosable: false,
+      });
+      router.push(SIGN_IN_ROUTE);
+    },
+  });
 
   const onTeacherSubmit: SubmitHandler<TeacherSignUpValidation> = data => {
     mutate(data);

@@ -8,23 +8,23 @@ datasource db {
 }
 
 model User {
-  id               Int           @id @default(autoincrement())
-  email            String        @unique
-  firstName        String?       @db.VarChar(45)
-  lastName         String?       @db.VarChar(45)
-  password         String        @db.VarChar(60)
-  isVerified       Boolean       @default(false)
-  isAdminVerified  Boolean       @default(false)
-  phone            String?       @db.VarChar(60)
-  isPhoneVerified  Boolean       @default(false)
-  address          String?       @db.VarChar(60)
-  country          String?       @db.VarChar(60)
-  state            String?       @db.VarChar(60)
-  city             String?       @db.VarChar(60)
-  confirmationCode Int?          @unique
-  attachmentId     String?       @unique @default(uuid())
+  id               Int          @id @default(autoincrement())
+  email            String       @unique
+  firstName        String       @db.VarChar(45)
+  lastName         String       @db.VarChar(45)
+  password         String       @db.VarChar(60)
+  isVerified       Boolean      @default(false)
+  isAdminVerified  Boolean      @default(false)
+  phone            String?      @db.VarChar(60)
+  isPhoneVerified  Boolean      @default(false)
+  address          String?      @db.VarChar(60)
+  country          String?      @db.VarChar(60)
+  state            String?      @db.VarChar(60)
+  city             String?      @db.VarChar(60)
+  confirmationCode Int?         @unique
+  attachmentId     String?      @unique @default(uuid())
   attachment       Attachment[]
-  role             UserRoleEnum?
+  role             UserRoleEnum
   teacher          Teacher?
   student          Student?
   admin            Admin?
