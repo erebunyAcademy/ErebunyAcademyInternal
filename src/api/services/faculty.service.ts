@@ -2,6 +2,6 @@ import $apiClient from '../axiosClient';
 
 export class FacultyService {
   static facultyList() {
-    return $apiClient.get('/faculty/list');
+    return $apiClient.get('/faculties/list');
   }
 }

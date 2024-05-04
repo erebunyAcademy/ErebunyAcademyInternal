@@ -2,6 +2,6 @@ import $apiClient from '../axiosClient';
 
 export class SubjectService {
   static getSubjectList() {
-    return $apiClient.get('/subject/list');
+    return $apiClient.get('/subjects/list');
   }
 }

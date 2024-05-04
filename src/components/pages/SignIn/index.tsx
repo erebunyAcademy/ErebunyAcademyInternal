@@ -3,7 +3,7 @@ import { FC, useEffect, useMemo } from 'react';
 import { Link, useToast, VStack } from '@chakra-ui/react';
 import { useMutation } from '@tanstack/react-query';
 import NextLink from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { signIn, SignInResponse } from 'next-auth/react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { UserService } from '@/api/services/user.service';
@@ -24,10 +24,9 @@ interface SearchParams {
   };
 }
 
-const SignIn: FC<SearchParams> = () => {
+const SignIn: FC<SearchParams> = ({ searchParams }) => {
   const toast = useToast();
   const router = useRouter();
-  const searchParams = useSearchParams();
 
   const authBoxProps = useMemo(
     () => ({
@@ -76,7 +75,7 @@ const SignIn: FC<SearchParams> = () => {
   const { mutate } = useMutation({ mutationFn: UserService.confirmUserEmail });
 
   useEffect(() => {
-    const code = searchParams?.get('code');
+    const code = searchParams.code;
     if (code) {
       mutate(code);
     }

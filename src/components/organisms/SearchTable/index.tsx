@@ -30,12 +30,12 @@ import {
 import { BsChevronLeft, BsChevronRight } from 'react-icons/bs';
 import { ITEMS_PER_PAGE } from '@/utils/constants/common';
 
-export type DataTableProps<Data> = {
+export type DataTableProps<T> = {
   title?: string;
   rowCondition?: string;
   count: number;
-  data: Data[];
-  columns: ColumnDef<Data, any>[];
+  data: T[];
+  columns: ColumnDef<T, any>[];
   sorting: SortingState;
   setSorting: Dispatch<SetStateAction<SortingState>>;
   setSearch: (value: string) => void;
@@ -48,7 +48,7 @@ export type DataTableProps<Data> = {
   addNew?: () => void;
 };
 
-function SearchTable<Data>({
+function SearchTable<T>({
   title,
   rowCondition,
   count,
@@ -64,7 +64,7 @@ function SearchTable<Data>({
   fetchNextPage,
   fetchPreviousPage,
   addNew,
-}: DataTableProps<Data>) {
+}: DataTableProps<T>) {
   const { getHeaderGroups, getRowModel } = useReactTable({
     columns,
     data,
