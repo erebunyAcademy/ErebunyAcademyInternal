@@ -1,4 +1,4 @@
-import { IsEmail, IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class UserProfileFormValidation {
   @IsString()
@@ -14,22 +14,24 @@ export class UserProfileFormValidation {
   email: string;
 
   @IsString()
-  phone: string;
+  @IsOptional()
+  address?: string;
 
   @IsString()
-  address: string;
-
-  @IsString()
+  @IsOptional()
   country: string;
 
   @IsString()
-  state: string;
+  @IsOptional()
+  state?: string;
 
   @IsString()
-  avatar: string;
+  @IsOptional()
+  avatar?: string;
 
   @IsString()
-  city: string;
+  @IsOptional()
+  city?: string;
 }
 
 export class VerifyPhoneValidation {

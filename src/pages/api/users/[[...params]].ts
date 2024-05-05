@@ -6,6 +6,7 @@ import {
   Delete,
   Param,
   Post,
+  Put,
   ValidationPipe,
 } from 'next-api-decorators';
 import { CurrentUser } from '@/lib/prisma/decorators/current-user.decorator';
@@ -38,7 +39,7 @@ class UserHandler {
   }
 
   @AuthMiddleware()
-  @Post('/update-profile')
+  @Put('/update-profile')
   updateProfile(
     @Body(ValidationPipe) input: UserProfileFormValidation,
     @CurrentUser() user: NonNullable<User>,

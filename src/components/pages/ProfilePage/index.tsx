@@ -6,7 +6,7 @@ import { User } from '@prisma/client';
 import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
 import { Country } from 'country-state-city';
-import { revalidatePath } from 'next/cache';
+import { useRouter } from 'next/navigation';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { UserService } from '@/api/services/user.service';
 import { Button, FormInput, Loading } from '@/components/atoms';
@@ -25,6 +25,7 @@ const Profile: FC<Props> = ({ sessionUser }) => {
   const [localImage, setLocalImage] = useState<{ file: File; localUrl: string } | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const toast = useToast();
+  const router = useRouter();
 
   const {
     control,
@@ -39,7 +40,6 @@ const Profile: FC<Props> = ({ sessionUser }) => {
       city: sessionUser?.city || '',
       country: sessionUser?.country || 'Armenia',
       address: sessionUser?.address || '',
-      avatar: localImage?.localUrl || '',
     },
     resolver,
   });
@@ -81,16 +81,16 @@ const Profile: FC<Props> = ({ sessionUser }) => {
           const { url } = await UserService.getPreSignedUrl(avatar);
           await axios.put(url, localImage.file);
         }
-        await updateUserProfileMutation({ ...data, avatar });
+        await updateUserProfileMutation({ ...data });
         toast({ title: 'Success', status: 'success' });
       } catch (error) {
         console.log(error);
       } finally {
-        revalidatePath('/profile', 'page');
+        router.refresh();
         setIsLoading(false);
       }
     },
-    [localImage, sessionUser?.id, toast, updateUserProfileMutation],
+    [localImage, router, sessionUser?.id, toast, updateUserProfileMutation],
   );
 
   const onFileSelect = useCallback(async (e: ChangeEvent<HTMLInputElement>) => {
