@@ -147,7 +147,7 @@ export default function Users() {
         <SharedAlertDialog
           body={`Are you sure you want to delete ${selectedStudent?.firstName} student?`}
           isOpen={isOpen}
-          title="Delete tudent"
+          title="Delete student"
           isLoading={isLoading}
           deleteFn={() => {
             if (selectedStudent?.id) {
