@@ -2,9 +2,9 @@ import { Exam } from '@prisma/client';
 import { NotFoundException } from 'next-api-decorators';
 import prisma from '..';
 
-export class ExamResolver {
-  static async createExam(data: Pick<Exam, 'title' | 'description'>) {
-    return prisma.exam.create({ data });
+export class ExamsResolver {
+  static async createExam() {
+    return prisma.exam.create({ data: { title: '' }, select: { id: true } });
   }
 
   static async getExamById(id: number) {

@@ -5,6 +5,7 @@ export const FORGOT_PASSWORD_ROUTE = '/forgot-password';
 export const PROFILE_ROUTE = '/profile';
 
 export const ROUTE_STUDENTS = '/students-list';
+export const ROUTE_EXAMS = '/exams-list';
 export const ROUTE_TEACHERS = '/teachers-list';
 export const ROUTE_FACULTIES = '/faculty-list';
 export const ROUTE_STUDENT_GRADES = '/student-grade-list';

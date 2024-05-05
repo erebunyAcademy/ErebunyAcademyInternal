@@ -4,6 +4,7 @@ import ProfileIcon from '/public/icons/profile.svg';
 import { ReactNode } from 'react';
 import {
   PROFILE_ROUTE,
+  ROUTE_EXAMS,
   ROUTE_FACULTIES,
   ROUTE_STUDENT_GRADE_GROUPS,
   ROUTE_STUDENT_GRADES,
@@ -31,13 +32,15 @@ export const linkItems: LinkItemsFunction = (user: User) => {
         ...commonLinks.slice(0, 1),
         { id: 2, name: 'Faculty', icon: <ProfileIcon />, href: ROUTE_FACULTIES },
         { id: 3, name: 'Student Grade', icon: <ProfileIcon />, href: ROUTE_STUDENT_GRADES },
-        { id: 5, name: 'Students', icon: <ProfileIcon />, href: ROUTE_STUDENTS },
         {
           id: 4,
           name: 'Student Grade Group',
           icon: <ProfileIcon />,
           href: ROUTE_STUDENT_GRADE_GROUPS,
         },
+        { id: 5, name: 'Students', icon: <ProfileIcon />, href: ROUTE_STUDENTS },
+        { id: 6, name: 'Exams', icon: <ProfileIcon />, href: ROUTE_EXAMS },
+
         commonLinks[1],
       ];
     case UserRoleEnum.TEACHER:
