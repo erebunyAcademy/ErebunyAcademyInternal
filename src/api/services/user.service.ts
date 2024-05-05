@@ -14,7 +14,7 @@ export class UserService {
   static confirmUserEmail(code: string): Promise<boolean> {
     return $apiClient.post('users/confirm-user-email', { code });
   }
-  static deleteStudentById(id: number) {
+  static deleteStudentById(id: string) {
     return $apiClient.delete(`/users/${id}`);
   }
   static confirmUserVerificationById(id: number) {

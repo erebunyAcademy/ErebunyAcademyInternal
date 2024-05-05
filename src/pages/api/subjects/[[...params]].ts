@@ -22,12 +22,12 @@ class SubjectHandler {
 
   @Get('/:id')
   getSubjectById(@Param('id') id: string) {
-    return SubjectResolver.getSubjectById(+id);
+    return SubjectResolver.getSubjectById(id);
   }
 
   @Delete('/:id')
   deleteSubject(@Param('id') id: string) {
-    return SubjectResolver.deleteSubjectById(+id);
+    return SubjectResolver.deleteSubjectById(id);
   }
 
   @Post()
@@ -40,7 +40,7 @@ class SubjectHandler {
     @Param('subjectId') subjectId: string,
     @Body(ValidationPipe) input: Partial<Pick<Subject, 'title' | 'description'>>,
   ) {
-    return SubjectResolver.updateSubjectById(+subjectId, input);
+    return SubjectResolver.updateSubjectById(subjectId, input);
   }
 }
 

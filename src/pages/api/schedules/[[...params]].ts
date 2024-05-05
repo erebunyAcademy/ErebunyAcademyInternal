@@ -17,7 +17,7 @@ import type { ScheduleUpdateableType } from '@/lib/prisma/resolvers/schedule.res
 class ScheduleHandler {
   @Get('/:id')
   getSubjectById(@Param('id') id: string) {
-    return ScheduleResolver.getScheduleById(+id);
+    return ScheduleResolver.getScheduleById(id);
   }
 
   @Get('/list')
@@ -27,7 +27,7 @@ class ScheduleHandler {
 
   @Delete('/:id')
   deleteSubject(@Param('id') id: string) {
-    return ScheduleResolver.deleteScheduleById(+id);
+    return ScheduleResolver.deleteScheduleById(id);
   }
 
   @Post()
@@ -40,7 +40,7 @@ class ScheduleHandler {
     @Param('subjectId') subjectId: string,
     @Body(ValidationPipe) input: Partial<ScheduleUpdateableType>,
   ) {
-    return ScheduleResolver.updateScheduleById(+subjectId, input);
+    return ScheduleResolver.updateScheduleById(subjectId, input);
   }
 }
 

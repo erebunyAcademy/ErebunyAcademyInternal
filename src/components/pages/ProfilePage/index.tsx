@@ -1,12 +1,12 @@
 'use client';
-import React, { ChangeEvent, useCallback, useEffect, useRef, useState } from 'react';
+import React, { ChangeEvent, FC, useCallback, useState } from 'react';
 import { Avatar, Box, Button as ChakraButton, Flex, Input, Text, useToast } from '@chakra-ui/react';
 import { classValidatorResolver } from '@hookform/resolvers/class-validator';
 import { User } from '@prisma/client';
 import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
 import { Country } from 'country-state-city';
-import { useRouter } from 'next/navigation';
+import { revalidatePath } from 'next/cache';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { UserService } from '@/api/services/user.service';
 import { Button, FormInput, Loading } from '@/components/atoms';
@@ -17,12 +17,14 @@ import { ChangePasswordValidation, UserProfileFormValidation } from '@/utils/val
 const resolver = classValidatorResolver(UserProfileFormValidation);
 const changePasswordResolver = classValidatorResolver(ChangePasswordValidation);
 
-const Profile = ({ sessionUser }: { sessionUser: User }) => {
+interface Props {
+  sessionUser: User;
+}
+
+const Profile: FC<Props> = ({ sessionUser }) => {
   const [localImage, setLocalImage] = useState<{ file: File; localUrl: string } | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const toast = useToast();
-  const timeout = useRef<NodeJS.Timeout>();
-  const router = useRouter();
 
   const {
     control,
@@ -69,35 +71,26 @@ const Profile = ({ sessionUser }: { sessionUser: User }) => {
   });
 
   const onSubmit: SubmitHandler<UserProfileFormValidation> = useCallback(
-    data => {
-      (async () => {
-        setIsLoading(true);
-        try {
-          let avatar = data.avatar;
-          if (localImage) {
-            avatar = `${sessionUser?.role}/${sessionUser?.id}/${localImage?.file.name}`;
-            const { url } = await UserService.getPreSignedUrl(avatar);
-            await axios.put(url, localImage.file);
-          }
-
-          await updateUserProfileMutation({ ...data, avatar });
-          toast({ title: 'Success', status: 'success' });
-        } catch (error) {
-          console.log(error);
-        } finally {
-          timeout.current = setTimeout(router.refresh, 500);
-          setIsLoading(false);
+    async data => {
+      setIsLoading(true);
+      try {
+        let avatar = data.avatar;
+        if (localImage) {
+          // todo, need to change aws url
+          avatar = `academy/users/${sessionUser?.id}/${localImage?.file.name}`;
+          const { url } = await UserService.getPreSignedUrl(avatar);
+          await axios.put(url, localImage.file);
         }
-      })();
+        await updateUserProfileMutation({ ...data, avatar });
+        toast({ title: 'Success', status: 'success' });
+      } catch (error) {
+        console.log(error);
+      } finally {
+        revalidatePath('/profile', 'page');
+        setIsLoading(false);
+      }
     },
-    [
-      localImage,
-      router.refresh,
-      sessionUser?.id,
-      sessionUser?.role,
-      toast,
-      updateUserProfileMutation,
-    ],
+    [localImage, sessionUser?.id, toast, updateUserProfileMutation],
   );
 
   const onFileSelect = useCallback(async (e: ChangeEvent<HTMLInputElement>) => {
@@ -120,12 +113,6 @@ const Profile = ({ sessionUser }: { sessionUser: User }) => {
     },
     [changePasswordMutation, reset, toast],
   );
-
-  useEffect(() => {
-    return () => {
-      clearTimeout(timeout.current);
-    };
-  }, []);
 
   const avatarSrc = localImage?.localUrl
     ? localImage.localUrl

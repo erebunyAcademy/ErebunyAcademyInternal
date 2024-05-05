@@ -95,9 +95,9 @@ export class AuthResolver {
     await prisma.student.create({
       data: {
         userId: user.id,
-        facultyId: +facultyId,
-        studentGradeId: +studentGradeId,
-        studentGradeGroupId: +studentGradeGroupId,
+        facultyId: facultyId,
+        studentGradeId: studentGradeId,
+        studentGradeGroupId: studentGradeGroupId,
       },
     });
 

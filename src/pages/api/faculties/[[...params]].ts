@@ -22,12 +22,12 @@ class FacultyHandler {
 
   @Get('/:id')
   getFacultyById(@Param('id') id: string) {
-    return FacultyResolver.getFacultyById(+id);
+    return FacultyResolver.getFacultyById(id);
   }
 
   @Delete('/:id')
   deleteFaculty(@Param('id') id: string) {
-    return FacultyResolver.deleteFacultyById(+id);
+    return FacultyResolver.deleteFacultyById(id);
   }
 
   @Post()
@@ -40,7 +40,7 @@ class FacultyHandler {
     @Param('facultyId') facultyId: string,
     @Body(ValidationPipe) input: Partial<Pick<Faculty, 'title' | 'description'>>,
   ) {
-    return FacultyResolver.updateFacultyById(+facultyId, input);
+    return FacultyResolver.updateFacultyById(facultyId, input);
   }
 }
 
