@@ -9,6 +9,6 @@ export class FacultyService {
   }
 
   static list() {
-    return $apiClient.get<FacultySignupListModel>('/faculties/get-list');
+    return $apiClient.get<FacultySignupListModel>('/faculties');
   }
 }

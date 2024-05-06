@@ -27,7 +27,7 @@ class FacultyHandler {
     return FacultyResolver.list(+skip, +take, search, sorting);
   }
 
-  @Get('get-list')
+  @Get()
   getFacultySignupList() {
     return FacultyResolver.getFacultyList();
   }
