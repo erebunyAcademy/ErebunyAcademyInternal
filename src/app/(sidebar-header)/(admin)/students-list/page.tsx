@@ -15,7 +15,7 @@ import useDebounce from '@/hooks/useDebounce';
 import { ITEMS_PER_PAGE } from '@/utils/constants/common';
 import { QUERY_KEY } from '@/utils/helpers/queryClient';
 import { Maybe } from '@/utils/models/common';
-import { UserModel } from '@/utils/models/user';
+import { StudentModel } from '@/utils/models/student';
 
 export default function Users() {
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -65,7 +65,7 @@ export default function Users() {
     [page],
   );
 
-  const columnHelper = createColumnHelper<UserModel>();
+  const columnHelper = createColumnHelper<StudentModel>();
 
   const columns = [
     columnHelper.accessor('firstName', {
@@ -83,17 +83,17 @@ export default function Users() {
       cell: info => info.getValue(),
       header: 'Email',
     }),
-    columnHelper.accessor('student.faculty', {
+    columnHelper.accessor('student.faculty.title', {
       id: uuidv4(),
       cell: info => info.getValue(),
       header: 'Faculty',
     }),
-    columnHelper.accessor('email', {
+    columnHelper.accessor('student.studentGrade.title', {
       id: uuidv4(),
       cell: info => info.getValue(),
       header: 'Student Grade',
     }),
-    columnHelper.accessor('email', {
+    columnHelper.accessor('student.studentGradeGroup.title', {
       id: uuidv4(),
       cell: info => info.getValue(),
       header: 'Student Grade Group',

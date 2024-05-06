@@ -6,7 +6,7 @@ import prisma from '..';
 
 export class TeacherResolver {
   static async list(skip: number, take: number, search: string, sorting: SortingType[]) {
-    const [count, users] = await Promise.all([
+    return Promise.all([
       prisma.user.count({
         where: {
           role: UserRoleEnum.TEACHER,
@@ -43,12 +43,10 @@ export class TeacherResolver {
         skip,
         take,
       }),
-    ]);
-
-    return {
+    ]).then(([count, users]) => ({
       count,
       users,
-    };
+    }));
   }
   static getTeacherById(id: string) {
     return prisma.student

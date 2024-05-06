@@ -1,7 +1,6 @@
 'use client';
 import React, { useCallback, useMemo, useState } from 'react';
-import { IconButton, Menu, MenuButton, MenuItem, MenuList, useDisclosure } from '@chakra-ui/react';
-import { User } from '@prisma/client';
+import { IconButton, Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/react';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { createColumnHelper, SortingState } from '@tanstack/react-table';
 import dayjs from 'dayjs';
@@ -13,21 +12,13 @@ import SearchTable from '@/components/organisms/SearchTable';
 import useDebounce from '@/hooks/useDebounce';
 import { ITEMS_PER_PAGE } from '@/utils/constants/common';
 import { QUERY_KEY } from '@/utils/helpers/queryClient';
-import { Maybe } from '@/utils/models/common';
-import { UserModel } from '@/utils/models/user';
+import { TeacherModel } from '@/utils/models/teachers';
 
 export default function Users() {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const debouncedSearch = useDebounce(search);
-  const [selectedStudent, setSelectedStudent] = useState<Maybe<User>>(null);
-
-  const { isOpen, onOpen, onClose } = useDisclosure({
-    onClose() {
-      setSelectedStudent(null);
-    },
-  });
 
   const { data, isLoading, isPlaceholderData } = useQuery({
     queryKey: QUERY_KEY.allUsers(debouncedSearch, page),
@@ -60,7 +51,7 @@ export default function Users() {
     [page],
   );
 
-  const columnHelper = createColumnHelper<UserModel>();
+  const columnHelper = createColumnHelper<TeacherModel>();
 
   const columns = [
     columnHelper.accessor('firstName', {
