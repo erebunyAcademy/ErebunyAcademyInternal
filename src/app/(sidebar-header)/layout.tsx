@@ -25,7 +25,9 @@ export default async function HeaderLayout({
         width="360px"
         linkItems={linkItems(session.user)}
       />
-      <Flex marginLeft={{ base: 0, md: '360px' }}>{children}</Flex>
+      <Flex marginLeft={{ base: 0, md: '360px' }} marginTop="60px">
+        {children}
+      </Flex>
     </>
   );
 }
