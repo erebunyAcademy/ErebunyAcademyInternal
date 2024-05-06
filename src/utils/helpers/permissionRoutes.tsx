@@ -6,9 +6,8 @@ import {
   PROFILE_ROUTE,
   ROUTE_EXAMS,
   ROUTE_FACULTIES,
-  ROUTE_STUDENT_GRADE_GROUPS,
-  ROUTE_STUDENT_GRADES,
   ROUTE_STUDENTS,
+  ROUTE_TEACHERS,
 } from '../constants/routes';
 
 export interface LinkItemProps {
@@ -31,17 +30,11 @@ export const linkItems: LinkItemsFunction = (user: User) => {
       return [
         ...commonLinks.slice(0, 1),
         { id: 2, name: 'Faculty', icon: <ProfileIcon />, href: ROUTE_FACULTIES },
-        { id: 3, name: 'Student Grade', icon: <ProfileIcon />, href: ROUTE_STUDENT_GRADES },
-        {
-          id: 4,
-          name: 'Student Grade Group',
-          icon: <ProfileIcon />,
-          href: ROUTE_STUDENT_GRADE_GROUPS,
-        },
+        { id: 3, name: 'Students', icon: <ProfileIcon />, href: ROUTE_STUDENTS },
+        { id: 4, name: 'Teachers', icon: <ProfileIcon />, href: ROUTE_TEACHERS },
         { id: 5, name: 'Students', icon: <ProfileIcon />, href: ROUTE_STUDENTS },
         { id: 6, name: 'Exams', icon: <ProfileIcon />, href: ROUTE_EXAMS },
-
-        commonLinks[1],
+          commonLinks[1],
       ];
     case UserRoleEnum.TEACHER:
     case UserRoleEnum.STUDENT:
