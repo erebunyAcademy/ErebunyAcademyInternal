@@ -4,9 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "pnpm lint && next build",
     "start": "next start",
-    "postbuild": "next lint",
+    "lint": "next lint",
     "migrate": "prisma migrate dev"
   },
   "dependencies": {
