@@ -7,7 +7,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { signIn, SignInResponse } from 'next-auth/react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { UserService } from '@/api/services/user.service';
-import { Button, FormInput } from '@/components/atoms';
+import { Button, FormInput, Loading } from '@/components/atoms';
 import { AuthBox } from '@/components/molecules';
 import { ERROR_MESSAGES } from '@/utils/constants/common';
 import {
@@ -75,6 +75,7 @@ const SignIn = () => {
 
   return (
     <AuthBox data={authBoxProps.data} boxProps={authBoxProps.boxProps}>
+      {isSubmitting && <Loading isLoading={isSubmitting} />}
       <VStack spacing={32}>
         <Controller
           name="email"

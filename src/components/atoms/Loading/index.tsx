@@ -1,9 +1,19 @@
 import React, { FC, memo } from 'react';
-import { Box, BoxProps } from '@chakra-ui/react';
+import { Box, BoxProps, Spinner } from '@chakra-ui/react';
+import { useIsFetching, useIsMutating } from '@tanstack/react-query';
 
-interface LoadingProps extends BoxProps {}
+interface LoadingProps extends BoxProps {
+  isLoading?: boolean;
+}
 
-const Loading: FC<LoadingProps> = ({ ...rest }) => {
+const Loading: FC<LoadingProps> = ({ isLoading = false, ...rest }) => {
+  const isFetching = useIsFetching();
+  const isMutating = useIsMutating();
+
+  if (!isFetching && !isMutating && !isLoading) {
+    return null;
+  }
+
   return (
     <Box {...rest}>
       <Box
@@ -17,16 +27,14 @@ const Loading: FC<LoadingProps> = ({ ...rest }) => {
         zIndex={10}
       />
       <Box
-        backgroundImage="url(/gifs/loading.gif)"
-        backgroundRepeat="no-repeat"
-        height="100px"
         position="fixed"
         left="50%"
         top="50%"
         transform="translate(-50%,-50%)"
         zIndex={100}
-        width="100px"
-      />
+        width="100px">
+        <Spinner thickness="4px" speed="0.65s" emptyColor="gray.200" color="#319795" size="xl" />
+      </Box>
     </Box>
   );
 };
