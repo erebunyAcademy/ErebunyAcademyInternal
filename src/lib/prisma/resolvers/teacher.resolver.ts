@@ -4,12 +4,12 @@ import { SortingType } from '@/api/types/common';
 import { orderBy } from './utils/common';
 import prisma from '..';
 
-export class StudentResolver {
+export class TeacherResolver {
   static async list(skip: number, take: number, search: string, sorting: SortingType[]) {
-    const [count, users] = await Promise.all([
+    return Promise.all([
       prisma.user.count({
         where: {
-          role: UserRoleEnum.STUDENT,
+          role: UserRoleEnum.TEACHER,
           OR: [
             { firstName: { contains: search, mode: 'insensitive' } },
             { lastName: { contains: search, mode: 'insensitive' } },
@@ -19,7 +19,7 @@ export class StudentResolver {
       }),
       prisma.user.findMany({
         where: {
-          role: UserRoleEnum.STUDENT,
+          role: UserRoleEnum.TEACHER,
           OR: [
             { firstName: { contains: search, mode: 'insensitive' } },
             { lastName: { contains: search, mode: 'insensitive' } },
@@ -32,23 +32,10 @@ export class StudentResolver {
           firstName: true,
           lastName: true,
           createdAt: true,
-          student: {
+          teacher: {
             select: {
-              faculty: {
-                select: {
-                  title: true,
-                },
-              },
-              studentGrade: {
-                select: {
-                  title: true,
-                },
-              },
-              studentGradeGroup: {
-                select: {
-                  title: true,
-                },
-              },
+              workPlace: true,
+              profession: true,
             },
           },
         },
@@ -56,21 +43,19 @@ export class StudentResolver {
         skip,
         take,
       }),
-    ]);
-
-    return {
+    ]).then(([count, users]) => ({
       count,
       users,
-    };
+    }));
   }
-  static getStudentById(id: string) {
+  static getTeacherById(id: string) {
     return prisma.student
       .findUnique({
         where: { id },
       })
       .then(res => {
         if (!res) {
-          throw new NotFoundException('Student was not found');
+          throw new NotFoundException('Teacher was not found');
         }
         return res;
       });
