@@ -29,7 +29,7 @@ export class FacultyResolver {
     });
   }
 
-  static async updateFacultyById(facultyId: number, data: Partial<Faculty>) {
+  static async updateFacultyById(facultyId: string, data: Partial<Faculty>) {
     const { id } = await this.getFacultyById(facultyId);
 
     return prisma.faculty.update({
@@ -40,7 +40,7 @@ export class FacultyResolver {
     });
   }
 
-  static async deleteFacultyById(examId: number) {
+  static async deleteFacultyById(examId: string) {
     const { id } = await this.getFacultyById(examId);
     return prisma.faculty.delete({
       where: {

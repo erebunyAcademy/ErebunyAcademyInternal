@@ -7,7 +7,7 @@ export class StudentGradeGroupResolver {
     return prisma.studentGradeGroup.create({ data });
   }
 
-  static getStudentGradeGroupById(id: number) {
+  static getStudentGradeGroupById(id: string) {
     return prisma.studentGradeGroup
       .findUnique({
         where: { id },
@@ -29,7 +29,7 @@ export class StudentGradeGroupResolver {
     });
   }
 
-  static async updateStudentGradeGroupById(id: number, data: Partial<Subject>) {
+  static async updateStudentGradeGroupById(id: string, data: Partial<Subject>) {
     const subject = await this.getStudentGradeGroupById(id);
 
     return prisma.studentGradeGroup.update({
@@ -40,7 +40,7 @@ export class StudentGradeGroupResolver {
     });
   }
 
-  static async deleteStudentGradeGroupById(id: number) {
+  static async deleteStudentGradeGroupById(id: string) {
     const subject = await this.getStudentGradeGroupById(id);
     return prisma.studentGradeGroup.delete({
       where: {

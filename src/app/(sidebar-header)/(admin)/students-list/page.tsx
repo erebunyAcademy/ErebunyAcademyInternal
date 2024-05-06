@@ -123,7 +123,7 @@ export default function Users() {
               color="red"
               onClick={() => {
                 onOpen();
-                setSelectedStudent(row.original as User);
+                setSelectedStudent(row.original as unknown as User);
               }}>
               Delete
             </MenuItem>
@@ -162,7 +162,7 @@ export default function Users() {
         <SharedAlertDialog
           body={`Are you sure you want to delete ${selectedStudent?.firstName} student?`}
           isOpen={isOpen}
-          title="Delete tudent"
+          title="Delete student"
           isLoading={isLoading}
           deleteFn={() => {
             if (selectedStudent?.id) {

@@ -1,5 +1,5 @@
 'use client';
-import { FC, useEffect, useMemo } from 'react';
+import { useLayoutEffect, useMemo } from 'react';
 import { Link, useToast, VStack } from '@chakra-ui/react';
 import { useMutation } from '@tanstack/react-query';
 import NextLink from 'next/link';
@@ -18,13 +18,7 @@ import {
 } from '@/utils/constants/routes';
 import { SignInFormData } from '@/utils/models/auth';
 
-interface SearchParams {
-  searchParams: {
-    [key: string]: string;
-  };
-}
-
-const SignIn: FC<SearchParams> = () => {
+const SignIn = () => {
   const toast = useToast();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -48,13 +42,7 @@ const SignIn: FC<SearchParams> = () => {
     defaultValues: { email: '', password: '', rememberMe: true },
   });
 
-  const onSubmit: SubmitHandler<SignInFormData> = async ({
-    email,
-    password,
-  }: {
-    email: string;
-    password: string;
-  }) => {
+  const onSubmit: SubmitHandler<SignInFormData> = async ({ email, password }) => {
     try {
       const res: SignInResponse | undefined = await signIn('credentials', {
         email,
@@ -73,9 +61,12 @@ const SignIn: FC<SearchParams> = () => {
     }
   };
 
-  const { mutate } = useMutation({ mutationFn: UserService.confirmUserEmail });
+  const { mutate } = useMutation({
+    mutationFn: UserService.confirmUserEmail,
+    onSuccess: () => router.replace('/signin'),
+  });
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const code = searchParams?.get('code');
     if (code) {
       mutate(code);

@@ -7,10 +7,10 @@ export class SubjectResolver {
     return prisma.subject.create({ data });
   }
 
-  static getSubjectById(id: number) {
+  static getSubjectById(id: string) {
     return prisma.subject
       .findUnique({
-        where: { id: +id },
+        where: { id },
       })
       .then(res => {
         if (!res) {
@@ -29,7 +29,7 @@ export class SubjectResolver {
     });
   }
 
-  static async updateSubjectById(id: number, data: Partial<Subject>) {
+  static async updateSubjectById(id: string, data: Partial<Subject>) {
     const subject = await this.getSubjectById(id);
 
     return prisma.subject.update({
@@ -40,7 +40,7 @@ export class SubjectResolver {
     });
   }
 
-  static async deleteSubjectById(id: number) {
+  static async deleteSubjectById(id: string) {
     const subject = await this.getSubjectById(id);
     return prisma.subject.delete({
       where: {

@@ -1,4 +1,4 @@
-import React, { ChangeEvent, memo, useState } from 'react';
+import React, { ChangeEvent, memo, useEffect, useState } from 'react';
 import {
   Box,
   Button as ChakraButton,
@@ -25,11 +25,24 @@ import { Button, FormInput, SelectLabel } from '../../atoms';
 
 const resolver = classValidatorResolver(StudentSignUpValidation);
 
+const fetchFormData = async () => {
+  try {
+    const [studentGradeList, studentGradeGroupList, facultyList] = await Promise.all([
+      StudentGradeService.getStudentGradeList(),
+      StudentGradeGroupService.getStudentGradeGroupList(),
+      FacultyService.facultyList(),
+    ]);
+    return { studentGradeList, studentGradeGroupList, facultyList };
+  } catch {
+    console.error();
+  }
+};
+
 const StudentSignUp = () => {
   const router = useRouter();
   const toast = useToast();
   const [localImage, setLocalImage] = useState<{ file: File; localUrl: string } | null>(null);
-  const { mutate } = useMutation({
+  const { mutate, isPending } = useMutation({
     mutationFn: AuthService.studentSignUp,
     onSuccess() {
       toast({
@@ -64,6 +77,7 @@ const StudentSignUp = () => {
   const {
     control,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<StudentSignUpValidation>({
     resolver,
@@ -74,6 +88,8 @@ const StudentSignUp = () => {
       password: '',
       confirmPassword: '',
       studentGradeId: '',
+      facultyId: '',
+      studentGradeGroupId: '',
       attachment: {
         mimetype: '',
         key: '',
@@ -82,19 +98,9 @@ const StudentSignUp = () => {
     },
   });
 
-  const { data: studentGradeList } = useQuery({
-    queryKey: ['student-grade'],
-    queryFn: StudentGradeService.getStudentGradeList,
-  });
-
-  const { data: studentGradeGroupList } = useQuery({
-    queryKey: ['student-grade-group'],
-    queryFn: StudentGradeGroupService.getStudentGradeGroupList,
-  });
-
-  const { data: facultyList } = useQuery({
-    queryKey: ['faculty'],
-    queryFn: FacultyService.facultyList,
+  const { data, isSuccess } = useQuery({
+    queryKey: ['faculty', 'student-grade', 'student-grade-group'],
+    queryFn: fetchFormData,
   });
 
   const onFileSelect = (e: ChangeEvent<HTMLInputElement>) => {
@@ -103,6 +109,18 @@ const StudentSignUp = () => {
       setLocalImage({ file: files[0], localUrl: URL.createObjectURL(files[0]) });
     }
   };
+
+  useEffect(() => {
+    if (isSuccess) {
+      reset({
+        facultyId: data?.facultyList[0].id,
+        studentGradeId: data?.studentGradeList[0].id,
+        studentGradeGroupId: data?.studentGradeGroupList[0].id,
+      });
+    }
+  }, [data?.facultyList, data?.studentGradeGroupList, data?.studentGradeList, isSuccess, reset]);
+
+  console.log(errors);
 
   return (
     <>
@@ -167,7 +185,7 @@ const StudentSignUp = () => {
             render={({ field: { onChange, value, name } }) => (
               <SelectLabel
                 name={name}
-                options={studentGradeList || []}
+                options={data?.studentGradeList || []}
                 labelName="Student grade"
                 valueLabel="id"
                 nameLabel="title"
@@ -185,7 +203,7 @@ const StudentSignUp = () => {
             render={({ field: { onChange, value, name } }) => (
               <SelectLabel
                 name={name}
-                options={studentGradeGroupList || []}
+                options={data?.studentGradeGroupList || []}
                 labelName="Course group"
                 valueLabel="id"
                 nameLabel="title"
@@ -200,7 +218,7 @@ const StudentSignUp = () => {
             render={({ field: { onChange, value, name } }) => (
               <SelectLabel
                 name={name}
-                options={facultyList || []}
+                options={data?.facultyList || []}
                 labelName="Faculty"
                 valueLabel="id"
                 nameLabel="title"
@@ -298,7 +316,7 @@ const StudentSignUp = () => {
         </HStack>
       </VStack>
       <VStack spacing={16} paddingTop={48}>
-        <Button w={'50%'} onClick={handleSubmit(onStudentSubmit)}>
+        <Button w={'50%'} onClick={handleSubmit(onStudentSubmit)} isLoading={isPending}>
           Sign up
         </Button>
       </VStack>
