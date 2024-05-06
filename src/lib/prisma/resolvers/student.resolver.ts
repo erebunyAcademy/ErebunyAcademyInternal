@@ -35,7 +35,7 @@ export class StudentResolver {
       users,
     };
   }
-  static getStudentById(id: number) {
+  static async getStudentById(id: string) {
     return prisma.student
       .findUnique({
         where: { id },

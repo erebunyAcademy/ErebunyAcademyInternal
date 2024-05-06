@@ -128,7 +128,7 @@ export class UserResolver {
     return true;
   }
 
-  static async confirmuser(id: number) {
+  static async confirmuser(id: string) {
     const user = await prisma.user.findUnique({
       where: {
         id,
@@ -147,7 +147,7 @@ export class UserResolver {
       },
     });
   }
-  static async deleteUser(id: number) {
+  static async deleteUser(id: string) {
     const user = await prisma.user.findUnique({
       where: {
         id,

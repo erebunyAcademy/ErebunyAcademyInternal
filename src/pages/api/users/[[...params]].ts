@@ -23,11 +23,11 @@ class UserHandler {
   }
   @Delete('/:id')
   _deleteUserById(@Param('id') id: string) {
-    return UserResolver.deleteUser(+id);
+    return UserResolver.deleteUser(id);
   }
   @Post('/:id')
   _confirmUserVerificationById(@Param('id') id: string) {
-    return UserResolver.confirmuser(+id);
+    return UserResolver.confirmuser(id);
   }
 }
 

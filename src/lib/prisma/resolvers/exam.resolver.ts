@@ -7,7 +7,7 @@ export class ExamsResolver {
     return prisma.exam.create({ data: { title: '' }, select: { id: true } });
   }
 
-  static async getExamById(id: number) {
+  static async getExamById(id: string) {
     return prisma.exam
       .findUnique({
         where: { id },
@@ -24,7 +24,7 @@ export class ExamsResolver {
     return prisma.exam.findMany();
   }
 
-  static async updateExamById(examId: number, data: Partial<Exam>) {
+  static async updateExamById(examId: string, data: Partial<Exam>) {
     const { id } = await this.getExamById(examId);
 
     return prisma.exam.update({
@@ -35,7 +35,7 @@ export class ExamsResolver {
     });
   }
 
-  static async deleteStudentGradeById(examId: number) {
+  static async deleteStudentGradeById(examId: string) {
     const { id } = await this.getExamById(examId);
     return prisma.studentGrade.delete({
       where: {
