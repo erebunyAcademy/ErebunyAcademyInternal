@@ -23,8 +23,10 @@ jobs:
           node-version: '20'
           cache: 'pnpm'
 
-      - name: Setup pnpm
-        run: npm install -g pnpm
+      - name: Install pnpm
+        run: |
+          curl -f https://get.pnpm.io/v6.16.js | node - add --global pnpm
+          echo "$(npm bin -g)" >> $GITHUB_PATH
 
       - name: Install dependencies
         run: pnpm install
