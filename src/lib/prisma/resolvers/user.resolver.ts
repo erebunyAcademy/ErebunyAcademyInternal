@@ -164,4 +164,13 @@ export class UserResolver {
       },
     });
   }
+
+  static async updateProfile(input: UserProfileFormValidation, user: NonNullable<User>) {
+    return (
+      await prisma.user.update({
+        where: { id: user.id },
+        data: input,
+      })
+    ).id;
+  }
 }

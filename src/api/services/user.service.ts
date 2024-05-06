@@ -6,10 +6,10 @@ export class UserService {
     return $apiClient.post('users/get-presigned-url', { imageKey });
   }
   static updateUserProfile(input: UserProfileFormValidation): Promise<number> {
-    return $apiClient.post('users/update-profile', input);
+    return $apiClient.put('users/update-profile', input);
   }
   static changeUserPassword(input: ChangePasswordValidation): Promise<number> {
-    return $apiClient.post('users/update-password', input);
+    return $apiClient.patch('users/update-password', input);
   }
   static confirmUserEmail(code: string): Promise<boolean> {
     return $apiClient.post('users/confirm-user-email', { code });

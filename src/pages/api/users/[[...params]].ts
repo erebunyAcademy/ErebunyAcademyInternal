@@ -1,3 +1,4 @@
+import { User } from '@prisma/client';
 import {
   Body,
   Catch,
@@ -5,11 +6,18 @@ import {
   Delete,
   Param,
   Post,
+  Put,
   ValidationPipe,
 } from 'next-api-decorators';
+import { CurrentUser } from '@/lib/prisma/decorators/current-user.decorator';
 import { exceptionHandler } from '@/lib/prisma/error';
+import { AuthMiddleware } from '@/lib/prisma/middlewares/auth-middleware';
 import { UserResolver } from '@/lib/prisma/resolvers/user.resolver';
-import { GetPresignedUrlInput, VerifyUserEmailInput } from '@/utils/validation/user';
+import {
+  GetPresignedUrlInput,
+  UserProfileFormValidation,
+  VerifyUserEmailInput,
+} from '@/utils/validation/user';
 
 @Catch(exceptionHandler)
 class UserHandler {
@@ -28,6 +36,15 @@ class UserHandler {
   @Post('/:id')
   _confirmUserVerificationById(@Param('id') id: string) {
     return UserResolver.confirmuser(id);
+  }
+
+  @AuthMiddleware()
+  @Put('/update-profile')
+  updateProfile(
+    @Body(ValidationPipe) input: UserProfileFormValidation,
+    @CurrentUser() user: NonNullable<User>,
+  ) {
+    return UserResolver.updateProfile(input, user);
   }
 }
 
