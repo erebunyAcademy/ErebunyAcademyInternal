@@ -117,7 +117,7 @@ export default function Users() {
       <SearchTable
         title="Faculty List"
         isLoading={isLoading}
-        data={data?.users || []}
+        data={data?.faculties || []}
         count={data?.count || 0}
         // @ts-ignore
         columns={columns}

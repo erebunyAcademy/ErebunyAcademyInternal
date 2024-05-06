@@ -22,12 +22,12 @@ class StudentGradeHandler {
 
   @Get('/:id')
   getStudentGradeGroupById(@Param('id') id: string) {
-    return StudentGradeGroupResolver.deleteStudentGradeGroupById(+id);
+    return StudentGradeGroupResolver.deleteStudentGradeGroupById(id);
   }
 
   @Delete('/:id')
   deleteStudentGradeGroup(@Param('id') id: string) {
-    return StudentGradeGroupResolver.deleteStudentGradeGroupById(+id);
+    return StudentGradeGroupResolver.deleteStudentGradeGroupById(id);
   }
 
   @Post()
@@ -42,7 +42,7 @@ class StudentGradeHandler {
     @Param('studentGradeGroupId') studentGradeGroupId: string,
     @Body(ValidationPipe) input: Partial<Pick<StudentGradeGroup, 'title' | 'description'>>,
   ) {
-    return StudentGradeGroupResolver.updateStudentGradeGroupById(+studentGradeGroupId, input);
+    return StudentGradeGroupResolver.updateStudentGradeGroupById(studentGradeGroupId, input);
   }
 }
 

@@ -9,7 +9,7 @@ export class ScheduleResolver {
     return prisma.schedule.create({ data });
   }
 
-  static getScheduleById(id: number) {
+  static getScheduleById(id: string) {
     return prisma.schedule
       .findUnique({
         where: { id },
@@ -26,7 +26,7 @@ export class ScheduleResolver {
     return prisma.schedule.findMany();
   }
 
-  static async updateScheduleById(scheduleId: number, data: Partial<ScheduleUpdateableType>) {
+  static async updateScheduleById(scheduleId: string, data: Partial<ScheduleUpdateableType>) {
     const { id } = await this.getScheduleById(scheduleId);
 
     return prisma.schedule.update({
@@ -37,7 +37,7 @@ export class ScheduleResolver {
     });
   }
 
-  static async deleteScheduleById(examId: number) {
+  static async deleteScheduleById(examId: string) {
     const { id } = await this.getScheduleById(examId);
     return prisma.schedule.delete({
       where: {

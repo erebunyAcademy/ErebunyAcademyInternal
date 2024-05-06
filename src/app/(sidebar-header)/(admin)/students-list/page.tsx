@@ -108,7 +108,7 @@ export default function Users() {
               color="red"
               onClick={() => {
                 onOpen();
-                setSelectedStudent(row.original as User);
+                setSelectedStudent(row.original as unknown as User);
               }}>
               Delete
             </MenuItem>

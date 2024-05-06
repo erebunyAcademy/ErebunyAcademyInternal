@@ -1,7 +1,3 @@
-export type UserModel = {
-  id: number;
-  firstName: string | null;
-  lastName: string | null;
-  email: string;
-  createdAt: Date;
-};
+import { User } from '@prisma/client';
+
+export interface UserModel extends User {};
