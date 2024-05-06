@@ -1,4 +1,4 @@
-import React, { ChangeEvent, memo, useState } from 'react';
+import React, { ChangeEvent, memo, useEffect, useState } from 'react';
 import {
   Box,
   Button as ChakraButton,
@@ -11,30 +11,48 @@ import {
 import { classValidatorResolver } from '@hookform/resolvers/class-validator';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import axios from 'axios';
+import { useRouter } from 'next/navigation';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { v4 as uuid } from 'uuid';
+import { AuthService } from '@/api/services/auth.service';
 import { FacultyService } from '@/api/services/faculty.service';
 import { StudentGradeGroupService } from '@/api/services/student-grade-group.service';
 import { StudentGradeService } from '@/api/services/student-grade.service';
 import { UserService } from '@/api/services/user.service';
+import { SIGN_IN_ROUTE } from '@/utils/constants/routes';
 import { StudentSignUpValidation } from '@/utils/validation';
 import { Button, FormInput, SelectLabel } from '../../atoms';
 
 const resolver = classValidatorResolver(StudentSignUpValidation);
 
+const fetchFormData = async () => {
+  try {
+    const [studentGradeList, studentGradeGroupList, facultyList] = await Promise.all([
+      StudentGradeService.getStudentGradeList(),
+      StudentGradeGroupService.getStudentGradeGroupList(),
+      FacultyService.list(),
+    ]);
+    return { studentGradeList, studentGradeGroupList, facultyList };
+  } catch {
+    console.error();
+  }
+};
+
 const StudentSignUp = () => {
+  const router = useRouter();
   const toast = useToast();
   const [localImage, setLocalImage] = useState<{ file: File; localUrl: string } | null>(null);
-  const { mutate } = useMutation({
-    mutationFn: UserService.studentSignUp,
+  const { mutate, isPending } = useMutation({
+    mutationFn: AuthService.studentSignUp,
     onSuccess() {
       toast({
-        title: 'Account created.',
-        description: "We've created your account for you.",
+        title: 'You have successfully signed up.',
+        description: 'Please verify your email.',
         status: 'success',
-        duration: 3000,
-        isClosable: true,
+        duration: 4000,
+        isClosable: false,
       });
+      router.push(SIGN_IN_ROUTE);
     },
   });
 
@@ -59,6 +77,7 @@ const StudentSignUp = () => {
   const {
     control,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<StudentSignUpValidation>({
     resolver,
@@ -69,6 +88,8 @@ const StudentSignUp = () => {
       password: '',
       confirmPassword: '',
       studentGradeId: '',
+      facultyId: '',
+      studentGradeGroupId: '',
       attachment: {
         mimetype: '',
         key: '',
@@ -77,19 +98,9 @@ const StudentSignUp = () => {
     },
   });
 
-  const { data: studentGradeList } = useQuery({
-    queryKey: ['student-grade'],
-    queryFn: StudentGradeService.getStudentGradeList,
-  });
-
-  const { data: studentGradeGroupList } = useQuery({
-    queryKey: ['student-grade-group'],
-    queryFn: StudentGradeGroupService.getStudentGradeGroupList,
-  });
-
-  const { data: facultyList } = useQuery({
-    queryKey: ['faculty'],
-    queryFn: FacultyService.facultyList,
+  const { data, isSuccess } = useQuery({
+    queryKey: ['faculty', 'student-grade', 'student-grade-group'],
+    queryFn: fetchFormData,
   });
 
   const onFileSelect = (e: ChangeEvent<HTMLInputElement>) => {
@@ -98,6 +109,18 @@ const StudentSignUp = () => {
       setLocalImage({ file: files[0], localUrl: URL.createObjectURL(files[0]) });
     }
   };
+
+  useEffect(() => {
+    if (isSuccess) {
+      reset({
+        facultyId: data?.facultyList[0]?.id,
+        studentGradeId: data?.studentGradeList[0].id,
+        studentGradeGroupId: data?.studentGradeGroupList[0].id,
+      });
+    }
+  }, [data?.facultyList, data?.studentGradeGroupList, data?.studentGradeList, isSuccess, reset]);
+
+  console.log(errors);
 
   return (
     <>
@@ -162,7 +185,7 @@ const StudentSignUp = () => {
             render={({ field: { onChange, value, name } }) => (
               <SelectLabel
                 name={name}
-                options={studentGradeList || []}
+                options={data?.studentGradeList || []}
                 labelName="Student grade"
                 valueLabel="id"
                 nameLabel="title"
@@ -180,7 +203,7 @@ const StudentSignUp = () => {
             render={({ field: { onChange, value, name } }) => (
               <SelectLabel
                 name={name}
-                options={studentGradeGroupList || []}
+                options={data?.studentGradeGroupList || []}
                 labelName="Course group"
                 valueLabel="id"
                 nameLabel="title"
@@ -195,7 +218,7 @@ const StudentSignUp = () => {
             render={({ field: { onChange, value, name } }) => (
               <SelectLabel
                 name={name}
-                options={facultyList || []}
+                options={data?.facultyList || []}
                 labelName="Faculty"
                 valueLabel="id"
                 nameLabel="title"
@@ -293,7 +316,7 @@ const StudentSignUp = () => {
         </HStack>
       </VStack>
       <VStack spacing={16} paddingTop={48}>
-        <Button w={'50%'} onClick={handleSubmit(onStudentSubmit)}>
+        <Button w={'50%'} onClick={handleSubmit(onStudentSubmit)} isLoading={isPending}>
           Sign up
         </Button>
       </VStack>

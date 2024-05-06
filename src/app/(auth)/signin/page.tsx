@@ -1,10 +1,12 @@
 'use client';
-import { useCallback, useMemo } from 'react';
+import { useLayoutEffect, useMemo } from 'react';
 import { Link, useToast, VStack } from '@chakra-ui/react';
+import { useMutation } from '@tanstack/react-query';
 import NextLink from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { signIn, SignInResponse } from 'next-auth/react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
+import { UserService } from '@/api/services/user.service';
 import { Button, FormInput } from '@/components/atoms';
 import { AuthBox } from '@/components/molecules';
 import { ERROR_MESSAGES } from '@/utils/constants/common';
@@ -16,10 +18,10 @@ import {
 } from '@/utils/constants/routes';
 import { SignInFormData } from '@/utils/models/auth';
 
-const SignIn = ({ searchParams }: { searchParams: string }) => {
-  console.log({ searchParams });
+const SignIn = () => {
   const toast = useToast();
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const authBoxProps = useMemo(
     () => ({
@@ -40,28 +42,36 @@ const SignIn = ({ searchParams }: { searchParams: string }) => {
     defaultValues: { email: '', password: '', rememberMe: true },
   });
 
-  const onSubmit: SubmitHandler<SignInFormData> = useCallback(
-    async ({ email, password }: { email: string; password: string }) => {
-      try {
-        const res: SignInResponse | undefined = await signIn('credentials', {
-          email,
-          password,
-          callbackUrl: PROFILE_ROUTE,
-          redirect: false,
-        });
-        console.log({ res });
-        if (res?.ok && res.url) {
-          router.push(res.url);
-          router.refresh();
-        } else {
-          toast({ title: res?.error, status: 'error' });
-        }
-      } catch (error) {
-        toast({ title: ERROR_MESSAGES.invalidCredentials, status: 'error' });
+  const onSubmit: SubmitHandler<SignInFormData> = async ({ email, password }) => {
+    try {
+      const res: SignInResponse | undefined = await signIn('credentials', {
+        email,
+        password,
+        callbackUrl: PROFILE_ROUTE,
+        redirect: false,
+      });
+      if (res?.ok && res.url) {
+        router.push(res.url);
+        router.refresh();
+      } else {
+        toast({ title: res?.error, status: 'error' });
       }
-    },
-    [router, toast],
-  );
+    } catch (error) {
+      toast({ title: ERROR_MESSAGES.invalidCredentials, status: 'error' });
+    }
+  };
+
+  const { mutate } = useMutation({
+    mutationFn: UserService.confirmUserEmail,
+    onSuccess: () => router.replace('/signin'),
+  });
+
+  useLayoutEffect(() => {
+    const code = searchParams?.get('code');
+    if (code) {
+      mutate(code);
+    }
+  }, [mutate, searchParams]);
 
   return (
     <AuthBox data={authBoxProps.data} boxProps={authBoxProps.boxProps}>

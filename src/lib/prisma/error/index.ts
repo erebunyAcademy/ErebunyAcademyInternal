@@ -8,6 +8,7 @@ export const exceptionHandler = (
   res: NextApiResponse,
 ) => {
   console.error({ req, error });
+  console.log(error.message, 'error.message');
   res.status(error instanceof HttpException ? error.statusCode : 500).json({
     message:
       !(error instanceof HttpException) && process.env.NODE_ENV !== 'development'

@@ -8,23 +8,23 @@ datasource db {
 }
 
 model User {
-  id               Int           @id @default(autoincrement())
-  email            String        @unique
-  firstName        String?       @db.VarChar(45)
-  lastName         String?       @db.VarChar(45)
-  password         String        @db.VarChar(60)
-  isVerified       Boolean       @default(false)
-  isAdminVerified  Boolean       @default(false)
-  phone            String?       @db.VarChar(60)
-  isPhoneVerified  Boolean       @default(false)
-  address          String?       @db.VarChar(60)
-  country          String?       @db.VarChar(60)
-  state            String?       @db.VarChar(60)
-  city             String?       @db.VarChar(60)
-  confirmationCode Int?          @unique
-  attachmentId     String?       @unique @default(uuid())
+  id               String       @id @default(uuid())
+  email            String       @unique
+  firstName        String       @db.VarChar(45)
+  lastName         String       @db.VarChar(45)
+  password         String       @db.VarChar(60)
+  isVerified       Boolean      @default(false)
+  isAdminVerified  Boolean      @default(false)
+  phone            String?      @db.VarChar(60)
+  isPhoneVerified  Boolean      @default(false)
+  address          String?      @db.VarChar(60)
+  country          String?      @db.VarChar(60)
+  state            String?      @db.VarChar(60)
+  city             String?      @db.VarChar(60)
+  confirmationCode Int?         @unique
+  attachmentId     String?      @unique @default(uuid())
   attachment       Attachment[]
-  role             UserRoleEnum?
+  role             UserRoleEnum
   teacher          Teacher?
   student          Student?
   admin            Admin?
@@ -34,12 +34,12 @@ model User {
 }
 
 model Teacher {
-  id                 Int              @id @default(autoincrement())
+  id                 String           @id @default(uuid())
   profession         String           @db.VarChar(60)
   workPlace          String           @db.VarChar(60)
   scientificActivity String?          @db.VarChar(60)
-  userId             Int              @unique
-  user               User             @relation(fields: [userId], references: [id])
+  userId             String           @unique
+  user               User             @relation(fields: [userId], references: [id], onDelete: Cascade)
   schedules          Schedule[]
   subjectTeachers    SubjectTeacher[]
 
@@ -48,9 +48,9 @@ model Teacher {
 }
 
 model Admin {
-  id     Int           @id @default(autoincrement())
-  userId Int           @unique
-  user   User          @relation(fields: [userId], references: [id])
+  id     String        @id @default(uuid())
+  userId String        @unique
+  user   User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   role   AdminRoleEnum
 
   createdAt DateTime @default(now()) @db.Timestamp(0)
@@ -58,7 +58,7 @@ model Admin {
 }
 
 model Schedule {
-  id                Int               @id @default(autoincrement())
+  id                String            @id @default(uuid())
   title             String?           @db.VarChar(60)
   description       String?           @db.Text
   academicYear      String?           @db.VarChar(60)
@@ -74,9 +74,9 @@ model Schedule {
 }
 
 model ScheduleSubject {
-  id         Int      @id @default(autoincrement())
-  scheduleId Int
-  subjectId  Int
+  id         String   @id @default(uuid())
+  scheduleId String
+  subjectId  String
   schedule   Schedule @relation(fields: [scheduleId], references: [id])
   subject    Subject  @relation(fields: [subjectId], references: [id])
 
@@ -87,22 +87,23 @@ model ScheduleSubject {
 }
 
 model Student {
-  id                  Int               @id @default(autoincrement())
+  id                  String            @id @default(uuid())
   studentGrade        StudentGrade      @relation(fields: [studentGradeId], references: [id])
-  studentGradeId      Int
+  studentGradeId      String
   faculty             Faculty           @relation(fields: [facultyId], references: [id])
-  facultyId           Int
+  facultyId           String
   studentGradeGroup   StudentGradeGroup @relation(fields: [studentGradeGroupId], references: [id])
-  studentGradeGroupId Int
-  user                User              @relation(fields: [userId], references: [id])
-  userId              Int               @unique
+  studentGradeGroupId String
+  user                User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId              String            @unique
+  studentExams        StudentExam[]
 
   createdAt DateTime @default(now()) @db.Timestamp(0)
   updatedAt DateTime @updatedAt @db.Timestamp(0)
 }
 
 model Faculty {
-  id            Int            @id @default(autoincrement())
+  id            String         @id @default(uuid())
   title         String?        @db.VarChar(60)
   description   String?        @db.VarChar(60)
   students      Student[]
@@ -113,9 +114,9 @@ model Faculty {
 }
 
 model StudentGradeSubject {
-  id             Int          @id @default(autoincrement())
-  studentGradeId Int
-  subjectId      Int
+  id             String       @id @default(uuid())
+  studentGradeId String
+  subjectId      String
   studentGrade   StudentGrade @relation(fields: [studentGradeId], references: [id])
   subject        Subject      @relation(fields: [subjectId], references: [id])
 
@@ -126,13 +127,13 @@ model StudentGradeSubject {
 }
 
 model StudentGrade {
-  id                   Int                   @id @default(autoincrement())
+  id                   String                @id @default(uuid())
   title                String?               @db.VarChar(60)
   description          String?               @db.VarChar(60)
   groups               StudentGradeGroup[]
   studentGradeSubjects StudentGradeSubject[]
   faculty              Faculty?              @relation(fields: [facultyId], references: [id])
-  facultyId            Int?
+  facultyId            String?
   students             Student[]
 
   createdAt DateTime @default(now()) @db.Timestamp(0)
@@ -140,10 +141,10 @@ model StudentGrade {
 }
 
 model StudentGradeGroup {
-  id             Int           @id @default(autoincrement())
+  id             String        @id @default(uuid())
   title          String?       @db.VarChar(60)
   description    String?       @db.VarChar(60)
-  studentGradeId Int?
+  studentGradeId String?
   studentGrade   StudentGrade? @relation(fields: [studentGradeId], references: [id])
   students       Student[]
 
@@ -152,7 +153,7 @@ model StudentGradeGroup {
 }
 
 model Subject {
-  id                   Int                   @id @default(autoincrement())
+  id                   String                @id @default(uuid())
   title                String?               @db.VarChar(60)
   description          String?               @db.VarChar(60)
   studentGradeSubjects StudentGradeSubject[]
@@ -165,10 +166,10 @@ model Subject {
 }
 
 model SubjectTeacher {
-  id        Int     @id @default(autoincrement())
-  teacherId Int
+  id        String  @id @default(uuid())
+  teacherId String
   teacher   Teacher @relation(fields: [teacherId], references: [id])
-  subjectId Int
+  subjectId String
   subject   Subject @relation(fields: [subjectId], references: [id])
 
   createdAt DateTime @default(now()) @db.Timestamp(0)
@@ -178,60 +179,65 @@ model SubjectTeacher {
 }
 
 model Attachment {
-  id          Int                @id @default(autoincrement())
+  id          String             @id @default(uuid())
   title       String?            @db.Text
   description String?            @db.VarChar(60)
   key         String             @db.Text
-  subjectId   Int?
+  subjectId   String?
   subject     Subject?           @relation(fields: [subjectId], references: [id])
-  user        User?              @relation(fields: [userId], references: [id])
+  user        User?              @relation(fields: [userId], references: [id], onDelete: Cascade)
   mimetype    String             @db.VarChar(60)
-  userId      Int?
+  userId      String?
   type        AttachmentTypeEnum
 
   createdAt DateTime @default(now()) @db.Timestamp(0)
   updatedAt DateTime @updatedAt @db.Timestamp(0)
 }
 
-model Exam {
-  id          Int        @id @default(autoincrement())
-  title       String     @db.VarChar(60)
-  description String?    @db.VarChar(60)
-  testExams   TestExam[]
+model StudentExam {
+  id        String  @id @default(uuid())
+  exam      Exam    @relation(fields: [examId], references: [id])
+  student   Student @relation(fields: [studentId], references: [id])
+  examId    String
+  studentId String
 
   updatedAt DateTime @updatedAt @db.Timestamp(0)
   createdAt DateTime @default(now()) @db.Timestamp(0)
+
+  @@unique([examId, studentId], name: "studentExamId")
 }
 
-model TestExam {
-  id     Int  @id @default(autoincrement())
-  testId Int
-  examId Int
-  exam   Exam @relation(fields: [examId], references: [id])
+model Exam {
+  id            String         @id @default(uuid())
+  title         String         @db.VarChar(60)
+  description   String?        @db.VarChar(60)
+  testQuestions TestQuestion[]
+  studentExams  StudentExam[]
 
-  createdAt DateTime @default(now()) @db.Timestamp(0)
   updatedAt DateTime @updatedAt @db.Timestamp(0)
-
-  @@unique([testId, examId], name: "testExamId")
+  createdAt DateTime @default(now()) @db.Timestamp(0)
 }
 
 model TestQuestion {
-  id          Int                  @id @default(autoincrement())
-  title       String               @db.VarChar(60)
-  description String?              @db.VarChar(60)
+  id          String                @id @default(uuid())
+  title       String                @db.VarChar(60)
+  description String?               @db.VarChar(60)
   type        TestQuestionTypeEnum
   options     Option[]
+  skillLevel  TestQuestionLevelEnum
+  exam        Exam?                 @relation(fields: [examId], references: [id])
+  examId      String?
 
   createdAt DateTime @default(now()) @db.Timestamp(0)
   updatedAt DateTime @updatedAt @db.Timestamp(0)
 }
 
 model Option {
-  id             Int          @id @default(autoincrement())
+  id             String       @id @default(uuid())
   title          String       @db.VarChar(60)
   isRightAnswer  Boolean      @default(false)
   testquestion   TestQuestion @relation(fields: [testQuestionId], references: [id])
-  testQuestionId Int
+  testQuestionId String
 
   createdAt DateTime @default(now()) @db.Timestamp(0)
   updatedAt DateTime @updatedAt @db.Timestamp(0)
@@ -241,6 +247,12 @@ enum UserRoleEnum {
   STUDENT
   TEACHER
   ADMIN
+}
+
+enum TestQuestionLevelEnum {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
 }
 
 enum ExamTypeEnum {

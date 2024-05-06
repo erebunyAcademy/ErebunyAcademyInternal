@@ -1,8 +1,8 @@
 import sgMail from '@sendgrid/mail';
 
 enum TemplateIdsEnum {
-  emailVerificationTemplateId = 'd-cf8f50b184474cb1a17f0b652177eb55',
-  forgotPasswordTemplateId = 'd-85df99defaf5421aa6d623d85f858df4',
+  emailVerificationTemplateId = 'd-e11d343ac0ee4ba3bfbe3f4e4f1d0e82',
+  forgotPasswordTemplateId = 'd-a3cf5ceaaaa8440abb7ddb87921a44db',
 }
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY!);
@@ -15,7 +15,7 @@ class Email {
   async sendConfirmationCodeEmail(
     email: string,
     confirmationCode: number,
-    userFirstName: string,
+    firstName: string,
   ): Promise<any> {
     return this.sendEmail(email, {
       template_id: TemplateIdsEnum.emailVerificationTemplateId,
@@ -23,7 +23,7 @@ class Email {
         {
           to: email,
           dynamic_template_data: {
-            userFirstName,
+            firstName,
             link: `${process.env.NEXTAUTH_URL}/signin?code=${confirmationCode}`,
           },
         },
@@ -31,7 +31,11 @@ class Email {
     });
   }
 
-  async sendForgotPasswordEmail(email: string, confirmationCode: number): Promise<any> {
+  async sendForgotPasswordEmail(
+    email: string,
+    confirmationCode: number,
+    firstName: string,
+  ): Promise<any> {
     return this.sendEmail(email, {
       template_id: TemplateIdsEnum.forgotPasswordTemplateId,
       personalizations: [
@@ -39,13 +43,18 @@ class Email {
           to: email,
           dynamic_template_data: {
             confirmationCode,
+            firstName,
           },
         },
       ],
     });
   }
 
-  async sendEmail(to: string, data: any = {}, from: string = `account@pba.am`): Promise<any> {
+  async sendEmail(
+    to: string,
+    data: any = {},
+    from: string = `erebuniacademyfoundation@gmail.com`,
+  ): Promise<any> {
     try {
       const message = {
         to,
