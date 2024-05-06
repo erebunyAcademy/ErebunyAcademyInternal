@@ -8,15 +8,27 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   ValidationPipe,
 } from 'next-api-decorators';
+import { SortingType } from '@/api/types/common';
 import { exceptionHandler } from '@/lib/prisma/error';
 import { FacultyResolver } from '@/lib/prisma/resolvers/faculty.resolver';
 
 @Catch(exceptionHandler)
 class FacultyHandler {
   @Get('/list')
-  getFacultyList() {
+  _list(
+    @Query('offset') skip: string,
+    @Query('limit') take: string,
+    @Query('search') search: string,
+    @Query('sorting') sorting: SortingType[],
+  ) {
+    return FacultyResolver.list(+skip, +take, search, sorting);
+  }
+
+  @Get()
+  getFacultySignupList() {
     return FacultyResolver.getFacultyList();
   }
 

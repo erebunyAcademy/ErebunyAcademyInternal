@@ -30,7 +30,7 @@ const fetchFormData = async () => {
     const [studentGradeList, studentGradeGroupList, facultyList] = await Promise.all([
       StudentGradeService.getStudentGradeList(),
       StudentGradeGroupService.getStudentGradeGroupList(),
-      FacultyService.facultyList(),
+      FacultyService.list(),
     ]);
     return { studentGradeList, studentGradeGroupList, facultyList };
   } catch {
@@ -113,7 +113,7 @@ const StudentSignUp = () => {
   useEffect(() => {
     if (isSuccess) {
       reset({
-        facultyId: data?.facultyList[0].id,
+        facultyId: data?.facultyList[0]?.id,
         studentGradeId: data?.studentGradeList[0].id,
         studentGradeGroupId: data?.studentGradeGroupList[0].id,
       });
