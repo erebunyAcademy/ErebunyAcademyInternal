@@ -1,51 +1,65 @@
-import { Subject } from '@prisma/client';
+import { UserRoleEnum } from '@prisma/client';
 import { NotFoundException } from 'next-api-decorators';
+import { SortingType } from '@/api/types/common';
+import { orderBy } from './utils/common';
 import prisma from '..';
 
-export class SubjectResolver {
-  static createSubject(data: Pick<Subject, 'title' | 'description'>) {
-    return prisma.subject.create({ data });
-  }
+export class TeacherResolver {
+  static async list(skip: number, take: number, search: string, sorting: SortingType[]) {
+    const [count, users] = await Promise.all([
+      prisma.user.count({
+        where: {
+          role: UserRoleEnum.TEACHER,
+          OR: [
+            { firstName: { contains: search, mode: 'insensitive' } },
+            { lastName: { contains: search, mode: 'insensitive' } },
+            { email: { contains: search, mode: 'insensitive' } },
+          ],
+        },
+      }),
+      prisma.user.findMany({
+        where: {
+          role: UserRoleEnum.TEACHER,
+          OR: [
+            { firstName: { contains: search, mode: 'insensitive' } },
+            { lastName: { contains: search, mode: 'insensitive' } },
+            { email: { contains: search, mode: 'insensitive' } },
+          ],
+        },
+        select: {
+          id: true,
+          email: true,
+          firstName: true,
+          lastName: true,
+          createdAt: true,
+          teacher: {
+            select: {
+              workPlace: true,
+              profession: true,
+            },
+          },
+        },
+        orderBy: sorting ? orderBy(sorting) : undefined,
+        skip,
+        take,
+      }),
+    ]);
 
-  static getSubjectById(id: number) {
-    return prisma.subject
+    return {
+      count,
+      users,
+    };
+  }
+  static getTeacherById(id: string) {
+    return prisma.student
       .findUnique({
-        where: { id: +id },
+        where: { id },
       })
       .then(res => {
         if (!res) {
-          throw new NotFoundException('Subject was not found');
+          throw new NotFoundException('Teacher was not found');
         }
         return res;
       });
-  }
-
-  static getSubjects() {
-    return prisma.subject.findMany({
-      select: {
-        id: true,
-        title: true,
-      },
-    });
-  }
-
-  static async updateSubjectById(id: number, data: Partial<Subject>) {
-    const subject = await this.getSubjectById(id);
-
-    return prisma.subject.update({
-      where: {
-        id: subject.id,
-      },
-      data,
-    });
-  }
-
-  static async deleteSubjectById(id: number) {
-    const subject = await this.getSubjectById(id);
-    return prisma.subject.delete({
-      where: {
-        id: subject.id,
-      },
-    });
   }
 }

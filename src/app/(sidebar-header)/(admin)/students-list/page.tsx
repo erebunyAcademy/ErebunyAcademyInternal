@@ -83,6 +83,21 @@ export default function Users() {
       cell: info => info.getValue(),
       header: 'Email',
     }),
+    // columnHelper.accessor('student.facultyId', {
+    //   id: uuidv4(),
+    //   cell: info => info.getValue(),
+    //   header: 'Faculty',
+    // }),
+    // columnHelper.accessor('email', {
+    //   id: uuidv4(),
+    //   cell: info => info.getValue(),
+    //   header: 'Student Grade',
+    // }),
+    // columnHelper.accessor('email', {
+    //   id: uuidv4(),
+    //   cell: info => info.getValue(),
+    //   header: 'Student Grade Group',
+    // }),
     columnHelper.accessor('createdAt', {
       id: uuidv4(),
       cell: info => {

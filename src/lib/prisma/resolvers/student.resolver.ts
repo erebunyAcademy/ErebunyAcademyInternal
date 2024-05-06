@@ -1,3 +1,4 @@
+import { UserRoleEnum } from '@prisma/client';
 import { NotFoundException } from 'next-api-decorators';
 import { SortingType } from '@/api/types/common';
 import { orderBy } from './utils/common';
@@ -8,6 +9,7 @@ export class StudentResolver {
     const [count, users] = await Promise.all([
       prisma.user.count({
         where: {
+          role: UserRoleEnum.STUDENT,
           OR: [
             { firstName: { contains: search, mode: 'insensitive' } },
             { lastName: { contains: search, mode: 'insensitive' } },
@@ -17,13 +19,39 @@ export class StudentResolver {
       }),
       prisma.user.findMany({
         where: {
+          role: UserRoleEnum.STUDENT,
           OR: [
             { firstName: { contains: search, mode: 'insensitive' } },
             { lastName: { contains: search, mode: 'insensitive' } },
             { email: { contains: search, mode: 'insensitive' } },
           ],
         },
-        select: { id: true, email: true, firstName: true, lastName: true, createdAt: true },
+        select: {
+          id: true,
+          email: true,
+          firstName: true,
+          lastName: true,
+          createdAt: true,
+          student: {
+            select: {
+              faculty: {
+                select: {
+                  title: true,
+                },
+              },
+              studentGrade: {
+                select: {
+                  title: true,
+                },
+              },
+              studentGradeGroup: {
+                select: {
+                  title: true,
+                },
+              },
+            },
+          },
+        },
         orderBy: sorting ? orderBy(sorting) : undefined,
         skip,
         take,
@@ -35,7 +63,7 @@ export class StudentResolver {
       users,
     };
   }
-  static getStudentById(id: number) {
+  static getStudentById(id: string) {
     return prisma.student
       .findUnique({
         where: { id },

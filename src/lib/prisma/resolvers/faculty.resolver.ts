@@ -7,7 +7,7 @@ export class FacultyResolver {
     return prisma.faculty.create({ data });
   }
 
-  static getFacultyById(id: number) {
+  static getFacultyById(id: string) {
     return prisma.faculty
       .findUnique({
         where: { id },
