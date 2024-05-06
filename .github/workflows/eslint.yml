@@ -12,22 +12,12 @@ jobs:
   eslint:
     name: ESLint
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Use Node.js
-        uses: actions/setup-node@v2
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'pnpm'
-
-      - name: Setup pnpm
+      - name: Manually install pnpm
         run: npm install -g pnpm
-
-      - name: Install dependencies
-        run: pnpm install
-
-      - name: Run ESLint
-        run: pnpm run lint
+      - run: pnpm install
+      - run: pnpm run lint
