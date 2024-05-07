@@ -4,7 +4,7 @@ import { IconButton, Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/rea
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { createColumnHelper, SortingState } from '@tanstack/react-table';
 import dayjs from 'dayjs';
-import { BsThreeDots } from 'react-icons/bs';
+import DotsIcon from '/public/icons/dots-horizontal.svg';
 import { v4 as uuidv4 } from 'uuid';
 import { TeacherService } from '@/api/services/teacher.service';
 import { UserService } from '@/api/services/user.service';
@@ -91,7 +91,7 @@ export default function Users() {
       id: uuidv4(),
       cell: ({ row }) => (
         <Menu>
-          <MenuButton as={IconButton} icon={<BsThreeDots />} />
+          <MenuButton as={IconButton} icon={<DotsIcon />} />
           <MenuList>
             <MenuItem
               color="green"

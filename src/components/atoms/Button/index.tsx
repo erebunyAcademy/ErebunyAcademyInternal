@@ -9,18 +9,18 @@ interface SharedButtonProps extends ButtonProps {
 const Button: FC<SharedButtonProps> = ({ children, ...props }) => {
   return (
     <ChakraButton
-      bg="#319795"
+      bg="#38B2AC"
       color="#FFFFFF"
       _hover={{
-        bg: 'blue.400',
+        bg: '#319795',
         color: '#FFFFFF',
       }}
       _focus={{
-        bg: 'blue.500',
+        bg: '#2C7A7B',
         color: '#FFFFFF',
       }}
       _focusVisible={{
-        bg: 'blue.500',
+        bg: '#2C7A7B',
         color: '#FFFFFF',
       }}
       _disabled={{
