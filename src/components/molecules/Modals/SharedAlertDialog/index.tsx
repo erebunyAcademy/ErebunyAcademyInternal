@@ -33,9 +33,10 @@ const SharedAlertDialog: FC<SharedAlertDialogProps> = ({
       leastDestructiveRef={cancelRef}
       onClose={onClose}
       closeOnOverlayClick
-      closeOnEsc>
+      closeOnEsc
+      isCentered>
       <AlertDialogOverlay>
-        <AlertDialogContent>
+        <AlertDialogContent p="20px 10px">
           <AlertDialogHeader fontSize="lg" fontWeight="bold">
             {title}
           </AlertDialogHeader>

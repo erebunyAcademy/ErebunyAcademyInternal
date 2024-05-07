@@ -5,7 +5,7 @@ import { User } from '@prisma/client';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { createColumnHelper, SortingState } from '@tanstack/react-table';
 import dayjs from 'dayjs';
-import { BsThreeDots } from 'react-icons/bs';
+import DotsIcon from '/public/icons/dots-horizontal.svg';
 import { v4 as uuidv4 } from 'uuid';
 import { StudentService } from '@/api/services/student.service';
 import { UserService } from '@/api/services/user.service';
@@ -110,7 +110,7 @@ export default function Users() {
       id: uuidv4(),
       cell: ({ row }) => (
         <Menu>
-          <MenuButton as={IconButton} icon={<BsThreeDots />} />
+          <MenuButton as={IconButton} icon={<DotsIcon />} />
           <MenuList>
             <MenuItem
               color="green"
@@ -137,7 +137,7 @@ export default function Users() {
   return (
     <>
       <SearchTable
-        title="Users List"
+        title="Students List"
         isLoading={isLoading}
         data={data?.users || []}
         count={data?.count || 0}

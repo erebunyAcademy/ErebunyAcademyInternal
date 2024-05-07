@@ -11,7 +11,7 @@ const NoDataFound = () => {
         height="180px"
         justifyContent="center"
         position="relative">
-        <Image fill alt="Error" src="/icons/pba_credit_icon.svg" />
+        <Image fill alt="Error" src="/icons/credit-card.svg" />
       </Box>
       <Text fontSize="24px" m="0" fontWeight="700" as="span">
         No Data Found

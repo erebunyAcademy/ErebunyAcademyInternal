@@ -46,10 +46,10 @@ const AuthWrapper = ({ children }: { children: React.ReactNode }) => {
           <Flex justifyContent="center">
             <Link href={HOMEPAGE_ROUTE}>
               <Image
-                src="/icons/logo_persona.svg"
-                width={135}
-                height={27}
-                alt="persona_logo"
+                src="/icons/college_main_icon.svg"
+                width={80}
+                height={80}
+                alt="College icon"
                 priority
                 style={{ objectFit: 'contain', zIndex: 1000 }}
               />

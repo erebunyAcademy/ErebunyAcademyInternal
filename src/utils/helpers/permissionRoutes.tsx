@@ -1,7 +1,10 @@
 import { User, UserRoleEnum } from '@prisma/client';
 import LogoutIcon from '/public/icons/log-out.svg';
 import ProfileIcon from '/public/icons/profile.svg';
-import { ReactNode } from 'react';
+import StudentIcon from '/public/icons/student_icon.svg';
+import ExamsIcon from '/public/icons/exams_icon.svg';
+import TeacherIcon from '/public/icons/teacher_icon.svg';
+import FacultiesIcon from '/public/icons/faculty_icon.svg';
 import {
   PROFILE_ROUTE,
   ROUTE_EXAMS,
@@ -9,6 +12,7 @@ import {
   ROUTE_STUDENTS,
   ROUTE_TEACHERS,
 } from '../constants/routes';
+import { ReactNode } from 'react';
 
 export interface LinkItemProps {
   name: string;
@@ -29,10 +33,10 @@ export const linkItems: LinkItemsFunction = (user: User) => {
     case UserRoleEnum.ADMIN:
       return [
         ...commonLinks.slice(0, 1),
-        { id: 2, name: 'Faculty', icon: <ProfileIcon />, href: ROUTE_FACULTIES },
-        { id: 5, name: 'Students', icon: <ProfileIcon />, href: ROUTE_STUDENTS },
-        { id: 6, name: 'Exams', icon: <ProfileIcon />, href: ROUTE_EXAMS },
-        { id: 7, name: 'Teachers', icon: <ProfileIcon />, href: ROUTE_TEACHERS },
+        { id: 2, name: 'Faculty', icon: <FacultiesIcon />, href: ROUTE_FACULTIES },
+        { id: 5, name: 'Students', icon: <StudentIcon />, href: ROUTE_STUDENTS },
+        { id: 6, name: 'Exams', icon: <ExamsIcon />, href: ROUTE_EXAMS },
+        { id: 7, name: 'Teachers', icon: <TeacherIcon />, href: ROUTE_TEACHERS },
         commonLinks[1],
       ];
     case UserRoleEnum.TEACHER:

@@ -27,7 +27,8 @@ import {
   SortingState,
   useReactTable,
 } from '@tanstack/react-table';
-import { BsChevronLeft, BsChevronRight } from 'react-icons/bs';
+import ChevronLeft from '/public/icons/chevron_left.svg';
+import ChevronRight from '/public/icons/chevron_right.svg';
 import { ITEMS_PER_PAGE } from '@/utils/constants/common';
 
 export type DataTableProps<T> = {
@@ -88,8 +89,8 @@ function SearchTable<T>({
   );
 
   return (
-    <Box overflow="auto" minHeight="700px">
-      <Flex justifyContent="space-between" padding={5}>
+    <Box minHeight="700px">
+      <Flex justifyContent="space-between" p="20px 0 20px 0">
         <Text as="h2" fontSize={24} textAlign="center">
           {title}
         </Text>
@@ -108,88 +109,90 @@ function SearchTable<T>({
           <Spinner thickness="4px" speed="0.65s" emptyColor="gray.200" color="blue.500" size="xl" />
         </Flex>
       ) : (
-        <Table borderTop="1px solid rgb(226, 232, 240)" height="100%">
-          <Thead>
-            {getHeaderGroups().map(headerGroup => (
-              <Tr key={headerGroup.id}>
-                {headerGroup.headers.map(header => {
-                  const meta: any = header.column.columnDef.meta;
-                  return (
-                    <Th
-                      key={header.id}
-                      onClick={header.column.getToggleSortingHandler()}
-                      isNumeric={meta?.isNumeric}>
-                      {flexRender(header.column.columnDef.header, header.getContext())}
-
-                      <chakra.span pl="4">
-                        {header.column.getIsSorted() ? (
-                          header.column.getIsSorted() === 'desc' ? (
-                            <TriangleDownIcon aria-label="sorted descending" />
-                          ) : (
-                            <TriangleUpIcon aria-label="sorted ascending" />
-                          )
-                        ) : null}
-                      </chakra.span>
-                    </Th>
-                  );
-                })}
-              </Tr>
-            ))}
-          </Thead>
-          <Tbody>
-            {getRowModel().rows.map(row => {
-              return (
-                <Tr
-                  key={row.id}
-                  {...(rowCondition
-                    ? {
-                        backgroundColor: (row.original as any)[rowCondition]
-                          ? 'red.100'
-                          : 'green.100',
-                      }
-                    : {})}>
-                  {row.getVisibleCells().map(cell => {
-                    const meta: any = cell.column.columnDef.meta;
+        <Box overflow="auto" maxWidth={{ base: '340px', sm: '670px', lg: '700px', xl: '100%' }}>
+          <Table borderTop="1px solid rgb(226, 232, 240)" height="100%">
+            <Thead>
+              {getHeaderGroups().map(headerGroup => (
+                <Tr key={headerGroup.id}>
+                  {headerGroup.headers.map(header => {
+                    const meta: any = header.column.columnDef.meta;
                     return (
-                      <Td key={cell.id} isNumeric={meta?.isNumeric}>
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                      </Td>
+                      <Th
+                        key={header.id}
+                        onClick={header.column.getToggleSortingHandler()}
+                        isNumeric={meta?.isNumeric}>
+                        {flexRender(header.column.columnDef.header, header.getContext())}
+
+                        <chakra.span pl="4">
+                          {header.column.getIsSorted() ? (
+                            header.column.getIsSorted() === 'desc' ? (
+                              <TriangleDownIcon aria-label="sorted descending" />
+                            ) : (
+                              <TriangleUpIcon aria-label="sorted ascending" />
+                            )
+                          ) : null}
+                        </chakra.span>
+                      </Th>
                     );
                   })}
                 </Tr>
-              );
-            })}
-          </Tbody>
-          <Tfoot>
-            <Tr>
-              <Td align="left" colSpan={5}>
-                <Text>Count - {count}</Text>
-              </Td>
-              <Td>
-                <HStack>
-                  <IconButton
-                    className="border rounded p-1"
-                    aria-label="chevron-left"
-                    onClick={fetchPreviousPage}
-                    bg="transparent"
-                    icon={<BsChevronLeft />}
-                    isDisabled={!hasPreviousPage}>
-                    {'<'}
-                  </IconButton>
-                  <IconButton
-                    aria-label="chevron-right"
-                    className="border rounded p-1"
-                    bg="transparent"
-                    onClick={fetchNextPage}
-                    icon={<BsChevronRight />}
-                    isDisabled={!hasNextPage}>
-                    {'>'}
-                  </IconButton>
-                </HStack>
-              </Td>
-            </Tr>
-          </Tfoot>
-        </Table>
+              ))}
+            </Thead>
+            <Tbody>
+              {getRowModel().rows.map(row => {
+                return (
+                  <Tr
+                    key={row.id}
+                    {...(rowCondition
+                      ? {
+                          backgroundColor: (row.original as any)[rowCondition]
+                            ? 'red.100'
+                            : 'green.100',
+                        }
+                      : {})}>
+                    {row.getVisibleCells().map(cell => {
+                      const meta: any = cell.column.columnDef.meta;
+                      return (
+                        <Td key={cell.id} isNumeric={meta?.isNumeric}>
+                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        </Td>
+                      );
+                    })}
+                  </Tr>
+                );
+              })}
+            </Tbody>
+            <Tfoot>
+              <Tr>
+                <Td align="left" colSpan={5}>
+                  <Text>Count - {count}</Text>
+                </Td>
+                <Td>
+                  <HStack>
+                    <IconButton
+                      className="border rounded p-1"
+                      aria-label="chevron-left"
+                      onClick={fetchPreviousPage}
+                      bg="transparent"
+                      icon={<ChevronLeft />}
+                      isDisabled={!hasPreviousPage}>
+                      {'<'}
+                    </IconButton>
+                    <IconButton
+                      aria-label="chevron-right"
+                      className="border rounded p-1"
+                      bg="transparent"
+                      onClick={fetchNextPage}
+                      icon={<ChevronRight />}
+                      isDisabled={!hasNextPage}>
+                      {'>'}
+                    </IconButton>
+                  </HStack>
+                </Td>
+              </Tr>
+            </Tfoot>
+          </Table>
+        </Box>
       )}
     </Box>
   );
