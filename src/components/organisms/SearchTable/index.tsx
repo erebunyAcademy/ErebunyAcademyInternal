@@ -9,7 +9,6 @@ import {
   HStack,
   IconButton,
   Input,
-  Spinner,
   Table,
   Tbody,
   Td,
@@ -59,7 +58,6 @@ function SearchTable<T>({
   setSorting,
   setSearch,
   search,
-  isLoading,
   hasNextPage,
   hasPreviousPage,
   fetchNextPage,
@@ -104,96 +102,90 @@ function SearchTable<T>({
           value={search}
         />
       </FormControl>
-      {isLoading ? (
-        <Flex alignItems="center" justifyContent="center" minHeight="500px">
-          <Spinner thickness="4px" speed="0.65s" emptyColor="gray.200" color="blue.500" size="xl" />
-        </Flex>
-      ) : (
-        <Box overflow="auto" maxWidth={{ base: '340px', sm: '670px', lg: '700px', xl: '100%' }}>
-          <Table borderTop="1px solid rgb(226, 232, 240)" height="100%">
-            <Thead>
-              {getHeaderGroups().map(headerGroup => (
-                <Tr key={headerGroup.id}>
-                  {headerGroup.headers.map(header => {
-                    const meta: any = header.column.columnDef.meta;
-                    return (
-                      <Th
-                        key={header.id}
-                        onClick={header.column.getToggleSortingHandler()}
-                        isNumeric={meta?.isNumeric}>
-                        {flexRender(header.column.columnDef.header, header.getContext())}
+      <Box overflow="auto" maxWidth={{ base: '340px', sm: '670px', lg: '700px', xl: '100%' }}>
+        <Table borderTop="1px solid rgb(226, 232, 240)" height="100%">
+          <Thead>
+            {getHeaderGroups().map(headerGroup => (
+              <Tr key={headerGroup.id}>
+                {headerGroup.headers.map(header => {
+                  const meta: any = header.column.columnDef.meta;
+                  return (
+                    <Th
+                      key={header.id}
+                      onClick={header.column.getToggleSortingHandler()}
+                      isNumeric={meta?.isNumeric}>
+                      {flexRender(header.column.columnDef.header, header.getContext())}
 
-                        <chakra.span pl="4">
-                          {header.column.getIsSorted() ? (
-                            header.column.getIsSorted() === 'desc' ? (
-                              <TriangleDownIcon aria-label="sorted descending" />
-                            ) : (
-                              <TriangleUpIcon aria-label="sorted ascending" />
-                            )
-                          ) : null}
-                        </chakra.span>
-                      </Th>
+                      <chakra.span pl="4">
+                        {header.column.getIsSorted() ? (
+                          header.column.getIsSorted() === 'desc' ? (
+                            <TriangleDownIcon aria-label="sorted descending" />
+                          ) : (
+                            <TriangleUpIcon aria-label="sorted ascending" />
+                          )
+                        ) : null}
+                      </chakra.span>
+                    </Th>
+                  );
+                })}
+              </Tr>
+            ))}
+          </Thead>
+          <Tbody>
+            {getRowModel().rows.map(row => {
+              return (
+                <Tr
+                  key={row.id}
+                  {...(rowCondition
+                    ? {
+                        backgroundColor: (row.original as any)[rowCondition]
+                          ? 'red.100'
+                          : 'green.100',
+                      }
+                    : {})}>
+                  {row.getVisibleCells().map(cell => {
+                    const meta: any = cell.column.columnDef.meta;
+                    return (
+                      <Td key={cell.id} isNumeric={meta?.isNumeric}>
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      </Td>
                     );
                   })}
                 </Tr>
-              ))}
-            </Thead>
-            <Tbody>
-              {getRowModel().rows.map(row => {
-                return (
-                  <Tr
-                    key={row.id}
-                    {...(rowCondition
-                      ? {
-                          backgroundColor: (row.original as any)[rowCondition]
-                            ? 'red.100'
-                            : 'green.100',
-                        }
-                      : {})}>
-                    {row.getVisibleCells().map(cell => {
-                      const meta: any = cell.column.columnDef.meta;
-                      return (
-                        <Td key={cell.id} isNumeric={meta?.isNumeric}>
-                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                        </Td>
-                      );
-                    })}
-                  </Tr>
-                );
-              })}
-            </Tbody>
-            <Tfoot>
-              <Tr>
-                <Td align="left" colSpan={5}>
-                  <Text>Count - {count}</Text>
-                </Td>
-                <Td>
-                  <HStack>
-                    <IconButton
-                      className="border rounded p-1"
-                      aria-label="chevron-left"
-                      onClick={fetchPreviousPage}
-                      bg="transparent"
-                      icon={<ChevronLeft />}
-                      isDisabled={!hasPreviousPage}>
-                      {'<'}
-                    </IconButton>
-                    <IconButton
-                      aria-label="chevron-right"
-                      className="border rounded p-1"
-                      bg="transparent"
-                      onClick={fetchNextPage}
-                      icon={<ChevronRight />}
-                      isDisabled={!hasNextPage}>
-                      {'>'}
-                    </IconButton>
-                  </HStack>
-                </Td>
-              </Tr>
-            </Tfoot>
-          </Table>
-        </Box>
-      )}
+              );
+            })}
+          </Tbody>
+          <Tfoot>
+            <Tr>
+              <Td align="left" colSpan={5}>
+                <Text>Count - {count}</Text>
+              </Td>
+              <Td>
+                <HStack>
+                  <IconButton
+                    className="border rounded p-1"
+                    aria-label="chevron-left"
+                    onClick={fetchPreviousPage}
+                    bg="transparent"
+                    icon={<ChevronLeft />}
+                    isDisabled={!hasPreviousPage}>
+                    {'<'}
+                  </IconButton>
+                  <IconButton
+                    aria-label="chevron-right"
+                    className="border rounded p-1"
+                    bg="transparent"
+                    onClick={fetchNextPage}
+                    icon={<ChevronRight />}
+                    isDisabled={!hasNextPage}>
+                    {'>'}
+                  </IconButton>
+                </HStack>
+              </Td>
+            </Tr>
+          </Tfoot>
+        </Table>
+      </Box>
     </Box>
   );
 }
