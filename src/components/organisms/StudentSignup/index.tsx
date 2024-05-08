@@ -28,7 +28,7 @@ const resolver = classValidatorResolver(StudentSignUpValidation);
 const fetchFormData = async () => {
   try {
     const [studentGradeList, studentGradeGroupList, facultyList] = await Promise.all([
-      StudentGradeService.getStudentGradeList(),
+      StudentGradeService.list(),
       StudentGradeGroupService.getStudentGradeGroupList(),
       FacultyService.list(),
     ]);
@@ -102,6 +102,7 @@ const StudentSignUp = () => {
     queryKey: ['faculty', 'student-grade', 'student-grade-group'],
     queryFn: fetchFormData,
   });
+  console.log(data);
 
   const onFileSelect = (e: ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;

@@ -8,16 +8,28 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   ValidationPipe,
 } from 'next-api-decorators';
+import { SortingType } from '@/api/types/common';
 import { exceptionHandler } from '@/lib/prisma/error';
 import { StudentGradeResolver } from '@/lib/prisma/resolvers/student-grade.resolver';
 
 @Catch(exceptionHandler)
 class StudentGradeHandler {
-  @Get('/list')
-  getStudentGradeList() {
+  @Get('')
+  getStudentGrades() {
     return StudentGradeResolver.getStudentGradeList();
+  }
+
+  @Get('/list')
+  getStudentGradeList(
+    @Query('offset') skip: string,
+    @Query('limit') take: string,
+    @Query('search') search: string,
+    @Query('sorting') sorting: SortingType[],
+  ) {
+    return StudentGradeResolver.list(+skip, +take, search, sorting);
   }
 
   @Get('/:id')
