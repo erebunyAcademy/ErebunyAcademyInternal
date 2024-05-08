@@ -108,6 +108,7 @@ model Faculty {
   description   String?        @db.VarChar(60)
   students      Student[]
   studentGrades StudentGrade[]
+  exams         Exam[]
 
   createdAt DateTime @default(now()) @db.Timestamp(0)
   updatedAt DateTime @updatedAt @db.Timestamp(0)
@@ -213,6 +214,8 @@ model Exam {
   description   String?        @db.VarChar(60)
   testQuestions TestQuestion[]
   studentExams  StudentExam[]
+  faculty       Faculty?       @relation(fields: [facultyId], references: [id])
+  facultyId     String?
 
   updatedAt DateTime @updatedAt @db.Timestamp(0)
   createdAt DateTime @default(now()) @db.Timestamp(0)

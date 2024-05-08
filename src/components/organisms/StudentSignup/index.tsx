@@ -28,8 +28,8 @@ const resolver = classValidatorResolver(StudentSignUpValidation);
 const fetchFormData = async () => {
   try {
     const [studentGradeList, studentGradeGroupList, facultyList] = await Promise.all([
-      StudentGradeService.getStudentGradeList(),
-      StudentGradeGroupService.getStudentGradeGroupList(),
+      StudentGradeService.list(),
+      StudentGradeGroupService.list(),
       FacultyService.list(),
     ]);
     return { studentGradeList, studentGradeGroupList, facultyList };
@@ -119,8 +119,6 @@ const StudentSignUp = () => {
       });
     }
   }, [data?.facultyList, data?.studentGradeGroupList, data?.studentGradeList, isSuccess, reset]);
-
-  console.log(errors);
 
   return (
     <>

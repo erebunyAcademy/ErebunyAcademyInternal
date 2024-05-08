@@ -1,8 +1,31 @@
 import { StudentGradeGroup, Subject } from '@prisma/client';
 import { NotFoundException } from 'next-api-decorators';
+import { SortingType } from '@/api/types/common';
+import { orderBy } from './utils/common';
 import prisma from '..';
 
 export class StudentGradeGroupResolver {
+  static async list(skip: number, take: number, search: string, sorting: SortingType[]) {
+    return Promise.all([
+      prisma.studentGradeGroup.count({
+        where: {
+          OR: [{ title: { contains: search, mode: 'insensitive' } }],
+        },
+      }),
+      prisma.studentGradeGroup.findMany({
+        where: {
+          OR: [{ title: { contains: search, mode: 'insensitive' } }],
+        },
+        select: { id: true, title: true, description: true, createdAt: true },
+        orderBy: sorting ? orderBy(sorting) : undefined,
+        skip,
+        take,
+      }),
+    ]).then(([count, studentGradeGroups]) => ({
+      count,
+      studentGradeGroups,
+    }));
+  }
   static createStudentGradeGroup(data: Pick<StudentGradeGroup, 'title' | 'description'>) {
     return prisma.studentGradeGroup.create({ data });
   }
@@ -20,7 +43,7 @@ export class StudentGradeGroupResolver {
       });
   }
 
-  static getStudentGradeGroupist() {
+  static getStudentGradeGroupList() {
     return prisma.studentGradeGroup.findMany({
       select: {
         id: true,

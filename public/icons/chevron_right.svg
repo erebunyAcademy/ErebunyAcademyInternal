@@ -1,10 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-
-<!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
-<svg fill="#000000" xmlns="http://www.w3.org/2000/svg" 
-	 width="25px" height="25px" viewBox="0 0 52 52" enable-background="new 0 0 52 52" xml:space="preserve">
-<g>
-	<path d="M17.9,4.4l20.7,20.5c0.6,0.6,0.6,1.6,0,2.2L17.9,47.6c-0.6,0.6-1.6,0.6-2.2,0l-2.2-2.2
-		c-0.6-0.6-0.6-1.6,0-2.2l16.3-16.1c0.6-0.6,0.6-1.6,0-2.2L13.6,8.8c-0.6-0.6-0.6-1.6,0-2.2l2.2-2.2C16.4,3.9,17.3,3.9,17.9,4.4z"/>
-</g>
+<svg width="40" height="41" viewBox="0 0 40 41" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect y="0.5" width="40" height="40" rx="20" fill="white"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M16.2929 13.7929C16.6834 13.4024 17.3166 13.4024 17.7071 13.7929L23.7071 19.7929C24.0976 20.1834 24.0976 20.8166 23.7071 21.2071L17.7071 27.2071C17.3166 27.5976 16.6834 27.5976 16.2929 27.2071C15.9024 26.8166 15.9024 26.1834 16.2929 25.7929L21.5858 20.5L16.2929 15.2071C15.9024 14.8166 15.9024 14.1834 16.2929 13.7929Z" fill="#222222"/>
 </svg>
