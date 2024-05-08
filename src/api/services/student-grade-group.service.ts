@@ -12,6 +12,6 @@ export class StudentGradeGroupService {
     });
   }
   static list() {
-    return $apiClient.get<StudentGradeGroupSignupListModel>('/student-grade-group');
+    return $apiClient.get<StudentGradeGroupSignupListModel>('/student-grade-groups/');
   }
 }

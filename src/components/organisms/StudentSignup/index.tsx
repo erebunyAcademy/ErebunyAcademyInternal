@@ -29,7 +29,7 @@ const fetchFormData = async () => {
   try {
     const [studentGradeList, studentGradeGroupList, facultyList] = await Promise.all([
       StudentGradeService.list(),
-      StudentGradeGroupService.getStudentGradeGroupList(),
+      StudentGradeGroupService.list(),
       FacultyService.list(),
     ]);
     return { studentGradeList, studentGradeGroupList, facultyList };
@@ -102,7 +102,6 @@ const StudentSignUp = () => {
     queryKey: ['faculty', 'student-grade', 'student-grade-group'],
     queryFn: fetchFormData,
   });
-  console.log(data);
 
   const onFileSelect = (e: ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -120,8 +119,6 @@ const StudentSignUp = () => {
       });
     }
   }, [data?.facultyList, data?.studentGradeGroupList, data?.studentGradeList, isSuccess, reset]);
-
-  console.log(errors);
 
   return (
     <>
