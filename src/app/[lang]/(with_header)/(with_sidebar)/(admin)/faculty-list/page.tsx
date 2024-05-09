@@ -260,7 +260,7 @@ const Faculty = () => {
           }
         }}
         actionText="Delete">
-        Are you sure you want to delete this faculty
+        Are you sure you want to delete this faculty?
       </Modal>
     </>
   );
