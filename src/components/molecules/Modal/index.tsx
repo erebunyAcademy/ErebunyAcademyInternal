@@ -9,7 +9,6 @@ import {
   ModalHeader,
   ModalOverlay,
 } from '@chakra-ui/react';
-import CustomButton from '@/components/atoms/Button';
 
 type ModalProps = {
   isOpen: boolean;
@@ -46,7 +45,7 @@ const Modal: FC<PropsWithChildren<ModalProps>> = ({
         <ModalBody display="flex" gap="20px" flexDirection="column">
           {children}
         </ModalBody>
-        <ModalFooter display="flex" justifyContent="flex-start">
+        <ModalFooter display="flex" justifyContent="flex-end">
           <Button
             bg="#ccc"
             color="#222"
@@ -66,12 +65,12 @@ const Modal: FC<PropsWithChildren<ModalProps>> = ({
             onClick={onClose}>
             Close
           </Button>
-          <CustomButton
+          <Button
             onClick={primaryAction}
-            bg={actionText === 'Delete' ? '#E53E3E' : 'green'}
-            bgHover={actionText === 'Delete' ? '#C53030' : '#179848'}>
+            colorScheme={actionText === 'Delete' ? 'red' : 'teal'}
+            size="lg">
             {actionText}
-          </CustomButton>
+          </Button>
         </ModalFooter>
       </ModalContent>
     </ChakraModal>

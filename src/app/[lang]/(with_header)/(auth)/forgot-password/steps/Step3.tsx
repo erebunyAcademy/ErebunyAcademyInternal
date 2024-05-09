@@ -1,12 +1,12 @@
 'use client';
 import { memo, useCallback } from 'react';
-import { VStack } from '@chakra-ui/react';
+import { Button, VStack } from '@chakra-ui/react';
 import { classValidatorResolver } from '@hookform/resolvers/class-validator';
 import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { AuthService } from '@/api/services/auth.service';
-import { Button, FormInput } from '@/components/atoms';
+import { FormInput } from '@/components/atoms';
 import { useAuth } from '@/contexts/AuthContext';
 import { SIGN_IN_ROUTE } from '@/utils/constants/routes';
 import { ForgotPasswordStep3Validation } from '@/utils/validation';

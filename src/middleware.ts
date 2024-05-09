@@ -1,21 +1,14 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 import createMiddleware from 'next-intl/middleware';
 import { i18n } from './i18n';
-import { SIGN_IN_ROUTE } from './utils/constants/routes';
+
+const i18nMiddleware = createMiddleware({ ...i18n, localeDetection: false });
 
 export async function middleware(req: NextRequest) {
-  const url = process.env.BASE_URL + SIGN_IN_ROUTE;
   try {
-    // const token = await getToken({ req, secret: process.env.JWT_SECRET });
-
-    // if (!token) {
-    //   return NextResponse.redirect(url);
-    // }
-    const handleI18nRouting = createMiddleware({ ...i18n, localeDetection: false });
-
-    return handleI18nRouting(req);
-  } catch {
-    return NextResponse.redirect(url);
+    return i18nMiddleware(req);
+  } catch (error) {
+    console.error('Error in authentication: ', error);
   }
 }
 

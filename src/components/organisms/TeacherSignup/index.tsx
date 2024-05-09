@@ -1,5 +1,5 @@
 import React from 'react';
-import { Stack, useToast, VStack } from '@chakra-ui/react';
+import { Button, Stack, useToast, VStack } from '@chakra-ui/react';
 import { classValidatorResolver } from '@hookform/resolvers/class-validator';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
@@ -8,7 +8,7 @@ import { AuthService } from '@/api/services/auth.service';
 import { SubjectService } from '@/api/services/subject.service';
 import { SIGN_IN_ROUTE } from '@/utils/constants/routes';
 import { TeacherSignUpValidation } from '@/utils/validation';
-import { Button, FormInput, SelectLabel } from '../../atoms';
+import { FormInput, SelectLabel } from '../../atoms';
 
 const resolver = classValidatorResolver(TeacherSignUpValidation);
 

@@ -87,29 +87,13 @@ function SearchTable<T>({
   );
 
   return (
-    <Box minHeight="700px">
-      <Flex justifyContent="space-between" p="20px 0 20px 0">
+    <Box minHeight="700px" width="100%">
+      <Flex justifyContent="space-between" p="20px 0 20px 0" width="100%">
         <Text as="h2" fontSize={24} textAlign="center">
           {title}
         </Text>
         {addNew && (
-          <Button
-            bg="#f5f6f7"
-            color="#222"
-            _hover={{
-              bg: '#ebedf0',
-              color: '#222',
-              boxShadow: '0 0 1px 2px rgba(88, 144, 255, .75), 0 1px 1px rgba(0, 0, 0, .15)',
-            }}
-            _active={{
-              bg: '#f5f6f7',
-              color: '#222',
-            }}
-            _focus={{
-              bg: '#f5f6f7',
-              color: '#222',
-            }}
-            onClick={addNew}>
+          <Button px="12px" py="8px" onClick={addNew}>
             Add New
           </Button>
         )}

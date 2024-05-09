@@ -1,6 +1,6 @@
 'use client';
 import React, { useCallback, useMemo, useState } from 'react';
-import { IconButton, Menu, MenuButton, MenuItem, MenuList, useDisclosure } from '@chakra-ui/react';
+import { MenuItem, useDisclosure } from '@chakra-ui/react';
 import { classValidatorResolver } from '@hookform/resolvers/class-validator';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { createColumnHelper, SortingState } from '@tanstack/react-table';
@@ -9,10 +9,10 @@ import { Controller, useForm } from 'react-hook-form';
 import { v4 as uuidv4 } from 'uuid';
 import { FacultyService } from '@/api/services/faculty.service';
 import { FormInput } from '@/components/atoms';
+import ActionButtons from '@/components/molecules/ActionButtons';
 import Modal from '@/components/molecules/Modal';
 import SearchTable from '@/components/organisms/SearchTable';
 import useDebounce from '@/hooks/useDebounce';
-import DotsIcon from '@/icons/dots-horizontal.svg';
 import { ITEMS_PER_PAGE } from '@/utils/constants/common';
 import { QUERY_KEY } from '@/utils/helpers/queryClient';
 import { Maybe } from '@/utils/models/common';
@@ -139,29 +139,26 @@ const Faculty = () => {
     columnHelper.accessor('id', {
       id: uuidv4(),
       cell: ({ row }) => (
-        <Menu>
-          <MenuButton as={IconButton} icon={<DotsIcon />} />
-          <MenuList>
-            <MenuItem
-              color="green"
-              onClick={() => {
-                setSelectedFaculty(row.original);
-                setValue('title', row.original.title || '');
-                setValue('description', row.original.description || '');
-                openCreateEditModal();
-              }}>
-              Edit
-            </MenuItem>
-            <MenuItem
-              color="red"
-              onClick={() => {
-                setSelectedFaculty(row.original);
-                openDeleteModal();
-              }}>
-              Delete
-            </MenuItem>
-          </MenuList>
-        </Menu>
+        <ActionButtons>
+          <MenuItem
+            color="green"
+            onClick={() => {
+              setSelectedFaculty(row.original);
+              setValue('title', row.original.title || '');
+              setValue('description', row.original.description || '');
+              openCreateEditModal();
+            }}>
+            Edit
+          </MenuItem>
+          <MenuItem
+            color="red"
+            onClick={() => {
+              setSelectedFaculty(row.original);
+              openDeleteModal();
+            }}>
+            Delete
+          </MenuItem>
+        </ActionButtons>
       ),
       header: 'Actions',
     }),

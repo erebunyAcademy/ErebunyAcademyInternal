@@ -1,6 +1,15 @@
 'use client';
 import React, { ChangeEvent, FC, useCallback, useState } from 'react';
-import { Avatar, Box, Button as ChakraButton, Flex, Input, Text, useToast } from '@chakra-ui/react';
+import {
+  Avatar,
+  Box,
+  Button,
+  Button as ChakraButton,
+  Flex,
+  Input,
+  Text,
+  useToast,
+} from '@chakra-ui/react';
 import { classValidatorResolver } from '@hookform/resolvers/class-validator';
 import { User } from '@prisma/client';
 import { useMutation } from '@tanstack/react-query';
@@ -9,7 +18,7 @@ import { Country } from 'country-state-city';
 import { useRouter } from 'next/navigation';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { UserService } from '@/api/services/user.service';
-import { Button, FormInput, Loading } from '@/components/atoms';
+import { FormInput, Loading } from '@/components/atoms';
 import SelectLabel from '@/components/atoms/SelectLabel';
 import { generateAWSUrl } from '@/utils/helpers/aws';
 import { ChangePasswordValidation, UserProfileFormValidation } from '@/utils/validation/user';

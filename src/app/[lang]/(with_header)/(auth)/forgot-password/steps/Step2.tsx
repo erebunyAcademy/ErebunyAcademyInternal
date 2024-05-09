@@ -1,10 +1,9 @@
 import { memo, useCallback } from 'react';
-import { Text, VStack } from '@chakra-ui/react';
+import { Button, Text, VStack } from '@chakra-ui/react';
 import { classValidatorResolver } from '@hookform/resolvers/class-validator';
 import { useMutation } from '@tanstack/react-query';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { AuthService } from '@/api/services/auth.service';
-import { Button } from '@/components/atoms';
 import OTPPassword from '@/components/atoms/OTPPassword';
 import { useAuth } from '@/contexts/AuthContext';
 import { ForgotPasswordStep2Validation } from '@/utils/validation';

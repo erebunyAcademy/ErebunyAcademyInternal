@@ -1,6 +1,7 @@
 import React, { ChangeEvent, memo, useEffect, useState } from 'react';
 import {
   Box,
+  Button,
   Button as ChakraButton,
   HStack,
   Input,
@@ -22,7 +23,7 @@ import { StudentGradeService } from '@/api/services/student-grade.service';
 import { UserService } from '@/api/services/user.service';
 import { SIGN_IN_ROUTE } from '@/utils/constants/routes';
 import { StudentSignUpValidation } from '@/utils/validation';
-import { Button, FormInput, SelectLabel } from '../../atoms';
+import { FormInput, SelectLabel } from '../../atoms';
 
 const resolver = classValidatorResolver(StudentSignUpValidation);
 

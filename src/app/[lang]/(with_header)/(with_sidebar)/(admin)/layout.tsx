@@ -11,5 +11,9 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return <Box p={{ base: '16px', md: '25px' }}>{children}</Box>;
+  return (
+    <Box p={{ base: '16px', md: '25px' }} width="100%">
+      {children}
+    </Box>
+  );
 }

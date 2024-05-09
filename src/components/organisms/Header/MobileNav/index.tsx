@@ -1,9 +1,8 @@
 import { FC, memo } from 'react';
-import { Accordion, Box, Flex, Stack } from '@chakra-ui/react';
+import { Accordion, Box, Button, Flex, Stack } from '@chakra-ui/react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { User } from 'next-auth';
-import { Button } from '@/components/atoms';
 import { SIGN_IN_ROUTE, SIGN_UP_ROUTE } from '@/utils/constants/routes';
 import MobileNavItem from '../MobileNavItem';
 

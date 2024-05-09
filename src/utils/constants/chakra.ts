@@ -1,37 +1,9 @@
 import { ComponentStyleConfig, UseToastOptions } from '@chakra-ui/react';
 
 const Button: ComponentStyleConfig = {
-  baseStyle: {
-    width: '118px',
-    height: '37px',
-    fontSize: '16px',
-    borderRadius: '6px',
-    fontStyle: 'normal',
-    fontWeight: 400,
-    lineHeight: 'normal',
-    bg: 'orange.900',
-    _hover: {
-      bg: 'blue.400',
-      color: 'white',
-    },
-    _focus: {
-      bg: 'blue.900',
-      color: 'white', // You need to specify the text color for focus state
-    },
-  },
-  sizes: {
-    sm: {
-      width: '118px',
-      height: '37px',
-    },
-    md: {
-      width: '122px',
-      height: '45px',
-    },
-    lg: {
-      width: '154px',
-      height: '53px',
-    },
+  defaultProps: {
+    colorScheme: 'teal',
+    size: 'lg',
   },
 };
 
