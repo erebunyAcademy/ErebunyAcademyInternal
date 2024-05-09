@@ -26,22 +26,6 @@ export class StudentGradeGroupResolver {
       studentGradeGroups,
     }));
   }
-  static createStudentGradeGroup(data: Pick<StudentGradeGroup, 'title' | 'description'>) {
-    return prisma.studentGradeGroup.create({ data });
-  }
-
-  static getStudentGradeGroupById(id: string) {
-    return prisma.studentGradeGroup
-      .findUnique({
-        where: { id },
-      })
-      .then(res => {
-        if (!res) {
-          throw new NotFoundException('Subject was not found');
-        }
-        return res;
-      });
-  }
 
   static getStudentGradeGroupList() {
     return prisma.studentGradeGroup.findMany({
@@ -52,22 +36,39 @@ export class StudentGradeGroupResolver {
     });
   }
 
-  static async updateStudentGradeGroupById(id: string, data: Partial<Subject>) {
-    const subject = await this.getStudentGradeGroupById(id);
+  static createStudentGradeGroup(data: Pick<StudentGradeGroup, 'title' | 'description'>) {
+    return prisma.studentGradeGroup.create({ data });
+  }
+
+  static async getStudentGradeGroupById(id: string) {
+    return prisma.studentGradeGroup
+      .findUnique({
+        where: { id },
+      })
+      .then(res => {
+        if (!res) {
+          throw new NotFoundException('Student grade group was not found');
+        }
+        return res;
+      });
+  }
+
+  static async updateStudentGradeGroupById(studentGradeGroupId: string, data: Partial<Subject>) {
+    const { id } = await this.getStudentGradeGroupById(studentGradeGroupId);
 
     return prisma.studentGradeGroup.update({
       where: {
-        id: subject.id,
+        id,
       },
       data,
     });
   }
 
-  static async deleteStudentGradeGroupById(id: string) {
-    const subject = await this.getStudentGradeGroupById(id);
+  static async deleteStudentGradeGroupById(studentGradeGroupId: string) {
+    const { id } = await this.getStudentGradeGroupById(studentGradeGroupId);
     return prisma.studentGradeGroup.delete({
       where: {
-        id: subject.id,
+        id,
       },
     });
   }

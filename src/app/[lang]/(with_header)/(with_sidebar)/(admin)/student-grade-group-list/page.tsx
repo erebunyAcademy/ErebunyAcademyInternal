@@ -1,13 +1,15 @@
 'use client';
 import React, { useCallback, useMemo, useState } from 'react';
 import { IconButton, Menu, MenuButton, MenuItem, MenuList, useDisclosure } from '@chakra-ui/react';
+import { classValidatorResolver } from '@hookform/resolvers/class-validator';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { createColumnHelper, SortingState } from '@tanstack/react-table';
 import dayjs from 'dayjs';
+import { Controller, useForm } from 'react-hook-form';
 import { v4 as uuidv4 } from 'uuid';
 import { StudentGradeGroupService } from '@/api/services/student-grade-group.service';
-import { UserService } from '@/api/services/user.service';
-import SharedAlertDialog from '@/components/molecules/Modals/SharedAlertDialog';
+import { FormInput } from '@/components/atoms';
+import Modal from '@/components/molecules/Modal';
 import SearchTable from '@/components/organisms/SearchTable';
 import useDebounce from '@/hooks/useDebounce';
 import DotsIcon from '@/icons/dots-horizontal.svg';
@@ -15,21 +17,54 @@ import { ITEMS_PER_PAGE } from '@/utils/constants/common';
 import { QUERY_KEY } from '@/utils/helpers/queryClient';
 import { Maybe } from '@/utils/models/common';
 import { StudentGradeGroupModel } from '@/utils/models/studentGradeGroup';
+import { CreateEditStudentGradeGroupValidation } from '@/utils/validation/studentGradeGroup';
 
-export default function Users() {
+const resolver = classValidatorResolver(CreateEditStudentGradeGroupValidation);
+
+const StudentGradeGroup = () => {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const debouncedSearch = useDebounce(search);
-  const [selectedStudent, setSelectedStudent] = useState<Maybe<StudentGradeGroupModel>>(null);
+  const [selectedStudentGradeGroup, setSelectedStudentGradeGroup] =
+    useState<Maybe<StudentGradeGroupModel>>(null);
 
-  const { isOpen, onOpen, onClose } = useDisclosure({
-    onClose() {
-      setSelectedStudent(null);
+  const {
+    control,
+    handleSubmit,
+    reset,
+    setValue,
+    formState: { errors },
+  } = useForm<CreateEditStudentGradeGroupValidation>({
+    resolver,
+    defaultValues: {
+      title: '',
+      description: '',
     },
   });
 
-  const { data, isLoading, isPlaceholderData } = useQuery({
+  const {
+    isOpen: isCreateEditModalOpen,
+    onOpen: openCreateEditModal,
+    onClose: closeCreateEditModal,
+  } = useDisclosure({
+    onClose() {
+      reset();
+      setSelectedStudentGradeGroup(null);
+    },
+  });
+
+  const {
+    isOpen: isDeleteModalOpen,
+    onOpen: openDeleteModal,
+    onClose: closeDeleteModal,
+  } = useDisclosure({
+    onClose() {
+      setSelectedStudentGradeGroup(null);
+    },
+  });
+
+  const { data, isLoading, isPlaceholderData, refetch } = useQuery({
     queryKey: QUERY_KEY.allUsers(debouncedSearch, page),
     queryFn: () =>
       StudentGradeGroupService.studentGradeGroupList({
@@ -40,12 +75,30 @@ export default function Users() {
       }),
   });
 
-  const { mutate: deleteUserById } = useMutation({
-    mutationFn: UserService.deleteStudentById,
+  const { mutate: createStudentGradeGroup } = useMutation({
+    mutationFn: StudentGradeGroupService.createStudentGradeGroup,
+    onSuccess() {
+      refetch();
+      reset();
+      closeCreateEditModal();
+    },
   });
 
-  const { mutate: confirmUserById } = useMutation({
-    mutationFn: UserService.confirmUserVerificationById,
+  const { mutate: updateStudentGradeGroup } = useMutation({
+    mutationFn: StudentGradeGroupService.updateStudentGradeGroup,
+    onSuccess() {
+      refetch();
+      reset();
+      closeCreateEditModal();
+    },
+  });
+
+  const { mutate } = useMutation({
+    mutationFn: StudentGradeGroupService.deleteStudentGradeGroup,
+    onSuccess() {
+      closeDeleteModal();
+      refetch();
+    },
   });
 
   const pageCount = useMemo(() => {
@@ -95,15 +148,18 @@ export default function Users() {
             <MenuItem
               color="green"
               onClick={() => {
-                confirmUserById(row.original.id);
+                setSelectedStudentGradeGroup(row.original);
+                setValue('title', row.original.title || '');
+                setValue('description', row.original.description || '');
+                openCreateEditModal();
               }}>
-              Confirm
+              Edit
             </MenuItem>
             <MenuItem
               color="red"
               onClick={() => {
-                onOpen();
-                setSelectedStudent(row.original as StudentGradeGroupModel);
+                setSelectedStudentGradeGroup(row.original);
+                openDeleteModal();
               }}>
               Delete
             </MenuItem>
@@ -113,6 +169,21 @@ export default function Users() {
       header: 'Actions',
     }),
   ];
+
+  const addNewStudentGradeGroupHandler = useCallback(() => {
+    openCreateEditModal();
+  }, [openCreateEditModal]);
+
+  const onSubmitHandler = useCallback(
+    (data: CreateEditStudentGradeGroupValidation) => {
+      if (selectedStudentGradeGroup) {
+        updateStudentGradeGroup({ data, id: selectedStudentGradeGroup.id });
+      } else {
+        createStudentGradeGroup(data);
+      }
+    },
+    [createStudentGradeGroup, selectedStudentGradeGroup, updateStudentGradeGroup],
+  );
 
   return (
     <>
@@ -137,21 +208,64 @@ export default function Users() {
         )}
         fetchNextPage={useCallback(() => setPage(prev => ++prev), [])}
         fetchPreviousPage={useCallback(() => setPage(prev => --prev), [])}
+        addNew={addNewStudentGradeGroupHandler}
       />
-      {isOpen && (
-        <SharedAlertDialog
-          body={`Are you sure you want to delete ${selectedStudent?.title} grade group?`}
-          isOpen={isOpen}
-          title="Delete grade group"
-          isLoading={isLoading}
-          deleteFn={() => {
-            if (selectedStudent?.id) {
-              deleteUserById(selectedStudent.id);
-            }
-          }}
-          onClose={onClose}
+      <Modal
+        isOpen={isCreateEditModalOpen}
+        onClose={closeCreateEditModal}
+        title="student grade group "
+        primaryAction={handleSubmit(onSubmitHandler)}
+        actionText={selectedStudentGradeGroup ? 'Update' : 'Create'}>
+        <Controller
+          name="title"
+          control={control}
+          rules={{ required: 'This field is required' }}
+          render={({ field: { onChange, value, name } }) => (
+            <FormInput
+              isRequired
+              isInvalid={!!errors.title?.message}
+              name={name}
+              type="text"
+              formLabelName="Student grade group name"
+              value={value}
+              placeholder="Please enter title"
+              handleInputChange={onChange}
+              formErrorMessage={errors.title?.message}
+            />
+          )}
         />
-      )}
+        <Controller
+          name="description"
+          control={control}
+          rules={{ required: 'This field is required' }}
+          render={({ field: { onChange, value, name } }) => (
+            <FormInput
+              isInvalid={!!errors.description?.message}
+              name={name}
+              type="text"
+              formLabelName="Student grade group description"
+              value={value}
+              placeholder="Please enter description"
+              handleInputChange={onChange}
+              formErrorMessage={errors.description?.message}
+            />
+          )}
+        />
+      </Modal>
+      <Modal
+        isOpen={isDeleteModalOpen}
+        onClose={closeDeleteModal}
+        title="student grade group"
+        primaryAction={() => {
+          if (selectedStudentGradeGroup) {
+            mutate(selectedStudentGradeGroup?.id);
+          }
+        }}
+        actionText="Delete">
+        Are you sure you want to delete this grade group
+      </Modal>
     </>
   );
-}
+};
+
+export default StudentGradeGroup;

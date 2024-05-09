@@ -2,8 +2,14 @@ import {
   StudentGradeGroupAdminListModel,
   StudentGradeGroupSignupListModel,
 } from '@/utils/models/studentGradeGroup';
+import { CreateEditStudentGradeGroupValidation } from '@/utils/validation/studentGradeGroup';
 import $apiClient from '../axiosClient';
 import { QueryParams } from '../types/common';
+
+type UpdateStudentGradeGroupArgs = {
+  data: CreateEditStudentGradeGroupValidation;
+  id: string;
+};
 
 export class StudentGradeGroupService {
   static studentGradeGroupList(params?: QueryParams) {
@@ -12,6 +18,20 @@ export class StudentGradeGroupService {
     });
   }
   static list() {
-    return $apiClient.get<StudentGradeGroupSignupListModel>('/student-grade-groups/');
+    return $apiClient.get<StudentGradeGroupSignupListModel>('/student-grade-groups');
+  }
+
+  static createStudentGradeGroup(input: CreateEditStudentGradeGroupValidation) {
+    return $apiClient.post<CreateEditStudentGradeGroupValidation>('/student-grade-groups', input);
+  }
+  static updateStudentGradeGroup(input: UpdateStudentGradeGroupArgs) {
+    const { id, data } = input;
+    return $apiClient.patch<CreateEditStudentGradeGroupValidation>(
+      `/student-grade-groups/${id}`,
+      data,
+    );
+  }
+  static deleteStudentGradeGroup(id: string) {
+    return $apiClient.delete<CreateEditStudentGradeGroupValidation>(`/student-grade-groups/${id}`);
   }
 }
