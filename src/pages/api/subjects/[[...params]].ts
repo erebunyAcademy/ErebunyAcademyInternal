@@ -8,15 +8,27 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   ValidationPipe,
 } from 'next-api-decorators';
+import { SortingType } from '@/api/types/common';
 import { exceptionHandler } from '@/lib/prisma/error';
 import { SubjectResolver } from '@/lib/prisma/resolvers/subject.resolver';
 
 @Catch(exceptionHandler)
 class SubjectHandler {
   @Get('/list')
-  getSubjects() {
+  _list(
+    @Query('offset') skip: string,
+    @Query('limit') take: string,
+    @Query('search') search: string,
+    @Query('sorting') sorting: SortingType[],
+  ) {
+    return SubjectResolver.list(+skip, +take, search, sorting);
+  }
+
+  @Get()
+  getSubjectsSignupList() {
     return SubjectResolver.getSubjects();
   }
 

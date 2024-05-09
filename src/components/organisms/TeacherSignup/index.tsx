@@ -36,8 +36,8 @@ const TeacherSignUp = () => {
   });
 
   const { data } = useQuery({
-    queryFn: SubjectService.getSubjectList,
     queryKey: [],
+    queryFn: SubjectService.list,
   });
 
   const { mutate } = useMutation({
