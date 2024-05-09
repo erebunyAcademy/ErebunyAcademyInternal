@@ -1,6 +1,6 @@
-import { Flex, Input, InputGroup, InputRightElement } from '@chakra-ui/react';
-import InputSearchIcon from '/public/icons/search_icon.svg';
 import React from 'react';
+import { Flex, Input, InputGroup, InputRightElement } from '@chakra-ui/react';
+import InputSearchIcon from '@/icons/search_icon.svg';
 
 const SearchInput = () => {
   return (

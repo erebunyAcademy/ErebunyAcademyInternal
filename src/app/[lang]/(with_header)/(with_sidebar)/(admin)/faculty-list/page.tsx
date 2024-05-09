@@ -5,7 +5,6 @@ import { classValidatorResolver } from '@hookform/resolvers/class-validator';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { createColumnHelper, SortingState } from '@tanstack/react-table';
 import dayjs from 'dayjs';
-import DotsIcon from '/public/icons/dots-horizontal.svg';
 import { Controller, useForm } from 'react-hook-form';
 import { v4 as uuidv4 } from 'uuid';
 import { FacultyService } from '@/api/services/faculty.service';
@@ -13,6 +12,7 @@ import { FormInput } from '@/components/atoms';
 import Modal from '@/components/molecules/Modal';
 import SearchTable from '@/components/organisms/SearchTable';
 import useDebounce from '@/hooks/useDebounce';
+import DotsIcon from '@/icons/dots-horizontal.svg';
 import { ITEMS_PER_PAGE } from '@/utils/constants/common';
 import { QUERY_KEY } from '@/utils/helpers/queryClient';
 import { Maybe } from '@/utils/models/common';
@@ -53,6 +53,16 @@ const Faculty = () => {
     },
   });
 
+  const {
+    isOpen: isDeleteModalOpen,
+    onOpen: openDeleteaModal,
+    onClose: closeDeleteModal,
+  } = useDisclosure({
+    onClose() {
+      setSelectedFaculty(null);
+    },
+  });
+
   const { data, isLoading, isPlaceholderData, refetch } = useQuery({
     queryKey: QUERY_KEY.allUsers(debouncedSearch, page),
     queryFn: () =>
@@ -79,6 +89,14 @@ const Faculty = () => {
       refetch();
       reset();
       closeCreateEditModal();
+    },
+  });
+
+  const { mutate } = useMutation({
+    mutationFn: FacultyService.deleteFaculty,
+    onSuccess() {
+      closeDeleteModal();
+      refetch();
     },
   });
 
@@ -134,7 +152,12 @@ const Faculty = () => {
               }}>
               Edit
             </MenuItem>
-            <MenuItem color="red" onClick={() => {}}>
+            <MenuItem
+              color="red"
+              onClick={() => {
+                setSelectedFaculty(row.original);
+                openDeleteaModal();
+              }}>
               Delete
             </MenuItem>
           </MenuList>
@@ -190,7 +213,7 @@ const Faculty = () => {
         onClose={closeCreateEditModal}
         title="Faculty"
         primaryAction={handleSubmit(onSubmitHandler)}
-        isCreateModal={!selectedFaculty}>
+        actionText={selectedFaculty ? 'Update' : 'Create'}>
         <Controller
           name="title"
           control={control}
@@ -226,6 +249,18 @@ const Faculty = () => {
             />
           )}
         />
+      </Modal>
+      <Modal
+        isOpen={isDeleteModalOpen}
+        onClose={closeDeleteModal}
+        title="Faculty"
+        primaryAction={() => {
+          if (selectedFaculty) {
+            mutate(selectedFaculty?.id);
+          }
+        }}
+        actionText="Delete">
+        Are you sure you want to delete this faculty
       </Modal>
     </>
   );

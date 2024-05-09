@@ -1,1 +1,7 @@
-{}
+{
+  "user": {
+    "userType": "User Type",
+    "firstName": "Անուն",
+    "lastName": "Ազգանուն"
+  }
+}

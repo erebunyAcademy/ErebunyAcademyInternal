@@ -1,1 +1,14 @@
-{}
+{
+  "user": {
+    "userType": "User Type",
+    "firstName": "First Name",
+    "lastName": "Last Name"
+  },
+  "common": {
+    "title": "",
+    "desription": ""
+  },
+  "validations": {
+    "titleIsRequired": "Title is required"
+  }
+}

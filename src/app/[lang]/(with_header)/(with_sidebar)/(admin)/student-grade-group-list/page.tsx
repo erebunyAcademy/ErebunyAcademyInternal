@@ -4,13 +4,13 @@ import { IconButton, Menu, MenuButton, MenuItem, MenuList, useDisclosure } from 
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { createColumnHelper, SortingState } from '@tanstack/react-table';
 import dayjs from 'dayjs';
-import DotsIcon from '/public/icons/dots-horizontal.svg';
 import { v4 as uuidv4 } from 'uuid';
 import { StudentGradeGroupService } from '@/api/services/student-grade-group.service';
 import { UserService } from '@/api/services/user.service';
 import SharedAlertDialog from '@/components/molecules/Modals/SharedAlertDialog';
 import SearchTable from '@/components/organisms/SearchTable';
 import useDebounce from '@/hooks/useDebounce';
+import DotsIcon from '@/icons/dots-horizontal.svg';
 import { ITEMS_PER_PAGE } from '@/utils/constants/common';
 import { QUERY_KEY } from '@/utils/helpers/queryClient';
 import { Maybe } from '@/utils/models/common';

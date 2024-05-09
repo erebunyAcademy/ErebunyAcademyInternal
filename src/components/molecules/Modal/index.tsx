@@ -16,7 +16,8 @@ type ModalProps = {
   onClose: () => void;
   title: string;
   primaryAction: () => void;
-  isCreateModal: boolean;
+  actionText: 'Create' | 'Update' | 'Delete';
+  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | '6xl' | 'full';
 };
 
 const Modal: FC<PropsWithChildren<ModalProps>> = ({
@@ -25,7 +26,8 @@ const Modal: FC<PropsWithChildren<ModalProps>> = ({
   title,
   children,
   primaryAction,
-  isCreateModal,
+  size = '2xl',
+  actionText,
 }) => {
   return (
     <ChakraModal
@@ -33,12 +35,12 @@ const Modal: FC<PropsWithChildren<ModalProps>> = ({
       onClose={() => {
         onClose();
       }}
-      size="2xl"
+      size={size}
       isCentered>
       <ModalOverlay />
       <ModalContent py="20px">
         <ModalHeader>
-          {isCreateModal ? 'Create' : 'Update'} {title}
+          {actionText} {title}
         </ModalHeader>
         <ModalCloseButton />
         <ModalBody display="flex" gap="20px" flexDirection="column">
@@ -48,7 +50,9 @@ const Modal: FC<PropsWithChildren<ModalProps>> = ({
           <Button colorScheme="blue" mr={3} onClick={onClose}>
             Close
           </Button>
-          <CustomButton onClick={primaryAction}>{isCreateModal ? 'Create' : 'Update'}</CustomButton>
+          <CustomButton onClick={primaryAction} bg={actionText === 'Delete' ? 'red' : 'green'}>
+            {actionText}
+          </CustomButton>
         </ModalFooter>
       </ModalContent>
     </ChakraModal>

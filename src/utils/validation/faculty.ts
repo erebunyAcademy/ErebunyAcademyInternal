@@ -6,7 +6,7 @@ export class CreateEditFacultyValidation {
   title: string;
 
   @IsString()
-  @IsOptional({ message: 'Description is required' })
+  @IsOptional()
   description: string;
 
   @IsString()

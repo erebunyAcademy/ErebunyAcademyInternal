@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { Text } from '@chakra-ui/react';
-import ArrowRightIcon from '/public/icons/not_found_icon.svg';
+import ArrowRightIcon from '@/icons/not_found_icon.svg';
 
 type MovableButtonProps = {
   btnText: string;

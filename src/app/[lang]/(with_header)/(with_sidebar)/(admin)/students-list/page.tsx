@@ -1,27 +1,28 @@
 'use client';
 import React, { useCallback, useMemo, useState } from 'react';
 import { IconButton, Menu, MenuButton, MenuItem, MenuList, useDisclosure } from '@chakra-ui/react';
+import { User } from '@prisma/client';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { createColumnHelper, SortingState } from '@tanstack/react-table';
 import dayjs from 'dayjs';
-import DotsIcon from '/public/icons/dots-horizontal.svg';
 import { v4 as uuidv4 } from 'uuid';
-import { StudentGradeService } from '@/api/services/student-grade.service';
+import { StudentService } from '@/api/services/student.service';
 import { UserService } from '@/api/services/user.service';
 import SharedAlertDialog from '@/components/molecules/Modals/SharedAlertDialog';
 import SearchTable from '@/components/organisms/SearchTable';
 import useDebounce from '@/hooks/useDebounce';
+import DotsIcon from '@/icons/dots-horizontal.svg';
 import { ITEMS_PER_PAGE } from '@/utils/constants/common';
 import { QUERY_KEY } from '@/utils/helpers/queryClient';
 import { Maybe } from '@/utils/models/common';
-import { StudentGradeModel } from '@/utils/models/studentGrade';
+import { StudentModel } from '@/utils/models/student';
 
 export default function Users() {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const debouncedSearch = useDebounce(search);
-  const [selectedStudent, setSelectedStudent] = useState<Maybe<StudentGradeModel>>(null);
+  const [selectedStudent, setSelectedStudent] = useState<Maybe<User>>(null);
 
   const { isOpen, onOpen, onClose } = useDisclosure({
     onClose() {
@@ -32,7 +33,7 @@ export default function Users() {
   const { data, isLoading, isPlaceholderData } = useQuery({
     queryKey: QUERY_KEY.allUsers(debouncedSearch, page),
     queryFn: () =>
-      StudentGradeService.studentGradeList({
+      StudentService.list({
         offset: page === 1 ? 0 : (page - 1) * ITEMS_PER_PAGE,
         limit: ITEMS_PER_PAGE,
         sorting: sorting,
@@ -64,20 +65,39 @@ export default function Users() {
     [page],
   );
 
-  const columnHelper = createColumnHelper<StudentGradeModel>();
+  const columnHelper = createColumnHelper<StudentModel>();
 
   const columns = [
-    columnHelper.accessor('title', {
+    columnHelper.accessor('firstName', {
       id: uuidv4(),
       cell: info => info.getValue(),
-      header: 'Title',
+      header: 'First Name',
     }),
-    columnHelper.accessor('description', {
+    columnHelper.accessor('lastName', {
       id: uuidv4(),
       cell: info => info.getValue(),
-      header: 'Description',
+      header: 'Last Name',
     }),
-
+    columnHelper.accessor('email', {
+      id: uuidv4(),
+      cell: info => info.getValue(),
+      header: 'Email',
+    }),
+    columnHelper.accessor('student.faculty.title', {
+      id: uuidv4(),
+      cell: info => info.getValue(),
+      header: 'Faculty',
+    }),
+    columnHelper.accessor('student.studentGrade.title', {
+      id: uuidv4(),
+      cell: info => info.getValue(),
+      header: 'Student Grade',
+    }),
+    columnHelper.accessor('student.studentGradeGroup.title', {
+      id: uuidv4(),
+      cell: info => info.getValue(),
+      header: 'Student Grade Group',
+    }),
     columnHelper.accessor('createdAt', {
       id: uuidv4(),
       cell: info => {
@@ -103,7 +123,7 @@ export default function Users() {
               color="red"
               onClick={() => {
                 onOpen();
-                setSelectedStudent(row.original as StudentGradeModel);
+                setSelectedStudent(row.original as unknown as User);
               }}>
               Delete
             </MenuItem>
@@ -117,9 +137,9 @@ export default function Users() {
   return (
     <>
       <SearchTable
-        title="Students Grade List"
+        title="Students List"
         isLoading={isLoading}
-        data={data?.studentGrades || []}
+        data={data?.users || []}
         count={data?.count || 0}
         // @ts-ignore
         columns={columns}
@@ -140,9 +160,9 @@ export default function Users() {
       />
       {isOpen && (
         <SharedAlertDialog
-          body={`Are you sure you want to delete ${selectedStudent?.title} grade?`}
+          body={`Are you sure you want to delete ${selectedStudent?.firstName} student?`}
           isOpen={isOpen}
-          title="Delete grade"
+          title="Delete student"
           isLoading={isLoading}
           deleteFn={() => {
             if (selectedStudent?.id) {

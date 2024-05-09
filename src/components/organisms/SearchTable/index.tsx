@@ -26,8 +26,8 @@ import {
   SortingState,
   useReactTable,
 } from '@tanstack/react-table';
-import ChevronLeft from '/public/icons/chevron_left.svg';
-import ChevronRight from '/public/icons/chevron_right.svg';
+import ChevronLeft from '@/icons/chevron_left.svg';
+import ChevronRight from '@/icons/chevron_right.svg';
 import { ITEMS_PER_PAGE } from '@/utils/constants/common';
 
 export type DataTableProps<T> = {

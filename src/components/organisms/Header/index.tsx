@@ -1,4 +1,5 @@
-import { FC, memo, useCallback, useRef } from 'react';
+'use client';
+import { FC, useCallback, useRef } from 'react';
 import {
   Accordion,
   Avatar,
@@ -9,23 +10,23 @@ import {
   useDisclosure,
   useOutsideClick,
 } from '@chakra-ui/react';
-import Image from 'next/image';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
 import { User } from 'next-auth';
 import { useSession } from 'next-auth/react';
-import { Button } from '@/components/atoms';
 import LanguagePicker from '@/components/molecules/LanguagePicker';
 import { Locale } from '@/i18n';
-import { HOMEPAGE_ROUTE, SIGN_IN_ROUTE, SIGN_UP_ROUTE } from '@/utils/constants/routes';
+import LogoIcon from '@/icons/college_main_icon.svg';
+import { HOMEPAGE_ROUTE } from '@/utils/constants/routes';
 import { generateAWSUrl } from '@/utils/helpers/aws';
+import { languagePathHelper } from '@/utils/helpers/language';
 import { LinkItemProps } from '@/utils/helpers/permissionRoutes';
+import { Maybe } from '@/utils/models/common';
 import ProfileMenu from './ProfileMenu';
 import ProfileNavItem from './ProfileNavItem';
 
 type HeaderProps = {
-  user: User | null;
-  linkItems: LinkItemProps[];
+  user: Maybe<User>;
+  linkItems?: LinkItemProps[];
   lang: Locale;
 };
 
@@ -36,7 +37,6 @@ const Header: FC<HeaderProps> = ({ user, linkItems, lang }) => {
     onClose: closeUserProfile,
   } = useDisclosure();
   const { data } = useSession();
-  const pathname = usePathname();
   const userCollapseRef = useRef<HTMLDivElement>(null);
 
   useOutsideClick({
@@ -71,16 +71,9 @@ const Header: FC<HeaderProps> = ({ user, linkItems, lang }) => {
         px={{ base: 4 }}
         align={'center'}>
         <Flex flex={{ base: 1 }} justifyContent="space-between" px={{ base: '10px' }}>
-          <Link href={HOMEPAGE_ROUTE}>
+          <Link href={languagePathHelper(lang, HOMEPAGE_ROUTE)}>
             <Flex alignItems="center" height="100%">
-              <Image
-                src="/icons/college_main_icon.svg"
-                width={35}
-                height={35}
-                alt="College icon"
-                priority
-                style={{ objectFit: 'contain', zIndex: 1000 }}
-              />
+              <LogoIcon width={40} height={40} />
             </Flex>
           </Link>
           <Flex
@@ -90,7 +83,7 @@ const Header: FC<HeaderProps> = ({ user, linkItems, lang }) => {
             alignItems="center"
             justifyContent="center"
             alignSelf="center">
-            {user && (
+            {!!user && (
               <Avatar
                 name={`${user?.firstName} ${user?.lastName}`}
                 src={user?.avatar ? generateAWSUrl(user.avatar) : ''}
@@ -105,31 +98,10 @@ const Header: FC<HeaderProps> = ({ user, linkItems, lang }) => {
               />
             )}
           </Flex>
-          {user || data?.user ? (
+          {(user || data?.user) && linkItems && (
             <Box display={{ base: 'none', lg: 'flex' }}>
               <ProfileMenu user={user} linkItems={linkItems} />
             </Box>
-          ) : (
-            <Stack flexDirection="row" alignItems="center" display={{ base: 'none', lg: 'flex' }}>
-              <Link href={`${SIGN_IN_ROUTE}?callback_url=${pathname}`}>
-                <Button
-                  borderRadius={6}
-                  fontSize={14}
-                  width={90}
-                  height={38}
-                  fontWeight={600}
-                  bg="#fff"
-                  color="#3CB4E7"
-                  border="1px solid #3CB4E7">
-                  Sign in
-                </Button>
-              </Link>
-              <Link href={SIGN_UP_ROUTE}>
-                <Button borderRadius={6} fontSize={14} fontWeight={600} height={38} width={127}>
-                  Sign Up
-                </Button>
-              </Link>
-            </Stack>
           )}
           <Stack>
             <LanguagePicker lang={lang} />
@@ -141,11 +113,11 @@ const Header: FC<HeaderProps> = ({ user, linkItems, lang }) => {
           <ProfileNavItem
             user={user || data?.user || null}
             onClose={closeUserProfile}
-            linkItems={linkItems}
+            linkItems={linkItems!}
           />
         </Accordion>
       </Collapse>
     </Box>
   );
 };
-export default memo(Header);
+export default Header;

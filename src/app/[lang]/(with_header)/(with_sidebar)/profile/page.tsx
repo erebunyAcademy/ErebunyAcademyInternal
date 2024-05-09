@@ -4,6 +4,8 @@ import { serverSession } from '@/pages/api/auth/[...nextauth]';
 
 const Profile = async () => {
   const session = await serverSession();
+  console.log({ session });
+
   if (!session) return null;
 
   return <ProfilePage sessionUser={session.user} />;

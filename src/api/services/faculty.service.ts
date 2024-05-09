@@ -24,4 +24,7 @@ export class FacultyService {
     const { id, data } = input;
     return $apiClient.patch<CreateEditFacultyValidation>(`/faculties/${id}`, data);
   }
+  static deleteFaculty(id: string) {
+    return $apiClient.delete<CreateEditFacultyValidation>(`/faculties/${id}`);
+  }
 }
