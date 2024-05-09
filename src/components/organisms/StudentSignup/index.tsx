@@ -12,6 +12,7 @@ import { classValidatorResolver } from '@hookform/resolvers/class-validator';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { v4 as uuid } from 'uuid';
 import { AuthService } from '@/api/services/auth.service';
@@ -42,6 +43,7 @@ const StudentSignUp = () => {
   const router = useRouter();
   const toast = useToast();
   const [localImage, setLocalImage] = useState<{ file: File; localUrl: string } | null>(null);
+  const t = useTranslations();
   const { mutate, isPending } = useMutation({
     mutationFn: AuthService.studentSignUp,
     onSuccess() {
@@ -137,7 +139,7 @@ const StudentSignUp = () => {
                 isInvalid={!!errors.firstName?.message}
                 name="firstName"
                 type="text"
-                formLabelName="First Name"
+                formLabelName={t('user.firstName')}
                 value={value}
                 handleInputChange={onChange}
               />
@@ -153,7 +155,7 @@ const StudentSignUp = () => {
                 name="lastName"
                 type="text"
                 placeholder="Last Name"
-                formLabelName="Last Name"
+                formLabelName={t('user.lastName')}
                 value={value}
                 handleInputChange={onChange}
               />

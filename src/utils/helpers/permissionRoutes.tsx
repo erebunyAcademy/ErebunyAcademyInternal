@@ -1,12 +1,13 @@
+import { ReactNode } from 'react';
 import { User, UserRoleEnum } from '@prisma/client';
-import LogoutIcon from '/public/icons/log-out.svg';
-import ProfileIcon from '/public/icons/profile.svg';
-import StudentIcon from '/public/icons/student_icon.svg';
-import ExamsIcon from '/public/icons/exams_icon.svg';
-import TeacherIcon from '/public/icons/teacher_icon.svg';
-import FacultiesIcon from '/public/icons/faculty_icon.svg';
-import StudentGradeIcon from '/public/icons/students_grade_icon.svg';
-import StudentGradeGroupIcon from '/public/icons/students_grade_group_icon.svg';
+import ExamsIcon from '@/icons/exams_icon.svg';
+import FacultiesIcon from '@/icons/faculty_icon.svg';
+import LogoutIcon from '@/icons/log-out.svg';
+import ProfileIcon from '@/icons/profile.svg';
+import StudentIcon from '@/icons/student_icon.svg';
+import StudentGradeGroupIcon from '@/icons/students_grade_group_icon.svg';
+import StudentGradeIcon from '@/icons/students_grade_icon.svg';
+import TeacherIcon from '@/icons/teacher_icon.svg';
 import {
   PROFILE_ROUTE,
   ROUTE_EXAMS,
@@ -16,7 +17,7 @@ import {
   ROUTE_STUDENTS,
   ROUTE_TEACHERS,
 } from '../constants/routes';
-import { ReactNode } from 'react';
+import { Maybe } from '../models/common';
 
 export interface LinkItemProps {
   name: string;
@@ -27,7 +28,9 @@ export interface LinkItemProps {
 
 export type LinkItemsFunction = (user: User) => Array<LinkItemProps>;
 
-export const linkItems: LinkItemsFunction = (user: User) => {
+export const linkItems: LinkItemsFunction = (user: Maybe<User>) => {
+  if (!user) return [];
+
   const commonLinks = [
     { id: 1, name: 'Profile', icon: <ProfileIcon />, href: PROFILE_ROUTE },
     { id: 9, name: 'Log out', icon: <LogoutIcon /> },

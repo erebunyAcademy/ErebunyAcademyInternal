@@ -1,6 +1,6 @@
 import React, { FC, memo } from 'react';
 import { Button } from '@chakra-ui/react';
-import ArrowIcon from '/public/icons/arrow_right.svg';
+import ArrowIcon from '@/icons/arrow_right.svg';
 
 type OutlinedButtonProps = {
   children: string;

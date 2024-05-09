@@ -21,12 +21,10 @@ export class FacultyResolver {
         skip,
         take,
       }),
-    ]).then(([count, faculties]) => (
-      {
-        count,
-        faculties,
-      }
-    ));
+    ]).then(([count, faculties]) => ({
+      count,
+      faculties,
+    }));
   }
 
   static getFacultyList() {
@@ -54,7 +52,6 @@ export class FacultyResolver {
         return res;
       });
   }
-
 
   static async updateFacultyById(facultyId: string, data: Partial<Faculty>) {
     const { id } = await this.getFacultyById(facultyId);

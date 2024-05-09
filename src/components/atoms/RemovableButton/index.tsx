@@ -1,6 +1,6 @@
 import React, { FC, memo, ReactNode } from 'react';
 import { Box, Button } from '@chakra-ui/react';
-import RemoveIcon from '/public/icons/remove.svg';
+import RemoveIcon from '@/icons/remove.svg';
 
 type RemovableButtonProps = {
   children: ReactNode;
@@ -25,12 +25,7 @@ const RemovableButton: FC<RemovableButtonProps> = ({ children, removeQueryParamH
     lineHeight="22px"
     px={16}>
     {children}
-    <Box
-      as="span"
-      ml={8}
-      onClick={removeQueryParamHandler}
-      display="flex"
-      alignItems="center">
+    <Box as="span" ml={8} onClick={removeQueryParamHandler} display="flex" alignItems="center">
       <RemoveIcon />
     </Box>
   </Button>

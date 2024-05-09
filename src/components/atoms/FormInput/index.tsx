@@ -10,7 +10,8 @@ import {
   InputRightElement,
   Text,
 } from '@chakra-ui/react';
-import Image from 'next/image';
+import EyeCloseIcon from '@/icons/eye_closed.svg';
+import EyeOpenIcon from '@/icons/eye_open.svg';
 
 interface FormInputProps extends InputProps {
   isInvalid?: boolean;
@@ -93,25 +94,21 @@ const FormInput: FC<FormInputProps> = ({
         {type === 'password' && (
           <InputRightElement>
             {isPasswordType ? (
-              <Image
-                width={20}
-                height={20}
-                alt="eye"
+              <EyeOpenIcon
                 style={{
                   cursor: 'pointer',
                 }}
-                src={'/icons/eye_open.svg'}
+                width={20}
+                height={20}
                 onClick={() => setIsPasswordType(false)}
               />
             ) : (
-              <Image
+              <EyeCloseIcon
                 width={20}
                 height={20}
-                alt="eye"
                 style={{
                   cursor: 'pointer',
                 }}
-                src={'/icons/eye_closed.svg'}
                 onClick={() => setIsPasswordType(true)}
               />
             )}
