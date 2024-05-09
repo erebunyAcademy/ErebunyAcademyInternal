@@ -16,7 +16,7 @@ import { QUERY_KEY } from '@/utils/helpers/queryClient';
 import { Maybe } from '@/utils/models/common';
 import { StudentGradeGroupModel } from '@/utils/models/studentGradeGroup';
 
-export default function Users() {
+const StudentGradeGroups = () => {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
@@ -154,4 +154,6 @@ export default function Users() {
       )}
     </>
   );
-}
+};
+
+export default StudentGradeGroups;

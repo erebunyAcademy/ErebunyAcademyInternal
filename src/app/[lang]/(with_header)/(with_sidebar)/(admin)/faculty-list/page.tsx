@@ -44,7 +44,7 @@ const Faculty = () => {
 
   const {
     isOpen: isCreateEditModalOpen,
-    onOpen: openCreateaEditModal,
+    onOpen: openCreateEditModal,
     onClose: closeCreateEditModal,
   } = useDisclosure({
     onClose() {
@@ -55,7 +55,7 @@ const Faculty = () => {
 
   const {
     isOpen: isDeleteModalOpen,
-    onOpen: openDeleteaModal,
+    onOpen: openDeleteModal,
     onClose: closeDeleteModal,
   } = useDisclosure({
     onClose() {
@@ -148,7 +148,7 @@ const Faculty = () => {
                 setSelectedFaculty(row.original);
                 setValue('title', row.original.title || '');
                 setValue('description', row.original.description || '');
-                openCreateaEditModal();
+                openCreateEditModal();
               }}>
               Edit
             </MenuItem>
@@ -156,7 +156,7 @@ const Faculty = () => {
               color="red"
               onClick={() => {
                 setSelectedFaculty(row.original);
-                openDeleteaModal();
+                openDeleteModal();
               }}>
               Delete
             </MenuItem>
@@ -168,8 +168,8 @@ const Faculty = () => {
   ];
 
   const addNewFacultyHandler = useCallback(() => {
-    openCreateaEditModal();
-  }, [openCreateaEditModal]);
+    openCreateEditModal();
+  }, [openCreateEditModal]);
 
   const onSubmitHandler = useCallback(
     (data: CreateEditFacultyValidation) => {

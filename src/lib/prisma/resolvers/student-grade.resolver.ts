@@ -1,4 +1,4 @@
-import { StudentGrade, Subject } from '@prisma/client';
+import { StudentGrade } from '@prisma/client';
 import { NotFoundException } from 'next-api-decorators';
 import { SortingType } from '@/api/types/common';
 import { orderBy } from './utils/common';
@@ -35,39 +35,40 @@ export class StudentGradeResolver {
       },
     });
   }
+
   static createStudentGrade(data: Pick<StudentGrade, 'title' | 'description'>) {
     return prisma.studentGrade.create({ data });
   }
 
-  static getStudentGradeById(id: string) {
+  static async getStudentGradeById(id: string) {
     return prisma.studentGrade
       .findUnique({
         where: { id },
       })
       .then(res => {
         if (!res) {
-          throw new NotFoundException('Subject was not found');
+          throw new NotFoundException('Student grade was not found');
         }
         return res;
       });
   }
 
-  static async updateStudentGradeById(id: string, data: Partial<Subject>) {
-    const subject = await this.getStudentGradeById(id);
+  static async updateStudentGradeById(gradIid: string, data: Partial<StudentGrade>) {
+    const { id } = await this.getStudentGradeById(gradIid);
 
     return prisma.studentGrade.update({
       where: {
-        id: subject.id,
+        id,
       },
       data,
     });
   }
 
-  static async deleteStudentGradeById(id: string) {
-    const subject = await this.getStudentGradeById(id);
+  static async deleteStudentGradeById(gradeId: string) {
+    const { id } = await this.getStudentGradeById(gradeId);
     return prisma.studentGrade.delete({
       where: {
-        id: subject.id,
+        id,
       },
     });
   }
