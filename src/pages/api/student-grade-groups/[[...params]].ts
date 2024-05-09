@@ -1,4 +1,4 @@
-import { StudentGrade, StudentGradeGroup } from '@prisma/client';
+import { StudentGradeGroup } from '@prisma/client';
 import {
   Body,
   Catch,
@@ -17,10 +17,6 @@ import { StudentGradeGroupResolver } from '@/lib/prisma/resolvers/student-grade-
 
 @Catch(exceptionHandler)
 class StudentGradeGroupHandler {
-  @Get('')
-  list() {
-    return StudentGradeGroupResolver.getStudentGradeGroupList();
-  }
   @Get('/list')
   getStudentGradeGroupList(
     @Query('offset') skip: string,
@@ -29,6 +25,11 @@ class StudentGradeGroupHandler {
     @Query('sorting') sorting: SortingType[],
   ) {
     return StudentGradeGroupResolver.list(+skip, +take, search, sorting);
+  }
+
+  @Get('')
+  list() {
+    return StudentGradeGroupResolver.getStudentGradeGroupList();
   }
 
   @Get('/:id')
@@ -43,7 +44,7 @@ class StudentGradeGroupHandler {
 
   @Post()
   createStudentGradeGroup(
-    @Body(ValidationPipe) input: Pick<StudentGrade, 'title' | 'description'>,
+    @Body(ValidationPipe) input: Pick<StudentGradeGroup, 'title' | 'description'>,
   ) {
     return StudentGradeGroupResolver.createStudentGradeGroup(input);
   }

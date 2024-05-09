@@ -64,8 +64,8 @@ export class FacultyResolver {
     });
   }
 
-  static async deleteFacultyById(examId: string) {
-    const { id } = await this.getFacultyById(examId);
+  static async deleteFacultyById(facultyId: string) {
+    const { id } = await this.getFacultyById(facultyId);
     return prisma.faculty.delete({
       where: {
         id,
