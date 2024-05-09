@@ -17,11 +17,6 @@ import { StudentGradeResolver } from '@/lib/prisma/resolvers/student-grade.resol
 
 @Catch(exceptionHandler)
 class StudentGradeHandler {
-  @Get('')
-  getStudentGrades() {
-    return StudentGradeResolver.getStudentGradeList();
-  }
-
   @Get('/list')
   getStudentGradeList(
     @Query('offset') skip: string,
@@ -31,6 +26,12 @@ class StudentGradeHandler {
   ) {
     return StudentGradeResolver.list(+skip, +take, search, sorting);
   }
+  
+  @Get('')
+  getStudentGrades() {
+    return StudentGradeResolver.getStudentGradeList();
+  }
+
 
   @Get('/:id')
   getStudentGradeById(@Param('id') id: string) {

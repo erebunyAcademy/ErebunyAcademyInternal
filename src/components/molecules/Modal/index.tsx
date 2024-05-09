@@ -47,10 +47,29 @@ const Modal: FC<PropsWithChildren<ModalProps>> = ({
           {children}
         </ModalBody>
         <ModalFooter display="flex" justifyContent="flex-start">
-          <Button colorScheme="blue" mr={3} onClick={onClose}>
+          <Button
+            bg="#ccc"
+            color="#222"
+            _hover={{
+              bg: '#BABABA',
+              color: '#222',
+            }}
+            _active={{
+              bg: '#BABABA',
+              color: '#222',
+            }}
+            _focus={{
+              bg: '#BABABA',
+              color: '#222',
+            }}
+            mr={3}
+            onClick={onClose}>
             Close
           </Button>
-          <CustomButton onClick={primaryAction} bg={actionText === 'Delete' ? 'red' : 'green'}>
+          <CustomButton
+            onClick={primaryAction}
+            bg={actionText === 'Delete' ? '#E53E3E' : 'green'}
+            bgHover={actionText === 'Delete' ? '#C53030' : '#179848'}>
             {actionText}
           </CustomButton>
         </ModalFooter>

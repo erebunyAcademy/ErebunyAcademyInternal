@@ -1,12 +1,13 @@
 import { ReactNode } from 'react';
 import { User, UserRoleEnum } from '@prisma/client';
-import ExamsIcon from '@/icons/exams_icon.svg';
+import ExamsIcon from '@/icons/exam_icon.svg';
 import FacultiesIcon from '@/icons/faculty_icon.svg';
 import LogoutIcon from '@/icons/log-out.svg';
 import ProfileIcon from '@/icons/profile.svg';
 import StudentIcon from '@/icons/student_icon.svg';
 import StudentGradeGroupIcon from '@/icons/students_grade_group_icon.svg';
 import StudentGradeIcon from '@/icons/students_grade_icon.svg';
+import SubjectsIcon from '@/icons/subjects_icon.svg';
 import TeacherIcon from '@/icons/teacher_icon.svg';
 import {
   PROFILE_ROUTE,
@@ -15,6 +16,7 @@ import {
   ROUTE_STUDENT_GRADE_GROUPS,
   ROUTE_STUDENT_GRADES,
   ROUTE_STUDENTS,
+  ROUTE_SUBJECTS,
   ROUTE_TEACHERS,
 } from '../constants/routes';
 import { Maybe } from '../models/common';
@@ -51,6 +53,7 @@ export const linkItems: LinkItemsFunction = (user: Maybe<User>) => {
         },
         { id: 6, name: 'Exams', icon: <ExamsIcon />, href: ROUTE_EXAMS },
         { id: 7, name: 'Teachers', icon: <TeacherIcon />, href: ROUTE_TEACHERS },
+        { id: 8, name: 'Subjects', icon: <SubjectsIcon />, href: ROUTE_SUBJECTS },
         commonLinks[1],
       ];
     case UserRoleEnum.TEACHER:

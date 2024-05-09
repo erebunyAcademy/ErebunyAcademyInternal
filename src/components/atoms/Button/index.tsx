@@ -4,24 +4,24 @@ import { ButtonProps, Button as ChakraButton } from '@chakra-ui/react';
 interface SharedButtonProps extends ButtonProps {
   children: ReactNode;
   href?: string;
+  bgHover?: string;
 }
 
 const Button: FC<SharedButtonProps> = ({ children, ...props }) => {
   return (
     <ChakraButton
-      bg="#38B2AC"
-      color="#FFFFFF"
+      color="#fff"
       _hover={{
-        bg: '#319795',
-        color: '#FFFFFF',
+        bg: props.bgHover || '#BABABA',
+        color: '#fff',
       }}
       _focus={{
-        bg: '#2C7A7B',
-        color: '#FFFFFF',
+        bg: '#BABABA',
+        color: '#222',
       }}
       _focusVisible={{
-        bg: '#2C7A7B',
-        color: '#FFFFFF',
+        bg: '#BABABA',
+        color: '#222',
       }}
       _disabled={{
         bg: 'grey.50',
