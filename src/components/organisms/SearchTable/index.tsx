@@ -92,7 +92,27 @@ function SearchTable<T>({
         <Text as="h2" fontSize={24} textAlign="center">
           {title}
         </Text>
-        {addNew && <Button onClick={addNew}>Add New</Button>}
+        {addNew && (
+          <Button
+            bg="#f5f6f7"
+            color="#222"
+            _hover={{
+              bg: '#ebedf0',
+              color: '#222',
+              boxShadow: '0 0 1px 2px rgba(88, 144, 255, .75), 0 1px 1px rgba(0, 0, 0, .15)',
+            }}
+            _active={{
+              bg: '#f5f6f7',
+              color: '#222',
+            }}
+            _focus={{
+              bg: '#f5f6f7',
+              color: '#222',
+            }}
+            onClick={addNew}>
+            Add New
+          </Button>
+        )}
       </Flex>
       <FormControl py={4} px={4}>
         <Input
