@@ -3,13 +3,16 @@ import { Flex } from '@chakra-ui/react';
 import { redirect } from 'next/navigation';
 import SidebarContent from '@/components/molecules/SidebarContent';
 import { Header } from '@/components/organisms';
+import { Locale } from '@/i18n';
 import { serverSession } from '@/pages/api/auth/[...nextauth]';
 import { linkItems } from '@/utils/helpers/permissionRoutes';
 
 export default async function HeaderLayout({
   children,
+  params,
 }: Readonly<{
   children: ReactNode;
+  params: { lang: Locale };
 }>) {
   const session = await serverSession();
 
@@ -19,7 +22,7 @@ export default async function HeaderLayout({
 
   return (
     <>
-      <Header user={session?.user} linkItems={linkItems(session.user)} />
+      <Header user={session?.user} linkItems={linkItems(session.user)} lang={params.lang} />
       <SidebarContent
         display={{ base: 'none', md: 'block' }}
         width="360px"

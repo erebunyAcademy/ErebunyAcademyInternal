@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
+import { Locale } from 'next/dist/compiled/@vercel/og/satori';
 import { Inter } from 'next/font/google';
-import Providers from './providers';
+import Providers from '../providers';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -11,11 +12,13 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
+  params,
 }: Readonly<{
   children: React.ReactNode;
+  params: { lang: Locale };
 }>) {
   return (
-    <html lang="en">
+    <html lang={params.lang}>
       <body className={inter.className}>
         <Providers>{children}</Providers>
       </body>

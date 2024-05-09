@@ -6,20 +6,13 @@ import { SelectLabel } from '@/components/atoms';
 import { AuthBox } from '@/components/molecules';
 import { TeacherSignUp } from '@/components/organisms';
 import StudentSignUp from '@/components/organisms/StudentSignup';
-import { SIGN_IN_ROUTE, SIGN_UP_ROUTE } from '@/utils/constants/routes';
+import { Locale } from '@/i18n';
+import { authBoxProps } from '@/utils/helpers/auth';
 
-const authBoxProps = {
-  data: [
-    { href: SIGN_UP_ROUTE, title: 'Sign up' },
-    { href: SIGN_IN_ROUTE, title: 'Sign In' },
-  ],
-  boxProps: { marginTop: { base: 64, md: 37 } },
-};
-
-const Signup = () => {
+const Signup = ({ params }: { params: { lang: Locale } }) => {
   const [userType, setUserType] = useState<UserRoleEnum>(UserRoleEnum.STUDENT);
   return (
-    <AuthBox data={authBoxProps.data} boxProps={authBoxProps.boxProps}>
+    <AuthBox data={authBoxProps(params.lang).data} boxProps={authBoxProps(params.lang).boxProps}>
       <Box pb={{ base: '20px', sm: '32px' }}>
         <SelectLabel
           name={'userType'}

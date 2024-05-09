@@ -1,5 +1,5 @@
 'use client';
-import { useLayoutEffect, useMemo } from 'react';
+import { useLayoutEffect } from 'react';
 import { Link, useToast, VStack } from '@chakra-ui/react';
 import { useMutation } from '@tanstack/react-query';
 import NextLink from 'next/link';
@@ -9,30 +9,17 @@ import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { UserService } from '@/api/services/user.service';
 import { Button, FormInput, Loading } from '@/components/atoms';
 import { AuthBox } from '@/components/molecules';
+import { Locale } from '@/i18n';
 import { ERROR_MESSAGES } from '@/utils/constants/common';
-import {
-  FORGOT_PASSWORD_ROUTE,
-  PROFILE_ROUTE,
-  SIGN_IN_ROUTE,
-  SIGN_UP_ROUTE,
-} from '@/utils/constants/routes';
+import { FORGOT_PASSWORD_ROUTE, PROFILE_ROUTE } from '@/utils/constants/routes';
+import { authBoxProps } from '@/utils/helpers/auth';
+import { languagePathHelper } from '@/utils/helpers/language';
 import { SignInFormData } from '@/utils/models/auth';
 
-const SignIn = () => {
+const SignIn = ({ params }: { params: { lang: Locale } }) => {
   const toast = useToast();
   const router = useRouter();
   const searchParams = useSearchParams();
-
-  const authBoxProps = useMemo(
-    () => ({
-      data: [
-        { href: SIGN_UP_ROUTE, title: 'Sign up' },
-        { href: SIGN_IN_ROUTE, title: 'Sign In' },
-      ],
-      boxProps: { marginTop: { base: 64, md: 42 } },
-    }),
-    [],
-  );
 
   const {
     control,
@@ -74,7 +61,7 @@ const SignIn = () => {
   }, [mutate, searchParams]);
 
   return (
-    <AuthBox data={authBoxProps.data} boxProps={authBoxProps.boxProps}>
+    <AuthBox data={authBoxProps(params.lang).data} boxProps={authBoxProps(params.lang).boxProps}>
       {isSubmitting && <Loading isLoading={isSubmitting} />}
       <VStack spacing={32}>
         <Controller
@@ -122,7 +109,7 @@ const SignIn = () => {
           Sign in
         </Button>
         <Link
-          href={FORGOT_PASSWORD_ROUTE}
+          href={languagePathHelper(params.lang, FORGOT_PASSWORD_ROUTE)}
           as={NextLink}
           fontSize="16px"
           fontWeight="400"

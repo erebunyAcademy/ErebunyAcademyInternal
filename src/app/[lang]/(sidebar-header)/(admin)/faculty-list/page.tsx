@@ -151,8 +151,7 @@ const Faculty = () => {
   const onSubmitHandler = useCallback(
     (data: CreateEditFacultyValidation) => {
       if (selectedFaculty) {
-        console.log(selectedFaculty.id);
-        updateFaculty(data, '');
+        updateFaculty({ data, id: selectedFaculty.id });
       } else {
         createFaculty(data);
       }

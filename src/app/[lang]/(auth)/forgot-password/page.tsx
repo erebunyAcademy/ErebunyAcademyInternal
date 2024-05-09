@@ -3,10 +3,12 @@ import { useMemo } from 'react';
 import { StackProps } from '@chakra-ui/react';
 import { AuthBox } from '@/components/molecules';
 import { useAuth } from '@/contexts/AuthContext';
+import { Locale } from '@/i18n';
 import { FORGOT_PASSWORD_ROUTE } from '@/utils/constants/routes';
+import { languagePathHelper } from '@/utils/helpers/language';
 import { Step1, Step2, Step3 } from './steps';
 
-export default function ForgotPasswrodPage() {
+export default function ForgotPasswrodPage({ params }: { params: { lang: Locale } }) {
   const { step } = useAuth();
 
   const Step = useMemo(() => {
@@ -26,21 +28,21 @@ export default function ForgotPasswrodPage() {
     switch (step) {
       case 'emailStep':
         return {
-          href: FORGOT_PASSWORD_ROUTE,
+          href: languagePathHelper(params.lang, FORGOT_PASSWORD_ROUTE),
           title: 'Forgot Password?',
         };
       case 'OTPStep':
         return {
-          href: FORGOT_PASSWORD_ROUTE,
+          href: languagePathHelper(params.lang, FORGOT_PASSWORD_ROUTE),
           title: 'Check your email',
         };
       case 'passwordStep':
         return {
-          href: FORGOT_PASSWORD_ROUTE,
+          href: languagePathHelper(params.lang, FORGOT_PASSWORD_ROUTE),
           title: 'Create new password',
         };
     }
-  }, [step]);
+  }, [params.lang, step]);
 
   const authBoxProps = useMemo(
     () => ({

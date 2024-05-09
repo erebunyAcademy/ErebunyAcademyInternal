@@ -3,6 +3,11 @@ import { CreateEditFacultyValidation } from '@/utils/validation/faculty';
 import $apiClient from '../axiosClient';
 import { QueryParams } from '../types/common';
 
+type UpdateFacultyArgs = {
+  data: CreateEditFacultyValidation;
+  id: string;
+};
+
 export class FacultyService {
   static facultyList(params?: QueryParams) {
     return $apiClient.get<FacultyAdminListModel>('/faculties/list', { params });
@@ -15,8 +20,8 @@ export class FacultyService {
   static createFaculty(input: CreateEditFacultyValidation) {
     return $apiClient.post<CreateEditFacultyValidation>('/faculties', input);
   }
-  static updateFaculty(input: CreateEditFacultyValidation, id: string) {
-    console.log(input, id);
-    return $apiClient.patch<CreateEditFacultyValidation>(`/faculties/${id}`, input);
+  static updateFaculty(input: UpdateFacultyArgs) {
+    const { id, data } = input;
+    return $apiClient.patch<CreateEditFacultyValidation>(`/faculties/${id}`, data);
   }
 }

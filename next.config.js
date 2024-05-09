@@ -1,4 +1,8 @@
 /** @type {import('next').NextConfig} */
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const withNextIntl = require('next-intl/plugin')('./src/i18n.ts');
+
+/** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
   logging: {
@@ -43,11 +47,11 @@ const nextConfig = {
     return [
       {
         source: '/',
-        destination: '/signin',
+        destination: '/en/signin',
         permanent: true,
       },
     ];
   },
 };
 
-export default nextConfig;
+module.exports = withNextIntl(nextConfig);

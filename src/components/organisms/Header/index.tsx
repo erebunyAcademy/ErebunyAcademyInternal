@@ -15,6 +15,8 @@ import { usePathname } from 'next/navigation';
 import { User } from 'next-auth';
 import { useSession } from 'next-auth/react';
 import { Button } from '@/components/atoms';
+import LanguagePicker from '@/components/molecules/LanguagePicker';
+import { Locale } from '@/i18n';
 import { HOMEPAGE_ROUTE, SIGN_IN_ROUTE, SIGN_UP_ROUTE } from '@/utils/constants/routes';
 import { generateAWSUrl } from '@/utils/helpers/aws';
 import { LinkItemProps } from '@/utils/helpers/permissionRoutes';
@@ -24,9 +26,10 @@ import ProfileNavItem from './ProfileNavItem';
 type HeaderProps = {
   user: User | null;
   linkItems: LinkItemProps[];
+  lang: Locale;
 };
 
-const Header: FC<HeaderProps> = ({ user, linkItems }) => {
+const Header: FC<HeaderProps> = ({ user, linkItems, lang }) => {
   const {
     isOpen: isUserProfileOpen,
     onToggle: toggleUserDropdown,
@@ -128,9 +131,11 @@ const Header: FC<HeaderProps> = ({ user, linkItems }) => {
               </Link>
             </Stack>
           )}
+          <Stack>
+            <LanguagePicker lang={lang} />
+          </Stack>
         </Flex>
       </Flex>
-
       <Collapse in={isUserProfileOpen} animateOpacity>
         <Accordion allowToggle defaultIndex={0}>
           <ProfileNavItem
