@@ -1,6 +1,6 @@
 'use client';
 import React, { useCallback, useMemo, useState } from 'react';
-import { IconButton, Menu, MenuButton, MenuItem, MenuList, useDisclosure } from '@chakra-ui/react';
+import { MenuItem, useDisclosure } from '@chakra-ui/react';
 import { User } from '@prisma/client';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { createColumnHelper, SortingState } from '@tanstack/react-table';
@@ -8,10 +8,10 @@ import dayjs from 'dayjs';
 import { v4 as uuidv4 } from 'uuid';
 import { StudentService } from '@/api/services/student.service';
 import { UserService } from '@/api/services/user.service';
+import ActionButtons from '@/components/molecules/ActionButtons';
 import SharedAlertDialog from '@/components/molecules/Modals/SharedAlertDialog';
 import SearchTable from '@/components/organisms/SearchTable';
 import useDebounce from '@/hooks/useDebounce';
-import DotsIcon from '@/icons/dots-horizontal.svg';
 import { ITEMS_PER_PAGE } from '@/utils/constants/common';
 import { QUERY_KEY } from '@/utils/helpers/queryClient';
 import { Maybe } from '@/utils/models/common';
@@ -109,26 +109,23 @@ export default function Users() {
     columnHelper.accessor('id', {
       id: uuidv4(),
       cell: ({ row }) => (
-        <Menu>
-          <MenuButton as={IconButton} icon={<DotsIcon />} />
-          <MenuList>
-            <MenuItem
-              color="green"
-              onClick={() => {
-                confirmUserById(row.original.id);
-              }}>
-              Confirm
-            </MenuItem>
-            <MenuItem
-              color="red"
-              onClick={() => {
-                onOpen();
-                setSelectedStudent(row.original as unknown as User);
-              }}>
-              Delete
-            </MenuItem>
-          </MenuList>
-        </Menu>
+        <ActionButtons>
+          <MenuItem
+            color="green"
+            onClick={() => {
+              confirmUserById(row.original.id);
+            }}>
+            Confirm
+          </MenuItem>
+          <MenuItem
+            color="red"
+            onClick={() => {
+              onOpen();
+              setSelectedStudent(row.original as unknown as User);
+            }}>
+            Delete
+          </MenuItem>
+        </ActionButtons>
       ),
       header: 'Actions',
     }),

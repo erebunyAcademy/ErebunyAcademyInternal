@@ -1,15 +1,15 @@
 'use client';
 import React, { useCallback, useMemo, useState } from 'react';
-import { IconButton, Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/react';
+import { MenuItem } from '@chakra-ui/react';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { createColumnHelper, SortingState } from '@tanstack/react-table';
 import dayjs from 'dayjs';
 import { v4 as uuidv4 } from 'uuid';
 import { TeacherService } from '@/api/services/teacher.service';
 import { UserService } from '@/api/services/user.service';
+import ActionButtons from '@/components/molecules/ActionButtons';
 import SearchTable from '@/components/organisms/SearchTable';
 import useDebounce from '@/hooks/useDebounce';
-import DotsIcon from '@/icons/dots-horizontal.svg';
 import { ITEMS_PER_PAGE } from '@/utils/constants/common';
 import { QUERY_KEY } from '@/utils/helpers/queryClient';
 import { TeacherModel } from '@/utils/models/teachers';
@@ -90,18 +90,15 @@ export default function Users() {
     columnHelper.accessor('id', {
       id: uuidv4(),
       cell: ({ row }) => (
-        <Menu>
-          <MenuButton as={IconButton} icon={<DotsIcon />} />
-          <MenuList>
-            <MenuItem
-              color="green"
-              onClick={() => {
-                confirmUserById(row.original.id);
-              }}>
-              Confirm
-            </MenuItem>
-          </MenuList>
-        </Menu>
+        <ActionButtons>
+          <MenuItem
+            color="green"
+            onClick={() => {
+              confirmUserById(row.original.id);
+            }}>
+            Confirm
+          </MenuItem>
+        </ActionButtons>
       ),
       header: 'Actions',
     }),

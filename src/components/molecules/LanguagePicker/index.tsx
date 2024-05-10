@@ -46,11 +46,11 @@ const LanguagePicker: FC<Props> = ({ lang }) => {
           display="flex"
           color="#222"
           bg="transparent"
-          _focusVisible={{
-            bg: 'transparent',
+          _hover={{
+            bg: '#EDF2F7',
             color: '#222',
           }}
-          _focus={{
+          _focusVisible={{
             bg: 'transparent',
             color: '#222',
           }}

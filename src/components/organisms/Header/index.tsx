@@ -68,39 +68,43 @@ const Header: FC<HeaderProps> = ({ user, linkItems, lang }) => {
         px={{ base: 4 }}
         align={'center'}>
         <Flex flex={{ base: 1 }} justifyContent="space-between" px={{ base: '10px' }}>
-          <Flex alignItems="center" height="100%">
-            <LogoIcon width={40} height={40} />
+          <Flex>
+            <Flex alignItems="center" height="100%">
+              <LogoIcon width={40} height={40} />
+            </Flex>
           </Flex>
-          <Flex
-            display={{ base: 'block', lg: 'none' }}
-            marginLeft="auto"
-            mr="16px"
-            alignItems="center"
-            justifyContent="center"
-            alignSelf="center">
-            {!!user && (
-              <Avatar
-                name={`${user?.firstName} ${user?.lastName}`}
-                src={user?.avatar ? generateAWSUrl(user.avatar) : ''}
-                bg="#F3F4F6"
-                color="#C0C0C0"
-                cursor="pointer"
-                size="xs"
-                display="flex"
-                justifyContent="center"
-                alignItems="center"
-                onClick={toggleUserProfile}
-              />
+          <Flex>
+            <Flex
+              display={{ base: 'block', lg: 'none' }}
+              marginLeft="auto"
+              mr="16px"
+              alignItems="center"
+              justifyContent="center"
+              alignSelf="center">
+              {!!user && (
+                <Avatar
+                  name={`${user?.firstName} ${user?.lastName}`}
+                  src={user?.avatar ? generateAWSUrl(user.avatar) : ''}
+                  bg="#F3F4F6"
+                  color="#C0C0C0"
+                  cursor="pointer"
+                  size="xs"
+                  display="flex"
+                  justifyContent="center"
+                  alignItems="center"
+                  onClick={toggleUserProfile}
+                />
+              )}
+            </Flex>
+            {(user || data?.user) && linkItems && (
+              <Box display={{ base: 'none', lg: 'flex' }} alignItems="center">
+                <ProfileMenu user={user} linkItems={linkItems} />
+              </Box>
             )}
+            <Stack marginLeft="15px">
+              <LanguagePicker lang={lang} />
+            </Stack>
           </Flex>
-          {(user || data?.user) && linkItems && (
-            <Box display={{ base: 'none', lg: 'flex' }}>
-              <ProfileMenu user={user} linkItems={linkItems} />
-            </Box>
-          )}
-          <Stack>
-            <LanguagePicker lang={lang} />
-          </Stack>
         </Flex>
       </Flex>
       <Collapse in={isUserProfileOpen} animateOpacity>

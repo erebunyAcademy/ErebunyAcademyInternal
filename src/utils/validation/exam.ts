@@ -2,11 +2,11 @@ import { IsArray, IsNotEmpty, IsString } from 'class-validator';
 
 export class ExamValidation {
   @IsString()
-  @IsNotEmpty({ message: 'Title is required' })
+  @IsNotEmpty({ message: 'Exam title is required' })
   title: string;
 
   @IsString()
-  @IsNotEmpty({ message: 'Description is required' })
+  @IsNotEmpty({ message: 'Exam description is required' })
   description: string;
 
   @IsString()
