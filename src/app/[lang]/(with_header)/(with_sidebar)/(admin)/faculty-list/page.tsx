@@ -5,6 +5,7 @@ import { classValidatorResolver } from '@hookform/resolvers/class-validator';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { createColumnHelper, SortingState } from '@tanstack/react-table';
 import dayjs from 'dayjs';
+import { useTranslations } from 'next-intl';
 import { Controller, useForm } from 'react-hook-form';
 import { v4 as uuidv4 } from 'uuid';
 import { FacultyService } from '@/api/services/faculty.service';
@@ -27,6 +28,7 @@ const Faculty = () => {
   const [page, setPage] = useState(1);
   const debouncedSearch = useDebounce(search);
   const [selectedFaculty, setSelectedFaculty] = useState<Maybe<FacultyModel>>(null);
+  const t = useTranslations();
 
   const {
     control,
@@ -121,12 +123,12 @@ const Faculty = () => {
     columnHelper.accessor('title', {
       id: uuidv4(),
       cell: info => info.getValue(),
-      header: 'Title',
+      header: t('list.title'),
     }),
     columnHelper.accessor('description', {
       id: uuidv4(),
       cell: info => info.getValue(),
-      header: 'Description',
+      header: t('list.description'),
     }),
     columnHelper.accessor('createdAt', {
       id: uuidv4(),
@@ -134,7 +136,7 @@ const Faculty = () => {
         const currentDate = dayjs(info.getValue());
         return currentDate.format('YYYY-MM-DD HH:mm:ss');
       },
-      header: 'Created At',
+      header: t('list.createdAt'),
     }),
     columnHelper.accessor('id', {
       id: uuidv4(),
@@ -160,7 +162,7 @@ const Faculty = () => {
           </MenuItem>
         </ActionButtons>
       ),
-      header: 'Actions',
+      header: t('list.actions'),
     }),
   ];
 
@@ -182,7 +184,7 @@ const Faculty = () => {
   return (
     <>
       <SearchTable
-        title="Faculty List"
+        title={t('list.facultyList')}
         isLoading={isLoading}
         data={data?.faculties || []}
         count={data?.count || 0}
@@ -208,7 +210,7 @@ const Faculty = () => {
       <Modal
         isOpen={isCreateEditModalOpen}
         onClose={closeCreateEditModal}
-        title="Faculty"
+        title={t('user.faculty')}
         primaryAction={handleSubmit(onSubmitHandler)}
         actionText={selectedFaculty ? 'Update' : 'Create'}>
         <Controller

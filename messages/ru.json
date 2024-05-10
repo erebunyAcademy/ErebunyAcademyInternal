@@ -1,7 +1,66 @@
 {
   "user": {
     "userType": "User Type",
-    "firstName": "xyz",
-    "lastName": "klm"
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "email": "Email",
+    "address": "Address",
+    "country": "Country",
+    "state": "State",
+    "city": "City",
+    "studentGrade": "Student grade",
+    "studentGradeGroup": "Student grade group",
+    "courseGroup": "Course group",
+    "faculty": "Faculty",
+    "profession": "Profession",
+    "workPlace": "Working place",
+    "scientificActivity": "Scientific activity",
+    "teachingSubject": "Teaching subject",
+    "exams": "Exams",
+    "teachers": "Teachers",
+    "students": "Students",
+    "profile": "Profile",
+    "subjects": "Subjects"
+  },
+  "common": {
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "logOut": "Log out",
+    "en": "en",
+    "ru": "ru",
+    "arm": "arm",
+    "next": "Next",
+    "saveChanges": "Save Changes",
+    "editProfile": "Edit Profile",
+    "changeAvatar": "Change Avatar",
+    "privateSettings": "Private Settings",
+    "password": "Password",
+    "confirmPassword": "Confirm password",
+    "forgotPassword": "Forgot password?",
+    "uploadDocument": "Upload document",
+    "currentPassword": "Current Password",
+    "newPassword": "New Password",
+    "changePassword": "Change Password"
+  },
+  "list": {
+    "searchInput": "Type here to search",
+    "facultyList": "Faculty List",
+    "studentsList": "Students List",
+    "studentGradeList": "Student Grade List",
+    "studentGradeGroupList": "Students Grade Group List",
+    "examList": "Exam List",
+    "count": "Count",
+    "title": "Title",
+    "description": "Description",
+    "createdAt": "Created at",
+    "actions": "Actions",
+    "addNew": "Add New",
+    "edit": "Edit",
+    "delete": "Delete",
+    "update": "Update",
+    "close": "Close"
+  },
+  "validations": {
+    "passwordValidation": "Your password must not be less than 6 characters."
   }
 }

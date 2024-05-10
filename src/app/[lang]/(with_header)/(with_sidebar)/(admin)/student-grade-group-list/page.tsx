@@ -262,7 +262,7 @@ const StudentGradeGroup = () => {
           }
         }}
         actionText="Delete">
-        Are you sure you want to delete this grade group
+        Are you sure you want to delete this grade group?
       </Modal>
     </>
   );

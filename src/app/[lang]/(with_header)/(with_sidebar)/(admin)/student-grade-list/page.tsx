@@ -261,7 +261,7 @@ const StudentGrades = () => {
           }
         }}
         actionText="Delete">
-        Are you sure you want to delete this student grade
+        Are you sure you want to delete this student grade?
       </Modal>
     </>
   );

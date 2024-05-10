@@ -3,6 +3,7 @@ import { Box, BoxProps, HStack, StackProps } from '@chakra-ui/react';
 import { Link } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 
 interface Props {
   data: Array<{ href: string; title: string }>;
@@ -13,6 +14,7 @@ interface Props {
 
 const AuthBox: FC<Props> = ({ data, children, boxProps = {}, linkProps = {} }) => {
   const pathname = usePathname();
+  const t = useTranslations();
 
   return (
     <Box
@@ -35,7 +37,7 @@ const AuthBox: FC<Props> = ({ data, children, boxProps = {}, linkProps = {} }) =
             _hover={{ textDecoration: 'none' }}
             fontWeight={pathname === href || pathname === '#' ? 600 : 400}
             fontStyle="normal">
-            {title}
+            {t(`common.${title}`)}
           </Link>
         ))}
       </HStack>

@@ -2,13 +2,69 @@
   "user": {
     "userType": "User Type",
     "firstName": "First Name",
-    "lastName": "Last Name"
+    "lastName": "Last Name",
+    "email": "Email",
+    "address": "Address",
+    "country": "Country",
+    "state": "State",
+    "enterYourState": "Enter your state",
+    "city": "City",
+    "enterYourCity": "Enter your City",
+    "studentGrade": "Student grade",
+    "studentGradeGroup": "Student grade group",
+    "courseGroup": "Course group",
+    "faculty": "Faculty",
+    "profession": "Profession",
+    "workPlace": "Working place",
+    "scientificActivity": "Scientific activity",
+    "teachingSubject": "Teaching subject",
+    "exams": "Exams",
+    "teachers": "Teachers",
+    "students": "Students",
+    "profile": "Profile",
+    "subjects": "Subjects"
   },
   "common": {
-    "title": "",
-    "desription": ""
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "logOut": "Log out",
+    "en": "en",
+    "ru": "ru",
+    "arm": "arm",
+    "next": "Next",
+    "saveChanges": "Save Changes",
+    "editProfile": "Edit Profile",
+    "changeAvatar": "Change Avatar",
+    "privateSettings": "Private Settings",
+    "password": "Password",
+    "confirmPassword": "Confirm password",
+    "forgotPassword": "Forgot password?",
+    "uploadDocument": "Upload document",
+    "currentPassword": "Current Password",
+    "newPassword": "New Password",
+    "changePassword": "Change Password"
+  },
+  "list": {
+    "searchInput": "Type here to search",
+    "facultyList": "Faculty List",
+    "studentsList": "Students List",
+    "studentGradeList": "Student Grade List",
+    "studentGradeGroupList": "Students Grade Group List",
+    "examList": "Exam List",
+    "count": "Count",
+    "title": "Title",
+    "description": "Description",
+    "createdAt": "Created at",
+    "actions": "Actions",
+    "addNew": "Add New",
+    "edit": "Edit",
+    "delete": "Delete",
+    "create": "Create",
+    "update": "Update",
+    "close": "Close",
+    "deleteConfirmationQuestion": "Are you sure you want to delete this"
   },
   "validations": {
-    "titleIsRequired": "Title is required"
+    "passwordValidation": "Your password must not be less than 6 characters."
   }
 }

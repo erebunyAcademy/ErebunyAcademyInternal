@@ -5,6 +5,7 @@ import { useMutation } from '@tanstack/react-query';
 import NextLink from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { signIn, SignInResponse } from 'next-auth/react';
+import { useTranslations } from 'next-intl';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { UserService } from '@/api/services/user.service';
 import { FormInput, Loading } from '@/components/atoms';
@@ -20,6 +21,7 @@ const SignIn = ({ params }: { params: { lang: Locale } }) => {
   const toast = useToast();
   const router = useRouter();
   const searchParams = useSearchParams();
+  const t = useTranslations();
 
   const {
     control,
@@ -76,7 +78,7 @@ const SignIn = ({ params }: { params: { lang: Locale } }) => {
               isInvalid={!!errors.email?.message}
               name="email"
               type="email"
-              formLabelName="Email"
+              formLabelName={t('user.email')}
               value={value}
               handleInputChange={onChange}
               formErrorMessage={errors.email?.message}
@@ -94,11 +96,11 @@ const SignIn = ({ params }: { params: { lang: Locale } }) => {
               isRequired
               isInvalid={!!errors.password?.message}
               name="password"
-              formLabelName="Password"
+              formLabelName={t('common.password')}
               value={value}
               handleInputChange={onChange}
               type="password"
-              formHelperText="Your password must not be less than 6 characters."
+              formHelperText={t('validations.passwordValidation')}
               formErrorMessage={errors.password?.message}
             />
           )}
@@ -106,7 +108,7 @@ const SignIn = ({ params }: { params: { lang: Locale } }) => {
       </VStack>
       <VStack spacing={16} paddingTop={16}>
         <Button width={'100%'} onClick={handleSubmit(onSubmit)} isDisabled={isSubmitting}>
-          Sign in
+          {t('common.signIn')}
         </Button>
         <Link
           href={languagePathHelper(params.lang, FORGOT_PASSWORD_ROUTE)}
@@ -115,7 +117,7 @@ const SignIn = ({ params }: { params: { lang: Locale } }) => {
           fontWeight="400"
           textDecorationLine="underline"
           textAlign="center">
-          Forgot password?
+          {t('common.forgotPassword')}
         </Link>
       </VStack>
     </AuthBox>
