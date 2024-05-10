@@ -2,7 +2,7 @@ import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class CreateEditSubjectValidation {
   @IsString()
-  @IsNotEmpty({ message: 'Title is required' })
+  @IsNotEmpty({ message: 'Subject title is required' })
   title: string;
 
   @IsString()

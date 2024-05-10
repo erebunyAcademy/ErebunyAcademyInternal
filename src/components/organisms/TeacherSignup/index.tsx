@@ -217,7 +217,7 @@ const TeacherSignUp = () => {
         </Stack>
       </VStack>
       <VStack spacing={16} paddingTop={48}>
-        <Button w={'50%'} onClick={handleSubmit(onTeacherSubmit)}>
+        <Button w={'100%'} onClick={handleSubmit(onTeacherSubmit)}>
           Sign up
         </Button>
       </VStack>

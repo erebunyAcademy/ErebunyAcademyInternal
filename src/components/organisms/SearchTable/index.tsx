@@ -9,6 +9,8 @@ import {
   HStack,
   IconButton,
   Input,
+  InputGroup,
+  InputLeftElement,
   Table,
   Tbody,
   Td,
@@ -28,6 +30,7 @@ import {
 } from '@tanstack/react-table';
 import ChevronLeft from '@/icons/chevron_left.svg';
 import ChevronRight from '@/icons/chevron_right.svg';
+import InputSearchIcon from '@/icons/search_icon.svg';
 import { ITEMS_PER_PAGE } from '@/utils/constants/common';
 
 export type DataTableProps<T> = {
@@ -99,12 +102,18 @@ function SearchTable<T>({
         )}
       </Flex>
       <FormControl py={4} px={4}>
-        <Input
-          placeholder="Type here to search"
-          width="200px"
-          onChange={userSearchHandler}
-          value={search}
-        />
+        <InputGroup marginBottom="10px">
+          <InputLeftElement pointerEvents="none" color="gray.300" fontSize="1.2em">
+            <InputSearchIcon />
+          </InputLeftElement>
+          <Input
+            p="10px 10px 10px 40px"
+            placeholder="Type here to search"
+            width="300px"
+            onChange={userSearchHandler}
+            value={search}
+          />
+        </InputGroup>
       </FormControl>
       <Box overflow="auto" maxWidth={{ base: '340px', sm: '670px', lg: '700px', xl: '100%' }}>
         <Table borderTop="1px solid rgb(226, 232, 240)" height="100%">
@@ -159,12 +168,12 @@ function SearchTable<T>({
               );
             })}
           </Tbody>
-          <Tfoot>
+          <Tfoot width="100%">
             <Tr>
               <Td align="left" colSpan={5}>
                 <Text>Count - {count}</Text>
               </Td>
-              <Td>
+              <Td align="right">
                 <HStack>
                   <IconButton
                     className="border rounded p-1"

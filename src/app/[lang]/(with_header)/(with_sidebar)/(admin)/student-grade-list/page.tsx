@@ -1,6 +1,6 @@
 'use client';
 import React, { useCallback, useMemo, useState } from 'react';
-import { IconButton, Menu, MenuButton, MenuItem, MenuList, useDisclosure } from '@chakra-ui/react';
+import { MenuItem, useDisclosure } from '@chakra-ui/react';
 import { classValidatorResolver } from '@hookform/resolvers/class-validator';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { createColumnHelper, SortingState } from '@tanstack/react-table';
@@ -9,10 +9,10 @@ import { Controller, useForm } from 'react-hook-form';
 import { v4 as uuidv4 } from 'uuid';
 import { StudentGradeService } from '@/api/services/student-grade.service';
 import { FormInput } from '@/components/atoms';
+import ActionButtons from '@/components/molecules/ActionButtons';
 import Modal from '@/components/molecules/Modal';
 import SearchTable from '@/components/organisms/SearchTable';
 import useDebounce from '@/hooks/useDebounce';
-import DotsIcon from '@/icons/dots-horizontal.svg';
 import { ITEMS_PER_PAGE } from '@/utils/constants/common';
 import { QUERY_KEY } from '@/utils/helpers/queryClient';
 import { Maybe } from '@/utils/models/common';
@@ -140,29 +140,26 @@ const StudentGrades = () => {
     columnHelper.accessor('id', {
       id: uuidv4(),
       cell: ({ row }) => (
-        <Menu>
-          <MenuButton as={IconButton} icon={<DotsIcon />} />
-          <MenuList>
-            <MenuItem
-              color="green"
-              onClick={() => {
-                setSelectedStudentGrade(row.original);
-                setValue('title', row.original.title || '');
-                setValue('description', row.original.description || '');
-                openCreateEditModal();
-              }}>
-              Edit
-            </MenuItem>
-            <MenuItem
-              color="red"
-              onClick={() => {
-                setSelectedStudentGrade(row.original);
-                openDeleteModal();
-              }}>
-              Delete
-            </MenuItem>
-          </MenuList>
-        </Menu>
+        <ActionButtons>
+          <MenuItem
+            color="green"
+            onClick={() => {
+              setSelectedStudentGrade(row.original);
+              setValue('title', row.original.title || '');
+              setValue('description', row.original.description || '');
+              openCreateEditModal();
+            }}>
+            Edit
+          </MenuItem>
+          <MenuItem
+            color="red"
+            onClick={() => {
+              setSelectedStudentGrade(row.original);
+              openDeleteModal();
+            }}>
+            Delete
+          </MenuItem>
+        </ActionButtons>
       ),
       header: 'Actions',
     }),
@@ -218,7 +215,7 @@ const StudentGrades = () => {
         <Controller
           name="title"
           control={control}
-          rules={{ required: 'This field is required' }}
+          rules={{ required: 'Student grade title is required' }}
           render={({ field: { onChange, value, name } }) => (
             <FormInput
               isRequired
@@ -236,7 +233,7 @@ const StudentGrades = () => {
         <Controller
           name="description"
           control={control}
-          rules={{ required: 'This field is required' }}
+          rules={{ required: 'Student grade description is required' }}
           render={({ field: { onChange, value, name } }) => (
             <FormInput
               isInvalid={!!errors.description?.message}

@@ -1,8 +1,8 @@
 import { FC, memo, useMemo } from 'react';
 import { Box, Center, Flex, Grid, GridItem, useMediaQuery } from '@chakra-ui/react';
-import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import LogoIcon from '@/icons/college_main_icon.svg';
 import { breakpoints } from '@/utils/constants/chakra';
 import { FORGOT_PASSWORD_ROUTE, HOMEPAGE_ROUTE } from '@/utils/constants/routes';
 
@@ -45,14 +45,7 @@ const AuthWrapper = ({ children }: { children: React.ReactNode }) => {
         <RightComponent isCenter={isCenter}>
           <Flex justifyContent="center">
             <Link href={HOMEPAGE_ROUTE}>
-              <Image
-                src="/icons/college_main_icon.svg"
-                width={80}
-                height={80}
-                alt="College icon"
-                priority
-                style={{ objectFit: 'contain', zIndex: 1000 }}
-              />
+              <LogoIcon width={80} height={80} />
             </Link>
           </Flex>
           <Flex justifyContent="center">{children}</Flex>

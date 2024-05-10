@@ -214,7 +214,7 @@ const Faculty = () => {
         <Controller
           name="title"
           control={control}
-          rules={{ required: 'This field is required' }}
+          rules={{ required: 'Faculty name is required' }}
           render={({ field: { onChange, value, name } }) => (
             <FormInput
               isRequired
@@ -232,7 +232,7 @@ const Faculty = () => {
         <Controller
           name="description"
           control={control}
-          rules={{ required: 'This field is required' }}
+          rules={{ required: 'Faculty description is required' }}
           render={({ field: { onChange, value, name } }) => (
             <FormInput
               isInvalid={!!errors.description?.message}
