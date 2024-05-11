@@ -1,18 +1,21 @@
 'use client';
 import React, { useCallback, useMemo, useState } from 'react';
-import { MenuItem, useDisclosure } from '@chakra-ui/react';
-import { User } from '@prisma/client';
+import { Avatar, Button, MenuItem, useDisclosure } from '@chakra-ui/react';
+import { AttachmentTypeEnum, User } from '@prisma/client';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { createColumnHelper, SortingState } from '@tanstack/react-table';
 import dayjs from 'dayjs';
+import Image from 'next/image';
 import { v4 as uuidv4 } from 'uuid';
 import { StudentService } from '@/api/services/student.service';
 import { UserService } from '@/api/services/user.service';
 import ActionButtons from '@/components/molecules/ActionButtons';
+import Modal from '@/components/molecules/Modal';
 import SharedAlertDialog from '@/components/molecules/Modals/SharedAlertDialog';
 import SearchTable from '@/components/organisms/SearchTable';
 import useDebounce from '@/hooks/useDebounce';
 import { ITEMS_PER_PAGE } from '@/utils/constants/common';
+import { generateAWSUrl } from '@/utils/helpers/aws';
 import { QUERY_KEY } from '@/utils/helpers/queryClient';
 import { Maybe } from '@/utils/models/common';
 import { StudentModel } from '@/utils/models/student';
@@ -23,6 +26,7 @@ export default function Users() {
   const [page, setPage] = useState(1);
   const debouncedSearch = useDebounce(search);
   const [selectedStudent, setSelectedStudent] = useState<Maybe<User>>(null);
+  const [attachmentKey, setAttachmentKey] = useState('');
 
   const { isOpen, onOpen, onClose } = useDisclosure({
     onClose() {
@@ -40,6 +44,12 @@ export default function Users() {
         search: debouncedSearch,
       }),
   });
+
+  const {
+    isOpen: isAttachmentModalOpen,
+    onOpen: openAttachmentModal,
+    onClose: closeAttachmentModal,
+  } = useDisclosure();
 
   const { mutate: deleteUserById } = useMutation({
     mutationFn: UserService.deleteStudentById,
@@ -68,6 +78,23 @@ export default function Users() {
   const columnHelper = createColumnHelper<StudentModel>();
 
   const columns = [
+    columnHelper.accessor('attachment', {
+      id: uuidv4(),
+      cell: info => {
+        const existingAvatar = info
+          .getValue()
+          .find(attachment => attachment.type === AttachmentTypeEnum.AVATAR);
+        return (
+          <Avatar
+            bg="#319795"
+            color="#fff"
+            name={`${info.row.original.firstName} ${info.row.original.lastName}`}
+            src={existingAvatar?.key || ''}
+          />
+        );
+      },
+      header: 'Avatar',
+    }),
     columnHelper.accessor('firstName', {
       id: uuidv4(),
       cell: info => info.getValue(),
@@ -82,6 +109,30 @@ export default function Users() {
       id: uuidv4(),
       cell: info => info.getValue(),
       header: 'Email',
+    }),
+    columnHelper.accessor('attachment', {
+      id: uuidv4(),
+      cell: info => {
+        return (
+          <>
+            {info.getValue().map((item, index) => (
+              <React.Fragment key={index}>
+                {item.type === AttachmentTypeEnum.FILE ? (
+                  <Button
+                    variant="link"
+                    onClick={() => {
+                      setAttachmentKey(item.key);
+                      openAttachmentModal();
+                    }}>
+                    See student attachment
+                  </Button>
+                ) : null}
+              </React.Fragment>
+            ))}
+          </>
+        );
+      },
+      header: 'Attachment',
     }),
     columnHelper.accessor('student.faculty.title', {
       id: uuidv4(),
@@ -169,6 +220,17 @@ export default function Users() {
           onClose={onClose}
         />
       )}
+      <Modal
+        isOpen={isAttachmentModalOpen}
+        onClose={closeAttachmentModal}
+        title="Student attachment">
+        <Image
+          src={generateAWSUrl(attachmentKey)}
+          width={400}
+          height={400}
+          alt="student attachment"
+        />
+      </Modal>
     </>
   );
 }

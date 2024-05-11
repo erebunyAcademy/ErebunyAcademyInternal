@@ -57,6 +57,13 @@ export class UserResolver {
             },
           },
         },
+        teacher: {
+          select: {
+            profession: true,
+            workPlace: true,
+            scientificActivity: true,
+          },
+        },
       },
     });
   }

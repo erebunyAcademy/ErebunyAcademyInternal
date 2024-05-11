@@ -1,4 +1,12 @@
-import { Faculty, Prisma, Student, StudentGrade, StudentGradeGroup, User } from '@prisma/client';
+import {
+  Attachment,
+  Faculty,
+  Prisma,
+  Student,
+  StudentGrade,
+  StudentGradeGroup,
+  User,
+} from '@prisma/client';
 import { StudentResolver } from '@/lib/prisma/resolvers/student.resolver';
 
 export type StudentsListModel = Prisma.PromiseReturnType<typeof StudentResolver.list>;
@@ -9,4 +17,5 @@ export interface StudentModel extends User {
     studentGrade: StudentGrade;
     studentGradeGroup: StudentGradeGroup;
   } & Student;
+  attachment: Attachment[];
 }

@@ -2,7 +2,7 @@ import { UserRoleEnum } from '@prisma/client';
 import { User } from 'next-auth';
 
 export const getUserData = (user: User) => {
-  const data = [
+  return [
     {
       id: 1,
       title: 'First name',
@@ -33,45 +33,44 @@ export const getUserData = (user: User) => {
       title: 'City',
       value: user.city,
     },
-  ];
-  if (user.role === UserRoleEnum.STUDENT) {
-    data.concat([
-      {
-        id: 7,
-        title: 'Faculty',
-        value: user.student.faculty.title,
-      },
-      {
-        id: 8,
-        title: 'Student Grade',
-        value: user.student.studentGrade.title,
-      },
-      {
-        id: 9,
-        title: 'Student Grade group',
-        value: user.student.studentGradeGroup.title,
-      },
-    ]);
-  } else if (user.role === UserRoleEnum.TEACHER) {
-    console.log(user.teacher);
+    ...(user.role === UserRoleEnum.STUDENT
+      ? [
+          {
+            id: 7,
+            title: 'Faculty',
+            value: user.student.faculty.title,
+          },
+          {
+            id: 8,
+            title: 'Student Grade',
+            value: user.student.studentGrade.title,
+          },
+          {
+            id: 9,
+            title: 'Student Grade group',
+            value: user.student.studentGradeGroup.title,
+          },
+        ]
+      : []),
 
-    data.concat([
-      {
-        id: 10,
-        title: 'Profession',
-        value: user.teacher.profession,
-      },
-      {
-        id: 11,
-        title: 'Workplace',
-        value: user.teacher.workPlace,
-      },
-      {
-        id: 12,
-        title: 'Scientific Activity',
-        value: user.teacher.scientificActivity,
-      },
-    ]);
-  }
-  return data;
+    ...(user.role === UserRoleEnum.TEACHER
+      ? [
+          {
+            id: 10,
+            title: 'Profession',
+            value: user.teacher.profession,
+          },
+          {
+            id: 11,
+            title: 'Workplace',
+            value: user.teacher.workPlace,
+          },
+          {
+            id: 12,
+            title: 'Scientific Activity',
+            value: user.teacher.scientificActivity,
+          },
+        ]
+      : []),
+  ];
 };

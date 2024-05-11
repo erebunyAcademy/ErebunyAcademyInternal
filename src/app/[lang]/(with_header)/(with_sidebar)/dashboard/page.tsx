@@ -5,6 +5,7 @@ import { getUserData } from '@/utils/helpers/user';
 
 const Dashboard = async () => {
   const session = await serverSession();
+
   if (!session?.user) {
     return null;
   }

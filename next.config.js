@@ -36,7 +36,12 @@ const nextConfig = {
     return config;
   },
   images: {
-    remotePatterns: [],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'pba-users-bucket.s3.amazonaws.com',
+      },
+    ],
   },
   async redirects() {
     return [
