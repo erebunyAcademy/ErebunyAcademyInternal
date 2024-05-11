@@ -43,7 +43,7 @@ export const linkItems: LinkItemsFunction = (user: Maybe<User>) => {
   switch (user.role) {
     case UserRoleEnum.ADMIN:
       return [
-        ...commonLinks.slice(0, 1),
+        ...commonLinks.slice(0, 2),
         { id: 2, name: 'Faculty', icon: <FacultiesIcon />, href: ROUTE_FACULTIES },
         { id: 3, name: 'Students', icon: <StudentIcon />, href: ROUTE_STUDENTS },
         { id: 4, name: 'Student Grade', icon: <StudentGradeIcon />, href: ROUTE_STUDENT_GRADES },
@@ -56,7 +56,7 @@ export const linkItems: LinkItemsFunction = (user: Maybe<User>) => {
         { id: 6, name: 'Exams', icon: <ExamsIcon />, href: ROUTE_EXAMS },
         { id: 7, name: 'Teachers', icon: <TeacherIcon />, href: ROUTE_TEACHERS },
         { id: 8, name: 'Subjects', icon: <SubjectsIcon />, href: ROUTE_SUBJECTS },
-        commonLinks[1],
+        commonLinks[2],
       ];
     case UserRoleEnum.TEACHER:
     case UserRoleEnum.STUDENT:
