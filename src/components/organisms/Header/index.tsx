@@ -95,7 +95,7 @@ const Header: FC<HeaderProps> = ({ user, linkItems, lang }) => {
                 />
               )}
             </Flex>
-            <Stack marginLeft="15px">
+            <Stack width="115px">
               <LanguagePicker lang={lang} />
             </Stack>
           </Flex>

@@ -26,7 +26,7 @@ const LanguagePicker: FC<Props> = ({ lang }) => {
     return `${segments.join('/')}?${new URLSearchParams(searchParams?.toString())}`;
   };
 
-  const languageIconHander = (lng: Locale) => {
+  const languageIconHandler = (lng: Locale) => {
     switch (lng) {
       case 'am':
         return <Armenian />;
@@ -44,6 +44,7 @@ const LanguagePicker: FC<Props> = ({ lang }) => {
           as={Button}
           rightIcon={<ChevronDownIcon />}
           display="flex"
+          p={{ base: '0', md: '0 24px' }}
           color="#222"
           bg="transparent"
           _hover={{
@@ -62,18 +63,19 @@ const LanguagePicker: FC<Props> = ({ lang }) => {
             bg: 'transparent',
             color: '#222',
           }}>
-          <Flex gap="8px" alignItems="center">
-            {languageIconHander(lang)} {t(`common.${lang}`)}
+          <Flex gap="8px" alignItems="center" fontSize={{ base: '12px', md: '18px' }}>
+            {languageIconHandler(lang)} {t(`common.${lang}`)}
           </Flex>
         </MenuButton>
-        <MenuList width="100px">
+        <MenuList>
           {Object.keys(languages).map(option => (
             <MenuItem
               as={Link}
               key={option}
               display="flex"
+              fontSize={{ base: '12px', md: '18px' }}
               href={changeLanguage(pathname!, option)}
-              icon={languageIconHander(option as Locale)}>
+              icon={languageIconHandler(option as Locale)}>
               {t(`common.${option}`)}
             </MenuItem>
           ))}
