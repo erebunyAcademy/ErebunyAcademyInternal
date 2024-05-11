@@ -1,10 +1,10 @@
-export const HOMEPAGE_ROUTE = '/';
-export const SIGN_IN_ROUTE = '/signin';
-export const SIGN_UP_ROUTE = '/signup';
-export const FORGOT_PASSWORD_ROUTE = '/forgot-password';
-export const PROFILE_ROUTE = '/profile';
+export const ROUTE_SIGN_IN = '/signin';
+export const ROUTE_SIGN_UP = '/signup';
+export const ROUTE_FORGOT_PASSWORD = '/forgot-password';
+export const ROUTE_PROFILE = '/profile';
 
 export const ROUTE_STUDENTS = '/students-list';
+export const ROUTE_DASHBOARD = '/dashboard';
 export const ROUTE_EXAMS = '/exams-list';
 export const ROUTE_TEACHERS = '/teachers-list';
 export const ROUTE_FACULTIES = '/faculty-list';

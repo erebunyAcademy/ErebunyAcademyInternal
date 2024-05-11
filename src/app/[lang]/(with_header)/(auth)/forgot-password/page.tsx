@@ -4,7 +4,7 @@ import { StackProps } from '@chakra-ui/react';
 import { AuthBox } from '@/components/molecules';
 import { useAuth } from '@/contexts/AuthContext';
 import { Locale } from '@/i18n';
-import { FORGOT_PASSWORD_ROUTE } from '@/utils/constants/routes';
+import { ROUTE_FORGOT_PASSWORD } from '@/utils/constants/routes';
 import { languagePathHelper } from '@/utils/helpers/language';
 import { Step1, Step2, Step3 } from './steps';
 
@@ -28,17 +28,17 @@ export default function ForgotPasswrodPage({ params }: { params: { lang: Locale 
     switch (step) {
       case 'emailStep':
         return {
-          href: languagePathHelper(params.lang, FORGOT_PASSWORD_ROUTE),
+          href: languagePathHelper(params.lang, ROUTE_FORGOT_PASSWORD),
           title: 'Forgot Password?',
         };
       case 'OTPStep':
         return {
-          href: languagePathHelper(params.lang, FORGOT_PASSWORD_ROUTE),
+          href: languagePathHelper(params.lang, ROUTE_FORGOT_PASSWORD),
           title: 'Check your email',
         };
       case 'passwordStep':
         return {
-          href: languagePathHelper(params.lang, FORGOT_PASSWORD_ROUTE),
+          href: languagePathHelper(params.lang, ROUTE_FORGOT_PASSWORD),
           title: 'Create new password',
         };
     }

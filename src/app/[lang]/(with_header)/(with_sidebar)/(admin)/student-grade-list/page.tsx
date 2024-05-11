@@ -5,6 +5,7 @@ import { classValidatorResolver } from '@hookform/resolvers/class-validator';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { createColumnHelper, SortingState } from '@tanstack/react-table';
 import dayjs from 'dayjs';
+import { useTranslations } from 'next-intl';
 import { Controller, useForm } from 'react-hook-form';
 import { v4 as uuidv4 } from 'uuid';
 import { StudentGradeService } from '@/api/services/student-grade.service';
@@ -22,6 +23,7 @@ import { CreateEditStudentGradeValidation } from '@/utils/validation/studentGrad
 const resolver = classValidatorResolver(CreateEditStudentGradeValidation);
 
 const StudentGrades = () => {
+  const t = useTranslations();
   const [sorting, setSorting] = useState<SortingState>([]);
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
@@ -183,6 +185,8 @@ const StudentGrades = () => {
     [createStudentGrade, selectedStudentGrade, updateStudentGrade],
   );
 
+  console.log(t('common.deleteItem'));
+
   return (
     <>
       <SearchTable
@@ -261,7 +265,7 @@ const StudentGrades = () => {
           }
         }}
         actionText="Delete">
-        Are you sure you want to delete this student grade?
+        {t('common.deleteItem', { element: 'Student' })}
       </Modal>
     </>
   );

@@ -21,7 +21,7 @@ import { FacultyService } from '@/api/services/faculty.service';
 import { StudentGradeGroupService } from '@/api/services/student-grade-group.service';
 import { StudentGradeService } from '@/api/services/student-grade.service';
 import { UserService } from '@/api/services/user.service';
-import { SIGN_IN_ROUTE } from '@/utils/constants/routes';
+import { ROUTE_SIGN_IN } from '@/utils/constants/routes';
 import { StudentSignUpValidation } from '@/utils/validation';
 import { FormInput, SelectLabel } from '../../atoms';
 
@@ -55,7 +55,7 @@ const StudentSignUp = () => {
         duration: 4000,
         isClosable: false,
       });
-      router.push(SIGN_IN_ROUTE);
+      router.push(ROUTE_SIGN_IN);
     },
   });
 

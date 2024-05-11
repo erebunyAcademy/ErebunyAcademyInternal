@@ -10,9 +10,10 @@ import StudentGradeIcon from '@/icons/students_grade_icon.svg';
 import SubjectsIcon from '@/icons/subjects_icon.svg';
 import TeacherIcon from '@/icons/teacher_icon.svg';
 import {
-  PROFILE_ROUTE,
+  ROUTE_DASHBOARD,
   ROUTE_EXAMS,
   ROUTE_FACULTIES,
+  ROUTE_PROFILE,
   ROUTE_STUDENT_GRADE_GROUPS,
   ROUTE_STUDENT_GRADES,
   ROUTE_STUDENTS,
@@ -34,7 +35,8 @@ export const linkItems: LinkItemsFunction = (user: Maybe<User>) => {
   if (!user) return [];
 
   const commonLinks = [
-    { id: 1, name: 'Profile', icon: <ProfileIcon />, href: PROFILE_ROUTE },
+    { id: 10, name: 'Dashboard', icon: <ProfileIcon />, href: ROUTE_DASHBOARD },
+    { id: 1, name: 'Profile', icon: <ProfileIcon />, href: ROUTE_PROFILE },
     { id: 9, name: 'Log out', icon: <LogoutIcon /> },
   ];
 

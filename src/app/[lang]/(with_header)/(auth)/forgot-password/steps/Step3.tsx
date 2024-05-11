@@ -8,7 +8,7 @@ import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { AuthService } from '@/api/services/auth.service';
 import { FormInput } from '@/components/atoms';
 import { useAuth } from '@/contexts/AuthContext';
-import { SIGN_IN_ROUTE } from '@/utils/constants/routes';
+import { ROUTE_SIGN_IN } from '@/utils/constants/routes';
 import { ForgotPasswordStep3Validation } from '@/utils/validation';
 
 const resolver = classValidatorResolver(ForgotPasswordStep3Validation);
@@ -30,7 +30,7 @@ const Step3 = () => {
     boolean,
     { message: string },
     ForgotPasswordStep3Validation
-  >({ mutationFn: AuthService.forgotPasswordStep3, onSuccess: () => push(SIGN_IN_ROUTE) });
+  >({ mutationFn: AuthService.forgotPasswordStep3, onSuccess: () => push(ROUTE_SIGN_IN) });
 
   const onSubmit: SubmitHandler<ForgotPasswordStep3Validation> = useCallback(
     data => {

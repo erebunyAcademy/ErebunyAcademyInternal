@@ -3,7 +3,7 @@ import { Accordion, Box, Button, Flex, Stack } from '@chakra-ui/react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { User } from 'next-auth';
-import { SIGN_IN_ROUTE, SIGN_UP_ROUTE } from '@/utils/constants/routes';
+import { ROUTE_SIGN_IN, ROUTE_SIGN_UP } from '@/utils/constants/routes';
 import MobileNavItem from '../MobileNavItem';
 
 interface MobileNavProps {
@@ -23,7 +23,7 @@ const MobileNav: FC<MobileNavProps> = ({ navItems, user, onClose }) => {
           ))}
           {!user && (
             <Flex flexDirection="column" gap={16} pb="50px" pt={24}>
-              <Link href={`${SIGN_IN_ROUTE}?callback_url=${pathname}`}>
+              <Link href={`${ROUTE_SIGN_IN}?callback_url=${pathname}`}>
                 <Button
                   borderRadius={6}
                   fontSize={14}
@@ -36,7 +36,7 @@ const MobileNav: FC<MobileNavProps> = ({ navItems, user, onClose }) => {
                   Log In
                 </Button>
               </Link>
-              <Link href={SIGN_UP_ROUTE}>
+              <Link href={ROUTE_SIGN_UP}>
                 <Button borderRadius={6} fontSize={14} fontWeight={600} height={38} width="100%">
                   Get Started
                 </Button>

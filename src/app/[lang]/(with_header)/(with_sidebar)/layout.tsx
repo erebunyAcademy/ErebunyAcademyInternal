@@ -4,7 +4,7 @@ import { redirect } from 'next/navigation';
 import SidebarContent from '@/components/molecules/SidebarContent';
 import { Locale } from '@/i18n';
 import { serverSession } from '@/pages/api/auth/[...nextauth]';
-import { SIGN_IN_ROUTE } from '@/utils/constants/routes';
+import { ROUTE_SIGN_IN } from '@/utils/constants/routes';
 import { languagePathHelper } from '@/utils/helpers/language';
 import { linkItems } from '@/utils/helpers/permissionRoutes';
 
@@ -18,7 +18,7 @@ export default async function HeaderLayout({
   const session = await serverSession();
 
   if (!session?.user) {
-    redirect(languagePathHelper(params.lang, SIGN_IN_ROUTE));
+    redirect(languagePathHelper(params.lang, ROUTE_SIGN_IN));
   }
 
   return (
@@ -27,6 +27,7 @@ export default async function HeaderLayout({
         display={{ base: 'none', md: 'block' }}
         width="360px"
         linkItems={linkItems(session?.user || null)}
+        lang={params.lang}
       />
       <Flex marginLeft={{ base: 0, md: '360px' }} marginTop="60px">
         {children}

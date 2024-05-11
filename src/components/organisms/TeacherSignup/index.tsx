@@ -7,7 +7,7 @@ import { useTranslations } from 'next-intl';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { AuthService } from '@/api/services/auth.service';
 import { SubjectService } from '@/api/services/subject.service';
-import { SIGN_IN_ROUTE } from '@/utils/constants/routes';
+import { ROUTE_SIGN_IN } from '@/utils/constants/routes';
 import { TeacherSignUpValidation } from '@/utils/validation';
 import { FormInput, SelectLabel } from '../../atoms';
 
@@ -52,7 +52,7 @@ const TeacherSignUp = () => {
         duration: 4000,
         isClosable: false,
       });
-      router.push(SIGN_IN_ROUTE);
+      router.push(ROUTE_SIGN_IN);
     },
   });
 
@@ -220,7 +220,7 @@ const TeacherSignUp = () => {
       </VStack>
       <VStack spacing={16} paddingTop={48}>
         <Button w={'50%'} onClick={handleSubmit(onTeacherSubmit)}>
-        {t('common.signUp')}
+          {t('common.signUp')}
         </Button>
       </VStack>
     </>

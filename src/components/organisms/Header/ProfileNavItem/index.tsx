@@ -15,7 +15,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { User } from 'next-auth';
 import { signOut } from 'next-auth/react';
-import { PROFILE_ROUTE } from '@/utils/constants/routes';
+import { ROUTE_PROFILE } from '@/utils/constants/routes';
 import { generateAWSUrl } from '@/utils/helpers/aws';
 import { LinkItemProps } from '@/utils/helpers/permissionRoutes';
 
@@ -41,7 +41,7 @@ const ProfileNavItem: FC<ProfileNavItemProps> = ({ user, onClose, linkItems }) =
   return (
     <AccordionItem pl={8}>
       <AccordionButton display="flex">
-        <Flex flex={6} textAlign="left" gap="8px" as={Link} href={PROFILE_ROUTE} onClick={onClose}>
+        <Flex flex={6} textAlign="left" gap="8px" as={Link} href={ROUTE_PROFILE} onClick={onClose}>
           <Avatar
             name={name}
             src={generateAWSUrl(user?.avatar || '')}

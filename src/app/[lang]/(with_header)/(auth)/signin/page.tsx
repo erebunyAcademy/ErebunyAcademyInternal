@@ -12,7 +12,7 @@ import { FormInput, Loading } from '@/components/atoms';
 import { AuthBox } from '@/components/molecules';
 import { Locale } from '@/i18n';
 import { ERROR_MESSAGES } from '@/utils/constants/common';
-import { FORGOT_PASSWORD_ROUTE, PROFILE_ROUTE } from '@/utils/constants/routes';
+import { ROUTE_DASHBOARD, ROUTE_FORGOT_PASSWORD } from '@/utils/constants/routes';
 import { authBoxProps } from '@/utils/helpers/auth';
 import { languagePathHelper } from '@/utils/helpers/language';
 import { SignInFormData } from '@/utils/models/auth';
@@ -36,7 +36,7 @@ const SignIn = ({ params }: { params: { lang: Locale } }) => {
       const res: SignInResponse | undefined = await signIn('credentials', {
         email,
         password,
-        callbackUrl: PROFILE_ROUTE,
+        callbackUrl: languagePathHelper(params.lang, ROUTE_DASHBOARD),
         redirect: false,
       });
       if (res?.ok && res.url) {
@@ -111,7 +111,7 @@ const SignIn = ({ params }: { params: { lang: Locale } }) => {
           {t('common.signIn')}
         </Button>
         <Link
-          href={languagePathHelper(params.lang, FORGOT_PASSWORD_ROUTE)}
+          href={languagePathHelper(params.lang, ROUTE_FORGOT_PASSWORD)}
           as={NextLink}
           fontSize="16px"
           fontWeight="400"

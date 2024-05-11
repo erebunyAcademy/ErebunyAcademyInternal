@@ -26,8 +26,6 @@ const LanguagePicker: FC<Props> = ({ lang }) => {
     return `${segments.join('/')}?${new URLSearchParams(searchParams?.toString())}`;
   };
 
-  console.log({ lang });
-
   const languageIconHander = (lng: Locale) => {
     switch (lng) {
       case 'am':
@@ -65,7 +63,7 @@ const LanguagePicker: FC<Props> = ({ lang }) => {
             color: '#222',
           }}>
           <Flex gap="8px" alignItems="center">
-            {languageIconHander(lang)} {lang}
+            {languageIconHander(lang)} {t(`common.${lang}`)}
           </Flex>
         </MenuButton>
         <MenuList width="100px">

@@ -26,9 +26,9 @@
     "signIn": "Sign In",
     "signUp": "Sign Up",
     "logOut": "Log out",
-    "en": "en",
-    "ru": "ru",
-    "arm": "hay",
+    "en": "Անգլերեն",
+    "ru": "Ռուսերեն",
+    "am": "Հայերեն",
     "next": "Next",
     "saveChanges": "Save Changes",
     "editProfile": "Edit Profile",
@@ -40,7 +40,8 @@
     "uploadDocument": "Upload document",
     "currentPassword": "Current Password",
     "newPassword": "New Password",
-    "changePassword": "Change Password"
+    "changePassword": "Change Password",
+    "deleteItem": "Դուք վստահ ես որ ցանկանում ես ջնջել  {{element}}"
   },
   "list": {
     "searchInput": "Type here to search",

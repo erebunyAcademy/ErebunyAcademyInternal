@@ -30,7 +30,7 @@
     "logOut": "Log out",
     "en": "en",
     "ru": "ru",
-    "arm": "arm",
+    "am": "arm",
     "next": "Next",
     "saveChanges": "Save Changes",
     "editProfile": "Edit Profile",
@@ -42,7 +42,8 @@
     "uploadDocument": "Upload document",
     "currentPassword": "Current Password",
     "newPassword": "New Password",
-    "changePassword": "Change Password"
+    "changePassword": "Change Password",
+    "deleteItem": "Are you sure you want to delete this {{element}}"
   },
   "list": {
     "searchInput": "Type here to search",
