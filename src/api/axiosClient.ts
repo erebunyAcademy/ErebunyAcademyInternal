@@ -1,8 +1,6 @@
-import { createStandaloneToast } from "@chakra-ui/react";
-import axios, { AxiosError } from "axios";
-import { signOut } from "next-auth/react";
-import { toastDefaultOptions } from "@/utils/constants/chakra";
-import { HOMEPAGE_ROUTE } from "@/utils/constants/routes";
+import { createStandaloneToast } from '@chakra-ui/react';
+import axios, { AxiosError } from 'axios';
+import { toastDefaultOptions } from '@/utils/constants/chakra';
 
 const $apiClient = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
@@ -10,17 +8,17 @@ const $apiClient = axios.create({
 });
 
 const handleError = (error: Error | AxiosError) => {
-  if (typeof window === "undefined") {
+  if (typeof window === 'undefined') {
     console.log({ handleError: error });
     return;
   }
   const { toast } = createStandaloneToast({
-    defaultOptions: { status: "error", ...toastDefaultOptions },
+    defaultOptions: { status: 'error', ...toastDefaultOptions },
   });
   if (axios.isAxiosError(error) && !!error.response?.data?.message) {
     toast({ title: error.response.data.message });
     if (error.response.status === 401) {
-      signOut({ callbackUrl: HOMEPAGE_ROUTE });
+      // signOut({ callbackUrl:  });
     }
     return Promise.reject(error.response.data);
   } else {
@@ -29,13 +27,13 @@ const handleError = (error: Error | AxiosError) => {
   }
 };
 
-$apiClient.interceptors.request.use((config) => {
+$apiClient.interceptors.request.use(config => {
   if (config.headers) {
-    config.headers["Content-Type"] = "application/json";
+    config.headers['Content-Type'] = 'application/json';
   }
   return config;
 }, handleError);
 
-$apiClient.interceptors.response.use((response) => response.data, handleError);
+$apiClient.interceptors.response.use(response => response.data, handleError);
 
 export default $apiClient;

@@ -3,10 +3,11 @@ import { Button, Stack, useToast, VStack } from '@chakra-ui/react';
 import { classValidatorResolver } from '@hookform/resolvers/class-validator';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { AuthService } from '@/api/services/auth.service';
 import { SubjectService } from '@/api/services/subject.service';
-import { SIGN_IN_ROUTE } from '@/utils/constants/routes';
+import { ROUTE_SIGN_IN } from '@/utils/constants/routes';
 import { TeacherSignUpValidation } from '@/utils/validation';
 import { FormInput, SelectLabel } from '../../atoms';
 
@@ -15,6 +16,7 @@ const resolver = classValidatorResolver(TeacherSignUpValidation);
 const TeacherSignUp = () => {
   const toast = useToast();
   const router = useRouter();
+  const t = useTranslations();
 
   const {
     control,
@@ -50,7 +52,7 @@ const TeacherSignUp = () => {
         duration: 4000,
         isClosable: false,
       });
-      router.push(SIGN_IN_ROUTE);
+      router.push(ROUTE_SIGN_IN);
     },
   });
 
@@ -68,11 +70,11 @@ const TeacherSignUp = () => {
             render={({ field: { onChange, value } }) => (
               <FormInput
                 isRequired
-                placeholder="First name"
+                placeholder={t('user.firstName')}
                 isInvalid={!!errors.firstName?.message}
                 name="firstName"
                 type="text"
-                formLabelName="First Name"
+                formLabelName={t('user.firstName')}
                 value={value}
                 handleInputChange={onChange}
               />
@@ -87,8 +89,8 @@ const TeacherSignUp = () => {
                 isInvalid={!!errors.lastName?.message}
                 name="lastName"
                 type="text"
-                placeholder="Last name"
-                formLabelName="Last Name"
+                placeholder={t('user.lastName')}
+                formLabelName={t('user.lastName')}
                 value={value}
                 handleInputChange={onChange}
               />
@@ -106,8 +108,8 @@ const TeacherSignUp = () => {
                 isInvalid={!!errors.email?.message}
                 name="email"
                 type="email"
-                placeholder="Email"
-                formLabelName="Email"
+                placeholder={t('user.email')}
+                formLabelName={t('user.email')}
                 value={value}
                 handleInputChange={onChange}
               />
@@ -119,11 +121,11 @@ const TeacherSignUp = () => {
             render={({ field: { onChange, value } }) => (
               <FormInput
                 isRequired
-                placeholder="Profession"
+                placeholder={t('user.profession')}
                 isInvalid={!!errors.firstName?.message}
                 name="firstName"
                 type="text"
-                formLabelName="Profession"
+                formLabelName={t('user.profession')}
                 value={value}
                 handleInputChange={onChange}
               />
@@ -138,11 +140,11 @@ const TeacherSignUp = () => {
             render={({ field: { onChange, value, name } }) => (
               <FormInput
                 isRequired
-                placeholder="Working place"
+                placeholder={t('user.workPlace')}
                 isInvalid={!!errors.firstName?.message}
                 name={name}
                 type="text"
-                formLabelName="Working place"
+                formLabelName={t('user.workPlace')}
                 value={value}
                 handleInputChange={onChange}
               />
@@ -154,11 +156,11 @@ const TeacherSignUp = () => {
             render={({ field: { onChange, value, name } }) => (
               <FormInput
                 isRequired
-                placeholder="Scientific activity"
+                placeholder={t('user.scientificActivity')}
                 isInvalid={!!errors.firstName?.message}
                 name={name}
                 type="text"
-                formLabelName="Scientific activity"
+                formLabelName={t('user.scientificActivity')}
                 value={value}
                 handleInputChange={onChange}
               />
@@ -172,7 +174,7 @@ const TeacherSignUp = () => {
             <SelectLabel
               name={name}
               options={data || []}
-              labelName="Teaching Subject"
+              labelName={t('user.teachingSubject')}
               valueLabel="id"
               nameLabel="title"
               onChange={onChange}
@@ -189,12 +191,12 @@ const TeacherSignUp = () => {
                 isRequired
                 isInvalid={!!errors.password?.message}
                 name="password"
-                formLabelName="Password"
-                placeholder="Password"
+                formLabelName={t('common.password')}
+                placeholder={t('common.password')}
                 value={value}
                 handleInputChange={onChange}
                 type="password"
-                formHelperText="Your password must not be less than 6 characters."
+                formHelperText={t('validations.passwordValidation')}
               />
             )}
           />
@@ -206,8 +208,8 @@ const TeacherSignUp = () => {
                 isRequired
                 isInvalid={!!errors.password?.message}
                 name="password"
-                formLabelName="Confirm password"
-                placeholder="Confirm password"
+                formLabelName={t('common.confirmPassword')}
+                placeholder={t('common.confirmPassword')}
                 value={value}
                 handleInputChange={onChange}
                 type="password"
@@ -217,8 +219,8 @@ const TeacherSignUp = () => {
         </Stack>
       </VStack>
       <VStack spacing={16} paddingTop={48}>
-        <Button w={'100%'} onClick={handleSubmit(onTeacherSubmit)}>
-          Sign up
+        <Button w={'50%'} onClick={handleSubmit(onTeacherSubmit)}>
+          {t('common.signUp')}
         </Button>
       </VStack>
     </>

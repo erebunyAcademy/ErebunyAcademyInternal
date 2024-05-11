@@ -1,18 +1,19 @@
 'use client';
-import { memo, ReactNode, useCallback } from 'react';
+import { memo, ReactNode } from 'react';
 import { Box, Flex, FlexProps } from '@chakra-ui/react';
 import Link from 'next/link';
 import { signOut } from 'next-auth/react';
-import { HOMEPAGE_ROUTE } from '@/utils/constants/routes';
+import { Locale } from '@/i18n';
+import { ROUTE_SIGN_IN } from '@/utils/constants/routes';
+import { languagePathHelper } from '@/utils/helpers/language';
 
 interface NavItemProps extends FlexProps {
   icon: ReactNode;
   children: React.ReactNode;
   href: string | undefined;
+  lang: Locale;
 }
-const NavItem = ({ href, icon, children, ...rest }: NavItemProps) => {
-  const signOutHandler = useCallback(() => signOut({ callbackUrl: HOMEPAGE_ROUTE }), []);
-
+const NavItem = ({ href, icon, children, lang, ...rest }: NavItemProps) => {
   return (
     <Box
       as={Link}
@@ -27,7 +28,9 @@ const NavItem = ({ href, icon, children, ...rest }: NavItemProps) => {
         color: '#222',
       }}
       height="52px"
-      {...(href ? {} : { onClick: signOutHandler })}>
+      {...(href
+        ? {}
+        : { onClick: () => signOut({ callbackUrl: languagePathHelper(lang, ROUTE_SIGN_IN) }) })}>
       <Flex
         align="center"
         p="4"

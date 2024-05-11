@@ -18,7 +18,6 @@ import LogoIcon from '@/icons/college_main_icon.svg';
 import { generateAWSUrl } from '@/utils/helpers/aws';
 import { LinkItemProps } from '@/utils/helpers/permissionRoutes';
 import { Maybe } from '@/utils/models/common';
-import ProfileMenu from './ProfileMenu';
 import ProfileNavItem from './ProfileNavItem';
 
 type HeaderProps = {
@@ -96,11 +95,6 @@ const Header: FC<HeaderProps> = ({ user, linkItems, lang }) => {
                 />
               )}
             </Flex>
-            {(user || data?.user) && linkItems && (
-              <Box display={{ base: 'none', lg: 'flex' }} alignItems="center">
-                <ProfileMenu user={user} linkItems={linkItems} />
-              </Box>
-            )}
             <Stack marginLeft="15px">
               <LanguagePicker lang={lang} />
             </Stack>

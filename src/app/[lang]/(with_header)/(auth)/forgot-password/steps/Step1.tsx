@@ -3,6 +3,7 @@ import { memo, useCallback } from 'react';
 import { Button, VStack } from '@chakra-ui/react';
 import { classValidatorResolver } from '@hookform/resolvers/class-validator';
 import { useMutation } from '@tanstack/react-query';
+import { useTranslations } from 'next-intl';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { AuthService } from '@/api/services/auth.service';
 import { FormInput } from '@/components/atoms';
@@ -12,6 +13,7 @@ import { ForgotPasswordStep1Validation } from '@/utils/validation';
 const resolver = classValidatorResolver(ForgotPasswordStep1Validation);
 
 const Step1 = () => {
+  const t = useTranslations();
   const { setStep } = useAuth();
   const {
     control,
@@ -47,7 +49,7 @@ const Step1 = () => {
             isInvalid={!!errors.email?.message}
             name="email"
             type="email"
-            formLabelName="Email"
+            formLabelName={t('user.email')}
             value={value}
             placeholder="you@example.com"
             handleInputChange={onChange}
@@ -56,7 +58,7 @@ const Step1 = () => {
         )}
       />
       <Button width={'100%'} onClick={handleSubmit(onSubmit)} isLoading={isPending}>
-        Next
+        {t('common.next')}
       </Button>
     </VStack>
   );

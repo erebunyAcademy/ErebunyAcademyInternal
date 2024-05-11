@@ -21,7 +21,7 @@ import { FacultyService } from '@/api/services/faculty.service';
 import { StudentGradeGroupService } from '@/api/services/student-grade-group.service';
 import { StudentGradeService } from '@/api/services/student-grade.service';
 import { UserService } from '@/api/services/user.service';
-import { SIGN_IN_ROUTE } from '@/utils/constants/routes';
+import { ROUTE_SIGN_IN } from '@/utils/constants/routes';
 import { StudentSignUpValidation } from '@/utils/validation';
 import { FormInput, SelectLabel } from '../../atoms';
 
@@ -55,7 +55,7 @@ const StudentSignUp = () => {
         duration: 4000,
         isClosable: false,
       });
-      router.push(SIGN_IN_ROUTE);
+      router.push(ROUTE_SIGN_IN);
     },
   });
 
@@ -136,7 +136,7 @@ const StudentSignUp = () => {
             render={({ field: { onChange, value } }) => (
               <FormInput
                 isRequired
-                placeholder="First Name"
+                placeholder={t('user.firstName')}
                 isInvalid={!!errors.firstName?.message}
                 name="firstName"
                 type="text"
@@ -155,7 +155,7 @@ const StudentSignUp = () => {
                 isInvalid={!!errors.lastName?.message}
                 name="lastName"
                 type="text"
-                placeholder="Last Name"
+                placeholder={t('user.lastName')}
                 formLabelName={t('user.lastName')}
                 value={value}
                 handleInputChange={onChange}
@@ -173,8 +173,8 @@ const StudentSignUp = () => {
                 isInvalid={!!errors.email?.message}
                 name="email"
                 type="email"
-                placeholder="Email"
-                formLabelName="Email"
+                placeholder={t('user.email')}
+                formLabelName={t('user.email')}
                 value={value}
                 handleInputChange={onChange}
               />
@@ -187,7 +187,7 @@ const StudentSignUp = () => {
               <SelectLabel
                 name={name}
                 options={data?.studentGradeList || []}
-                labelName="Student grade"
+                labelName={t('user.studentGrade')}
                 valueLabel="id"
                 nameLabel="title"
                 onChange={onChange}
@@ -205,7 +205,7 @@ const StudentSignUp = () => {
               <SelectLabel
                 name={name}
                 options={data?.studentGradeGroupList || []}
-                labelName="Course group"
+                labelName={t('user.courseGroup')}
                 valueLabel="id"
                 nameLabel="title"
                 onChange={onChange}
@@ -220,7 +220,7 @@ const StudentSignUp = () => {
               <SelectLabel
                 name={name}
                 options={data?.facultyList || []}
-                labelName="Faculty"
+                labelName={t('user.faculty')}
                 valueLabel="id"
                 nameLabel="title"
                 onChange={onChange}
@@ -239,12 +239,12 @@ const StudentSignUp = () => {
                 isRequired
                 isInvalid={!!errors.password?.message}
                 name="password"
-                formLabelName="Password"
-                placeholder="Password"
+                formLabelName={t('common.password')}
+                placeholder={t('common.password')}
                 value={value}
                 handleInputChange={onChange}
                 type="password"
-                formHelperText="Your password must not be less than 6 characters."
+                formHelperText={t('validations.passwordValidation')}
               />
             )}
           />
@@ -256,8 +256,8 @@ const StudentSignUp = () => {
                 isRequired
                 isInvalid={!!errors.password?.message}
                 name="password"
-                formLabelName="Confirm password"
-                placeholder="Confirm password"
+                formLabelName={t('common.confirmPassword')}
+                placeholder={t('common.confirmPassword')}
                 value={value}
                 handleInputChange={onChange}
                 type="password"
@@ -311,14 +311,14 @@ const StudentSignUp = () => {
                   backgroundColor: '#fff',
                 }}
               />
-              Upload document
+              {t('common.uploadDocument')}
             </ChakraButton>
           </Box>
         </HStack>
       </VStack>
       <VStack spacing={16} paddingTop={48}>
-        <Button w={'100%'} onClick={handleSubmit(onStudentSubmit)} isLoading={isPending}>
-          Sign up
+        <Button w={'50%'} onClick={handleSubmit(onStudentSubmit)} isLoading={isPending}>
+          {t('common.signUp')}
         </Button>
       </VStack>
     </>

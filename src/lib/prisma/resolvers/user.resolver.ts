@@ -38,6 +38,25 @@ export class UserResolver {
             key: true,
           },
         },
+        student: {
+          select: {
+            studentGrade: {
+              select: {
+                title: true,
+              },
+            },
+            faculty: {
+              select: {
+                title: true,
+              },
+            },
+            studentGradeGroup: {
+              select: {
+                title: true,
+              },
+            },
+          },
+        },
       },
     });
   }
