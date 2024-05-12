@@ -1,6 +1,7 @@
 import React from 'react';
 import { Avatar, Container, Flex, ListItem, Text, UnorderedList } from '@chakra-ui/react';
 import { serverSession } from '@/pages/api/auth/[...nextauth]';
+import { generateUserAvatar } from '@/utils/helpers/aws';
 import { getUserData } from '@/utils/helpers/user';
 
 const Dashboard = async () => {
@@ -9,6 +10,7 @@ const Dashboard = async () => {
   if (!session?.user) {
     return null;
   }
+
   const userData = getUserData(session.user);
 
   return (
@@ -16,7 +18,7 @@ const Dashboard = async () => {
       <Flex alignItems="center" gap="20px">
         <Avatar
           name={`${session?.user.firstName} ${session?.user.lastName}`}
-          src={session?.user?.attachment?.key || ''}
+          src={generateUserAvatar(session.user)}
           bg="#F3F4F6"
           color="#C0C0C0"
           size="xl"

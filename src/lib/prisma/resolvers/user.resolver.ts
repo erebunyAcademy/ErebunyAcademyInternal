@@ -23,6 +23,7 @@ export class UserResolver {
             id: true,
           },
         },
+        id: true,
         email: true,
         firstName: true,
         country: true,
@@ -35,7 +36,10 @@ export class UserResolver {
             type: AttachmentTypeEnum.AVATAR,
           },
           select: {
+            id: true,
             key: true,
+            type: true,
+            mimetype: true,
           },
         },
         student: {
@@ -71,6 +75,17 @@ export class UserResolver {
   static async findUserByEmail(email: string) {
     return prisma.user.findUnique({
       where: { email },
+      include: {
+        student: {
+          include: {
+            faculty: true,
+            studentGrade: true,
+            studentGradeGroup: true,
+          },
+        },
+        teacher: true,
+        attachment: true,
+      },
     });
   }
 
@@ -192,11 +207,58 @@ export class UserResolver {
   }
 
   static async updateProfile(input: UserProfileFormValidation, user: NonNullable<User>) {
+    const { avatar, avatarMimetype, ...userData } = input;
+    const userAvatar = await prisma.attachment.findFirst({ where: { userId: user.id } });
+
+    if (!!userAvatar) {
+      await prisma.attachment.update({
+        where: { id: userAvatar.id },
+        data: { mimetype: avatarMimetype, key: avatar },
+      });
+    } else if (avatar && avatarMimetype) {
+      await prisma.attachment.create({
+        data: {
+          userId: user.id,
+          type: 'AVATAR',
+          title: `${user.email} avatar`,
+          mimetype: avatarMimetype,
+          key: avatar,
+        },
+      });
+    }
+
     return (
       await prisma.user.update({
         where: { id: user.id },
-        data: input,
+        data: userData,
       })
     ).id;
+  }
+
+  static async updatePassword(input: ChangePasswordValidation, user: NonNullable<User>) {
+    const { currentPassword, newPassword, confirmPassword } = input;
+
+    if (newPassword !== confirmPassword) {
+      throw new ConflictException("Password don't match");
+    }
+
+    if (currentPassword === newPassword) {
+      throw new ConflictException('You are currently using this password');
+    }
+
+    const isValid = await bcrypt.compare(currentPassword, user.password);
+
+    if (!isValid) {
+      throw new ConflictException('Current password is not valid');
+    }
+
+    const hashedPassword = await bcrypt.hash(confirmPassword, 10);
+
+    const updatedUser = await prisma.user.update({
+      where: { id: user.id },
+      data: { password: hashedPassword },
+    });
+
+    return updatedUser.id;
   }
 }

@@ -1,5 +1,6 @@
 import { ReactNode } from 'react';
-import { User, UserRoleEnum } from '@prisma/client';
+import { UserRoleEnum } from '@prisma/client';
+import { User } from 'next-auth';
 import ExamsIcon from '@/icons/exam_icon.svg';
 import FacultiesIcon from '@/icons/faculty_icon.svg';
 import LogoutIcon from '@/icons/log-out.svg';

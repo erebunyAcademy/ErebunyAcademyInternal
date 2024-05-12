@@ -15,7 +15,7 @@ import { useSession } from 'next-auth/react';
 import LanguagePicker from '@/components/molecules/LanguagePicker';
 import { Locale } from '@/i18n';
 import LogoIcon from '@/icons/college_main_icon.svg';
-import { generateAWSUrl } from '@/utils/helpers/aws';
+import { generateUserAvatar } from '@/utils/helpers/aws';
 import { LinkItemProps } from '@/utils/helpers/permissionRoutes';
 import { Maybe } from '@/utils/models/common';
 import ProfileNavItem from './ProfileNavItem';
@@ -83,7 +83,7 @@ const Header: FC<HeaderProps> = ({ user, linkItems, lang }) => {
               {!!user && (
                 <Avatar
                   name={`${user?.firstName} ${user?.lastName}`}
-                  src={user?.avatar ? generateAWSUrl(user.avatar) : ''}
+                  src={generateUserAvatar(user)}
                   bg="#F3F4F6"
                   color="#C0C0C0"
                   cursor="pointer"

@@ -32,6 +32,10 @@ export class UserProfileFormValidation {
   @IsString()
   @IsOptional()
   city?: string;
+
+  @IsString()
+  @IsOptional()
+  avatarMimetype?: string;
 }
 
 export class VerifyPhoneValidation {

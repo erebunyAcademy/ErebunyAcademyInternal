@@ -1,4 +1,4 @@
-import { AttachmentTypeEnum, User, UserRoleEnum } from '@prisma/client';
+import { AttachmentTypeEnum, UserRoleEnum } from '@prisma/client';
 import bcrypt from 'bcrypt';
 import {
   BadRequestException,
@@ -6,6 +6,7 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from 'next-api-decorators';
+import { User } from 'next-auth';
 import { ERROR_MESSAGES } from '@/utils/constants/common';
 import { Maybe } from '@/utils/models/common';
 import {

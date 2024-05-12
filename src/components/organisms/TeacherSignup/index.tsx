@@ -12,7 +12,7 @@ import { TeacherSignUpValidation } from '@/utils/validation';
 import { FormInput, SelectLabel } from '../../atoms';
 
 const resolver = classValidatorResolver(TeacherSignUpValidation);
-
+// todo for me
 const TeacherSignUp = () => {
   const toast = useToast();
   const router = useRouter();

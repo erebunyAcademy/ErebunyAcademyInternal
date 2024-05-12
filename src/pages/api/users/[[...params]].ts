@@ -1,19 +1,21 @@
-import { User } from '@prisma/client';
 import {
   Body,
   Catch,
   createHandler,
   Delete,
   Param,
+  Patch,
   Post,
   Put,
   ValidationPipe,
 } from 'next-api-decorators';
+import { User } from 'next-auth';
 import { CurrentUser } from '@/lib/prisma/decorators/current-user.decorator';
 import { exceptionHandler } from '@/lib/prisma/error';
 import { AuthMiddleware } from '@/lib/prisma/middlewares/auth-middleware';
 import { UserResolver } from '@/lib/prisma/resolvers/user.resolver';
 import {
+  ChangePasswordValidation,
   GetPresignedUrlInput,
   UserProfileFormValidation,
   VerifyUserEmailInput,
@@ -45,6 +47,15 @@ class UserHandler {
     @CurrentUser() user: NonNullable<User>,
   ) {
     return UserResolver.updateProfile(input, user);
+  }
+
+  @AuthMiddleware()
+  @Patch('/update-password')
+  updatePassword(
+    @Body(ValidationPipe) input: ChangePasswordValidation,
+    @CurrentUser() user: NonNullable<User>,
+  ) {
+    return UserResolver.updatePassword(input, user);
   }
 }
 

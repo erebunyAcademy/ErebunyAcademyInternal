@@ -15,7 +15,11 @@ export default async function HeaderLayout({
 
   return (
     <>
-      <Header user={session?.user} lang={params.lang} linkItems={linkItems(session?.user)} />
+      <Header
+        user={session?.user || null}
+        lang={params.lang}
+        linkItems={linkItems(session?.user || null)}
+      />
       {children}
     </>
   );

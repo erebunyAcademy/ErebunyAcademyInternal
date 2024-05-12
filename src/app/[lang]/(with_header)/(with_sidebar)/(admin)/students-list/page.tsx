@@ -1,11 +1,12 @@
 'use client';
 import React, { useCallback, useMemo, useState } from 'react';
 import { Avatar, Button, MenuItem, useDisclosure } from '@chakra-ui/react';
-import { AttachmentTypeEnum, User } from '@prisma/client';
+import { AttachmentTypeEnum } from '@prisma/client';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { createColumnHelper, SortingState } from '@tanstack/react-table';
 import dayjs from 'dayjs';
 import Image from 'next/image';
+import { User } from 'next-auth';
 import { v4 as uuidv4 } from 'uuid';
 import { StudentService } from '@/api/services/student.service';
 import { UserService } from '@/api/services/user.service';

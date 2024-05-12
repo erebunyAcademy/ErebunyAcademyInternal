@@ -117,8 +117,8 @@ const StudentSignUp = () => {
     if (isSuccess) {
       reset({
         facultyId: data?.facultyList[0]?.id,
-        studentGradeId: data?.studentGradeList[0].id,
-        studentGradeGroupId: data?.studentGradeGroupList[0].id,
+        studentGradeId: data?.studentGradeList[0]?.id,
+        studentGradeGroupId: data?.studentGradeGroupList[0]?.id,
       });
     }
   }, [data?.facultyList, data?.studentGradeGroupList, data?.studentGradeList, isSuccess, reset]);
