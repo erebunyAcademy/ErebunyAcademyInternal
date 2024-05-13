@@ -136,6 +136,7 @@ model StudentGrade {
   faculty              Faculty?              @relation(fields: [facultyId], references: [id])
   facultyId            String?
   students             Student[]
+  exams                Exam[]
 
   createdAt DateTime @default(now()) @db.Timestamp(0)
   updatedAt DateTime @updatedAt @db.Timestamp(0)
@@ -148,6 +149,7 @@ model StudentGradeGroup {
   studentGradeId String?
   studentGrade   StudentGrade? @relation(fields: [studentGradeId], references: [id])
   students       Student[]
+  exams          Exam[]
 
   createdAt DateTime @default(now()) @db.Timestamp(0)
   updatedAt DateTime @updatedAt @db.Timestamp(0)
@@ -209,13 +211,17 @@ model StudentExam {
 }
 
 model Exam {
-  id            String         @id @default(uuid())
-  title         String         @db.VarChar(60)
-  description   String?        @db.VarChar(60)
-  testQuestions TestQuestion[]
-  studentExams  StudentExam[]
-  faculty       Faculty?       @relation(fields: [facultyId], references: [id])
-  facultyId     String?
+  id                  String             @id @default(uuid())
+  title               String             @db.VarChar(60)
+  description         String?            @db.VarChar(60)
+  facultyId           String?
+  testQuestions       TestQuestion[]
+  studentExams        StudentExam[]
+  faculty             Faculty?           @relation(fields: [facultyId], references: [id])
+  StudentGradeGroup   StudentGradeGroup? @relation(fields: [studentGradeGroupId], references: [id])
+  StudentGrade        StudentGrade?      @relation(fields: [studentGradeId], references: [id])
+  studentGradeId      String?
+  studentGradeGroupId String?
 
   updatedAt DateTime @updatedAt @db.Timestamp(0)
   createdAt DateTime @default(now()) @db.Timestamp(0)

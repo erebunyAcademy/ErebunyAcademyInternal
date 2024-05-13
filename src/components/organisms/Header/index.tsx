@@ -87,7 +87,7 @@ const Header: FC<HeaderProps> = ({ user, linkItems, lang }) => {
                   bg="#F3F4F6"
                   color="#C0C0C0"
                   cursor="pointer"
-                  size="xs"
+                  size="sm"
                   display="flex"
                   justifyContent="center"
                   alignItems="center"

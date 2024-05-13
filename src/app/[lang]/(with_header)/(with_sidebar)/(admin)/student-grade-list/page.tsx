@@ -8,8 +8,9 @@ import dayjs from 'dayjs';
 import { useTranslations } from 'next-intl';
 import { Controller, useForm } from 'react-hook-form';
 import { v4 as uuidv4 } from 'uuid';
+import { FacultyService } from '@/api/services/faculty.service';
 import { StudentGradeService } from '@/api/services/student-grade.service';
-import { FormInput } from '@/components/atoms';
+import { FormInput, SelectLabel } from '@/components/atoms';
 import ActionButtons from '@/components/molecules/ActionButtons';
 import Modal from '@/components/molecules/Modal';
 import SearchTable from '@/components/organisms/SearchTable';
@@ -41,6 +42,7 @@ const StudentGrades = () => {
     defaultValues: {
       title: '',
       description: '',
+      facultyId: '',
     },
   });
 
@@ -55,6 +57,12 @@ const StudentGrades = () => {
     },
   });
 
+  const { data: facultyQueryData } = useQuery({
+    queryKey: ['faculty'],
+    queryFn: FacultyService.list,
+    enabled: isCreateEditModalOpen,
+  });
+
   const {
     isOpen: isDeleteModalOpen,
     onOpen: openDeleteModal,
@@ -66,7 +74,7 @@ const StudentGrades = () => {
   });
 
   const { data, isLoading, isPlaceholderData, refetch } = useQuery({
-    queryKey: QUERY_KEY.allUsers(debouncedSearch, page),
+    queryKey: QUERY_KEY.allStudentGrades(debouncedSearch, page),
     queryFn: () =>
       StudentGradeService.studentGradeList({
         offset: page === 1 ? 0 : (page - 1) * ITEMS_PER_PAGE,
@@ -149,6 +157,8 @@ const StudentGrades = () => {
               setSelectedStudentGrade(row.original);
               setValue('title', row.original.title || '');
               setValue('description', row.original.description || '');
+              console.log(row.original.facultyId, '-----------');
+              setValue('facultyId', row.original.facultyId || '');
               openCreateEditModal();
             }}>
             Edit
@@ -182,7 +192,7 @@ const StudentGrades = () => {
     [createStudentGrade, selectedStudentGrade, updateStudentGrade],
   );
 
-  console.log(t('common.deleteItem'));
+  console.log('**************');
 
   return (
     <>
@@ -237,7 +247,6 @@ const StudentGrades = () => {
         <Controller
           name="description"
           control={control}
-          rules={{ required: 'Student grade description is required' }}
           render={({ field: { onChange, value, name } }) => (
             <FormInput
               isInvalid={!!errors.description?.message}
@@ -248,6 +257,21 @@ const StudentGrades = () => {
               placeholder="Please enter description"
               handleInputChange={onChange}
               formErrorMessage={errors.description?.message}
+            />
+          )}
+        />
+        <Controller
+          name="facultyId"
+          control={control}
+          render={({ field: { onChange, value, name } }) => (
+            <SelectLabel
+              name={name}
+              options={facultyQueryData || []}
+              labelName={t('user.faculty')}
+              valueLabel="id"
+              nameLabel="title"
+              onChange={onChange}
+              value={value}
             />
           )}
         />

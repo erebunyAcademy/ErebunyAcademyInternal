@@ -16,7 +16,7 @@ export class StudentGradeResolver {
         where: {
           OR: [{ title: { contains: search, mode: 'insensitive' } }],
         },
-        select: { id: true, title: true, description: true, createdAt: true },
+        select: { id: true, title: true, description: true, createdAt: true, facultyId: true },
         orderBy: sorting ? orderBy(sorting) : undefined,
         skip,
         take,
@@ -29,6 +29,18 @@ export class StudentGradeResolver {
 
   static getStudentGradeList() {
     return prisma.studentGrade.findMany({
+      select: {
+        id: true,
+        title: true,
+      },
+    });
+  }
+
+  static getStudentGradeListByFacultyId(facultyId: string) {
+    return prisma.studentGrade.findMany({
+      where: {
+        facultyId,
+      },
       select: {
         id: true,
         title: true,

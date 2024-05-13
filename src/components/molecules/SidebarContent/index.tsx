@@ -10,7 +10,6 @@ interface SidebarProps extends BoxProps {
 }
 
 const SidebarContent: FC<SidebarProps> = ({ linkItems, lang, ...props }) => {
-  console.log({ linkItems });
   return (
     <Box borderRight="1px" borderColor="#F9FAFB" pos="fixed" h="full" {...props}>
       <Flex padding="64px 46px" flexDirection="column">

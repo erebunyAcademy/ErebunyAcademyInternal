@@ -208,7 +208,9 @@ export class UserResolver {
 
   static async updateProfile(input: UserProfileFormValidation, user: NonNullable<User>) {
     const { avatar, avatarMimetype, ...userData } = input;
-    const userAvatar = await prisma.attachment.findFirst({ where: { userId: user.id } });
+    const userAvatar = await prisma.attachment.findFirst({
+      where: { userId: user.id, type: AttachmentTypeEnum.AVATAR },
+    });
 
     if (!!userAvatar) {
       await prisma.attachment.update({
@@ -219,7 +221,7 @@ export class UserResolver {
       await prisma.attachment.create({
         data: {
           userId: user.id,
-          type: 'AVATAR',
+          type: AttachmentTypeEnum.AVATAR,
           title: `${user.email} avatar`,
           mimetype: avatarMimetype,
           key: avatar,
@@ -227,12 +229,10 @@ export class UserResolver {
       });
     }
 
-    return (
-      await prisma.user.update({
-        where: { id: user.id },
-        data: userData,
-      })
-    ).id;
+    return prisma.user.update({
+      where: { id: user.id },
+      data: userData,
+    });
   }
 
   static async updatePassword(input: ChangePasswordValidation, user: NonNullable<User>) {

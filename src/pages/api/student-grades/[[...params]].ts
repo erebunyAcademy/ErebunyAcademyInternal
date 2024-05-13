@@ -26,12 +26,16 @@ class StudentGradeHandler {
   ) {
     return StudentGradeResolver.list(+skip, +take, search, sorting);
   }
-  
+
   @Get('')
   getStudentGrades() {
     return StudentGradeResolver.getStudentGradeList();
   }
 
+  @Get('/faculty/:facultyId')
+  getStudentGradesByFacultyId(@Param('facultyId') facultyId: string) {
+    return StudentGradeResolver.getStudentGradeListByFacultyId(facultyId);
+  }
 
   @Get('/:id')
   getStudentGradeById(@Param('id') id: string) {

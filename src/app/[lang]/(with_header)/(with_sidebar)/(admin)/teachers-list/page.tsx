@@ -21,7 +21,7 @@ export default function Users() {
   const debouncedSearch = useDebounce(search);
 
   const { data, isLoading, isPlaceholderData } = useQuery({
-    queryKey: QUERY_KEY.allUsers(debouncedSearch, page),
+    queryKey: QUERY_KEY.allTeachers(debouncedSearch, page),
     queryFn: () =>
       TeacherService.list({
         offset: page === 1 ? 0 : (page - 1) * ITEMS_PER_PAGE,

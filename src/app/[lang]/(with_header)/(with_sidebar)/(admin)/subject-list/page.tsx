@@ -64,7 +64,7 @@ const Subject = () => {
   });
 
   const { data, isLoading, isPlaceholderData, refetch } = useQuery({
-    queryKey: QUERY_KEY.allUsers(debouncedSearch, page),
+    queryKey: QUERY_KEY.allSubjects(debouncedSearch, page),
     queryFn: () =>
       SubjectService.subjectList({
         offset: page === 1 ? 0 : (page - 1) * ITEMS_PER_PAGE,

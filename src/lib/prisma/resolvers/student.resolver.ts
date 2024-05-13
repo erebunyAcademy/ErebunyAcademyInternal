@@ -81,4 +81,21 @@ export class StudentResolver {
         return res;
       });
   }
+
+  static getStudentsByStudentGradeGroupId(studentGradeGroupId: string) {
+    console.log('******************************************');
+    return prisma.user.findMany({
+      where: {
+        student: {
+          studentGradeGroupId,
+        },
+      },
+      select: {
+        id: true,
+        firstName: true,
+        lastName: true,
+        email: true,
+      },
+    });
+  }
 }

@@ -34,4 +34,8 @@ export class StudentGradeGroupService {
   static deleteStudentGradeGroup(id: string) {
     return $apiClient.delete<CreateEditStudentGradeGroupValidation>(`/student-grade-groups/${id}`);
   }
+
+  static getStudentGradeGroupByStudentGradeId(id: string) {
+    return $apiClient.get(`/student-grade-groups/student-grade/${id}`);
+  }
 }

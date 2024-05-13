@@ -66,7 +66,7 @@ const Faculty = () => {
   });
 
   const { data, isLoading, isPlaceholderData, refetch } = useQuery({
-    queryKey: QUERY_KEY.allUsers(debouncedSearch, page),
+    queryKey: QUERY_KEY.allFaculties(debouncedSearch, page),
     queryFn: () =>
       FacultyService.facultyList({
         offset: page === 1 ? 0 : (page - 1) * ITEMS_PER_PAGE,

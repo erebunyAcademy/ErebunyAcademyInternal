@@ -28,4 +28,8 @@ export class StudentGradeService {
   static deleteStudentGrade(id: string) {
     return $apiClient.delete<CreateEditStudentGradeValidation>(`/student-grades/${id}`);
   }
+
+  static getStudentGradeByFacultyId(id: string) {
+    return $apiClient.get(`/student-grades/faculty/${id}`);
+  }
 }

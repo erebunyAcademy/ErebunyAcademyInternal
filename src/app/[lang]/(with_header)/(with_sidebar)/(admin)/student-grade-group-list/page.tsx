@@ -5,10 +5,12 @@ import { classValidatorResolver } from '@hookform/resolvers/class-validator';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { createColumnHelper, SortingState } from '@tanstack/react-table';
 import dayjs from 'dayjs';
+import { useTranslations } from 'next-intl';
 import { Controller, useForm } from 'react-hook-form';
 import { v4 as uuidv4 } from 'uuid';
 import { StudentGradeGroupService } from '@/api/services/student-grade-group.service';
-import { FormInput } from '@/components/atoms';
+import { StudentGradeService } from '@/api/services/student-grade.service';
+import { FormInput, SelectLabel } from '@/components/atoms';
 import ActionButtons from '@/components/molecules/ActionButtons';
 import Modal from '@/components/molecules/Modal';
 import SearchTable from '@/components/organisms/SearchTable';
@@ -22,6 +24,7 @@ import { CreateEditStudentGradeGroupValidation } from '@/utils/validation/studen
 const resolver = classValidatorResolver(CreateEditStudentGradeGroupValidation);
 
 const StudentGradeGroup = () => {
+  const t = useTranslations();
   const [sorting, setSorting] = useState<SortingState>([]);
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
@@ -40,6 +43,7 @@ const StudentGradeGroup = () => {
     defaultValues: {
       title: '',
       description: '',
+      studentGradeId: '',
     },
   });
 
@@ -65,7 +69,7 @@ const StudentGradeGroup = () => {
   });
 
   const { data, isLoading, isPlaceholderData, refetch } = useQuery({
-    queryKey: QUERY_KEY.allUsers(debouncedSearch, page),
+    queryKey: QUERY_KEY.allStudentGradeGroups(debouncedSearch, page),
     queryFn: () =>
       StudentGradeGroupService.studentGradeGroupList({
         offset: page === 1 ? 0 : (page - 1) * ITEMS_PER_PAGE,
@@ -73,6 +77,12 @@ const StudentGradeGroup = () => {
         sorting: sorting,
         search: debouncedSearch,
       }),
+  });
+
+  const { data: studentGradeQueryData } = useQuery({
+    queryKey: ['student-grade'],
+    queryFn: StudentGradeService.list,
+    enabled: isCreateEditModalOpen,
   });
 
   const { mutate: createStudentGradeGroup } = useMutation({
@@ -149,6 +159,7 @@ const StudentGradeGroup = () => {
               setSelectedStudentGradeGroup(row.original);
               setValue('title', row.original.title || '');
               setValue('description', row.original.description || '');
+              setValue('studentGradeId', row.original.studentGradeId || '');
               openCreateEditModal();
             }}>
             Edit
@@ -248,7 +259,23 @@ const StudentGradeGroup = () => {
             />
           )}
         />
+        <Controller
+          name="studentGradeId"
+          control={control}
+          render={({ field: { onChange, value, name } }) => (
+            <SelectLabel
+              name={name}
+              options={studentGradeQueryData || []}
+              labelName={t('user.studentGrade')}
+              valueLabel="id"
+              nameLabel="title"
+              onChange={onChange}
+              value={value}
+            />
+          )}
+        />
       </Modal>
+
       <Modal
         isOpen={isDeleteModalOpen}
         onClose={closeDeleteModal}

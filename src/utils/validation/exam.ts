@@ -1,4 +1,4 @@
-import { IsArray, IsNotEmpty, IsString } from 'class-validator';
+import { IsArray, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class ExamValidation {
   @IsString()
@@ -6,14 +6,22 @@ export class ExamValidation {
   title: string;
 
   @IsString()
-  @IsNotEmpty({ message: 'Exam description is required' })
+  @IsOptional()
   description: string;
 
   @IsString()
-  @IsNotEmpty({ message: "Faculty's required" })
+  @IsNotEmpty({ message: 'Faculty is required' })
   facultyId: string;
 
+  @IsString()
+  @IsNotEmpty({ message: 'Student grade is required' })
+  studentGradeId: string;
+
+  @IsString()
+  @IsNotEmpty({ message: 'Student grade is required' })
+  studentGradeGroupId: string;
+
   @IsArray()
-  @IsNotEmpty({ message: 'You need to select students' })
-  selectedUsersIds: string[];
+  @IsNotEmpty({ message: 'Students are required' })
+  studentIds: string[];
 }

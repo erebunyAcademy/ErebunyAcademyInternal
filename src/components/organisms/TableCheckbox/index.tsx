@@ -1,22 +1,14 @@
-import React, { Dispatch, memo, SetStateAction, useCallback, useState } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import { TriangleDownIcon, TriangleUpIcon } from '@chakra-ui/icons';
 import {
   Box,
-  Button,
   chakra,
   Checkbox,
   Flex,
-  FormControl,
-  HStack,
-  IconButton,
-  Input,
-  InputGroup,
-  InputLeftElement,
   Table,
   Tbody,
   Td,
   Text,
-  Tfoot,
   Th,
   Thead,
   Tr,
@@ -26,48 +18,24 @@ import {
   flexRender,
   getCoreRowModel,
   getSortedRowModel,
-  SortingState,
   useReactTable,
 } from '@tanstack/react-table';
-import ChevronLeft from '@/icons/chevron_left.svg';
-import ChevronRight from '@/icons/chevron_right.svg';
-import InputSearchIcon from '@/icons/search_icon.svg';
-import { ITEMS_PER_PAGE } from '@/utils/constants/common';
 
 export type DataTableProps<T> = {
   title?: string;
   rowCondition?: string;
-  count: number;
   data: T[];
   columns: ColumnDef<T, any>[];
-  sorting: SortingState;
-  setSorting: Dispatch<SetStateAction<SortingState>>;
-  setSearch: (value: string) => void;
-  search: string;
-  hasNextPage: boolean;
-  hasPreviousPage: boolean;
-  fetchNextPage: () => void;
-  fetchPreviousPage: () => void;
-  addNew?: () => void;
-  withCheckbox?: boolean;
+  selectedValues: string[];
+  onChange: (selected: string[]) => void;
 };
 
-function SearchTable<T>({
+function TableCheckbox<T extends { id: string }>({
   title,
   rowCondition,
-  count,
   data,
   columns,
-  sorting,
-  setSorting,
-  setSearch,
-  search,
-  hasNextPage,
-  hasPreviousPage,
-  fetchNextPage,
-  fetchPreviousPage,
-  addNew,
-  withCheckbox,
+  onChange,
 }: DataTableProps<T>) {
   const [selectedRows, setSelectedRows] = useState<Record<string, boolean>>({});
 
@@ -75,23 +43,15 @@ function SearchTable<T>({
     columns,
     data,
     getCoreRowModel: getCoreRowModel(),
-    onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
-    state: {
-      sorting,
-      pagination: {
-        pageIndex: 0,
-        pageSize: ITEMS_PER_PAGE,
-      },
-    },
   });
 
-  const userSearchHandler = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      setSearch(e.target.value);
-    },
-    [setSearch],
-  );
+  useEffect(() => {
+    const selectedRowIds = getRowModel()
+      .rows.filter(row => selectedRows[row.id])
+      .map(row => row.original.id);
+    onChange(selectedRowIds);
+  }, [selectedRows, getRowModel, onChange]);
 
   const toggleRowSelected = (rowId: string) => {
     setSelectedRows(prev => ({
@@ -120,39 +80,19 @@ function SearchTable<T>({
         <Text as="h2" fontSize={24} textAlign="center">
           {title}
         </Text>
-        {addNew && (
-          <Button px="12px" py="8px" onClick={addNew}>
-            Add New
-          </Button>
-        )}
       </Flex>
-      <FormControl py={4} px={4}>
-        <InputGroup marginBottom="10px">
-          <InputLeftElement pointerEvents="none" color="gray.300" fontSize="1.2em">
-            <InputSearchIcon />
-          </InputLeftElement>
-          <Input
-            p="10px 10px 10px 40px"
-            placeholder="Type here to search"
-            width="300px"
-            onChange={userSearchHandler}
-            value={search}
-          />
-        </InputGroup>
-      </FormControl>
+
       <Box overflow="auto" maxWidth={{ base: '340px', sm: '670px', lg: '700px', xl: '100%' }}>
         <Table borderTop="1px solid rgb(226, 232, 240)" height="100%">
           <Thead>
             {getHeaderGroups().map(headerGroup => (
               <Tr key={headerGroup.id}>
-                {withCheckbox && (
-                  <Th>
-                    <Checkbox
-                      isChecked={isAllSelected}
-                      onChange={e => toggleSelectAll(e.target.checked)}
-                    />
-                  </Th>
-                )}
+                <Th>
+                  <Checkbox
+                    isChecked={isAllSelected}
+                    onChange={e => toggleSelectAll(e.target.checked)}
+                  />
+                </Th>
                 {headerGroup.headers.map(header => {
                   const meta: any = header.column.columnDef.meta;
                   return (
@@ -188,14 +128,12 @@ function SearchTable<T>({
                           : 'green.100',
                       }
                     : {})}>
-                  {withCheckbox && (
-                    <Td>
-                      <Checkbox
-                        isChecked={selectedRows[row.id] || false}
-                        onChange={() => toggleRowSelected(row.id)}
-                      />
-                    </Td>
-                  )}
+                  <Td>
+                    <Checkbox
+                      isChecked={selectedRows[row.id] || false}
+                      onChange={() => toggleRowSelected(row.id)}
+                    />
+                  </Td>
                   {row.getVisibleCells().map(cell => {
                     const meta: any = cell.column.columnDef.meta;
                     return (
@@ -208,39 +146,10 @@ function SearchTable<T>({
               );
             })}
           </Tbody>
-          <Tfoot width="100%">
-            <Tr>
-              <Td align="left" colSpan={5}>
-                <Text>Count - {count}</Text>
-              </Td>
-              <Td align="right">
-                <HStack>
-                  <IconButton
-                    className="border rounded p-1"
-                    aria-label="chevron-left"
-                    onClick={fetchPreviousPage}
-                    bg="transparent"
-                    icon={<ChevronLeft />}
-                    isDisabled={!hasPreviousPage}>
-                    {'<'}
-                  </IconButton>
-                  <IconButton
-                    aria-label="chevron-right"
-                    className="border rounded p-1"
-                    bg="transparent"
-                    onClick={fetchNextPage}
-                    icon={<ChevronRight />}
-                    isDisabled={!hasNextPage}>
-                    {'>'}
-                  </IconButton>
-                </HStack>
-              </Td>
-            </Tr>
-          </Tfoot>
         </Table>
       </Box>
     </Box>
   );
 }
 
-export default memo(SearchTable);
+export default memo(TableCheckbox);

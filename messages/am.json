@@ -7,7 +7,9 @@
     "address": "Address",
     "country": "Country",
     "state": "State",
+    "enterYourState": "Enter your state",
     "city": "City",
+    "enterYourCity": "Enter your City",
     "studentGrade": "Student grade",
     "studentGradeGroup": "Student grade group",
     "courseGroup": "Course group",
@@ -26,9 +28,9 @@
     "signIn": "Sign In",
     "signUp": "Sign Up",
     "logOut": "Log out",
-    "en": "Անգլերեն",
-    "ru": "Ռուսերեն",
-    "am": "Հայերեն",
+    "en": "en",
+    "ru": "ru",
+    "am": "arm",
     "next": "Next",
     "saveChanges": "Save Changes",
     "editProfile": "Edit Profile",
@@ -41,7 +43,7 @@
     "currentPassword": "Current Password",
     "newPassword": "New Password",
     "changePassword": "Change Password",
-    "deleteItem": "Դուք վստահ ես որ ցանկանում ես ջնջել  {{element}}"
+    "deleteItem": "Are you sure you want to delete this {{element}}"
   },
   "list": {
     "searchInput": "Type here to search",
@@ -58,8 +60,10 @@
     "addNew": "Add New",
     "edit": "Edit",
     "delete": "Delete",
+    "create": "Create",
     "update": "Update",
-    "close": "Close"
+    "close": "Close",
+    "deleteConfirmationQuestion": "Are you sure you want to delete this"
   },
   "validations": {
     "passwordValidation": "Your password must not be less than 6 characters."

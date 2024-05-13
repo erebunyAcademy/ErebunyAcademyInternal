@@ -12,4 +12,8 @@ export class CreateEditStudentGradeGroupValidation {
   @IsString()
   @IsOptional()
   id?: string;
+
+  @IsString()
+  @IsNotEmpty({ message: 'Student grade is required' })
+  studentGradeId: string;
 }

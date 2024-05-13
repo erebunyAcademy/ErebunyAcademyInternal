@@ -12,4 +12,8 @@ export class CreateEditStudentGradeValidation {
   @IsString()
   @IsOptional()
   id?: string;
+
+  @IsString()
+  @IsOptional()
+  facultyId: string;
 }

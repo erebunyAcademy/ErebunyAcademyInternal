@@ -36,7 +36,7 @@ export default function Users() {
   });
 
   const { data, isLoading, isPlaceholderData } = useQuery({
-    queryKey: QUERY_KEY.allUsers(debouncedSearch, page),
+    queryKey: QUERY_KEY.allStudents(debouncedSearch, page),
     queryFn: () =>
       StudentService.list({
         offset: page === 1 ? 0 : (page - 1) * ITEMS_PER_PAGE,
@@ -90,7 +90,7 @@ export default function Users() {
             bg="#319795"
             color="#fff"
             name={`${info.row.original.firstName} ${info.row.original.lastName}`}
-            src={existingAvatar?.key || ''}
+            src={generateAWSUrl(existingAvatar?.key || '')}
           />
         );
       },

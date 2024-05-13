@@ -32,6 +32,11 @@ class StudentGradeGroupHandler {
     return StudentGradeGroupResolver.getStudentGradeGroupList();
   }
 
+  @Get('/student-grade/:studentGradeId')
+  getStudentGradeListByStudentGradeId(@Param('studentGradeId') studentGradeId: string) {
+    return StudentGradeGroupResolver.getStudentGradeGroupListByStudentGradeId(studentGradeId);
+  }
+
   @Get('/:id')
   getStudentGradeGroupById(@Param('id') id: string) {
     return StudentGradeGroupResolver.deleteStudentGradeGroupById(id);

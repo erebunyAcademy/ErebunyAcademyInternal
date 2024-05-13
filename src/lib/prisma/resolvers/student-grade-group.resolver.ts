@@ -16,7 +16,7 @@ export class StudentGradeGroupResolver {
         where: {
           OR: [{ title: { contains: search, mode: 'insensitive' } }],
         },
-        select: { id: true, title: true, description: true, createdAt: true },
+        select: { id: true, title: true, description: true, createdAt: true, studentGradeId: true },
         orderBy: sorting ? orderBy(sorting) : undefined,
         skip,
         take,
@@ -29,6 +29,18 @@ export class StudentGradeGroupResolver {
 
   static getStudentGradeGroupList() {
     return prisma.studentGradeGroup.findMany({
+      select: {
+        id: true,
+        title: true,
+      },
+    });
+  }
+
+  static getStudentGradeGroupListByStudentGradeId(studentGradeId: string) {
+    return prisma.studentGradeGroup.findMany({
+      where: {
+        studentGradeId,
+      },
       select: {
         id: true,
         title: true,

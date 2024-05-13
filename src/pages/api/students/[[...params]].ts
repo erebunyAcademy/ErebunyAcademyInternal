@@ -1,4 +1,4 @@
-import { Catch, createHandler, Get, Query } from 'next-api-decorators';
+import { Catch, createHandler, Get, Param, Query } from 'next-api-decorators';
 import { SortingType } from '@/api/types/common';
 import { exceptionHandler } from '@/lib/prisma/error';
 import { StudentResolver } from '@/lib/prisma/resolvers/student.resolver';
@@ -13,6 +13,11 @@ class StudentsHandler {
     @Query('sorting') sorting: SortingType[],
   ) {
     return StudentResolver.list(+skip, +take, search, sorting);
+  }
+
+  @Get('/student-grade-group/:studentGradeGroupId')
+  getStudentsByGradeGroupId(@Param('studentGradeGroupId') studentGradeGroupId: string) {
+    return StudentResolver.getStudentsByStudentGradeGroupId(studentGradeGroupId);
   }
 }
 
