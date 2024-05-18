@@ -1,6 +1,7 @@
 import { ReactNode } from 'react';
 import { UserRoleEnum } from '@prisma/client';
 import { User } from 'next-auth';
+import DashboardIcon from '@/icons/dashboard-icon.svg';
 import ExamsIcon from '@/icons/exam_icon.svg';
 import FacultiesIcon from '@/icons/faculty_icon.svg';
 import LogoutIcon from '@/icons/log-out.svg';
@@ -36,7 +37,7 @@ export const linkItems: LinkItemsFunction = (user: Maybe<User>) => {
   if (!user) return [];
 
   const commonLinks = [
-    { id: 10, name: 'Dashboard', icon: <ProfileIcon />, href: ROUTE_DASHBOARD },
+    { id: 10, name: 'Dashboard', icon: <DashboardIcon />, href: ROUTE_DASHBOARD },
     { id: 1, name: 'Profile', icon: <ProfileIcon />, href: ROUTE_PROFILE },
     { id: 9, name: 'Log out', icon: <LogoutIcon /> },
   ];
