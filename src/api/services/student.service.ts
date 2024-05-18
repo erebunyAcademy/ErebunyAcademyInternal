@@ -1,5 +1,4 @@
-import { Student } from '@prisma/client';
-import { StudentsListModel } from '@/utils/models/student';
+import { StudentsExamListModel, StudentsListModel } from '@/utils/models/student';
 import $apiClient from '../axiosClient';
 import { QueryParams } from '../types/common';
 
@@ -8,7 +7,6 @@ export class StudentService {
     return $apiClient.get<StudentsListModel>('/students/list', { params });
   }
   static getStudentsByStudentGradeGroupId(id: string) {
-    console.log('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%');
-    return $apiClient.get<Student[]>(`/students/student-grade-group/${id}`);
+    return $apiClient.get<StudentsExamListModel>(`/students/student-grade-group/${id}`);
   }
 }

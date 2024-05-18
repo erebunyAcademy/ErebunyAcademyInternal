@@ -1,5 +1,6 @@
-import { Faculty, Prisma } from '@prisma/client';
+
 import { FacultyResolver } from '@/lib/prisma/resolvers/faculty.resolver';
+import { Faculty, Prisma } from '@prisma/client';
 
 export interface FacultyModel extends Faculty {}
 

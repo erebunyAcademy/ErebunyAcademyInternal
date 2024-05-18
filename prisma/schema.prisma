@@ -271,7 +271,6 @@ enum ExamTypeEnum {
 
 enum TestQuestionTypeEnum {
   RADIO
-  INPUT
   CHECKBOX
 }
 

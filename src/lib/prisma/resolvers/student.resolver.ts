@@ -1,4 +1,4 @@
-import { UserRoleEnum } from '@prisma/client';
+import { AttachmentTypeEnum, UserRoleEnum } from '@prisma/client';
 import { NotFoundException } from 'next-api-decorators';
 import { SortingType } from '@/api/types/common';
 import { orderBy } from './utils/common';
@@ -83,18 +83,27 @@ export class StudentResolver {
   }
 
   static getStudentsByStudentGradeGroupId(studentGradeGroupId: string) {
-    console.log('******************************************');
-    return prisma.user.findMany({
+    return prisma.student.findMany({
       where: {
-        student: {
-          studentGradeGroupId,
-        },
+        studentGradeGroupId,
       },
       select: {
         id: true,
-        firstName: true,
-        lastName: true,
-        email: true,
+        user: {
+          select: {
+            firstName: true,
+            lastName: true,
+            email: true,
+            attachment: {
+              where: {
+                type: AttachmentTypeEnum.AVATAR,
+              },
+              select: {
+                key: true,
+              },
+            },
+          },
+        },
       },
     });
   }

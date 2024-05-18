@@ -1,5 +1,5 @@
-import { Prisma, StudentGrade } from '@prisma/client';
 import { StudentGradeResolver } from '@/lib/prisma/resolvers/student-grade.resolver';
+import { Prisma, StudentGrade } from '@prisma/client';
 
 export interface StudentGradeModel extends StudentGrade {}
 

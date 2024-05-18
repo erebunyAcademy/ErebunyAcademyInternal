@@ -1,6 +1,5 @@
-import { Prisma, Teacher } from '@prisma/client';
-import { User } from '@prisma/client';
 import { TeacherResolver } from '@/lib/prisma/resolvers/teacher.resolver';
+import { Prisma, Teacher, User } from '@prisma/client';
 
 export type TeachersListModel = Prisma.PromiseReturnType<typeof TeacherResolver.list>;
 
