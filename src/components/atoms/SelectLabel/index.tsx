@@ -12,13 +12,13 @@ type SelectLabelProps = {
 };
 
 const SelectLabel: FC<SelectLabelProps> = ({
+  name,
   options,
+  labelName,
   valueLabel,
   nameLabel,
-  labelName,
   onChange,
   value,
-  name,
 }) => {
   return (
     <FormControl>

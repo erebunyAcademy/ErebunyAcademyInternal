@@ -1,5 +1,6 @@
 'use client';
 import { ReactNode } from 'react';
+import 'reflect-metadata';
 import { CacheProvider } from '@chakra-ui/next-js';
 import { ChakraProvider, extendTheme, LightMode, ThemeConfig } from '@chakra-ui/react';
 import {

@@ -49,7 +49,7 @@ function TableCheckbox<T extends { id: string }>({
   useEffect(() => {
     const selectedRowIds = getRowModel()
       .rows.filter(row => selectedRows[row.id])
-      .map(row => row.original.id);
+      .map(row => (row.original as any).student.id);
     onChange(selectedRowIds);
   }, [selectedRows, getRowModel, onChange]);
 

@@ -8,7 +8,7 @@ CREATE TYPE "TestQuestionLevelEnum" AS ENUM ('BEGINNER', 'INTERMEDIATE', 'ADVANC
 CREATE TYPE "ExamTypeEnum" AS ENUM ('VERBAL', 'TEST');
 
 -- CreateEnum
-CREATE TYPE "TestQuestionTypeEnum" AS ENUM ('RADIO', 'INPUT', 'CHECKBOX');
+CREATE TYPE "TestQuestionTypeEnum" AS ENUM ('RADIO', 'CHECKBOX');
 
 -- CreateEnum
 CREATE TYPE "AttachmentTypeEnum" AS ENUM ('AVATAR', 'FILE');
@@ -205,6 +205,8 @@ CREATE TABLE "Exam" (
     "title" VARCHAR(60) NOT NULL,
     "description" VARCHAR(60),
     "facultyId" TEXT,
+    "studentGradeId" TEXT,
+    "studentGradeGroupId" TEXT,
     "updatedAt" TIMESTAMP(0) NOT NULL,
     "createdAt" TIMESTAMP(0) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
@@ -335,6 +337,12 @@ ALTER TABLE "StudentExam" ADD CONSTRAINT "StudentExam_studentId_fkey" FOREIGN KE
 
 -- AddForeignKey
 ALTER TABLE "Exam" ADD CONSTRAINT "Exam_facultyId_fkey" FOREIGN KEY ("facultyId") REFERENCES "Faculty"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Exam" ADD CONSTRAINT "Exam_studentGradeGroupId_fkey" FOREIGN KEY ("studentGradeGroupId") REFERENCES "StudentGradeGroup"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Exam" ADD CONSTRAINT "Exam_studentGradeId_fkey" FOREIGN KEY ("studentGradeId") REFERENCES "StudentGrade"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "TestQuestion" ADD CONSTRAINT "TestQuestion_examId_fkey" FOREIGN KEY ("examId") REFERENCES "Exam"("id") ON DELETE SET NULL ON UPDATE CASCADE;

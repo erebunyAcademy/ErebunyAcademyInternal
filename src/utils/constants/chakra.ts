@@ -8,31 +8,35 @@ const Button: ComponentStyleConfig = {
 };
 
 const Checkbox: ComponentStyleConfig = {
+  defaultProps: {
+    colorScheme: 'teal',
+    size: 'lg',
+  },
   baseStyle: {
     control: {
       borderRadius: '5px',
       borderWidth: '0.83px',
       bg: '#fff',
-      borderColor: '#36A1CE',
+      borderColor: '#319795',
 
       _checked: {
         borderRadius: '5px',
-        bg: '#36A1CE',
-        borderColor: '#36A1CE',
+        bg: '#319795',
+        borderColor: '#319795',
 
         _hover: {
-          bg: '#3CB3E5',
-          borderColor: '#3CB3E5',
+          bg: '#319795',
+          borderColor: '#319795',
         },
       },
       _hover: {
-        borderColor: '#3CB3E5',
+        borderColor: '#319795',
         color: '#fff',
       },
 
       _disabled: {
-        bg: '#3CB3E5',
-        borderColor: '#3CB3E5',
+        bg: '#319795',
+        borderColor: '#319795',
       },
     },
   },
@@ -71,8 +75,8 @@ export const colors = {
     50: '#F6FCFF',
     100: '#E2F4FB',
     200: '#C3E7F7',
-    300: '#3CB3E5',
-    400: '#36A1CE',
+    300: '#319795',
+    400: '#319795',
     500: '#308FB7',
     600: '#2D86AC',
     700: '#246B89',

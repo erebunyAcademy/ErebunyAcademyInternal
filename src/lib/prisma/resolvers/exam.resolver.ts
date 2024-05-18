@@ -1,6 +1,7 @@
 import { Exam } from '@prisma/client';
 import { NotFoundException } from 'next-api-decorators';
 import { SortingType } from '@/api/types/common';
+import { ExamValidation } from '@/utils/validation/exam';
 import { orderBy } from './utils/common';
 import prisma from '..';
 
@@ -27,8 +28,59 @@ export class ExamsResolver {
     }));
   }
 
-  static async createExam() {
-    return prisma.exam.create({ data: { title: '' }, select: { id: true } });
+  static async createExam(input: ExamValidation) {
+    const {
+      title,
+      description,
+      facultyId,
+      studentGradeId,
+      studentGradeGroupId,
+      studentIds,
+      questions,
+    } = input;
+
+    return await prisma.$transaction(async prisma => {
+      const exam = await prisma.exam.create({
+        data: {
+          title,
+          description,
+          facultyId,
+          studentGradeId,
+          studentGradeGroupId,
+          testQuestions: {
+            create: questions.map(question => ({
+              title: question.questionText,
+              type: question.questionType,
+              skillLevel: question.skillLevel,
+              options: {
+                create: question.answers.map(answer => ({
+                  title: answer.title,
+                  isRightAnswer: answer.isRightAnswer,
+                })),
+              },
+            })),
+          },
+        },
+        include: {
+          testQuestions: {
+            include: {
+              options: true,
+            },
+          },
+        },
+      });
+
+      for (const studentId of studentIds) {
+        await prisma.studentExam.create({
+          data: {
+            studentId,
+            examId: exam.id,
+          },
+        });
+      }
+
+      return exam;
+    });
   }
 
   static async getExamById(id: string) {
@@ -66,5 +118,57 @@ export class ExamsResolver {
         id,
       },
     });
+  }
+
+  static async getExamDataById(examId: string) {
+    return prisma.exam.findUnique({
+      where: {
+        id: examId,
+      },
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        studentExams: {
+          select: {
+            studentId: true,
+          },
+        },
+        faculty: {
+          select: {
+            id: true,
+            exams: {
+              select: {
+                id: true,
+                studentExams: {
+                  select: {
+                    student: {
+                      select: {
+                        id: true,
+                      },
+                    },
+                  },
+                },
+                testQuestions: {
+                  select: {
+                    id: true,
+                    title: true,
+                    options: {
+                      select: {
+                        id: true,
+                        isRightAnswer: true,
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+        studentGradeId: true,
+        studentGradeGroupId: true,
+      },
+    });
+
   }
 }

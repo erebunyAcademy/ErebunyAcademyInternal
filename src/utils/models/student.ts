@@ -19,3 +19,7 @@ export interface StudentModel extends User {
   } & Student;
   attachment: Attachment[];
 }
+
+export type StudentsExamListModel = Prisma.PromiseReturnType<
+  typeof StudentResolver.getStudentsByStudentGradeGroupId
+>;
