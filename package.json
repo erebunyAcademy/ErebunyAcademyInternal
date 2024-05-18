@@ -58,8 +58,7 @@
     "eslint-plugin-react-hooks": "^4.6.2",
     "eslint-plugin-unused-imports": "^3.2.0",
     "prettier": "^3.2.5",
-    "prisma": "^5.14.0",
-    "react-query": "link:@types/@tanstack/react-query",
+    "prisma": "^5.12.1",
     "typescript": "^5"
   }
 }

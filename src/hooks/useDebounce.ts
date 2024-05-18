@@ -1,7 +1,4 @@
-import {
-  useEffect,
-  useState,
-} from '../../public/node_modules/.pnpm/@types+react@18.3.1/node_modules/@types/react';
+import { useEffect, useState } from 'react';
 
 const useDebounce = (text: string, delay: number = 300) => {
   const [debounceText, setDebounceText] = useState<string>(text);

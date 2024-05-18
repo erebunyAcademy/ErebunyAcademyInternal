@@ -49,7 +49,7 @@ export default function Users() {
 
   const columnHelper = createColumnHelper<FacultyModel>();
   const columns = [
-    columnHelper.accessor('title', {
+    columnHelper.accessor("title", {
       id: uuidv4(),
       cell: info => info.getValue(),
       header: 'Title',

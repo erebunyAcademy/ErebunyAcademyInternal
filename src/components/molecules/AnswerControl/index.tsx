@@ -1,5 +1,11 @@
 import { FormInput } from '@/components/atoms';
 import { ExamValidation } from '@/utils/validation/exam';
+import { DeleteIcon } from '@chakra-ui/icons';
+import { Button, Checkbox, Flex, Heading, Radio, Stack,IconButton } from '@chakra-ui/react';
+import { TestQuestionTypeEnum } from '@prisma/client';
+import { FC, memo } from 'react';
+import { Control, Controller, useFieldArray } from 'react-hook-form';
+import { v4 } from 'uuid';
 
 interface AnswersControlProps {
   control: Control<ExamValidation>;
@@ -10,12 +16,12 @@ interface AnswersControlProps {
 const AnswersControl: FC<AnswersControlProps> = ({ control, questionIndex, questionType }) => {
   const { fields, append, remove, update } = useFieldArray({
     control,
-    name: `questions.${questionIndex}.answers`,
+    name: `questions.${questionIndex}.answers` as const,
   });
 
   const handleRadioChange = (index: number) => {
     fields.forEach((field, i) => {
-      update(i, { ...field, isCorrect: i === index });
+      update(i, { ...field, isRightAnswer: i === index });
     });
   };
 
@@ -27,7 +33,7 @@ const AnswersControl: FC<AnswersControlProps> = ({ control, questionIndex, quest
           <Flex display="flex" alignItems="center" height="100%">
             {questionType === TestQuestionTypeEnum.RADIO ? (
               <Controller
-                name={`questions.${questionIndex}.answers.${answerIndex}.isCorrect`}
+                name={`questions.${questionIndex}.answers.${answerIndex}.isRightAnswer` as const}
                 control={control}
                 render={({ field }) => (
                   <Radio
@@ -35,21 +41,23 @@ const AnswersControl: FC<AnswersControlProps> = ({ control, questionIndex, quest
                     onChange={() => {
                       handleRadioChange(answerIndex);
                       field.onChange(true); // Ensure this field's value is set to true
-                    }}>
+                    }}
+                  >
                     Correct
                   </Radio>
                 )}
               />
             ) : (
               <Controller
-                name={`questions.${questionIndex}.answers.${answerIndex}.isCorrect`}
+                name={`questions.${questionIndex}.answers.${answerIndex}.isRightAnswer` as const}
                 control={control}
                 render={({ field: { name, value, onChange } }) => (
                   <Checkbox
                     name={name}
                     isChecked={value}
                     onChange={e => onChange(e.target.checked)}
-                    ml="4">
+                    ml="4"
+                  >
                     Correct
                   </Checkbox>
                 )}
@@ -59,7 +67,7 @@ const AnswersControl: FC<AnswersControlProps> = ({ control, questionIndex, quest
 
           <Flex flexGrow={1}>
             <Controller
-              name={`questions.${questionIndex}.answers.${answerIndex}.answerText`}
+              name={`questions.${questionIndex}.answers.${answerIndex}.title` as const}
               control={control}
               render={({ field: { onChange, value, name } }) => (
                 <FormInput
@@ -85,7 +93,7 @@ const AnswersControl: FC<AnswersControlProps> = ({ control, questionIndex, quest
           </Flex>
         </Flex>
       ))}
-      <Button onClick={() => append({ answerText: '', isCorrect: false, answerId: v4() })}>
+      <Button onClick={() => append({ title: '', isRightAnswer: false, optionId: v4() })}>
         Add Answer
       </Button>
     </Stack>

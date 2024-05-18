@@ -281,7 +281,7 @@ const CreateEditExam: FC<CreateEditExamProps> = ({ exam }) => {
               </Flex>
               <Flex gap="30px">
                 <Controller
-                  name={`questions.${questionIndex}.questionText`}
+                  name={`questions.${questionIndex}.questionText` as const}
                   control={control}
                   render={({ field: { onChange, value, name } }) => (
                     <FormInput
@@ -296,7 +296,7 @@ const CreateEditExam: FC<CreateEditExamProps> = ({ exam }) => {
                   )}
                 />
                 <Controller
-                  name={`questions.${questionIndex}.questionType`}
+                  name={`questions.${questionIndex}.questionType` as const}
                   control={control}
                   render={({ field: { onChange, value, name } }) => (
                     <SelectLabel
