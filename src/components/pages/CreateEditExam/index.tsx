@@ -1,7 +1,7 @@
 'use client';
 import React, { FC, useEffect } from 'react';
 import { DeleteIcon } from '@chakra-ui/icons';
-import { Avatar, Button, Flex, Heading, IconButton, Stack } from '@chakra-ui/react';
+import { Avatar, Box, Button, Flex, Heading, IconButton, Stack } from '@chakra-ui/react';
 import { classValidatorResolver } from '@hookform/resolvers/class-validator';
 import {
   Attachment,
@@ -120,23 +120,11 @@ const CreateEditExam: FC<CreateEditExamProps> = ({ exam }) => {
     queryFn: FacultyService.list,
   });
 
-  useEffect(() => {
-    if (!exam && facultyQueryData && facultyQueryData.length === 1) {
-      setValue('facultyId', facultyQueryData[0].id);
-    }
-  }, [facultyQueryData]);
-
   const { data: studentGradeQueryData } = useQuery({
     queryKey: ['student-grade', isFacultySelected],
     queryFn: () => StudentGradeService.getStudentGradeByFacultyId(isFacultySelected),
     enabled: !!isFacultySelected,
   });
-
-  useEffect(() => {
-    if (!exam && studentGradeQueryData && studentGradeQueryData.length === 1) {
-      setValue('studentGradeId', studentGradeQueryData[0].id);
-    }
-  }, [studentGradeQueryData]);
 
   const { data: studentGradeGroupQueryData } = useQuery({
     queryKey: ['student-grade-group', isStudentGradeSelected],
@@ -144,12 +132,6 @@ const CreateEditExam: FC<CreateEditExamProps> = ({ exam }) => {
       StudentGradeGroupService.getStudentGradeGroupByStudentGradeId(isStudentGradeSelected),
     enabled: !!isStudentGradeSelected,
   });
-
-  useEffect(() => {
-    if (!exam && studentGradeGroupQueryData && studentGradeGroupQueryData.length === 1) {
-      setValue('studentGradeGroupId', studentGradeGroupQueryData[0].id);
-    }
-  }, [studentGradeGroupQueryData]);
 
   const { data: studentsData } = useQuery({
     queryKey: ['students', isStudentGradeGroupSelected],
@@ -201,70 +183,67 @@ const CreateEditExam: FC<CreateEditExamProps> = ({ exam }) => {
   const onSubmit = (data: ExamValidation) => {
     mutate(data);
   };
-  console.log({ errors });
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Heading textAlign="center">Exam Description</Heading>
-      <Stack direction={{ base: 'column', md: 'column' }} gap={{ base: '16px', sm: '8px' }}>
+      <Stack
+        direction={{ base: 'column', md: 'column' }}
+        gap={{ base: '16px', sm: '8px' }}
+        borderWidth="1px"
+        borderRadius="lg"
+        px="24px"
+        py="32px">
         <Flex gap="30px">
-          <Controller
-            name="title"
-            control={control}
-            render={({ field: { onChange, value, name } }) => (
-              <FormInput
-                isRequired
-                placeholder="Title"
-                name={name}
-                type="text"
-                formLabelName="Title"
-                value={value}
-                handleInputChange={onChange}
-                formHelperText={value}
-              />
-            )}
-          />
-          <Controller
-            name="description"
-            control={control}
-            render={({ field: { onChange, value, name } }) => (
-              <FormInput
-                name={name}
-                type="text"
-                placeholder="Description"
-                formLabelName="Description"
-                value={value}
-                handleInputChange={onChange}
-              />
-            )}
-          />
+          <Flex width="33.3%">
+            <Controller
+              name="title"
+              control={control}
+              render={({ field: { onChange, value, name } }) => (
+                <FormInput
+                  isRequired
+                  placeholder="Title"
+                  name={name}
+                  type="text"
+                  formLabelName="Title"
+                  value={value}
+                  handleInputChange={onChange}
+                  formHelperText={value}
+                />
+              )}
+            />
+          </Flex>
+
+          <Flex width="33.3%">
+            <Controller
+              name="description"
+              control={control}
+              render={({ field: { onChange, value, name } }) => (
+                <FormInput
+                  name={name}
+                  type="text"
+                  placeholder="Description"
+                  formLabelName="Description"
+                  value={value}
+                  handleInputChange={onChange}
+                />
+              )}
+            />
+          </Flex>
+
+          <Flex width="33.3%" />
         </Flex>
 
         <Flex gap="30px">
-          <Controller
-            name="facultyId"
-            control={control}
-            render={({ field: { onChange, value, name } }) => (
-              <SelectLabel
-                name={name}
-                options={facultyQueryData || []}
-                labelName="Select faculty for"
-                valueLabel="id"
-                nameLabel="title"
-                onChange={onChange}
-                value={value}
-              />
-            )}
-          />
-          {isFacultySelected && (
+          <Flex width="33.3%">
             <Controller
-              name="studentGradeId"
+              name="facultyId"
               control={control}
               render={({ field: { onChange, value, name } }) => (
                 <SelectLabel
                   name={name}
-                  options={studentGradeQueryData || []}
-                  labelName="Select student grade"
+                  options={facultyQueryData || []}
+                  labelName="Select faculty for"
                   valueLabel="id"
                   nameLabel="title"
                   onChange={onChange}
@@ -272,26 +251,46 @@ const CreateEditExam: FC<CreateEditExamProps> = ({ exam }) => {
                 />
               )}
             />
-          )}
-        </Flex>
-
-        {isStudentGradeSelected && (
-          <Controller
-            name="studentGradeGroupId"
-            control={control}
-            render={({ field: { onChange, value, name } }) => (
-              <SelectLabel
-                name={name}
-                options={studentGradeGroupQueryData || []}
-                labelName="Select student grade group"
-                valueLabel="id"
-                nameLabel="title"
-                onChange={onChange}
-                value={value}
+          </Flex>
+          <Flex width="33.3%">
+            {isFacultySelected && (
+              <Controller
+                name="studentGradeId"
+                control={control}
+                render={({ field: { onChange, value, name } }) => (
+                  <SelectLabel
+                    name={name}
+                    options={studentGradeQueryData || []}
+                    labelName="Select student grade"
+                    valueLabel="id"
+                    nameLabel="title"
+                    onChange={onChange}
+                    value={value}
+                  />
+                )}
               />
             )}
-          />
-        )}
+          </Flex>
+          <Flex width="33.3%">
+            {isStudentGradeSelected && (
+              <Controller
+                name="studentGradeGroupId"
+                control={control}
+                render={({ field: { onChange, value, name } }) => (
+                  <SelectLabel
+                    name={name}
+                    options={studentGradeGroupQueryData || []}
+                    labelName="Select student grade group"
+                    valueLabel="id"
+                    nameLabel="title"
+                    onChange={onChange}
+                    value={value}
+                  />
+                )}
+              />
+            )}
+          </Flex>
+        </Flex>
 
         {studentsData && (
           <Controller
@@ -311,12 +310,18 @@ const CreateEditExam: FC<CreateEditExamProps> = ({ exam }) => {
         )}
       </Stack>
 
-      <Stack>
+      <Box my="50px">
         <Heading textAlign="center">Create Exam Questions</Heading>
         {questionFields.map((question, questionIndex) => {
           const questionType = watch(`questions.${questionIndex}.questionType`);
           return (
-            <Stack key={question.id} borderWidth="1px" borderRadius="lg" px="12px" py="24px" mb="4">
+            <Stack
+              key={question.id}
+              borderWidth="1px"
+              borderRadius="lg"
+              px="24px"
+              py="32px"
+              mt="20px">
               <Flex justifyContent="space-between" alignItems="center">
                 <Heading size="md">Question {questionIndex + 1}</Heading>
                 <IconButton
@@ -378,16 +383,19 @@ const CreateEditExam: FC<CreateEditExamProps> = ({ exam }) => {
                 questionIndex={questionIndex}
                 questionType={questionType}
               />
+
               {questionIndex === questionFields.length - 1 && (
-                <Button onClick={() => appendQuestion(initValue)}>Add Question</Button>
+                <Button onClick={() => appendQuestion(initValue)} width="50%">
+                  Add Question
+                </Button>
               )}
             </Stack>
           );
         })}
-        <Button colorScheme="teal" type="submit">
+        <Button colorScheme="teal" type="submit" width="50%">
           Submit Exam
         </Button>
-      </Stack>
+      </Box>
     </form>
   );
 };

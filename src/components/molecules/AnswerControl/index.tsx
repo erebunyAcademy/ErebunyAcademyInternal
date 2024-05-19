@@ -91,7 +91,9 @@ const AnswersControl: FC<AnswersControlProps> = ({ control, questionIndex, quest
           </Flex>
         </Flex>
       ))}
-      <Button onClick={() => append({ title: '', isRightAnswer: false, optionId: v4() })}>
+      <Button
+        onClick={() => append({ title: '', isRightAnswer: false, optionId: v4() })}
+        width="50%">
         Add Answer
       </Button>
     </Stack>

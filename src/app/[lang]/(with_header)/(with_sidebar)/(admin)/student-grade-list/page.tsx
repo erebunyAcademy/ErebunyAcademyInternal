@@ -64,12 +64,6 @@ const StudentGrades = () => {
     enabled: isCreateEditModalOpen,
   });
 
-  useEffect(() => {
-    if (facultyQueryData) {
-      setValue('facultyId', facultyQueryData[0].id);
-    }
-  }, [facultyQueryData]);
-
   const {
     isOpen: isDeleteModalOpen,
     onOpen: openDeleteModal,

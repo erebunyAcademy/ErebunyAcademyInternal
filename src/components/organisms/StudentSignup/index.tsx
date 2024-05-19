@@ -80,7 +80,6 @@ const StudentSignUp = () => {
   const {
     control,
     handleSubmit,
-    reset,
     formState: { errors },
   } = useForm<StudentSignUpValidation>({
     resolver,
@@ -101,7 +100,7 @@ const StudentSignUp = () => {
     },
   });
 
-  const { data, isSuccess } = useQuery({
+  const { data } = useQuery({
     queryKey: ['faculty', 'student-grade', 'student-grade-group'],
     queryFn: fetchFormData,
   });
@@ -112,16 +111,6 @@ const StudentSignUp = () => {
       setLocalImage({ file: files[0], localUrl: URL.createObjectURL(files[0]) });
     }
   };
-
-  useEffect(() => {
-    if (isSuccess) {
-      reset({
-        facultyId: data?.facultyList[0]?.id,
-        studentGradeId: data?.studentGradeList[0]?.id,
-        studentGradeGroupId: data?.studentGradeGroupList[0]?.id,
-      });
-    }
-  }, [data?.facultyList, data?.studentGradeGroupList, data?.studentGradeList, isSuccess, reset]);
 
   return (
     <>

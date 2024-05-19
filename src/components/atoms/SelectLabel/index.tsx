@@ -29,6 +29,9 @@ const SelectLabel: FC<SelectLabelProps> = ({
         {labelName}
       </FormLabel>
       <Select onChange={onChange} value={value} name={name} placeholder={placeholder}>
+        <option selected value="" disabled>
+          Select an option
+        </option>
         {options.map((option, index) => (
           <option key={index} value={option[valueLabel]}>
             {option[nameLabel]}

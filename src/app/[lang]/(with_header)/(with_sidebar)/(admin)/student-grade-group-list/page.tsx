@@ -86,12 +86,6 @@ const StudentGradeGroup = () => {
     enabled: isCreateEditModalOpen,
   });
 
-  useEffect(() => {
-    if (studentGradeQueryData) {
-      setValue('studentGradeId', studentGradeQueryData[0].id);
-    }
-  }, [studentGradeQueryData]);
-
   const { mutate: createStudentGradeGroup } = useMutation({
     mutationFn: StudentGradeGroupService.createStudentGradeGroup,
     onSuccess() {
