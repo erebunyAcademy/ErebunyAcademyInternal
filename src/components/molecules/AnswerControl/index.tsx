@@ -83,6 +83,7 @@ const AnswersControl: FC<AnswersControlProps> = ({ control, questionIndex, quest
 
           <Flex>
             <IconButton
+              colorScheme="red"
               aria-label="Delete answer"
               icon={<DeleteIcon />}
               onClick={() => remove(answerIndex)}

@@ -212,30 +212,41 @@ model StudentExam {
 
 model Exam {
   id                  String             @id @default(uuid())
-  title               String             @db.VarChar(60)
-  description         String?            @db.VarChar(60)
   facultyId           String?
-  testQuestions       TestQuestion[]
-  studentExams        StudentExam[]
   faculty             Faculty?           @relation(fields: [facultyId], references: [id])
-  StudentGradeGroup   StudentGradeGroup? @relation(fields: [studentGradeGroupId], references: [id])
-  StudentGrade        StudentGrade?      @relation(fields: [studentGradeId], references: [id])
+  studentExams        StudentExam[]
+  studentGradeGroup   StudentGradeGroup? @relation(fields: [studentGradeGroupId], references: [id])
+  studentGrade        StudentGrade?      @relation(fields: [studentGradeId], references: [id])
   studentGradeId      String?
   studentGradeGroupId String?
+  examLanguages       ExamTranslation[]
+
+  updatedAt DateTime @updatedAt @db.Timestamp(0)
+  createdAt DateTime @default(now()) @db.Timestamp(0)
+}
+
+model ExamTranslation {
+  id            String           @id @default(uuid())
+  title         String           @db.VarChar(60)
+  description   String?          @db.Text
+  examId        String?
+  testQuestions TestQuestion[]
+  exam          Exam?            @relation(fields: [examId], references: [id])
+  language      LanguageTypeEnum
 
   updatedAt DateTime @updatedAt @db.Timestamp(0)
   createdAt DateTime @default(now()) @db.Timestamp(0)
 }
 
 model TestQuestion {
-  id          String                @id @default(uuid())
-  title       String                @db.VarChar(60)
-  description String?               @db.VarChar(60)
-  type        TestQuestionTypeEnum
-  options     Option[]
-  skillLevel  TestQuestionLevelEnum
-  exam        Exam?                 @relation(fields: [examId], references: [id])
-  examId      String?
+  id                String                @id @default(uuid())
+  title             String                @db.VarChar(60)
+  description       String?               @db.VarChar(60)
+  type              TestQuestionTypeEnum
+  options           Option[]
+  skillLevel        TestQuestionLevelEnum
+  examTranslation   ExamTranslation?      @relation(fields: [examTranslationId], references: [id])
+  examTranslationId String?
 
   createdAt DateTime @default(now()) @db.Timestamp(0)
   updatedAt DateTime @updatedAt @db.Timestamp(0)
@@ -256,6 +267,12 @@ enum UserRoleEnum {
   STUDENT
   TEACHER
   ADMIN
+}
+
+enum LanguageTypeEnum {
+  AM
+  RU
+  EN
 }
 
 enum TestQuestionLevelEnum {

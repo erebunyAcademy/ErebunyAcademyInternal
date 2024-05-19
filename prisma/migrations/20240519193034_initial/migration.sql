@@ -2,6 +2,9 @@
 CREATE TYPE "UserRoleEnum" AS ENUM ('STUDENT', 'TEACHER', 'ADMIN');
 
 -- CreateEnum
+CREATE TYPE "LanguageTypeEnum" AS ENUM ('AM', 'RU', 'EN');
+
+-- CreateEnum
 CREATE TYPE "TestQuestionLevelEnum" AS ENUM ('BEGINNER', 'INTERMEDIATE', 'ADVANCED');
 
 -- CreateEnum
@@ -202,8 +205,6 @@ CREATE TABLE "StudentExam" (
 -- CreateTable
 CREATE TABLE "Exam" (
     "id" TEXT NOT NULL,
-    "title" VARCHAR(60) NOT NULL,
-    "description" VARCHAR(60),
     "facultyId" TEXT,
     "studentGradeId" TEXT,
     "studentGradeGroupId" TEXT,
@@ -214,13 +215,26 @@ CREATE TABLE "Exam" (
 );
 
 -- CreateTable
+CREATE TABLE "ExamTranslation" (
+    "id" TEXT NOT NULL,
+    "title" VARCHAR(60) NOT NULL,
+    "description" TEXT,
+    "examId" TEXT,
+    "language" "LanguageTypeEnum" NOT NULL,
+    "updatedAt" TIMESTAMP(0) NOT NULL,
+    "createdAt" TIMESTAMP(0) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "ExamTranslation_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "TestQuestion" (
     "id" TEXT NOT NULL,
     "title" VARCHAR(60) NOT NULL,
     "description" VARCHAR(60),
     "type" "TestQuestionTypeEnum" NOT NULL,
     "skillLevel" "TestQuestionLevelEnum" NOT NULL,
-    "examId" TEXT,
+    "examTranslationId" TEXT,
     "createdAt" TIMESTAMP(0) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(0) NOT NULL,
 
@@ -345,7 +359,10 @@ ALTER TABLE "Exam" ADD CONSTRAINT "Exam_studentGradeGroupId_fkey" FOREIGN KEY ("
 ALTER TABLE "Exam" ADD CONSTRAINT "Exam_studentGradeId_fkey" FOREIGN KEY ("studentGradeId") REFERENCES "StudentGrade"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "TestQuestion" ADD CONSTRAINT "TestQuestion_examId_fkey" FOREIGN KEY ("examId") REFERENCES "Exam"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "ExamTranslation" ADD CONSTRAINT "ExamTranslation_examId_fkey" FOREIGN KEY ("examId") REFERENCES "Exam"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "TestQuestion" ADD CONSTRAINT "TestQuestion_examTranslationId_fkey" FOREIGN KEY ("examTranslationId") REFERENCES "ExamTranslation"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Option" ADD CONSTRAINT "Option_testQuestionId_fkey" FOREIGN KEY ("testQuestionId") REFERENCES "TestQuestion"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

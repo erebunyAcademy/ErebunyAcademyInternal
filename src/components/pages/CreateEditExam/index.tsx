@@ -324,11 +324,14 @@ const CreateEditExam: FC<CreateEditExamProps> = ({ exam }) => {
               mt="20px">
               <Flex justifyContent="space-between" alignItems="center">
                 <Heading size="md">Question {questionIndex + 1}</Heading>
-                <IconButton
-                  aria-label="Delete question"
-                  icon={<DeleteIcon />}
-                  onClick={() => removeQuestion(questionIndex)}
-                />
+                {questionIndex > 0 && (
+                  <IconButton
+                    colorScheme="red"
+                    aria-label="Delete question"
+                    icon={<DeleteIcon />}
+                    onClick={() => removeQuestion(questionIndex)}
+                  />
+                )}
               </Flex>
               <Flex gap="30px">
                 <Controller
