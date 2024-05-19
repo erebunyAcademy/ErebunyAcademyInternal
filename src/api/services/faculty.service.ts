@@ -13,7 +13,7 @@ export class FacultyService {
     return $apiClient.get<FacultyAdminListModel>('/faculties/list', { params });
   }
 
-  static list() {
+  static list(): Promise<FacultySignupListModel> {
     return $apiClient.get<FacultySignupListModel>('/faculties');
   }
 

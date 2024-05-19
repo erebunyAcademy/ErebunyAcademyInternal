@@ -45,12 +45,33 @@ const questionTypes = [
   },
 ];
 
+const skillLevels = [
+  {
+    id: TestQuestionLevelEnum.BEGINNER,
+    skillLevel: 'Beginner',
+  },
+  {
+    id: TestQuestionLevelEnum.INTERMEDIATE,
+    skillLevel: 'Intermediate',
+  },
+  {
+    id: TestQuestionLevelEnum.ADVANCED,
+    skillLevel: 'Advanced',
+  },
+];
+
 type CreateEditExamProps = {
   exam?: ExamDataListModel;
 };
 
 const CreateEditExam: FC<CreateEditExamProps> = ({ exam }) => {
-  const { control, watch, handleSubmit, setValue } = useForm<ExamValidation>({
+  const {
+    control,
+    watch,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+  } = useForm<ExamValidation>({
     resolver,
     defaultValues: {
       title: '',
@@ -89,10 +110,21 @@ const CreateEditExam: FC<CreateEditExamProps> = ({ exam }) => {
   const isStudentGradeSelected = watch('studentGradeId');
   const isStudentGradeGroupSelected = watch('studentGradeGroupId');
 
+  console.log(watch('studentIds'));
+  console.log(watch('questions'));
+
+  console.log({ isFacultySelected, isStudentGradeGroupSelected, isStudentGradeSelected });
+
   const { data: facultyQueryData } = useQuery({
     queryKey: ['faculty'],
     queryFn: FacultyService.list,
   });
+
+  useEffect(() => {
+    if (!exam && facultyQueryData && facultyQueryData.length === 1) {
+      setValue('facultyId', facultyQueryData[0].id);
+    }
+  }, [facultyQueryData]);
 
   const { data: studentGradeQueryData } = useQuery({
     queryKey: ['student-grade', isFacultySelected],
@@ -100,12 +132,24 @@ const CreateEditExam: FC<CreateEditExamProps> = ({ exam }) => {
     enabled: !!isFacultySelected,
   });
 
+  useEffect(() => {
+    if (!exam && studentGradeQueryData && studentGradeQueryData.length === 1) {
+      setValue('studentGradeId', studentGradeQueryData[0].id);
+    }
+  }, [studentGradeQueryData]);
+
   const { data: studentGradeGroupQueryData } = useQuery({
     queryKey: ['student-grade-group', isStudentGradeSelected],
     queryFn: () =>
       StudentGradeGroupService.getStudentGradeGroupByStudentGradeId(isStudentGradeSelected),
     enabled: !!isStudentGradeSelected,
   });
+
+  useEffect(() => {
+    if (!exam && studentGradeGroupQueryData && studentGradeGroupQueryData.length === 1) {
+      setValue('studentGradeGroupId', studentGradeGroupQueryData[0].id);
+    }
+  }, [studentGradeGroupQueryData]);
 
   const { data: studentsData } = useQuery({
     queryKey: ['students', isStudentGradeGroupSelected],
@@ -157,6 +201,7 @@ const CreateEditExam: FC<CreateEditExamProps> = ({ exam }) => {
   const onSubmit = (data: ExamValidation) => {
     mutate(data);
   };
+  console.log({ errors });
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -175,6 +220,7 @@ const CreateEditExam: FC<CreateEditExamProps> = ({ exam }) => {
                 formLabelName="Title"
                 value={value}
                 handleInputChange={onChange}
+                formHelperText={value}
               />
             )}
           />
@@ -281,7 +327,7 @@ const CreateEditExam: FC<CreateEditExamProps> = ({ exam }) => {
               </Flex>
               <Flex gap="30px">
                 <Controller
-                  name={`questions.${questionIndex}.questionText` as const}
+                  name={`questions.${questionIndex}.questionText`}
                   control={control}
                   render={({ field: { onChange, value, name } }) => (
                     <FormInput
@@ -296,7 +342,7 @@ const CreateEditExam: FC<CreateEditExamProps> = ({ exam }) => {
                   )}
                 />
                 <Controller
-                  name={`questions.${questionIndex}.questionType` as const}
+                  name={`questions.${questionIndex}.questionType`}
                   control={control}
                   render={({ field: { onChange, value, name } }) => (
                     <SelectLabel
@@ -305,6 +351,21 @@ const CreateEditExam: FC<CreateEditExamProps> = ({ exam }) => {
                       labelName="Question type"
                       valueLabel="id"
                       nameLabel="type"
+                      onChange={onChange}
+                      value={value}
+                    />
+                  )}
+                />
+                <Controller
+                  name={`questions.${questionIndex}.skillLevel`}
+                  control={control}
+                  render={({ field: { onChange, value, name } }) => (
+                    <SelectLabel
+                      name={name}
+                      options={skillLevels}
+                      labelName="Skill level"
+                      valueLabel="id"
+                      nameLabel="skillLevel"
                       onChange={onChange}
                       value={value}
                     />

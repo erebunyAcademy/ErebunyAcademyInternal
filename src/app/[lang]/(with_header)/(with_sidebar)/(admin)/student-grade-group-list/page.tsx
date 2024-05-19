@@ -1,5 +1,5 @@
 'use client';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { MenuItem, useDisclosure } from '@chakra-ui/react';
 import { classValidatorResolver } from '@hookform/resolvers/class-validator';
 import { useMutation, useQuery } from '@tanstack/react-query';
@@ -20,6 +20,7 @@ import { QUERY_KEY } from '@/utils/helpers/queryClient';
 import { Maybe } from '@/utils/models/common';
 import { StudentGradeGroupModel } from '@/utils/models/studentGradeGroup';
 import { CreateEditStudentGradeGroupValidation } from '@/utils/validation/studentGradeGroup';
+import { StudentGradeSignupListModel } from '@/utils/models/studentGrade';
 
 const resolver = classValidatorResolver(CreateEditStudentGradeGroupValidation);
 
@@ -79,11 +80,17 @@ const StudentGradeGroup = () => {
       }),
   });
 
-  const { data: studentGradeQueryData } = useQuery({
+  const { data: studentGradeQueryData } = useQuery<StudentGradeSignupListModel>({
     queryKey: ['student-grade'],
     queryFn: StudentGradeService.list,
     enabled: isCreateEditModalOpen,
   });
+
+  useEffect(() => {
+    if (studentGradeQueryData) {
+      setValue('studentGradeId', studentGradeQueryData[0].id);
+    }
+  }, [studentGradeQueryData]);
 
   const { mutate: createStudentGradeGroup } = useMutation({
     mutationFn: StudentGradeGroupService.createStudentGradeGroup,

@@ -9,7 +9,7 @@ export function AtLeastOneCorrectAnswer(validationOptions?: ValidationOptions) {
       options: validationOptions,
       validator: {
         validate(answers: any[]) {
-          return answers.some(answer => answer.isCorrect === true);
+          return answers.some(answer => answer.isRightAnswer);
         },
         defaultMessage() {
           return 'At least one answer must be marked as correct';

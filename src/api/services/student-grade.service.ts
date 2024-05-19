@@ -14,7 +14,7 @@ export class StudentGradeService {
   static studentGradeList(params?: QueryParams) {
     return $apiClient.get<StudentGradeAdminListModel>('/student-grades/list', { params });
   }
-  static list() {
+  static list(): Promise<StudentGradeSignupListModel> {
     return $apiClient.get<StudentGradeSignupListModel>('/student-grades');
   }
 
