@@ -64,38 +64,33 @@ type CreateEditExamProps = {
   exam?: ExamDataListModel;
 };
 
+const defaultValues = {
+  title: '',
+  description: '',
+  facultyId: '',
+  studentGradeId: '',
+  studentGradeGroupId: '',
+  studentIds: [],
+  questions: [initValue],
+};
+
 const CreateEditExam: FC<CreateEditExamProps> = ({ exam }) => {
-  const {
-    control,
-    watch,
-    handleSubmit,
-    setValue,
-    formState: { errors },
-  } = useForm<ExamValidation>({
+  const { control, watch, handleSubmit, reset } = useForm<ExamValidation>({
     resolver,
-    defaultValues: {
-      title: '',
-      description: '',
-      facultyId: '',
-      studentGradeId: '',
-      studentGradeGroupId: '',
-      studentIds: [],
-      questions: [initValue],
-    },
+    defaultValues,
   });
 
   useEffect(() => {
-    if (exam) {
-      setValue('facultyId', exam.faculty?.id!);
-      setValue('studentGradeId', exam.studentGradeId!);
-      setValue('studentGradeGroupId', exam.studentGradeGroupId!);
-      setValue('title', exam.title!);
-      setValue(
-        'studentIds',
-        exam.studentExams.map(studentExam => studentExam.studentId),
-      );
+    if (exam && exam.studentGradeId && exam.studentGradeGroupId) {
+      reset({
+        title: exam.examLanguages.find(({ language }) => language === 'AM')?.title,
+        facultyId: exam.faculty?.id,
+        studentGradeId: exam.studentGradeId,
+        studentGradeGroupId: exam.studentGradeGroupId,
+        studentIds: exam.studentExams.map(studentExam => studentExam.studentId),
+      });
     }
-  }, [exam, setValue]);
+  }, [exam, reset]);
 
   const {
     fields: questionFields,

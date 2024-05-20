@@ -1,4 +1,4 @@
-import React, { ChangeEvent, memo, useEffect, useState } from 'react';
+import React, { ChangeEvent, memo, useState } from 'react';
 import {
   Box,
   Button,

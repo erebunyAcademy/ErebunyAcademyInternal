@@ -1,5 +1,5 @@
 'use client';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { MenuItem, useDisclosure } from '@chakra-ui/react';
 import { classValidatorResolver } from '@hookform/resolvers/class-validator';
 import { useMutation, useQuery } from '@tanstack/react-query';
@@ -18,9 +18,9 @@ import useDebounce from '@/hooks/useDebounce';
 import { ITEMS_PER_PAGE } from '@/utils/constants/common';
 import { QUERY_KEY } from '@/utils/helpers/queryClient';
 import { Maybe } from '@/utils/models/common';
+import { FacultySignupListModel } from '@/utils/models/faculty';
 import { StudentGradeModel } from '@/utils/models/studentGrade';
 import { CreateEditStudentGradeValidation } from '@/utils/validation/studentGrade';
-import { FacultySignupListModel } from '@/utils/models/faculty';
 
 const resolver = classValidatorResolver(CreateEditStudentGradeValidation);
 

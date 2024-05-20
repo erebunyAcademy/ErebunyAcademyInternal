@@ -10,14 +10,28 @@ export class ExamsResolver {
     return Promise.all([
       prisma.exam.count({
         where: {
-          OR: [{ title: { contains: search, mode: 'insensitive' } }],
+          examLanguages: {
+            every: {
+              AND: {
+                language: 'AM',
+                OR: [{ title: { contains: search, mode: 'insensitive' } }],
+              },
+            },
+          },
         },
       }),
       prisma.exam.findMany({
         where: {
-          OR: [{ title: { contains: search, mode: 'insensitive' } }],
+          examLanguages: {
+            every: {
+              AND: {
+                language: 'AM',
+                OR: [{ title: { contains: search, mode: 'insensitive' } }],
+              },
+            },
+          },
         },
-        select: { id: true, title: true, description: true, createdAt: true },
+        select: { id: true, examLanguages: true, createdAt: true },
         orderBy: sorting ? orderBy(sorting) : undefined,
         skip,
         take,
@@ -42,29 +56,38 @@ export class ExamsResolver {
     return await prisma.$transaction(async prisma => {
       const exam = await prisma.exam.create({
         data: {
-          title,
-          description,
           facultyId,
           studentGradeId,
           studentGradeGroupId,
-          testQuestions: {
-            create: questions.map(question => ({
-              title: question.questionText,
-              type: question.questionType,
-              skillLevel: question.skillLevel,
-              options: {
-                create: question.answers.map(answer => ({
-                  title: answer.title,
-                  isRightAnswer: answer.isRightAnswer,
+          examLanguages: {
+            create: {
+              title,
+              description,
+              language: 'AM',
+              testQuestions: {
+                create: questions.map(question => ({
+                  title: question.questionText,
+                  type: question.questionType,
+                  skillLevel: question.skillLevel,
+                  options: {
+                    create: question.answers.map(answer => ({
+                      title: answer.title,
+                      isRightAnswer: answer.isRightAnswer,
+                    })),
+                  },
                 })),
               },
-            })),
+            },
           },
         },
         include: {
-          testQuestions: {
-            include: {
-              options: true,
+          examLanguages: {
+            select: {
+              testQuestions: {
+                include: {
+                  options: true,
+                },
+              },
             },
           },
         },
@@ -127,8 +150,6 @@ export class ExamsResolver {
       },
       select: {
         id: true,
-        title: true,
-        description: true,
         studentExams: {
           select: {
             studentId: true,
@@ -149,26 +170,35 @@ export class ExamsResolver {
                     },
                   },
                 },
-                testQuestions: {
-                  select: {
-                    id: true,
-                    title: true,
-                    options: {
-                      select: {
-                        id: true,
-                        isRightAnswer: true,
-                      },
-                    },
-                  },
-                },
               },
             },
           },
         },
         studentGradeId: true,
         studentGradeGroupId: true,
+        examLanguages: {
+          where: {
+            language: 'AM',
+          },
+          select: {
+            title: true,
+            description: true,
+            language: true,
+            testQuestions: {
+              select: {
+                id: true,
+                title: true,
+                options: {
+                  select: {
+                    id: true,
+                    isRightAnswer: true,
+                  },
+                },
+              },
+            },
+          },
+        },
       },
     });
-
   }
 }

@@ -1,5 +1,5 @@
-import { SubjectResolver } from '@/lib/prisma/resolvers/subject.resolver';
 import { Prisma, Subject } from '@prisma/client';
+import { SubjectResolver } from '@/lib/prisma/resolvers/subject.resolver';
 
 export interface SubjectModel extends Subject {}
 

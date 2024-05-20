@@ -231,7 +231,7 @@ model ExamTranslation {
   description   String?          @db.Text
   examId        String?
   testQuestions TestQuestion[]
-  exam          Exam?            @relation(fields: [examId], references: [id])
+  exam          Exam?            @relation(fields: [examId], references: [id], onDelete: Cascade)
   language      LanguageTypeEnum
 
   updatedAt DateTime @updatedAt @db.Timestamp(0)
