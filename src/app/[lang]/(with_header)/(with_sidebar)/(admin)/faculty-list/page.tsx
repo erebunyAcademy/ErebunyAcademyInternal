@@ -150,7 +150,7 @@ const Faculty = () => {
               setValue('description', row.original.description || '');
               openCreateEditModal();
             }}>
-            Edit
+            {t('list.edit')}
           </MenuItem>
           <MenuItem
             color="red"
@@ -158,7 +158,7 @@ const Faculty = () => {
               setSelectedFaculty(row.original);
               openDeleteModal();
             }}>
-            Delete
+            {t('list.delete')}
           </MenuItem>
         </ActionButtons>
       ),
@@ -212,7 +212,7 @@ const Faculty = () => {
         onClose={closeCreateEditModal}
         title={t('user.faculty')}
         primaryAction={handleSubmit(onSubmitHandler)}
-        actionText={selectedFaculty ? 'Update' : 'Create'}>
+        actionText={selectedFaculty ? t('list.update') : t('list.create')}>
         <Controller
           name="title"
           control={control}
@@ -223,9 +223,9 @@ const Faculty = () => {
               isInvalid={!!errors.title?.message}
               name={name}
               type="text"
-              formLabelName="Faculty name"
+              formLabelName={t('list.facultyName')}
               value={value}
-              placeholder="Please enter title"
+              placeholder={t('list.enterTitle')}
               handleInputChange={onChange}
               formErrorMessage={errors.title?.message}
             />
@@ -240,9 +240,9 @@ const Faculty = () => {
               isInvalid={!!errors.description?.message}
               name={name}
               type="text"
-              formLabelName="Faculty Description"
+              formLabelName={t('list.facultyDescription')}
               value={value}
-              placeholder="Please enter description"
+              placeholder={t('list.enterDescription')}
               handleInputChange={onChange}
               formErrorMessage={errors.description?.message}
             />
@@ -252,14 +252,14 @@ const Faculty = () => {
       <Modal
         isOpen={isDeleteModalOpen}
         onClose={closeDeleteModal}
-        title="Faculty"
+        title={t('user.faculty')}
         primaryAction={() => {
           if (selectedFaculty) {
             mutate(selectedFaculty?.id);
           }
         }}
-        actionText="Delete">
-        Are you sure you want to delete this faculty?
+        actionText={t('list.delete')}>
+        {t('list.deleteFacultyQuestion')}
       </Modal>
     </>
   );

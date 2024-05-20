@@ -1,5 +1,5 @@
 'use client';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { MenuItem, useDisclosure } from '@chakra-ui/react';
 import { classValidatorResolver } from '@hookform/resolvers/class-validator';
 import { useMutation, useQuery } from '@tanstack/react-query';
@@ -18,9 +18,9 @@ import useDebounce from '@/hooks/useDebounce';
 import { ITEMS_PER_PAGE } from '@/utils/constants/common';
 import { QUERY_KEY } from '@/utils/helpers/queryClient';
 import { Maybe } from '@/utils/models/common';
+import { StudentGradeSignupListModel } from '@/utils/models/studentGrade';
 import { StudentGradeGroupModel } from '@/utils/models/studentGradeGroup';
 import { CreateEditStudentGradeGroupValidation } from '@/utils/validation/studentGradeGroup';
-import { StudentGradeSignupListModel } from '@/utils/models/studentGrade';
 
 const resolver = classValidatorResolver(CreateEditStudentGradeGroupValidation);
 
@@ -134,12 +134,12 @@ const StudentGradeGroup = () => {
     columnHelper.accessor('title', {
       id: uuidv4(),
       cell: info => info.getValue(),
-      header: 'Title',
+      header: t('list.title'),
     }),
     columnHelper.accessor('description', {
       id: uuidv4(),
       cell: info => info.getValue(),
-      header: 'Description',
+      header: t('list.description'),
     }),
 
     columnHelper.accessor('createdAt', {
@@ -148,7 +148,7 @@ const StudentGradeGroup = () => {
         const currentDate = dayjs(info.getValue());
         return currentDate.format('YYYY-MM-DD HH:mm:ss');
       },
-      header: 'Created At',
+      header: t('list.createdAt'),
     }),
     columnHelper.accessor('id', {
       id: uuidv4(),
@@ -163,7 +163,7 @@ const StudentGradeGroup = () => {
               setValue('studentGradeId', row.original.studentGradeId || '');
               openCreateEditModal();
             }}>
-            Edit
+            {t('list.edit')}
           </MenuItem>
           <MenuItem
             color="red"
@@ -171,11 +171,11 @@ const StudentGradeGroup = () => {
               setSelectedStudentGradeGroup(row.original);
               openDeleteModal();
             }}>
-            Delete
+            {t('list.delete')}
           </MenuItem>
         </ActionButtons>
       ),
-      header: 'Actions',
+      header: t('list.actions'),
     }),
   ];
 
@@ -197,7 +197,7 @@ const StudentGradeGroup = () => {
   return (
     <>
       <SearchTable
-        title="Students Grade Group List"
+        title={t('list.studentGradeGroupList')}
         isLoading={isLoading}
         data={data?.studentGradeGroups || []}
         count={data?.count || 0}
@@ -222,9 +222,9 @@ const StudentGradeGroup = () => {
       <Modal
         isOpen={isCreateEditModalOpen}
         onClose={closeCreateEditModal}
-        title="student grade group "
+        title={t('user.studentGradeGroup')}
         primaryAction={handleSubmit(onSubmitHandler)}
-        actionText={selectedStudentGradeGroup ? 'Update' : 'Create'}>
+        actionText={selectedStudentGradeGroup ? t('list.update') : t('list.create')}>
         <Controller
           name="title"
           control={control}
@@ -235,9 +235,9 @@ const StudentGradeGroup = () => {
               isInvalid={!!errors.title?.message}
               name={name}
               type="text"
-              formLabelName="Student grade group name"
+              formLabelName={t('list.studentGradeGroupName')}
               value={value}
-              placeholder="Please enter title"
+              placeholder={t('list.enterTitle')}
               handleInputChange={onChange}
               formErrorMessage={errors.title?.message}
             />
@@ -252,9 +252,9 @@ const StudentGradeGroup = () => {
               isInvalid={!!errors.description?.message}
               name={name}
               type="text"
-              formLabelName="Student grade group description"
+              formLabelName={t('list.studentGradeGroupDescription')}
               value={value}
-              placeholder="Please enter description"
+              placeholder={t('list.enterDescription')}
               handleInputChange={onChange}
               formErrorMessage={errors.description?.message}
             />
@@ -280,14 +280,14 @@ const StudentGradeGroup = () => {
       <Modal
         isOpen={isDeleteModalOpen}
         onClose={closeDeleteModal}
-        title="student grade group"
+        title={t('user.studentGradeGroup')}
         primaryAction={() => {
           if (selectedStudentGradeGroup) {
             mutate(selectedStudentGradeGroup?.id);
           }
         }}
-        actionText="Delete">
-        Are you sure you want to delete this grade group?
+        actionText={t('list.delete')}>
+        {t('list.deleteStudentGradeGroupQuestion')}
       </Modal>
     </>
   );

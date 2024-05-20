@@ -1,5 +1,5 @@
 'use client';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { MenuItem, useDisclosure } from '@chakra-ui/react';
 import { classValidatorResolver } from '@hookform/resolvers/class-validator';
 import { useMutation, useQuery } from '@tanstack/react-query';
@@ -18,9 +18,9 @@ import useDebounce from '@/hooks/useDebounce';
 import { ITEMS_PER_PAGE } from '@/utils/constants/common';
 import { QUERY_KEY } from '@/utils/helpers/queryClient';
 import { Maybe } from '@/utils/models/common';
+import { FacultySignupListModel } from '@/utils/models/faculty';
 import { StudentGradeModel } from '@/utils/models/studentGrade';
 import { CreateEditStudentGradeValidation } from '@/utils/validation/studentGrade';
-import { FacultySignupListModel } from '@/utils/models/faculty';
 
 const resolver = classValidatorResolver(CreateEditStudentGradeValidation);
 
@@ -132,12 +132,12 @@ const StudentGrades = () => {
     columnHelper.accessor('title', {
       id: uuidv4(),
       cell: info => info.getValue(),
-      header: 'Title',
+      header: t('list.title'),
     }),
     columnHelper.accessor('description', {
       id: uuidv4(),
       cell: info => info.getValue(),
-      header: 'Description',
+      header: t('list.description'),
     }),
 
     columnHelper.accessor('createdAt', {
@@ -146,7 +146,7 @@ const StudentGrades = () => {
         const currentDate = dayjs(info.getValue());
         return currentDate.format('YYYY-MM-DD HH:mm:ss');
       },
-      header: 'Created At',
+      header: t('list.createdAt'),
     }),
     columnHelper.accessor('id', {
       id: uuidv4(),
@@ -162,7 +162,7 @@ const StudentGrades = () => {
               setValue('facultyId', row.original.facultyId || '');
               openCreateEditModal();
             }}>
-            Edit
+            {t('list.edit')}
           </MenuItem>
           <MenuItem
             color="red"
@@ -170,11 +170,11 @@ const StudentGrades = () => {
               setSelectedStudentGrade(row.original);
               openDeleteModal();
             }}>
-            Delete
+            {t('list.delete')}
           </MenuItem>
         </ActionButtons>
       ),
-      header: 'Actions',
+      header: t('list.actions'),
     }),
   ];
 
@@ -193,12 +193,10 @@ const StudentGrades = () => {
     [createStudentGrade, selectedStudentGrade, updateStudentGrade],
   );
 
-  console.log('**************');
-
   return (
     <>
       <SearchTable
-        title="Students Grade List"
+        title={t('list.studentGradeList')}
         isLoading={isLoading}
         data={data?.studentGrades || []}
         count={data?.count || 0}
@@ -224,9 +222,9 @@ const StudentGrades = () => {
       <Modal
         isOpen={isCreateEditModalOpen}
         onClose={closeCreateEditModal}
-        title="student grade"
+        title={t('user.studentGrade')}
         primaryAction={handleSubmit(onSubmitHandler)}
-        actionText={selectedStudentGrade ? 'Update' : 'Create'}>
+        actionText={selectedStudentGrade ? t('list.update') : t('list.create')}>
         <Controller
           name="title"
           control={control}
@@ -237,9 +235,9 @@ const StudentGrades = () => {
               isInvalid={!!errors.title?.message}
               name={name}
               type="text"
-              formLabelName="Student grade title"
+              formLabelName={t('list.studentGradeTitle')}
               value={value}
-              placeholder="Please enter title"
+              placeholder={t('list.enterTitle')}
               handleInputChange={onChange}
               formErrorMessage={errors.title?.message}
             />
@@ -253,9 +251,9 @@ const StudentGrades = () => {
               isInvalid={!!errors.description?.message}
               name={name}
               type="text"
-              formLabelName="Student grade description"
+              formLabelName={t('list.studentGradeDescription')}
               value={value}
-              placeholder="Please enter description"
+              placeholder={t('list.enterDescription')}
               handleInputChange={onChange}
               formErrorMessage={errors.description?.message}
             />
@@ -280,14 +278,14 @@ const StudentGrades = () => {
       <Modal
         isOpen={isDeleteModalOpen}
         onClose={closeDeleteModal}
-        title="student grade"
+        title={t('user.studentGrade')}
         primaryAction={() => {
           if (selectedStudentGrade) {
             mutate(selectedStudentGrade?.id);
           }
         }}
-        actionText="Delete">
-        {t('common.deleteItem', { element: 'Student' })}
+        actionText={t('list.delete')}>
+        {t('list.deleteStudentGradeQuestion')}
       </Modal>
     </>
   );

@@ -4,6 +4,7 @@ import { MenuItem } from '@chakra-ui/react';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { createColumnHelper, SortingState } from '@tanstack/react-table';
 import dayjs from 'dayjs';
+import { useTranslations } from 'next-intl';
 import { v4 as uuidv4 } from 'uuid';
 import { TeacherService } from '@/api/services/teacher.service';
 import { UserService } from '@/api/services/user.service';
@@ -19,6 +20,7 @@ export default function Users() {
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const debouncedSearch = useDebounce(search);
+  const t = useTranslations();
 
   const { data, isLoading, isPlaceholderData } = useQuery({
     queryKey: QUERY_KEY.allTeachers(debouncedSearch, page),
@@ -57,27 +59,27 @@ export default function Users() {
     columnHelper.accessor('firstName', {
       id: uuidv4(),
       cell: info => info.getValue(),
-      header: 'First Name',
+      header: t('user.firstName'),
     }),
     columnHelper.accessor('lastName', {
       id: uuidv4(),
       cell: info => info.getValue(),
-      header: 'Last Name',
+      header: t('user.lastName'),
     }),
     columnHelper.accessor('email', {
       id: uuidv4(),
       cell: info => info.getValue(),
-      header: 'Email',
+      header: t('user.email'),
     }),
     columnHelper.accessor('teacher.profession', {
       id: uuidv4(),
       cell: info => info.getValue(),
-      header: 'Profession',
+      header: t('user.profession'),
     }),
     columnHelper.accessor('teacher.workPlace', {
       id: uuidv4(),
       cell: info => info.getValue(),
-      header: 'Workplace',
+      header: t('user.workPlace'),
     }),
     columnHelper.accessor('createdAt', {
       id: uuidv4(),
@@ -85,7 +87,7 @@ export default function Users() {
         const currentDate = dayjs(info.getValue());
         return currentDate.format('YYYY-MM-DD HH:mm:ss');
       },
-      header: 'Created At',
+      header: t('list.createdAt'),
     }),
     columnHelper.accessor('id', {
       id: uuidv4(),
@@ -96,18 +98,18 @@ export default function Users() {
             onClick={() => {
               confirmUserById(row.original.id);
             }}>
-            Confirm
+            {t('list.confirm')}
           </MenuItem>
         </ActionButtons>
       ),
-      header: 'Actions',
+      header: t('list.actions'),
     }),
   ];
 
   return (
     <>
       <SearchTable
-        title="Teachers List"
+        title={t('list.teachersList')}
         isLoading={isLoading}
         data={data?.users || []}
         count={data?.count || 0}

@@ -9,13 +9,14 @@ import {
   ModalHeader,
   ModalOverlay,
 } from '@chakra-ui/react';
+import { useTranslations } from 'next-intl';
 
 type ModalProps = {
   isOpen: boolean;
   onClose: () => void;
   title: string;
   primaryAction?: () => void;
-  actionText?: 'Create' | 'Update' | 'Delete';
+  actionText?: 'Create' | 'Update' | 'Delete' | string;
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | '6xl' | 'full';
 };
 
@@ -28,6 +29,7 @@ const Modal: FC<PropsWithChildren<ModalProps>> = ({
   size = '2xl',
   actionText,
 }) => {
+  const t = useTranslations();
   return (
     <ChakraModal
       isOpen={isOpen}
@@ -64,7 +66,7 @@ const Modal: FC<PropsWithChildren<ModalProps>> = ({
               }}
               mr={3}
               onClick={onClose}>
-              Close
+              {t('list.close')}
             </Button>
             <Button
               onClick={primaryAction}

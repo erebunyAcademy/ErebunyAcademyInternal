@@ -7,6 +7,7 @@ import { createColumnHelper, SortingState } from '@tanstack/react-table';
 import dayjs from 'dayjs';
 import Image from 'next/image';
 import { User } from 'next-auth';
+import { useTranslations } from 'next-intl';
 import { v4 as uuidv4 } from 'uuid';
 import { StudentService } from '@/api/services/student.service';
 import { UserService } from '@/api/services/user.service';
@@ -28,6 +29,7 @@ export default function Users() {
   const debouncedSearch = useDebounce(search);
   const [selectedStudent, setSelectedStudent] = useState<Maybe<User>>(null);
   const [attachmentKey, setAttachmentKey] = useState('');
+  const t = useTranslations();
 
   const { isOpen, onOpen, onClose } = useDisclosure({
     onClose() {
@@ -94,22 +96,22 @@ export default function Users() {
           />
         );
       },
-      header: 'Avatar',
+      header: t('list.avatar'),
     }),
     columnHelper.accessor('firstName', {
       id: uuidv4(),
       cell: info => info.getValue(),
-      header: 'First Name',
+      header: t('user.firstName'),
     }),
     columnHelper.accessor('lastName', {
       id: uuidv4(),
       cell: info => info.getValue(),
-      header: 'Last Name',
+      header: t('user.lastName'),
     }),
     columnHelper.accessor('email', {
       id: uuidv4(),
       cell: info => info.getValue(),
-      header: 'Email',
+      header: t('user.email'),
     }),
     columnHelper.accessor('attachment', {
       id: uuidv4(),
@@ -125,7 +127,7 @@ export default function Users() {
                       setAttachmentKey(item.key);
                       openAttachmentModal();
                     }}>
-                    See student attachment
+                    {t('list.studentAttachmentButton')}
                   </Button>
                 ) : null}
               </React.Fragment>
@@ -133,22 +135,22 @@ export default function Users() {
           </>
         );
       },
-      header: 'Attachment',
+      header: t('user.attachment'),
     }),
     columnHelper.accessor('student.faculty.title', {
       id: uuidv4(),
       cell: info => info.getValue(),
-      header: 'Faculty',
+      header: t('user.faculty'),
     }),
     columnHelper.accessor('student.studentGrade.title', {
       id: uuidv4(),
       cell: info => info.getValue(),
-      header: 'Student Grade',
+      header: t('user.studentGrade'),
     }),
     columnHelper.accessor('student.studentGradeGroup.title', {
       id: uuidv4(),
       cell: info => info.getValue(),
-      header: 'Student Grade Group',
+      header: t('user.studentGradeGroup'),
     }),
     columnHelper.accessor('createdAt', {
       id: uuidv4(),
@@ -156,7 +158,7 @@ export default function Users() {
         const currentDate = dayjs(info.getValue());
         return currentDate.format('YYYY-MM-DD HH:mm:ss');
       },
-      header: 'Created At',
+      header: t('list.createdAt'),
     }),
     columnHelper.accessor('id', {
       id: uuidv4(),
@@ -167,7 +169,7 @@ export default function Users() {
             onClick={() => {
               confirmUserById(row.original.id);
             }}>
-            Confirm
+            {t('list.confirm')}
           </MenuItem>
           <MenuItem
             color="red"
@@ -175,18 +177,18 @@ export default function Users() {
               onOpen();
               setSelectedStudent(row.original as unknown as User);
             }}>
-            Delete
+            {t('list.delete')}
           </MenuItem>
         </ActionButtons>
       ),
-      header: 'Actions',
+      header: t('list.actions'),
     }),
   ];
 
   return (
     <>
       <SearchTable
-        title="Students List"
+        title={t('list.studentsList')}
         isLoading={isLoading}
         data={data?.users || []}
         count={data?.count || 0}
@@ -209,9 +211,9 @@ export default function Users() {
       />
       {isOpen && (
         <SharedAlertDialog
-          body={`Are you sure you want to delete ${selectedStudent?.firstName} student?`}
+          body={`${t('list.deleteQuestion')} ${selectedStudent?.firstName} ?`}
           isOpen={isOpen}
-          title="Delete student"
+          title={t('list.deleteStudent')}
           isLoading={isLoading}
           deleteFn={() => {
             if (selectedStudent?.id) {
@@ -224,7 +226,7 @@ export default function Users() {
       <Modal
         isOpen={isAttachmentModalOpen}
         onClose={closeAttachmentModal}
-        title="Student attachment">
+        title={t('list.studentAttachment')}>
         <Image
           src={generateAWSUrl(attachmentKey)}
           width={400}
