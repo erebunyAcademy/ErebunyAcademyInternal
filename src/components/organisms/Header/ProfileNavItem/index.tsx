@@ -29,7 +29,6 @@ type ProfileNavItemProps = {
 };
 
 const ProfileNavItem: FC<ProfileNavItemProps> = ({ user, onClose, linkItems, lang }) => {
-  const pathName = usePathname();
   const router = useRouter();
   const name = useMemo(
     () => `${user?.firstName} ${user?.lastName}`,
