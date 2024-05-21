@@ -12,7 +12,7 @@ import {
   Text,
 } from '@chakra-ui/react';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { User } from 'next-auth';
 import { signOut } from 'next-auth/react';
 import { Locale } from '@/i18n';
