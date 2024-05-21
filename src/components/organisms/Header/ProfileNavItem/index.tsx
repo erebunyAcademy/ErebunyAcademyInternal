@@ -39,7 +39,7 @@ const ProfileNavItem: FC<ProfileNavItemProps> = ({ user, onClose, linkItems, lan
   const logout = useCallback(() => {
     signOut({ callbackUrl: languagePathHelper(lang, ROUTE_SIGN_IN) });
     router.refresh();
-  }, [pathName, router, lang]);
+  }, [router, lang]);
 
   return (
     <AccordionItem pl={8}>
