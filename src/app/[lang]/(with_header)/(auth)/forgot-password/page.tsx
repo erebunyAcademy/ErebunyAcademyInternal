@@ -29,17 +29,17 @@ export default function ForgotPasswrodPage({ params }: { params: { lang: Locale 
       case 'emailStep':
         return {
           href: languagePathHelper(params.lang, ROUTE_FORGOT_PASSWORD),
-          title: 'Forgot Password?',
+          title: 'forgotPassword',
         };
       case 'OTPStep':
         return {
           href: languagePathHelper(params.lang, ROUTE_FORGOT_PASSWORD),
-          title: 'Check your email',
+          title: 'checkEmail',
         };
       case 'passwordStep':
         return {
           href: languagePathHelper(params.lang, ROUTE_FORGOT_PASSWORD),
-          title: 'Create new password',
+          title: 'createNewPassword',
         };
     }
   }, [params.lang, step]);

@@ -45,7 +45,12 @@
     "uploadDocument": "Upload document",
     "currentPassword": "Current Password",
     "newPassword": "New Password",
-    "changePassword": "Change Password"
+    "changePassword": "Change Password",
+    "createNewPassword": "Create new password",
+    "verify": "Verify",
+    "checkEmail": "Check your email",
+    "otpVerification": "OTP verification",
+    "resetPasswordMail": "An email with password reset instructions has been sent to your email address"
   },
   "list": {
     "searchInput": "Type here to search",
@@ -105,6 +110,7 @@
     "submitExam": "Submit Exam"
   },
   "validations": {
+    "requiredField": "This field is required",
     "passwordValidation": "Your password must not be less than 6 characters."
   }
 }
