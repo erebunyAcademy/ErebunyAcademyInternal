@@ -65,6 +65,7 @@ export class SubjectResolver {
   }
 
   static async deleteSubjectById(subjectId: string) {
+    // todo
     const { id } = await this.getSubjectById(subjectId);
     return prisma.subject.delete({
       where: {

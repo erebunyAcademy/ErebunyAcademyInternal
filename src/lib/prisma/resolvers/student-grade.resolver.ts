@@ -77,6 +77,7 @@ export class StudentGradeResolver {
   }
 
   static async deleteStudentGradeById(gradeId: string) {
+    // todo
     const { id } = await this.getStudentGradeById(gradeId);
     return prisma.studentGrade.delete({
       where: {

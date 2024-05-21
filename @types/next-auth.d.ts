@@ -3,7 +3,7 @@ import { ISODateString } from 'next-auth';
 import { UserResolver } from '@/lib/prisma/resolvers/user.resolver';
 
 declare module 'next-auth' {
-  export type User = Prisma.PromiseReturnType<typeof UserResolver.findUserByEmail>;
+  export type User = Prisma.PromiseReturnType<typeof UserResolver.findUserWithEmail>;
   interface Session {
     expires: ISODateString;
     token?: {

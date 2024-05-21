@@ -38,6 +38,7 @@ export class ScheduleResolver {
   }
 
   static async deleteScheduleById(examId: string) {
+    // todo
     const { id } = await this.getScheduleById(examId);
     return prisma.schedule.delete({
       where: {
