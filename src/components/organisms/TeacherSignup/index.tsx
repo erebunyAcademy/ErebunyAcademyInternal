@@ -10,10 +10,12 @@ import { SubjectService } from '@/api/services/subject.service';
 import { ROUTE_SIGN_IN } from '@/utils/constants/routes';
 import { TeacherSignUpValidation } from '@/utils/validation';
 import { FormInput, SelectLabel } from '../../atoms';
+import { Locale } from '@/i18n';
+import { languagePathHelper } from '@/utils/helpers/language';
 
 const resolver = classValidatorResolver(TeacherSignUpValidation);
 // todo for me
-const TeacherSignUp = () => {
+const TeacherSignUp = ({ lang }: { lang: Locale }) => {
   const toast = useToast();
   const router = useRouter();
   const t = useTranslations();
@@ -52,7 +54,7 @@ const TeacherSignUp = () => {
         duration: 4000,
         isClosable: false,
       });
-      router.push(ROUTE_SIGN_IN);
+      router.push(languagePathHelper(lang, ROUTE_SIGN_IN));
     },
   });
 

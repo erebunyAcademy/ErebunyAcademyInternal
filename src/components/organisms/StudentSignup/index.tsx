@@ -24,6 +24,8 @@ import { UserService } from '@/api/services/user.service';
 import { ROUTE_SIGN_IN } from '@/utils/constants/routes';
 import { StudentSignUpValidation } from '@/utils/validation';
 import { FormInput, SelectLabel } from '../../atoms';
+import { Locale } from '@/i18n';
+import { languagePathHelper } from '@/utils/helpers/language';
 
 const resolver = classValidatorResolver(StudentSignUpValidation);
 
@@ -40,7 +42,7 @@ const fetchFormData = async () => {
   }
 };
 
-const StudentSignUp = () => {
+const StudentSignUp = ({ lang }: { lang: Locale }) => {
   const router = useRouter();
   const toast = useToast();
   const [localImage, setLocalImage] = useState<{ file: File; localUrl: string } | null>(null);
@@ -55,7 +57,7 @@ const StudentSignUp = () => {
         duration: 4000,
         isClosable: false,
       });
-      router.push(ROUTE_SIGN_IN);
+      router.push(languagePathHelper(lang, ROUTE_SIGN_IN));
     },
   });
 

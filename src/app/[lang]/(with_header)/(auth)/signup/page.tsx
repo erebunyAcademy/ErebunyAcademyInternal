@@ -27,8 +27,8 @@ const Signup = ({ params }: { params: { lang: Locale } }) => {
           value={userType}
         />
       </Box>
-      {userType === 'TEACHER' ? <TeacherSignUp /> : null}
-      {userType === 'STUDENT' ? <StudentSignUp /> : null}
+      {userType === 'TEACHER' ? <TeacherSignUp lang={params.lang} /> : null}
+      {userType === 'STUDENT' ? <StudentSignUp lang={params.lang} /> : null}
     </AuthBox>
   );
 };

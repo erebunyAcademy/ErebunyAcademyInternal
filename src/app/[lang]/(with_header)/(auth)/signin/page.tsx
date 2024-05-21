@@ -12,7 +12,7 @@ import { FormInput, Loading } from '@/components/atoms';
 import { AuthBox } from '@/components/molecules';
 import { Locale } from '@/i18n';
 import { ERROR_MESSAGES } from '@/utils/constants/common';
-import { ROUTE_DASHBOARD, ROUTE_FORGOT_PASSWORD } from '@/utils/constants/routes';
+import { ROUTE_DASHBOARD, ROUTE_FORGOT_PASSWORD, ROUTE_SIGN_IN } from '@/utils/constants/routes';
 import { authBoxProps } from '@/utils/helpers/auth';
 import { languagePathHelper } from '@/utils/helpers/language';
 import { SignInFormData } from '@/utils/models/auth';
@@ -52,7 +52,7 @@ const SignIn = ({ params }: { params: { lang: Locale } }) => {
 
   const { mutate } = useMutation({
     mutationFn: UserService.confirmUserEmail,
-    onSuccess: () => router.replace('/signin'),
+    onSuccess: () => router.replace(languagePathHelper(params.lang, ROUTE_SIGN_IN)),
   });
 
   useLayoutEffect(() => {
