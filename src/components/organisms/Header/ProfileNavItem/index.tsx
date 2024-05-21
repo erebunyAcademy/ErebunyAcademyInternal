@@ -15,17 +15,20 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { User } from 'next-auth';
 import { signOut } from 'next-auth/react';
-import { ROUTE_PROFILE } from '@/utils/constants/routes';
+import { ROUTE_PROFILE, ROUTE_SIGN_IN } from '@/utils/constants/routes';
 import { generateUserAvatar } from '@/utils/helpers/aws';
 import { LinkItemProps } from '@/utils/helpers/permissionRoutes';
+import { languagePathHelper } from '@/utils/helpers/language';
+import { Locale } from '@/i18n';
 
 type ProfileNavItemProps = {
   user: User;
   onClose: () => void;
   linkItems: LinkItemProps[];
+  lang: Locale;
 };
 
-const ProfileNavItem: FC<ProfileNavItemProps> = ({ user, onClose, linkItems }) => {
+const ProfileNavItem: FC<ProfileNavItemProps> = ({ user, onClose, linkItems, lang }) => {
   const pathName = usePathname();
   const router = useRouter();
   const name = useMemo(
@@ -34,7 +37,7 @@ const ProfileNavItem: FC<ProfileNavItemProps> = ({ user, onClose, linkItems }) =
   );
 
   const logout = useCallback(() => {
-    signOut({ callbackUrl: pathName || '' });
+    signOut({ callbackUrl: languagePathHelper(lang, ROUTE_SIGN_IN) });
     router.refresh();
   }, [pathName, router]);
 
@@ -67,9 +70,7 @@ const ProfileNavItem: FC<ProfileNavItemProps> = ({ user, onClose, linkItems }) =
           {linkItems.map(({ href, name, icon, id }) => (
             <AccordionItem key={id}>
               <AccordionButton
-                {...(href
-                  ? { as: Link, href, onClick: onClose }
-                  : { onClick: id === 9 ? logout : () => {} })}>
+                {...(href ? { as: Link, href } : { onClick: id === 9 ? logout : () => {} })}>
                 <Flex as="span" flex="1" textAlign="left" pl="24px" alignItems="center" gap="8px">
                   {icon}
                   {name}

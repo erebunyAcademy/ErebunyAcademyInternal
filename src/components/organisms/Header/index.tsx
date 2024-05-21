@@ -104,6 +104,7 @@ const Header: FC<HeaderProps> = ({ user, linkItems, lang }) => {
       <Collapse in={isUserProfileOpen} animateOpacity>
         <Accordion allowToggle defaultIndex={0}>
           <ProfileNavItem
+            lang={lang}
             user={user || data?.user || null}
             onClose={closeUserProfile}
             linkItems={linkItems!}
