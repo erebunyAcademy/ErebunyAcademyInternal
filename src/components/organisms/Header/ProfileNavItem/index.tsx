@@ -15,11 +15,11 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { User } from 'next-auth';
 import { signOut } from 'next-auth/react';
+import { Locale } from '@/i18n';
 import { ROUTE_PROFILE, ROUTE_SIGN_IN } from '@/utils/constants/routes';
 import { generateUserAvatar } from '@/utils/helpers/aws';
-import { LinkItemProps } from '@/utils/helpers/permissionRoutes';
 import { languagePathHelper } from '@/utils/helpers/language';
-import { Locale } from '@/i18n';
+import { LinkItemProps } from '@/utils/helpers/permissionRoutes';
 
 type ProfileNavItemProps = {
   user: User;
@@ -39,7 +39,7 @@ const ProfileNavItem: FC<ProfileNavItemProps> = ({ user, onClose, linkItems, lan
   const logout = useCallback(() => {
     signOut({ callbackUrl: languagePathHelper(lang, ROUTE_SIGN_IN) });
     router.refresh();
-  }, [pathName, router]);
+  }, [pathName, router, lang]);
 
   return (
     <AccordionItem pl={8}>
