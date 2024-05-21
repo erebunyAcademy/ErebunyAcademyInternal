@@ -7,11 +7,11 @@ import { useTranslations } from 'next-intl';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { AuthService } from '@/api/services/auth.service';
 import { SubjectService } from '@/api/services/subject.service';
+import { Locale } from '@/i18n';
 import { ROUTE_SIGN_IN } from '@/utils/constants/routes';
+import { languagePathHelper } from '@/utils/helpers/language';
 import { TeacherSignUpValidation } from '@/utils/validation';
 import { FormInput, SelectLabel } from '../../atoms';
-import { Locale } from '@/i18n';
-import { languagePathHelper } from '@/utils/helpers/language';
 
 const resolver = classValidatorResolver(TeacherSignUpValidation);
 // todo for me

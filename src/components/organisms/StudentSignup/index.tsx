@@ -21,11 +21,11 @@ import { FacultyService } from '@/api/services/faculty.service';
 import { StudentGradeGroupService } from '@/api/services/student-grade-group.service';
 import { StudentGradeService } from '@/api/services/student-grade.service';
 import { UserService } from '@/api/services/user.service';
+import { Locale } from '@/i18n';
 import { ROUTE_SIGN_IN } from '@/utils/constants/routes';
+import { languagePathHelper } from '@/utils/helpers/language';
 import { StudentSignUpValidation } from '@/utils/validation';
 import { FormInput, SelectLabel } from '../../atoms';
-import { Locale } from '@/i18n';
-import { languagePathHelper } from '@/utils/helpers/language';
 
 const resolver = classValidatorResolver(StudentSignUpValidation);
 
