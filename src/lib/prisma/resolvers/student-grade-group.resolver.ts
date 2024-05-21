@@ -77,6 +77,7 @@ export class StudentGradeGroupResolver {
   }
 
   static async deleteStudentGradeGroupById(studentGradeGroupId: string) {
+    // todo
     const { id } = await this.getStudentGradeGroupById(studentGradeGroupId);
     return prisma.studentGradeGroup.delete({
       where: {

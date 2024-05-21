@@ -6,9 +6,7 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from 'next-api-decorators';
-import { User } from 'next-auth';
 import { ERROR_MESSAGES } from '@/utils/constants/common';
-import { Maybe } from '@/utils/models/common';
 import {
   ForgotPasswordStep1Validation,
   ForgotPasswordStep2Validation,
@@ -69,7 +67,7 @@ export class AuthResolver {
       },
     });
 
-    if (user.confirmationCode && user.firstName) {
+    if (user.confirmationCode) {
       Email.sendConfirmationCodeEmail(user.email, user.confirmationCode, user.firstName)
         .then(res => console.log({ res }))
         .catch(err => console.log({ err }));
@@ -102,7 +100,7 @@ export class AuthResolver {
       },
     });
 
-    if (user.confirmationCode && user.firstName) {
+    if (user.confirmationCode) {
       Email.sendConfirmationCodeEmail(user.email, user.confirmationCode, user.firstName)
         .then(res => console.log({ res }))
         .catch(err => console.log({ err }));
@@ -112,7 +110,7 @@ export class AuthResolver {
   }
   static async signin(email: string, password: string) {
     try {
-      const user: Maybe<User> = await UserResolver.findUserByEmail(email);
+      const user = await UserResolver.findUserWithEmail(email);
 
       if (!user) {
         throw new UnauthorizedException(ERROR_MESSAGES.invalidCredentials);
@@ -138,7 +136,7 @@ export class AuthResolver {
     }
   }
   static async forgotPasswordStep1({ email }: ForgotPasswordStep1Validation) {
-    const user: Maybe<User> = await UserResolver.findUserByEmail(email);
+    const user = await UserResolver.findUserWithEmail(email);
 
     if (!user) {
       throw new BadRequestException(ERROR_MESSAGES.userNotFound);
@@ -199,7 +197,7 @@ export class AuthResolver {
 
     const updatedUser = await prisma.user.update({
       where: { id: user.id },
-      data: { password: hashedPassword },
+      data: { password: hashedPassword, confirmationCode: null },
     });
 
     return !!updatedUser;

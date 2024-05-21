@@ -13,7 +13,7 @@ export class ExamsResolver {
           examLanguages: {
             every: {
               AND: {
-                language: 'AM',
+                language: 'AM', // todo, need to set current lang
                 OR: [{ title: { contains: search, mode: 'insensitive' } }],
               },
             },
@@ -25,7 +25,7 @@ export class ExamsResolver {
           examLanguages: {
             every: {
               AND: {
-                language: 'AM',
+                language: 'AM', // todo
                 OR: [{ title: { contains: search, mode: 'insensitive' } }],
               },
             },
@@ -63,7 +63,7 @@ export class ExamsResolver {
             create: {
               title,
               description,
-              language: 'AM',
+              language: 'AM', // todo
               testQuestions: {
                 create: questions.map(question => ({
                   title: question.questionText,
@@ -134,15 +134,6 @@ export class ExamsResolver {
     });
   }
 
-  static async deleteStudentGradeById(examId: string) {
-    const { id } = await this.getExamById(examId);
-    return prisma.studentGrade.delete({
-      where: {
-        id,
-      },
-    });
-  }
-
   static async getExamDataById(examId: string) {
     return prisma.exam.findUnique({
       where: {
@@ -178,7 +169,7 @@ export class ExamsResolver {
         studentGradeGroupId: true,
         examLanguages: {
           where: {
-            language: 'AM',
+            language: 'AM', // todo
           },
           select: {
             title: true,
