@@ -105,11 +105,6 @@ const CreateEditExam: FC<CreateEditExamProps> = ({ exam }) => {
   const isStudentGradeSelected = watch('studentGradeId');
   const isStudentGradeGroupSelected = watch('studentGradeGroupId');
 
-  console.log(watch('studentIds'));
-  console.log(watch('questions'));
-
-  console.log({ isFacultySelected, isStudentGradeGroupSelected, isStudentGradeSelected });
-
   const { data: facultyQueryData } = useQuery({
     queryKey: ['faculty'],
     queryFn: FacultyService.list,
