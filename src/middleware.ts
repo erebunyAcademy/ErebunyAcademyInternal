@@ -3,7 +3,7 @@ import { getToken } from 'next-auth/jwt';
 import createMiddleware from 'next-intl/middleware';
 import { i18n } from './i18n';
 
-const unauthorizedPaths = ['/signup', '/signin'];
+const unauthorizedPaths = ['/signup', '/signin', '/forgot-password'];
 
 const i18nMiddleware = createMiddleware({ ...i18n, localeDetection: false });
 

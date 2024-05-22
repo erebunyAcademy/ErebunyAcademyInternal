@@ -40,6 +40,8 @@
     "password": "Password",
     "confirmPassword": "Confirm password",
     "forgotPassword": "Forgot password?",
+    "checkYourEmail": "Check your email",
+    "createNewPassword": "Create new password",
     "uploadDocument": "Upload document",
     "currentPassword": "Current Password",
     "newPassword": "New Password",
