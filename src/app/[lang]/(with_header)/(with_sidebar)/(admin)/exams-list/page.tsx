@@ -49,7 +49,7 @@ export default function Users() {
 
   const columnHelper = createColumnHelper<FacultyModel>();
   const columns = [
-    columnHelper.accessor("title", {
+    columnHelper.accessor('title', {
       id: uuidv4(),
       cell: info => info.getValue(),
       header: 'Title',
@@ -63,7 +63,7 @@ export default function Users() {
       id: uuidv4(),
       cell: info => {
         const currentDate = dayjs(info.getValue());
-        return currentDate.format('YYYY-MM-DD HH:mm:ss');
+        return currentDate.format('YYYY-MM-DD');
       },
       header: 'Created At',
     }),

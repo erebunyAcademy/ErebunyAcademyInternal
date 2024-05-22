@@ -3,7 +3,7 @@ import {
   Box,
   Button,
   Button as ChakraButton,
-  HStack,
+  Flex,
   Input,
   Stack,
   useToast,
@@ -113,6 +113,8 @@ const StudentSignUp = ({ lang }: { lang: Locale }) => {
       setLocalImage({ file: files[0], localUrl: URL.createObjectURL(files[0]) });
     }
   };
+
+  console.log(localImage, '-------------');
 
   return (
     <>
@@ -256,18 +258,20 @@ const StudentSignUp = ({ lang }: { lang: Locale }) => {
             )}
           />
         </Stack>
-        <HStack>
+        <VStack alignItems="flex-start">
           <Box
             cursor="pointer"
             position="relative"
             display="flex"
-            justifyContent="center"
+            justifyContent="flex-start"
             alignItems="center"
             height="22px"
             ml="5px">
             <ChakraButton
               fontWeight={500}
               height="100%"
+              width="auto"
+              // textAlign="left"
               cursor="pointer"
               color="#1F1646"
               backgroundColor="#fff"
@@ -302,10 +306,21 @@ const StudentSignUp = ({ lang }: { lang: Locale }) => {
                   backgroundColor: '#fff',
                 }}
               />
-              {t('common.uploadDocument')}
+              {localImage ? 'Change uploaded document ' : t('common.uploadDocument')}
             </ChakraButton>
           </Box>
-        </HStack>
+          <Flex display={localImage ? 'block' : 'none'} pl="25px" width="100px" height="100px">
+            <Flex
+              as="img"
+              src={localImage?.localUrl}
+              alt={`${localImage?.file.name}`}
+              width="100%"
+              height="100%"
+              objectFit="contain"
+              borderRadius="none"
+            />
+          </Flex>
+        </VStack>
       </VStack>
       <VStack spacing={16} paddingTop={48}>
         <Button w={'50%'} onClick={handleSubmit(onStudentSubmit)} isLoading={isPending}>
