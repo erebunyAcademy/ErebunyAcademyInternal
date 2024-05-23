@@ -6,6 +6,7 @@ import {
   Flex,
   Input,
   Stack,
+  Text,
   useToast,
   VStack,
 } from '@chakra-ui/react';
@@ -114,7 +115,9 @@ const StudentSignUp = ({ lang }: { lang: Locale }) => {
     }
   };
 
-  console.log(localImage, '-------------');
+  const handleRemoveImage = () => {
+    setLocalImage(null);
+  };
 
   return (
     <>
@@ -271,7 +274,6 @@ const StudentSignUp = ({ lang }: { lang: Locale }) => {
               fontWeight={500}
               height="100%"
               width="auto"
-              // textAlign="left"
               cursor="pointer"
               color="#1F1646"
               backgroundColor="#fff"
@@ -306,10 +308,19 @@ const StudentSignUp = ({ lang }: { lang: Locale }) => {
                   backgroundColor: '#fff',
                 }}
               />
-              {localImage ? 'Change uploaded document ' : t('common.uploadDocument')}
+              {t('common.uploadDocument')}
             </ChakraButton>
           </Box>
-          <Flex display={localImage ? 'block' : 'none'} pl="25px" width="100px" height="100px">
+          <Box
+            display={localImage ? 'block' : 'none'}
+            position="relative"
+            width="150px"
+            height="150px"
+            border="1px solid #ccc"
+            borderRadius="8px"
+            ml="30px"
+            overflow="hidden"
+            boxShadow="0 2px 8px rgba(0, 0, 0, 0.1)">
             <Flex
               as="img"
               src={localImage?.localUrl}
@@ -317,9 +328,24 @@ const StudentSignUp = ({ lang }: { lang: Locale }) => {
               width="100%"
               height="100%"
               objectFit="contain"
-              borderRadius="none"
             />
-          </Flex>
+            <Text
+              position="absolute"
+              top="5px"
+              right="5px"
+              backgroundColor="rgba(0, 0, 0, 0.6)"
+              color="white"
+              borderRadius="50%"
+              width="32px"
+              height="32px"
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+              cursor="pointer"
+              onClick={() => handleRemoveImage()}>
+              X
+            </Text>
+          </Box>
         </VStack>
       </VStack>
       <VStack spacing={16} paddingTop={48}>
