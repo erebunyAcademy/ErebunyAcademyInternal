@@ -22,7 +22,6 @@ const SelectLabel: FC<SelectLabelProps> = ({
   value,
   placeholder,
 }) => {
-  console.log({ value });
   return (
     <FormControl>
       <FormLabel fontWeight={600} marginBottom={4} lineHeight="20px" fontSize={14} color="#222">

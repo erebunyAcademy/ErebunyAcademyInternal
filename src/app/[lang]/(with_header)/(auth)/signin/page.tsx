@@ -36,7 +36,6 @@ const SignIn = ({ params }: { params: { lang: Locale } }) => {
   });
 
   const onSubmit: SubmitHandler<SignInFormValidation> = async ({ email, password }) => {
-    console.log({ errors });
     try {
       const res: SignInResponse | undefined = await signIn('credentials', {
         email,

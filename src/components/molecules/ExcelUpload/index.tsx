@@ -1,4 +1,4 @@
-import { ChangeEventHandler, memo, MouseEventHandler, useCallback, useState } from 'react';
+import { ChangeEventHandler, FC, memo, MouseEventHandler, useCallback, useState } from 'react';
 import { Box, Button, Input, useToast } from '@chakra-ui/react';
 import * as XLSX from 'xlsx';
 import { Maybe } from '@/utils/models/common';
@@ -10,11 +10,15 @@ const fileTypes = [
   'text/csv',
 ];
 
-// const SUGGESTED_QUESTION_NAMES = ['question', 'question*'];
+export type DataType = Maybe<Array<Record<string, Maybe<string>>>>;
 
-const ExcelUpload = () => {
+interface Props {
+  setExcelData: React.Dispatch<React.SetStateAction<DataType>>;
+  setValues: (uniqueKeys: Array<string>) => void;
+}
+
+const ExcelUpload: FC<Props> = ({ setExcelData, setValues }) => {
   const [excelFile, setExcelFile] = useState<FileReader['result']>(null);
-  const [_, setExcelData] = useState<Maybe<unknown[]>>(null);
   const toast = useToast();
 
   const handleFile: ChangeEventHandler<HTMLInputElement> = useCallback(
@@ -49,17 +53,25 @@ const ExcelUpload = () => {
     e => {
       e.preventDefault();
       if (!excelFile) {
-        toast({ title: 'Something went wrong', status: 'error' });
+        return toast({ title: 'Something went wrong', status: 'error' });
       }
 
       const workbook = XLSX.read(excelFile, { type: 'buffer' });
       const worksheetName = workbook.SheetNames[0];
       const worksheet = workbook.Sheets[worksheetName];
-      const data = XLSX.utils.sheet_to_json(worksheet);
+      const data = XLSX.utils.sheet_to_json(worksheet, { defval: null });
+      const convertedDataKeys = data.flatMap(item => Object.keys(item as {}));
+      const uniqueKeys = Array.from(new Set(convertedDataKeys)).filter(
+        key => !key.startsWith('__EMPTY'),
+      );
 
-      setExcelData(data);
+      setExcelData(data as DataType);
+      if (!data.length) {
+        return toast({ title: 'You have imported an empty file', status: 'error' });
+      }
+      setValues(uniqueKeys);
     },
-    [excelFile, toast],
+    [excelFile, setExcelData, setValues, toast],
   );
 
   return (
