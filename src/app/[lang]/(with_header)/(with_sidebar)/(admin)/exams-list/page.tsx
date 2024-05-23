@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { createColumnHelper, SortingState } from '@tanstack/react-table';
 import dayjs from 'dayjs';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { v4 as uuidv4 } from 'uuid';
 import { ExamService } from '@/api/services/exam.service';
 import SearchTable from '@/components/organisms/SearchTable';
@@ -19,6 +20,7 @@ export default function Users() {
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const debouncedSearch = useDebounce(search);
+  const t = useTranslations();
 
   const { data, isLoading, isPlaceholderData } = useQuery({
     queryKey: QUERY_KEY.allExams(debouncedSearch, page),
@@ -52,12 +54,12 @@ export default function Users() {
     columnHelper.accessor('title', {
       id: uuidv4(),
       cell: info => info.getValue(),
-      header: 'Title',
+      header: t('list.title'),
     }),
     columnHelper.accessor('description', {
       id: uuidv4(),
       cell: info => info.getValue(),
-      header: 'Description',
+      header: t('list.description'),
     }),
     columnHelper.accessor('createdAt', {
       id: uuidv4(),
@@ -65,14 +67,14 @@ export default function Users() {
         const currentDate = dayjs(info.getValue());
         return currentDate.format('YYYY-MM-DD');
       },
-      header: 'Created At',
+      header: t('list.createdAt'),
     }),
   ];
 
   return (
     <>
       <SearchTable
-        title="Exam List"
+        title={t('list.examList')}
         isLoading={isLoading}
         data={data?.exams || []}
         count={data?.count || 0}

@@ -5,6 +5,7 @@ import { classValidatorResolver } from '@hookform/resolvers/class-validator';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { createColumnHelper, SortingState } from '@tanstack/react-table';
 import dayjs from 'dayjs';
+import { useTranslations } from 'next-intl';
 import { Controller, useForm } from 'react-hook-form';
 import { v4 as uuidv4 } from 'uuid';
 import { SubjectService } from '@/api/services/subject.service';
@@ -27,6 +28,7 @@ const Subject = () => {
   const [page, setPage] = useState(1);
   const debouncedSearch = useDebounce(search);
   const [selectedSubject, setSelectedSubject] = useState<Maybe<SubjectModel>>(null);
+  const t = useTranslations();
 
   const {
     control,
@@ -121,12 +123,12 @@ const Subject = () => {
     columnHelper.accessor('title', {
       id: uuidv4(),
       cell: info => info.getValue(),
-      header: 'Title',
+      header: t('list.title'),
     }),
     columnHelper.accessor('description', {
       id: uuidv4(),
       cell: info => info.getValue(),
-      header: 'Description',
+      header: t('list.description'),
     }),
     columnHelper.accessor('createdAt', {
       id: uuidv4(),
@@ -134,7 +136,7 @@ const Subject = () => {
         const currentDate = dayjs(info.getValue());
         return currentDate.format('YYYY-MM-DD');
       },
-      header: 'Created At',
+      header: t('list.createdAt'),
     }),
     columnHelper.accessor('id', {
       id: uuidv4(),
@@ -148,7 +150,7 @@ const Subject = () => {
               setValue('description', row.original.description || '');
               openCreateEditModal();
             }}>
-            Edit
+            {t('list.edit')}
           </MenuItem>
           <MenuItem
             color="red"
@@ -156,11 +158,11 @@ const Subject = () => {
               setSelectedSubject(row.original);
               openDeleteModal();
             }}>
-            Delete
+            {t('list.delete')}
           </MenuItem>
         </ActionButtons>
       ),
-      header: 'Actions',
+      header: t('list.actions'),
     }),
   ];
 
@@ -182,7 +184,7 @@ const Subject = () => {
   return (
     <>
       <SearchTable
-        title="Subject List"
+        title={t('list.subjectList')}
         isLoading={isLoading}
         data={data?.subjects || []}
         count={data?.count || 0}
@@ -208,9 +210,9 @@ const Subject = () => {
       <Modal
         isOpen={isCreateEditModalOpen}
         onClose={closeCreateEditModal}
-        title="Subject"
+        title={t('user.subject')}
         primaryAction={handleSubmit(onSubmitHandler)}
-        actionText={selectedSubject ? 'Update' : 'Create'}>
+        actionText={selectedSubject ? t('list.update') : t('list.create')}>
         <Controller
           name="title"
           control={control}
@@ -221,9 +223,9 @@ const Subject = () => {
               isInvalid={!!errors.title?.message}
               name={name}
               type="text"
-              formLabelName="Subject name"
+              formLabelName={t('list.subjectName')}
               value={value}
-              placeholder="Please enter title"
+              placeholder={t('list.enterTitle')}
               handleInputChange={onChange}
               formErrorMessage={errors.title?.message}
             />
@@ -238,9 +240,9 @@ const Subject = () => {
               isInvalid={!!errors.description?.message}
               name={name}
               type="text"
-              formLabelName="Subject Description"
+              formLabelName={t('list.subjectDescription')}
               value={value}
-              placeholder="Please enter description"
+              placeholder={t('list.enterDescription')}
               handleInputChange={onChange}
               formErrorMessage={errors.description?.message}
             />
@@ -250,14 +252,14 @@ const Subject = () => {
       <Modal
         isOpen={isDeleteModalOpen}
         onClose={closeDeleteModal}
-        title="Subject"
+        title={t('user.subject')}
         primaryAction={() => {
           if (selectedSubject) {
             mutate(selectedSubject?.id);
           }
         }}
-        actionText="Delete">
-        Are you sure you want to delete this subject
+        actionText={t('list.delete')}>
+        {t('list.deleteSubjectQuestion')}
       </Modal>
     </>
   );

@@ -8,6 +8,7 @@ import {
   AlertDialogOverlay,
   Button,
 } from '@chakra-ui/react';
+import { useTranslations } from 'next-intl';
 
 interface SharedAlertDialogProps {
   isOpen: boolean;
@@ -27,6 +28,7 @@ const SharedAlertDialog: FC<SharedAlertDialogProps> = ({
   body,
 }) => {
   const cancelRef = useRef<HTMLButtonElement>(null);
+  const t = useTranslations();
   return (
     <AlertDialog
       isOpen={isOpen}
@@ -43,10 +45,10 @@ const SharedAlertDialog: FC<SharedAlertDialogProps> = ({
           <AlertDialogBody>{body}</AlertDialogBody>
           <AlertDialogFooter>
             <Button ref={cancelRef} onClick={onClose} isDisabled={isLoading}>
-              Cancel
+              {t('list.cancel')}
             </Button>
             <Button colorScheme="red" onClick={deleteFn} ml={3} isLoading={isLoading}>
-              Delete
+              {t('list.delete')}
             </Button>
           </AlertDialogFooter>
         </AlertDialogContent>

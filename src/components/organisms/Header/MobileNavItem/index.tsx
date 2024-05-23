@@ -1,4 +1,4 @@
-import { FC, memo } from "react";
+import { FC, memo } from 'react';
 import {
   Accordion,
   AccordionButton,
@@ -6,8 +6,8 @@ import {
   AccordionItem,
   AccordionPanel,
   Box,
-} from "@chakra-ui/react";
-import Link from "next/link";
+} from '@chakra-ui/react';
+import Link from 'next/link';
 
 interface MobileNavItemProp {
   label: string;
@@ -16,12 +16,7 @@ interface MobileNavItemProp {
   onClose: () => void;
 }
 
-const MobileNavItem: FC<MobileNavItemProp> = ({
-  label,
-  children,
-  href,
-  onClose,
-}) => {
+const MobileNavItem: FC<MobileNavItemProp> = ({ label, children, href, onClose }) => {
   return (
     <AccordionItem>
       <AccordionButton>
@@ -32,9 +27,8 @@ const MobileNavItem: FC<MobileNavItemProp> = ({
           lineHeight="20px"
           textAlign="left"
           pl={8}
-          as={href ? Link : "span"}
-          {...(href ? { href, onClick: onClose } : {})}
-        >
+          as={href ? Link : 'span'}
+          {...(href ? { href, onClick: onClose } : {})}>
           {label}
         </Box>
         {!!children?.length && (

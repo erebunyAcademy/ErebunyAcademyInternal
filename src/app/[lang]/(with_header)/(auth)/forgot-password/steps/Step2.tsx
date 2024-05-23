@@ -45,10 +45,10 @@ const Step2 = () => {
   return (
     <VStack spacing={32}>
       <Text fontWeight={'400'} fontSize={14} lineHeight={'normal'} textAlign={'center'}>
-        An email with password reset instructions has been sent to your email address
+        {t('common.resetPasswordMail')}
       </Text>
       <Text fontWeight={'600'} fontSize={20} lineHeight={'normal'} textAlign={'center'}>
-        OTP verification
+        {t('common.otpVerification')}
       </Text>
       <Controller
         name="otpPassword"

@@ -29,6 +29,7 @@ import {
   SortingState,
   useReactTable,
 } from '@tanstack/react-table';
+import { useTranslations } from 'next-intl';
 import ChevronLeft from '@/icons/chevron_left.svg';
 import ChevronRight from '@/icons/chevron_right.svg';
 import InputSearchIcon from '@/icons/search_icon.svg';
@@ -113,6 +114,7 @@ function SearchTable<T>({
   };
 
   const isAllSelected = getRowModel().rows.every(row => selectedRows[row.id]);
+  const t = useTranslations();
 
   return (
     <Box minHeight="700px" width="100%">
@@ -122,7 +124,7 @@ function SearchTable<T>({
         </Text>
         {addNew && (
           <Button px="12px" py="8px" onClick={addNew}>
-            Add New
+            {t('list.addNew')}
           </Button>
         )}
       </Flex>
@@ -133,7 +135,7 @@ function SearchTable<T>({
           </InputLeftElement>
           <Input
             p="10px 10px 10px 40px"
-            placeholder="Type here to search"
+            placeholder={t('list.searchInput')}
             width="300px"
             onChange={userSearchHandler}
             value={search}
@@ -211,7 +213,9 @@ function SearchTable<T>({
           <Tfoot width="100%">
             <Tr>
               <Td align="left" colSpan={5}>
-                <Text>Count - {count}</Text>
+                <Text>
+                  {t('list.count')} - {count}
+                </Text>
               </Td>
               <Td align="right">
                 <HStack>

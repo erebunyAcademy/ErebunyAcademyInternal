@@ -4,6 +4,7 @@ import { Button, VStack } from '@chakra-ui/react';
 import { classValidatorResolver } from '@hookform/resolvers/class-validator';
 import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { AuthService } from '@/api/services/auth.service';
 import { FormInput } from '@/components/atoms';
@@ -17,6 +18,7 @@ const resolver = classValidatorResolver(ForgotPasswordStep3Validation);
 
 const Step3 = ({ lang }: { lang: Locale }) => {
   const { confirmationCode } = useAuth();
+  const t = useTranslations();
 
   const { push } = useRouter();
   const {
@@ -56,7 +58,7 @@ const Step3 = ({ lang }: { lang: Locale }) => {
             isInvalid={!!errors.newPassword?.message}
             name="newPassword"
             type="password"
-            formLabelName="New password"
+            formLabelName={t('common.newPassword')}
             value={value}
             handleInputChange={onChange}
             formErrorMessage={errors.newPassword?.message}
@@ -73,7 +75,7 @@ const Step3 = ({ lang }: { lang: Locale }) => {
             isInvalid={!!errors.confirmPassword?.message}
             name="confirmPassword"
             type="password"
-            formLabelName="Confirm password"
+            formLabelName={t('common.confirmPassword')}
             value={value}
             handleInputChange={onChange}
             formErrorMessage={errors.confirmPassword?.message}
@@ -81,7 +83,7 @@ const Step3 = ({ lang }: { lang: Locale }) => {
         )}
       />
       <Button width={'100%'} onClick={handleSubmit(onSubmit)} isLoading={isPending}>
-        Verify
+        {t('common.verify')}
       </Button>
     </VStack>
   );
