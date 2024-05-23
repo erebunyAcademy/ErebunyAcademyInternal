@@ -11,10 +11,12 @@ import { FormInput } from '@/components/atoms';
 import { useAuth } from '@/contexts/AuthContext';
 import { ROUTE_SIGN_IN } from '@/utils/constants/routes';
 import { ForgotPasswordStep3Validation } from '@/utils/validation';
+import { languagePathHelper } from '@/utils/helpers/language';
+import { Locale } from '@/i18n';
 
 const resolver = classValidatorResolver(ForgotPasswordStep3Validation);
 
-const Step3 = () => {
+const Step3 = ({ lang }: { lang: Locale }) => {
   const { confirmationCode } = useAuth();
   const t = useTranslations();
 
@@ -32,7 +34,10 @@ const Step3 = () => {
     boolean,
     { message: string },
     ForgotPasswordStep3Validation
-  >({ mutationFn: AuthService.forgotPasswordStep3, onSuccess: () => push(ROUTE_SIGN_IN) });
+  >({
+    mutationFn: AuthService.forgotPasswordStep3,
+    onSuccess: () => push(languagePathHelper(lang, ROUTE_SIGN_IN)),
+  });
 
   const onSubmit: SubmitHandler<ForgotPasswordStep3Validation> = useCallback(
     data => {

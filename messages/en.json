@@ -48,7 +48,7 @@
     "changePassword": "Change Password",
     "createNewPassword": "Create new password",
     "verify": "Verify",
-    "checkEmail": "Check your email",
+    "checkYourEmail": "Check your email",
     "otpVerification": "OTP verification",
     "resetPasswordMail": "An email with password reset instructions has been sent to your email address"
   },

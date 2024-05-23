@@ -156,7 +156,7 @@ export default function Users() {
       id: uuidv4(),
       cell: info => {
         const currentDate = dayjs(info.getValue());
-        return currentDate.format('YYYY-MM-DD HH:mm:ss');
+        return currentDate.format('YYYY-MM-DD');
       },
       header: t('list.createdAt'),
     }),

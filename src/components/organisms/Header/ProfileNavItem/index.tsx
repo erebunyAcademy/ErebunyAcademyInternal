@@ -12,21 +12,23 @@ import {
   Text,
 } from '@chakra-ui/react';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { User } from 'next-auth';
 import { signOut } from 'next-auth/react';
-import { ROUTE_PROFILE } from '@/utils/constants/routes';
+import { Locale } from '@/i18n';
+import { ROUTE_PROFILE, ROUTE_SIGN_IN } from '@/utils/constants/routes';
 import { generateUserAvatar } from '@/utils/helpers/aws';
+import { languagePathHelper } from '@/utils/helpers/language';
 import { LinkItemProps } from '@/utils/helpers/permissionRoutes';
 
 type ProfileNavItemProps = {
   user: User;
   onClose: () => void;
   linkItems: LinkItemProps[];
+  lang: Locale;
 };
 
-const ProfileNavItem: FC<ProfileNavItemProps> = ({ user, onClose, linkItems }) => {
-  const pathName = usePathname();
+const ProfileNavItem: FC<ProfileNavItemProps> = ({ user, onClose, linkItems, lang }) => {
   const router = useRouter();
   const name = useMemo(
     () => `${user?.firstName} ${user?.lastName}`,
@@ -34,9 +36,9 @@ const ProfileNavItem: FC<ProfileNavItemProps> = ({ user, onClose, linkItems }) =
   );
 
   const logout = useCallback(() => {
-    signOut({ callbackUrl: pathName || '' });
+    signOut({ callbackUrl: languagePathHelper(lang, ROUTE_SIGN_IN) });
     router.refresh();
-  }, [pathName, router]);
+  }, [router, lang]);
 
   return (
     <AccordionItem pl={8}>
@@ -67,9 +69,7 @@ const ProfileNavItem: FC<ProfileNavItemProps> = ({ user, onClose, linkItems }) =
           {linkItems.map(({ href, name, icon, id }) => (
             <AccordionItem key={id}>
               <AccordionButton
-                {...(href
-                  ? { as: Link, href, onClick: onClose }
-                  : { onClick: id === 9 ? logout : () => {} })}>
+                {...(href ? { as: Link, href } : { onClick: id === 9 ? logout : () => {} })}>
                 <Flex as="span" flex="1" textAlign="left" pl="24px" alignItems="center" gap="8px">
                   {icon}
                   {name}

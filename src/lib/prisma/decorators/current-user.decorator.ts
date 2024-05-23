@@ -9,7 +9,7 @@ export const CurrentUser = createParamDecorator(async req => {
     throw new UnauthorizedException();
   }
 
-  const user = await UserResolver.findUserByEmail(token.email);
+  const user = await UserResolver.findUserWithEmail(token.email);
 
   if (!user) {
     throw new UnauthorizedException();

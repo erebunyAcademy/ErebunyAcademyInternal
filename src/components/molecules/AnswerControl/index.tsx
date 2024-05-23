@@ -1,11 +1,11 @@
-import { FormInput } from '@/components/atoms';
-import { ExamValidation } from '@/utils/validation/exam';
-import { DeleteIcon } from '@chakra-ui/icons';
-import { Button, Checkbox, Flex, Heading, Radio, Stack, IconButton } from '@chakra-ui/react';
-import { TestQuestionTypeEnum } from '@prisma/client';
 import { FC, memo } from 'react';
+import { DeleteIcon } from '@chakra-ui/icons';
+import { Button, Checkbox, Flex, Heading, IconButton, Radio, Stack } from '@chakra-ui/react';
+import { TestQuestionTypeEnum } from '@prisma/client';
 import { Control, Controller, useFieldArray } from 'react-hook-form';
 import { v4 } from 'uuid';
+import { FormInput } from '@/components/atoms';
+import { ExamValidation } from '@/utils/validation/exam';
 
 interface AnswersControlProps {
   control: Control<ExamValidation>;

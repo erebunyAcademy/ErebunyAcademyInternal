@@ -7,13 +7,15 @@ import { useTranslations } from 'next-intl';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { AuthService } from '@/api/services/auth.service';
 import { SubjectService } from '@/api/services/subject.service';
+import { Locale } from '@/i18n';
 import { ROUTE_SIGN_IN } from '@/utils/constants/routes';
+import { languagePathHelper } from '@/utils/helpers/language';
 import { TeacherSignUpValidation } from '@/utils/validation';
 import { FormInput, SelectLabel } from '../../atoms';
 
 const resolver = classValidatorResolver(TeacherSignUpValidation);
 // todo for me
-const TeacherSignUp = () => {
+const TeacherSignUp = ({ lang }: { lang: Locale }) => {
   const toast = useToast();
   const router = useRouter();
   const t = useTranslations();
@@ -52,7 +54,7 @@ const TeacherSignUp = () => {
         duration: 4000,
         isClosable: false,
       });
-      router.push(ROUTE_SIGN_IN);
+      router.push(languagePathHelper(lang, ROUTE_SIGN_IN));
     },
   });
 

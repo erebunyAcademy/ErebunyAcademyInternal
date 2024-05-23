@@ -1,8 +1,7 @@
 import { AttachmentTypeEnum } from '@prisma/client';
 import bcrypt from 'bcrypt';
-import { BadRequestException, ConflictException, NotFoundException } from 'next-api-decorators';
+import { ConflictException, NotFoundException } from 'next-api-decorators';
 import { User } from 'next-auth';
-import { ERROR_MESSAGES } from '@/utils/constants/common';
 import {
   ChangePasswordValidation,
   GetPresignedUrlInput,
@@ -26,6 +25,10 @@ export class UserResolver {
         id: true,
         email: true,
         firstName: true,
+        password: true,
+        isAdminVerified: true,
+        isVerified: true,
+        city: true,
         country: true,
         state: true,
         address: true,
@@ -72,71 +75,6 @@ export class UserResolver {
     });
   }
 
-  static async findUserByEmail(email: string) {
-    return prisma.user.findUnique({
-      where: { email },
-      include: {
-        student: {
-          include: {
-            faculty: true,
-            studentGrade: true,
-            studentGradeGroup: true,
-          },
-        },
-        teacher: true,
-        attachment: true,
-      },
-    });
-  }
-
-  static async findUserWithConfirmationCode(confirmationCode: number) {
-    return prisma.user.findUnique({
-      where: { confirmationCode },
-    });
-  }
-
-  static async verifyUserAccount(email: string) {
-    return prisma.user.update({
-      where: { email },
-      data: {
-        isVerified: true,
-      },
-    });
-  }
-
-  static async updateUserProfile(input: UserProfileFormValidation, user: NonNullable<User>) {
-    return (
-      await prisma.user.update({
-        where: { id: user.id },
-        data: input,
-      })
-    ).id;
-  }
-
-  static async changeUserPassword(
-    { confirmPassword, newPassword, currentPassword }: ChangePasswordValidation,
-    user: NonNullable<User>,
-  ) {
-    const isValid = await bcrypt.compare(currentPassword, user.password);
-
-    if (!isValid) {
-      throw new BadRequestException(ERROR_MESSAGES.invalidPassword);
-    }
-
-    if (confirmPassword !== newPassword) {
-      throw new BadRequestException(ERROR_MESSAGES.passwordDontMatch);
-    }
-
-    const hashedPassword = await bcrypt.hash(newPassword, 10);
-
-    return (
-      await prisma.user.update({
-        where: { id: user.id },
-        data: { password: hashedPassword },
-      })
-    ).id;
-  }
-
   static async getPreSignedUrl(input: GetPresignedUrlInput) {
     const { imageKey } = input;
     const awsService = new AWSService();
@@ -170,6 +108,7 @@ export class UserResolver {
   }
 
   static async confirmuser(id: string) {
+    // todo, need to add email conf
     const user = await prisma.user.findUnique({
       where: {
         id,
@@ -189,6 +128,7 @@ export class UserResolver {
     });
   }
   static async deleteUser(id: string) {
+    // todo
     const user = await prisma.user.findUnique({
       where: {
         id,

@@ -24,7 +24,7 @@ class Email {
           to: email,
           dynamic_template_data: {
             firstName,
-            link: `${process.env.NEXTAUTH_URL}/signin?code=${confirmationCode}`,
+            link: `${process.env.NEXTAUTH_URL}/am/signin?code=${confirmationCode}`,
           },
         },
       ],

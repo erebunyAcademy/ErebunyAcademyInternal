@@ -1,6 +1,5 @@
-
-import { StudentGradeGroupResolver } from '@/lib/prisma/resolvers/student-grade-group.resolver';
 import { Prisma, StudentGradeGroup } from '@prisma/client';
+import { StudentGradeGroupResolver } from '@/lib/prisma/resolvers/student-grade-group.resolver';
 
 export interface StudentGradeGroupModel extends StudentGradeGroup {}
 

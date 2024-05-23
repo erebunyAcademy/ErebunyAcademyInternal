@@ -40,7 +40,8 @@
     "react-phone-input-2": "^2.15.1",
     "reflect-metadata": "^0.2.2",
     "sharp": "^0.33.4",
-    "uuid": "^9.0.1"
+    "uuid": "^9.0.1",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@svgr/webpack": "^8.1.0",
@@ -51,7 +52,7 @@
     "@types/uuid": "^9.0.8",
     "@typescript-eslint/eslint-plugin": "^7.9.0",
     "@typescript-eslint/parser": "^7.9.0",
-    "eslint": "^9.3.0",
+    "eslint": "^8.0.0",
     "eslint-config-next": "14.2.3",
     "eslint-plugin-import": "^2.29.1",
     "eslint-plugin-prettier": "^5.1.3",

@@ -1,11 +1,12 @@
-import React, { ChangeEvent, memo, useEffect, useState } from 'react';
+import React, { ChangeEvent, memo, useState } from 'react';
 import {
   Box,
   Button,
   Button as ChakraButton,
-  HStack,
+  Flex,
   Input,
   Stack,
+  Text,
   useToast,
   VStack,
 } from '@chakra-ui/react';
@@ -21,7 +22,9 @@ import { FacultyService } from '@/api/services/faculty.service';
 import { StudentGradeGroupService } from '@/api/services/student-grade-group.service';
 import { StudentGradeService } from '@/api/services/student-grade.service';
 import { UserService } from '@/api/services/user.service';
+import { Locale } from '@/i18n';
 import { ROUTE_SIGN_IN } from '@/utils/constants/routes';
+import { languagePathHelper } from '@/utils/helpers/language';
 import { StudentSignUpValidation } from '@/utils/validation';
 import { FormInput, SelectLabel } from '../../atoms';
 
@@ -40,7 +43,7 @@ const fetchFormData = async () => {
   }
 };
 
-const StudentSignUp = () => {
+const StudentSignUp = ({ lang }: { lang: Locale }) => {
   const router = useRouter();
   const toast = useToast();
   const [localImage, setLocalImage] = useState<{ file: File; localUrl: string } | null>(null);
@@ -55,7 +58,7 @@ const StudentSignUp = () => {
         duration: 4000,
         isClosable: false,
       });
-      router.push(ROUTE_SIGN_IN);
+      router.push(languagePathHelper(lang, ROUTE_SIGN_IN));
     },
   });
 
@@ -110,6 +113,10 @@ const StudentSignUp = () => {
     if (files?.length) {
       setLocalImage({ file: files[0], localUrl: URL.createObjectURL(files[0]) });
     }
+  };
+
+  const handleRemoveImage = () => {
+    setLocalImage(null);
   };
 
   return (
@@ -254,18 +261,19 @@ const StudentSignUp = () => {
             )}
           />
         </Stack>
-        <HStack>
+        <VStack alignItems="flex-start">
           <Box
             cursor="pointer"
             position="relative"
             display="flex"
-            justifyContent="center"
+            justifyContent="flex-start"
             alignItems="center"
             height="22px"
             ml="5px">
             <ChakraButton
               fontWeight={500}
               height="100%"
+              width="auto"
               cursor="pointer"
               color="#1F1646"
               backgroundColor="#fff"
@@ -303,7 +311,42 @@ const StudentSignUp = () => {
               {t('common.uploadDocument')}
             </ChakraButton>
           </Box>
-        </HStack>
+          <Box
+            display={localImage ? 'block' : 'none'}
+            position="relative"
+            width="150px"
+            height="150px"
+            border="1px solid #ccc"
+            borderRadius="8px"
+            ml="30px"
+            overflow="hidden"
+            boxShadow="0 2px 8px rgba(0, 0, 0, 0.1)">
+            <Flex
+              as="img"
+              src={localImage?.localUrl}
+              alt={`${localImage?.file.name}`}
+              width="100%"
+              height="100%"
+              objectFit="contain"
+            />
+            <Text
+              position="absolute"
+              top="5px"
+              right="5px"
+              backgroundColor="rgba(0, 0, 0, 0.6)"
+              color="white"
+              borderRadius="50%"
+              width="32px"
+              height="32px"
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+              cursor="pointer"
+              onClick={() => handleRemoveImage()}>
+              X
+            </Text>
+          </Box>
+        </VStack>
       </VStack>
       <VStack spacing={16} paddingTop={48}>
         <Button w={'50%'} onClick={handleSubmit(onStudentSubmit)} isLoading={isPending}>
