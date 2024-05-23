@@ -123,12 +123,12 @@ const Subject = () => {
     columnHelper.accessor('title', {
       id: uuidv4(),
       cell: info => info.getValue(),
-      header: t('list.title'),
+      header: t('title'),
     }),
     columnHelper.accessor('description', {
       id: uuidv4(),
       cell: info => info.getValue(),
-      header: t('list.description'),
+      header: t('description'),
     }),
     columnHelper.accessor('createdAt', {
       id: uuidv4(),
@@ -136,7 +136,7 @@ const Subject = () => {
         const currentDate = dayjs(info.getValue());
         return currentDate.format('YYYY-MM-DD');
       },
-      header: t('list.createdAt'),
+      header: t('createdAt'),
     }),
     columnHelper.accessor('id', {
       id: uuidv4(),
@@ -150,7 +150,7 @@ const Subject = () => {
               setValue('description', row.original.description || '');
               openCreateEditModal();
             }}>
-            {t('list.edit')}
+            {t('edit')}
           </MenuItem>
           <MenuItem
             color="red"
@@ -158,11 +158,11 @@ const Subject = () => {
               setSelectedSubject(row.original);
               openDeleteModal();
             }}>
-            {t('list.delete')}
+            {t('delete')}
           </MenuItem>
         </ActionButtons>
       ),
-      header: t('list.actions'),
+      header: t('actions'),
     }),
   ];
 
@@ -184,7 +184,7 @@ const Subject = () => {
   return (
     <>
       <SearchTable
-        title={t('list.subjectList')}
+        title={t('subjectList')}
         isLoading={isLoading}
         data={data?.subjects || []}
         count={data?.count || 0}
@@ -210,9 +210,9 @@ const Subject = () => {
       <Modal
         isOpen={isCreateEditModalOpen}
         onClose={closeCreateEditModal}
-        title={t('user.subject')}
+        title={t('subject')}
         primaryAction={handleSubmit(onSubmitHandler)}
-        actionText={selectedSubject ? t('list.update') : t('list.create')}>
+        actionText={selectedSubject ? t('update') : t('create')}>
         <Controller
           name="title"
           control={control}
@@ -223,9 +223,9 @@ const Subject = () => {
               isInvalid={!!errors.title?.message}
               name={name}
               type="text"
-              formLabelName={t('list.subjectName')}
+              formLabelName={t('subjectName')}
               value={value}
-              placeholder={t('list.enterTitle')}
+              placeholder={t('enterTitle')}
               handleInputChange={onChange}
               formErrorMessage={errors.title?.message}
             />
@@ -240,9 +240,9 @@ const Subject = () => {
               isInvalid={!!errors.description?.message}
               name={name}
               type="text"
-              formLabelName={t('list.subjectDescription')}
+              formLabelName={t('subjectDescription')}
               value={value}
-              placeholder={t('list.enterDescription')}
+              placeholder={t('enterDescription')}
               handleInputChange={onChange}
               formErrorMessage={errors.description?.message}
             />
@@ -251,15 +251,16 @@ const Subject = () => {
       </Modal>
       <Modal
         isOpen={isDeleteModalOpen}
+        isDeleteVariant
         onClose={closeDeleteModal}
-        title={t('user.subject')}
+        title={t('subject')}
         primaryAction={() => {
           if (selectedSubject) {
             mutate(selectedSubject?.id);
           }
         }}
-        actionText={t('list.delete')}>
-        {t('list.deleteSubjectQuestion')}
+        actionText={t('delete')}>
+        {t('deleteSubjectQuestion')}
       </Modal>
     </>
   );

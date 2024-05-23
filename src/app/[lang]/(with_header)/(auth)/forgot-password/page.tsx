@@ -22,7 +22,7 @@ export default function ForgotPasswrodPage({ params }: { params: { lang: Locale 
       default:
         return null;
     }
-  }, [step]);
+  }, [params.lang, step]);
 
   const authBoxData = useMemo(() => {
     switch (step) {

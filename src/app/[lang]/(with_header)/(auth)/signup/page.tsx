@@ -12,7 +12,7 @@ import { authBoxProps } from '@/utils/helpers/auth';
 
 const Signup = ({ params }: { params: { lang: Locale } }) => {
   const [userType, setUserType] = useState<UserRoleEnum>(UserRoleEnum.STUDENT);
-  const t = useTranslations('user');
+  const t = useTranslations();
 
   return (
     <AuthBox data={authBoxProps(params.lang).data} boxProps={authBoxProps(params.lang).boxProps}>

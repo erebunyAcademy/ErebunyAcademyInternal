@@ -3,7 +3,6 @@ import {
   Box,
   Button,
   Button as ChakraButton,
-  Flex,
   Input,
   Stack,
   Text,
@@ -13,6 +12,7 @@ import {
 import { classValidatorResolver } from '@hookform/resolvers/class-validator';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import axios from 'axios';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
@@ -132,11 +132,11 @@ const StudentSignUp = ({ lang }: { lang: Locale }) => {
             render={({ field: { onChange, value } }) => (
               <FormInput
                 isRequired
-                placeholder={t('user.firstName')}
+                placeholder={t('firstName')}
                 isInvalid={!!errors.firstName?.message}
                 name="firstName"
                 type="text"
-                formLabelName={t('user.firstName')}
+                formLabelName={t('firstName')}
                 value={value}
                 handleInputChange={onChange}
               />
@@ -151,8 +151,8 @@ const StudentSignUp = ({ lang }: { lang: Locale }) => {
                 isInvalid={!!errors.lastName?.message}
                 name="lastName"
                 type="text"
-                placeholder={t('user.lastName')}
-                formLabelName={t('user.lastName')}
+                placeholder={t('lastName')}
+                formLabelName={t('lastName')}
                 value={value}
                 handleInputChange={onChange}
               />
@@ -169,8 +169,8 @@ const StudentSignUp = ({ lang }: { lang: Locale }) => {
                 isInvalid={!!errors.email?.message}
                 name="email"
                 type="email"
-                placeholder={t('user.email')}
-                formLabelName={t('user.email')}
+                placeholder={t('email')}
+                formLabelName={t('email')}
                 value={value}
                 handleInputChange={onChange}
               />
@@ -183,7 +183,7 @@ const StudentSignUp = ({ lang }: { lang: Locale }) => {
               <SelectLabel
                 name={name}
                 options={data?.studentGradeList || []}
-                labelName={t('user.studentGrade')}
+                labelName={t('studentGrade')}
                 valueLabel="id"
                 nameLabel="title"
                 onChange={onChange}
@@ -201,7 +201,7 @@ const StudentSignUp = ({ lang }: { lang: Locale }) => {
               <SelectLabel
                 name={name}
                 options={data?.studentGradeGroupList || []}
-                labelName={t('user.courseGroup')}
+                labelName={t('courseGroup')}
                 valueLabel="id"
                 nameLabel="title"
                 onChange={onChange}
@@ -216,7 +216,7 @@ const StudentSignUp = ({ lang }: { lang: Locale }) => {
               <SelectLabel
                 name={name}
                 options={data?.facultyList || []}
-                labelName={t('user.faculty')}
+                labelName={t('faculty')}
                 valueLabel="id"
                 nameLabel="title"
                 onChange={onChange}
@@ -235,12 +235,12 @@ const StudentSignUp = ({ lang }: { lang: Locale }) => {
                 isRequired
                 isInvalid={!!errors.password?.message}
                 name="password"
-                formLabelName={t('common.password')}
-                placeholder={t('common.password')}
+                formLabelName={t('password')}
+                placeholder={t('password')}
                 value={value}
                 handleInputChange={onChange}
                 type="password"
-                formHelperText={t('validations.passwordValidation')}
+                formHelperText={t('passwordValidation')}
               />
             )}
           />
@@ -252,8 +252,8 @@ const StudentSignUp = ({ lang }: { lang: Locale }) => {
                 isRequired
                 isInvalid={!!errors.password?.message}
                 name="password"
-                formLabelName={t('common.confirmPassword')}
-                placeholder={t('common.confirmPassword')}
+                formLabelName={t('confirmPassword')}
+                placeholder={t('confirmPassword')}
                 value={value}
                 handleInputChange={onChange}
                 type="password"
@@ -308,49 +308,50 @@ const StudentSignUp = ({ lang }: { lang: Locale }) => {
                   backgroundColor: '#fff',
                 }}
               />
-              {t('common.uploadDocument')}
+              {t('uploadDocument')}
             </ChakraButton>
           </Box>
-          <Box
-            display={localImage ? 'block' : 'none'}
-            position="relative"
-            width="150px"
-            height="150px"
-            border="1px solid #ccc"
-            borderRadius="8px"
-            ml="30px"
-            overflow="hidden"
-            boxShadow="0 2px 8px rgba(0, 0, 0, 0.1)">
-            <Flex
-              as="img"
-              src={localImage?.localUrl}
-              alt={`${localImage?.file.name}`}
-              width="100%"
-              height="100%"
-              objectFit="contain"
-            />
-            <Text
-              position="absolute"
-              top="5px"
-              right="5px"
-              backgroundColor="rgba(0, 0, 0, 0.6)"
-              color="white"
-              borderRadius="50%"
-              width="32px"
-              height="32px"
-              display="flex"
-              alignItems="center"
-              justifyContent="center"
-              cursor="pointer"
-              onClick={() => handleRemoveImage()}>
-              X
-            </Text>
-          </Box>
+          {localImage?.localUrl && (
+            <Box
+              position="relative"
+              width="200px"
+              height="150px"
+              border="1px solid #ccc"
+              borderRadius="8px"
+              ml="30px"
+              overflow="hidden"
+              boxShadow="0 2px 8px rgba(0, 0, 0, 0.1)">
+              <Image
+                src={localImage?.localUrl || ''}
+                alt={localImage?.file.name || ''}
+                fill
+                style={{
+                  objectFit: 'cover',
+                }}
+              />
+              <Text
+                position="absolute"
+                top="5px"
+                right="5px"
+                backgroundColor="rgba(0, 0, 0, 0.6)"
+                color="white"
+                borderRadius="50%"
+                width="32px"
+                height="32px"
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+                cursor="pointer"
+                onClick={handleRemoveImage}>
+                X
+              </Text>
+            </Box>
+          )}
         </VStack>
       </VStack>
       <VStack spacing={16} paddingTop={48}>
         <Button w={'50%'} onClick={handleSubmit(onStudentSubmit)} isLoading={isPending}>
-          {t('common.signUp')}
+          {t('signUp')}
         </Button>
       </VStack>
     </>

@@ -1,5 +1,15 @@
 import { IsEmail, IsNotEmpty, IsNumber, IsString, Length, ValidateNested } from 'class-validator';
 
+export class SignInFormValidation {
+  @IsEmail()
+  @IsNotEmpty({ message: 'Email is required' })
+  email: string;
+
+  @IsString()
+  @IsNotEmpty({ message: 'Password' })
+  password: string;
+}
+
 export class AttachmentValidation {
   @IsNotEmpty({ message: 'Mime type is required' })
   mimetype: string;
@@ -66,7 +76,7 @@ export class StudentSignUpValidation extends UserSignupValidation {
   studentGradeId: string;
 
   @IsString()
-  @IsNotEmpty({ message: 'Course group is required' })
+  @IsNotEmpty({ message: 'Student grade group is required' })
   studentGradeGroupId: string;
 
   @IsString()

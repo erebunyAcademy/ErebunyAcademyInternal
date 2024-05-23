@@ -1,6 +1,7 @@
 'use client';
 import { useLayoutEffect } from 'react';
 import { Button, Link, useToast, VStack } from '@chakra-ui/react';
+import { classValidatorResolver } from '@hookform/resolvers/class-validator';
 import { useMutation } from '@tanstack/react-query';
 import NextLink from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -15,7 +16,9 @@ import { ERROR_MESSAGES } from '@/utils/constants/common';
 import { ROUTE_DASHBOARD, ROUTE_FORGOT_PASSWORD, ROUTE_SIGN_IN } from '@/utils/constants/routes';
 import { authBoxProps } from '@/utils/helpers/auth';
 import { languagePathHelper } from '@/utils/helpers/language';
-import { SignInFormData } from '@/utils/models/auth';
+import { SignInFormValidation } from '@/utils/validation';
+
+const resolver = classValidatorResolver(SignInFormValidation);
 
 const SignIn = ({ params }: { params: { lang: Locale } }) => {
   const toast = useToast();
@@ -26,12 +29,14 @@ const SignIn = ({ params }: { params: { lang: Locale } }) => {
   const {
     control,
     handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm<SignInFormData>({
-    defaultValues: { email: '', password: '', rememberMe: true },
+    formState: { errors, isSubmitting, isValid },
+  } = useForm<SignInFormValidation>({
+    defaultValues: { email: '', password: '' },
+    resolver,
   });
 
-  const onSubmit: SubmitHandler<SignInFormData> = async ({ email, password }) => {
+  const onSubmit: SubmitHandler<SignInFormValidation> = async ({ email, password }) => {
+    console.log({ errors });
     try {
       const res: SignInResponse | undefined = await signIn('credentials', {
         email,
@@ -62,6 +67,8 @@ const SignIn = ({ params }: { params: { lang: Locale } }) => {
     }
   }, [mutate, searchParams]);
 
+  // console.log(t("requiredField",{ field: errors.email?.message }), '**********');
+
   return (
     <AuthBox data={authBoxProps(params.lang).data} boxProps={authBoxProps(params.lang).boxProps}>
       {isSubmitting && <Loading isLoading={isSubmitting} />}
@@ -69,17 +76,14 @@ const SignIn = ({ params }: { params: { lang: Locale } }) => {
         <Controller
           name="email"
           control={control}
-          rules={{
-            required: 'This field is required',
-          }}
-          render={({ field: { onChange, value } }) => (
+          render={({ field: { onChange, value, name } }) => (
             <FormInput
               isRequired
-              isInvalid={!!errors.email?.message}
-              name="email"
+              name={name}
               type="email"
-              formLabelName={t('user.email')}
+              formLabelName={t('email')}
               value={value}
+              isInvalid={!!errors.email?.message}
               handleInputChange={onChange}
               formErrorMessage={errors.email?.message}
             />
@@ -88,27 +92,28 @@ const SignIn = ({ params }: { params: { lang: Locale } }) => {
         <Controller
           name="password"
           control={control}
-          rules={{
-            required: 'This field is required',
+          rules={{ required: 'This field is required' }}
+          render={({ field: { onChange, value, name }, fieldState: { error } }) => {
+            console.log({ error });
+            return (
+              <FormInput
+                isRequired
+                name={name}
+                formLabelName={t('password')}
+                value={value}
+                handleInputChange={onChange}
+                type="password"
+                formHelperText={t('passwordValidation')}
+                isInvalid={!!errors.password?.message}
+                formErrorMessage={errors.password?.message}
+              />
+            );
           }}
-          render={({ field: { onChange, value } }) => (
-            <FormInput
-              isRequired
-              isInvalid={!!errors.password?.message}
-              name="password"
-              formLabelName={t('common.password')}
-              value={value}
-              handleInputChange={onChange}
-              type="password"
-              formHelperText={t('validations.passwordValidation')}
-              formErrorMessage={errors.password?.message}
-            />
-          )}
         />
       </VStack>
       <VStack spacing={16} paddingTop={16}>
-        <Button width={'100%'} onClick={handleSubmit(onSubmit)} isDisabled={isSubmitting}>
-          {t('common.signIn')}
+        <Button width={'100%'} onClick={handleSubmit(onSubmit)} isDisabled={!isValid}>
+          {t('signIn')}
         </Button>
         <Link
           href={languagePathHelper(params.lang, ROUTE_FORGOT_PASSWORD)}
@@ -117,7 +122,7 @@ const SignIn = ({ params }: { params: { lang: Locale } }) => {
           fontWeight="400"
           textDecorationLine="underline"
           textAlign="center">
-          {t('common.forgotPassword')}
+          {t('forgotPassword')}
         </Link>
       </VStack>
     </AuthBox>

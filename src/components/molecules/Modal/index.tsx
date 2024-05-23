@@ -16,8 +16,9 @@ type ModalProps = {
   onClose: () => void;
   title: string;
   primaryAction?: () => void;
-  actionText?: 'Create' | 'Update' | 'Delete' | string;
+  actionText?: string;
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | '6xl' | 'full';
+  isDeleteVariant?: boolean;
 };
 
 const Modal: FC<PropsWithChildren<ModalProps>> = ({
@@ -28,16 +29,11 @@ const Modal: FC<PropsWithChildren<ModalProps>> = ({
   primaryAction,
   size = '2xl',
   actionText,
+  isDeleteVariant = false,
 }) => {
   const t = useTranslations();
   return (
-    <ChakraModal
-      isOpen={isOpen}
-      onClose={() => {
-        onClose();
-      }}
-      size={size}
-      isCentered>
+    <ChakraModal isOpen={isOpen} onClose={onClose} size={size} isCentered>
       <ModalOverlay />
       <ModalContent py="20px">
         <ModalHeader>
@@ -66,11 +62,11 @@ const Modal: FC<PropsWithChildren<ModalProps>> = ({
               }}
               mr={3}
               onClick={onClose}>
-              {t('list.close')}
+              {t('close')}
             </Button>
             <Button
               onClick={primaryAction}
-              colorScheme={actionText === 'Delete' ? 'red' : 'teal'}
+              colorScheme={isDeleteVariant ? 'red' : 'teal'}
               size="lg">
               {actionText}
             </Button>

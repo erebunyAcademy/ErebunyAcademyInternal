@@ -37,27 +37,27 @@ export const linkItems: LinkItemsFunction = (user: Maybe<User>) => {
   if (!user) return [];
 
   const commonLinks = [
-    { id: 10, name: 'Dashboard', icon: <DashboardIcon />, href: ROUTE_DASHBOARD },
-    { id: 1, name: 'Profile', icon: <ProfileIcon />, href: ROUTE_PROFILE },
-    { id: 9, name: 'Log out', icon: <LogoutIcon /> },
+    { id: 10, name: 'dashboard', icon: <DashboardIcon />, href: ROUTE_DASHBOARD },
+    { id: 1, name: 'profile', icon: <ProfileIcon />, href: ROUTE_PROFILE },
+    { id: 9, name: 'logout', icon: <LogoutIcon /> },
   ];
 
   switch (user.role) {
     case UserRoleEnum.ADMIN:
       return [
         ...commonLinks.slice(0, 2),
-        { id: 2, name: 'Faculty', icon: <FacultiesIcon />, href: ROUTE_FACULTIES },
-        { id: 3, name: 'Students', icon: <StudentIcon />, href: ROUTE_STUDENTS },
-        { id: 4, name: 'Student Grade', icon: <StudentGradeIcon />, href: ROUTE_STUDENT_GRADES },
+        { id: 2, name: 'faculty', icon: <FacultiesIcon />, href: ROUTE_FACULTIES },
+        { id: 3, name: 'students', icon: <StudentIcon />, href: ROUTE_STUDENTS },
+        { id: 4, name: 'studentGrade', icon: <StudentGradeIcon />, href: ROUTE_STUDENT_GRADES },
         {
           id: 5,
-          name: 'Student Grade group',
+          name: 'studentGradeGroup',
           icon: <StudentGradeGroupIcon />,
           href: ROUTE_STUDENT_GRADE_GROUPS,
         },
-        { id: 6, name: 'Exams', icon: <ExamsIcon />, href: ROUTE_EXAMS },
-        { id: 7, name: 'Teachers', icon: <TeacherIcon />, href: ROUTE_TEACHERS },
-        { id: 8, name: 'Subjects', icon: <SubjectsIcon />, href: ROUTE_SUBJECTS },
+        { id: 6, name: 'exams', icon: <ExamsIcon />, href: ROUTE_EXAMS },
+        { id: 7, name: 'teachers', icon: <TeacherIcon />, href: ROUTE_TEACHERS },
+        { id: 8, name: 'subjects', icon: <SubjectsIcon />, href: ROUTE_SUBJECTS },
         commonLinks[2],
       ];
     case UserRoleEnum.TEACHER:

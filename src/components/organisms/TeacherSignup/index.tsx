@@ -72,11 +72,11 @@ const TeacherSignUp = ({ lang }: { lang: Locale }) => {
             render={({ field: { onChange, value } }) => (
               <FormInput
                 isRequired
-                placeholder={t('user.firstName')}
+                placeholder={t('firstName')}
                 isInvalid={!!errors.firstName?.message}
                 name="firstName"
                 type="text"
-                formLabelName={t('user.firstName')}
+                formLabelName={t('firstName')}
                 value={value}
                 handleInputChange={onChange}
               />
@@ -91,8 +91,8 @@ const TeacherSignUp = ({ lang }: { lang: Locale }) => {
                 isInvalid={!!errors.lastName?.message}
                 name="lastName"
                 type="text"
-                placeholder={t('user.lastName')}
-                formLabelName={t('user.lastName')}
+                placeholder={t('lastName')}
+                formLabelName={t('lastName')}
                 value={value}
                 handleInputChange={onChange}
               />
@@ -110,8 +110,8 @@ const TeacherSignUp = ({ lang }: { lang: Locale }) => {
                 isInvalid={!!errors.email?.message}
                 name="email"
                 type="email"
-                placeholder={t('user.email')}
-                formLabelName={t('user.email')}
+                placeholder={t('email')}
+                formLabelName={t('email')}
                 value={value}
                 handleInputChange={onChange}
               />
@@ -123,11 +123,11 @@ const TeacherSignUp = ({ lang }: { lang: Locale }) => {
             render={({ field: { onChange, value } }) => (
               <FormInput
                 isRequired
-                placeholder={t('user.profession')}
+                placeholder={t('profession')}
                 isInvalid={!!errors.firstName?.message}
                 name="firstName"
                 type="text"
-                formLabelName={t('user.profession')}
+                formLabelName={t('profession')}
                 value={value}
                 handleInputChange={onChange}
               />
@@ -142,11 +142,11 @@ const TeacherSignUp = ({ lang }: { lang: Locale }) => {
             render={({ field: { onChange, value, name } }) => (
               <FormInput
                 isRequired
-                placeholder={t('user.workPlace')}
+                placeholder={t('workPlace')}
                 isInvalid={!!errors.firstName?.message}
                 name={name}
                 type="text"
-                formLabelName={t('user.workPlace')}
+                formLabelName={t('workPlace')}
                 value={value}
                 handleInputChange={onChange}
               />
@@ -158,11 +158,11 @@ const TeacherSignUp = ({ lang }: { lang: Locale }) => {
             render={({ field: { onChange, value, name } }) => (
               <FormInput
                 isRequired
-                placeholder={t('user.scientificActivity')}
+                placeholder={t('scientificActivity')}
                 isInvalid={!!errors.firstName?.message}
                 name={name}
                 type="text"
-                formLabelName={t('user.scientificActivity')}
+                formLabelName={t('scientificActivity')}
                 value={value}
                 handleInputChange={onChange}
               />
@@ -176,7 +176,7 @@ const TeacherSignUp = ({ lang }: { lang: Locale }) => {
             <SelectLabel
               name={name}
               options={data || []}
-              labelName={t('user.teachingSubject')}
+              labelName={t('teachingSubject')}
               valueLabel="id"
               nameLabel="title"
               onChange={onChange}
@@ -193,12 +193,12 @@ const TeacherSignUp = ({ lang }: { lang: Locale }) => {
                 isRequired
                 isInvalid={!!errors.password?.message}
                 name="password"
-                formLabelName={t('common.password')}
-                placeholder={t('common.password')}
+                formLabelName={t('password')}
+                placeholder={t('password')}
                 value={value}
                 handleInputChange={onChange}
                 type="password"
-                formHelperText={t('validations.passwordValidation')}
+                formHelperText={t('passwordValidation')}
               />
             )}
           />
@@ -210,8 +210,8 @@ const TeacherSignUp = ({ lang }: { lang: Locale }) => {
                 isRequired
                 isInvalid={!!errors.password?.message}
                 name="password"
-                formLabelName={t('common.confirmPassword')}
-                placeholder={t('common.confirmPassword')}
+                formLabelName={t('confirmPassword')}
+                placeholder={t('confirmPassword')}
                 value={value}
                 handleInputChange={onChange}
                 type="password"
@@ -222,7 +222,7 @@ const TeacherSignUp = ({ lang }: { lang: Locale }) => {
       </VStack>
       <VStack spacing={16} paddingTop={48}>
         <Button w={'50%'} onClick={handleSubmit(onTeacherSubmit)}>
-          {t('common.signUp')}
+          {t('signUp')}
         </Button>
       </VStack>
     </>

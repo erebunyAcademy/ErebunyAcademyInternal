@@ -132,12 +132,12 @@ const StudentGrades = () => {
     columnHelper.accessor('title', {
       id: uuidv4(),
       cell: info => info.getValue(),
-      header: t('list.title'),
+      header: t('title'),
     }),
     columnHelper.accessor('description', {
       id: uuidv4(),
       cell: info => info.getValue(),
-      header: t('list.description'),
+      header: t('description'),
     }),
 
     columnHelper.accessor('createdAt', {
@@ -146,7 +146,7 @@ const StudentGrades = () => {
         const currentDate = dayjs(info.getValue());
         return currentDate.format('YYYY-MM-DD');
       },
-      header: t('list.createdAt'),
+      header: t('createdAt'),
     }),
     columnHelper.accessor('id', {
       id: uuidv4(),
@@ -162,7 +162,7 @@ const StudentGrades = () => {
               setValue('facultyId', row.original.facultyId || '');
               openCreateEditModal();
             }}>
-            {t('list.edit')}
+            {t('edit')}
           </MenuItem>
           <MenuItem
             color="red"
@@ -170,11 +170,11 @@ const StudentGrades = () => {
               setSelectedStudentGrade(row.original);
               openDeleteModal();
             }}>
-            {t('list.delete')}
+            {t('delete')}
           </MenuItem>
         </ActionButtons>
       ),
-      header: t('list.actions'),
+      header: t('actions'),
     }),
   ];
 
@@ -196,7 +196,7 @@ const StudentGrades = () => {
   return (
     <>
       <SearchTable
-        title={t('list.studentGradeList')}
+        title={t('studentGradeList')}
         isLoading={isLoading}
         data={data?.studentGrades || []}
         count={data?.count || 0}
@@ -222,9 +222,9 @@ const StudentGrades = () => {
       <Modal
         isOpen={isCreateEditModalOpen}
         onClose={closeCreateEditModal}
-        title={t('user.studentGrade')}
+        title={t('studentGrade')}
         primaryAction={handleSubmit(onSubmitHandler)}
-        actionText={selectedStudentGrade ? t('list.update') : t('list.create')}>
+        actionText={selectedStudentGrade ? t('update') : t('create')}>
         <Controller
           name="title"
           control={control}
@@ -235,9 +235,9 @@ const StudentGrades = () => {
               isInvalid={!!errors.title?.message}
               name={name}
               type="text"
-              formLabelName={t('list.studentGradeTitle')}
+              formLabelName={t('studentGradeTitle')}
               value={value}
-              placeholder={t('list.enterTitle')}
+              placeholder={t('enterTitle')}
               handleInputChange={onChange}
               formErrorMessage={errors.title?.message}
             />
@@ -251,9 +251,9 @@ const StudentGrades = () => {
               isInvalid={!!errors.description?.message}
               name={name}
               type="text"
-              formLabelName={t('list.studentGradeDescription')}
+              formLabelName={t('studentGradeDescription')}
               value={value}
-              placeholder={t('list.enterDescription')}
+              placeholder={t('enterDescription')}
               handleInputChange={onChange}
               formErrorMessage={errors.description?.message}
             />
@@ -266,7 +266,7 @@ const StudentGrades = () => {
             <SelectLabel
               name={name}
               options={facultyQueryData || []}
-              labelName={t('user.faculty')}
+              labelName={t('faculty')}
               valueLabel="id"
               nameLabel="title"
               onChange={onChange}
@@ -277,15 +277,16 @@ const StudentGrades = () => {
       </Modal>
       <Modal
         isOpen={isDeleteModalOpen}
+        isDeleteVariant
         onClose={closeDeleteModal}
-        title={t('user.studentGrade')}
+        title={t('studentGrade')}
         primaryAction={() => {
           if (selectedStudentGrade) {
             mutate(selectedStudentGrade?.id);
           }
         }}
-        actionText={t('list.delete')}>
-        {t('list.deleteStudentGradeQuestion')}
+        actionText={t('delete')}>
+        {t('deleteStudentGradeQuestion')}
       </Modal>
     </>
   );

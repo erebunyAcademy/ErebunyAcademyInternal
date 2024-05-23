@@ -123,12 +123,12 @@ const Faculty = () => {
     columnHelper.accessor('title', {
       id: uuidv4(),
       cell: info => info.getValue(),
-      header: t('list.title'),
+      header: t('title'),
     }),
     columnHelper.accessor('description', {
       id: uuidv4(),
       cell: info => info.getValue(),
-      header: t('list.description'),
+      header: t('description'),
     }),
     columnHelper.accessor('createdAt', {
       id: uuidv4(),
@@ -136,7 +136,7 @@ const Faculty = () => {
         const currentDate = dayjs(info.getValue());
         return currentDate.format('YYYY-MM-DD');
       },
-      header: t('list.createdAt'),
+      header: t('createdAt'),
     }),
     columnHelper.accessor('id', {
       id: uuidv4(),
@@ -150,7 +150,7 @@ const Faculty = () => {
               setValue('description', row.original.description || '');
               openCreateEditModal();
             }}>
-            {t('list.edit')}
+            {t('edit')}
           </MenuItem>
           <MenuItem
             color="red"
@@ -158,11 +158,11 @@ const Faculty = () => {
               setSelectedFaculty(row.original);
               openDeleteModal();
             }}>
-            {t('list.delete')}
+            {t('delete')}
           </MenuItem>
         </ActionButtons>
       ),
-      header: t('list.actions'),
+      header: t('actions'),
     }),
   ];
 
@@ -184,7 +184,7 @@ const Faculty = () => {
   return (
     <>
       <SearchTable
-        title={t('list.facultyList')}
+        title={t('facultyList')}
         isLoading={isLoading}
         data={data?.faculties || []}
         count={data?.count || 0}
@@ -210,9 +210,9 @@ const Faculty = () => {
       <Modal
         isOpen={isCreateEditModalOpen}
         onClose={closeCreateEditModal}
-        title={t('user.faculty')}
+        title={t('faculty')}
         primaryAction={handleSubmit(onSubmitHandler)}
-        actionText={selectedFaculty ? t('list.update') : t('list.create')}>
+        actionText={selectedFaculty ? t('update') : t('create')}>
         <Controller
           name="title"
           control={control}
@@ -223,9 +223,9 @@ const Faculty = () => {
               isInvalid={!!errors.title?.message}
               name={name}
               type="text"
-              formLabelName={t('list.facultyName')}
+              formLabelName={t('facultyName')}
               value={value}
-              placeholder={t('list.enterTitle')}
+              placeholder={t('enterTitle')}
               handleInputChange={onChange}
               formErrorMessage={errors.title?.message}
             />
@@ -240,9 +240,9 @@ const Faculty = () => {
               isInvalid={!!errors.description?.message}
               name={name}
               type="text"
-              formLabelName={t('list.facultyDescription')}
+              formLabelName={t('facultyDescription')}
               value={value}
-              placeholder={t('list.enterDescription')}
+              placeholder={t('enterDescription')}
               handleInputChange={onChange}
               formErrorMessage={errors.description?.message}
             />
@@ -252,14 +252,15 @@ const Faculty = () => {
       <Modal
         isOpen={isDeleteModalOpen}
         onClose={closeDeleteModal}
-        title={t('user.faculty')}
+        isDeleteVariant
+        title={t('faculty')}
         primaryAction={() => {
           if (selectedFaculty) {
             mutate(selectedFaculty?.id);
           }
         }}
-        actionText={t('list.delete')}>
-        {t('list.deleteFacultyQuestion')}
+        actionText={t('delete')}>
+        {t('deleteFacultyQuestion')}
       </Modal>
     </>
   );

@@ -124,7 +124,7 @@ function SearchTable<T>({
         </Text>
         {addNew && (
           <Button px="12px" py="8px" onClick={addNew}>
-            {t('list.addNew')}
+            {t('addNew')}
           </Button>
         )}
       </Flex>
@@ -135,7 +135,7 @@ function SearchTable<T>({
           </InputLeftElement>
           <Input
             p="10px 10px 10px 40px"
-            placeholder={t('list.searchInput')}
+            placeholder={t('searchInput')}
             width="300px"
             onChange={userSearchHandler}
             value={search}
@@ -214,7 +214,7 @@ function SearchTable<T>({
             <Tr>
               <Td align="left" colSpan={5}>
                 <Text>
-                  {t('list.count')} - {count}
+                  {t('count')} - {count}
                 </Text>
               </Td>
               <Td align="right">

@@ -14,7 +14,7 @@ const fileTypes = [
 
 const ExcelUpload = () => {
   const [excelFile, setExcelFile] = useState<FileReader['result']>(null);
-  const [excelData, setExcelData] = useState<Maybe<unknown[]>>(null);
+  const [_, setExcelData] = useState<Maybe<unknown[]>>(null);
   const toast = useToast();
 
   const handleFile: ChangeEventHandler<HTMLInputElement> = useCallback(

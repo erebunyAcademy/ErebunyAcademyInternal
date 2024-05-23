@@ -37,7 +37,7 @@ const AuthBox: FC<Props> = ({ data, children, boxProps = {}, linkProps = {} }) =
             _hover={{ textDecoration: 'none' }}
             fontWeight={pathname === href || pathname === '#' ? 600 : 400}
             fontStyle="normal">
-            {t(`common.${title}`)}
+            {t(title)}
           </Link>
         ))}
       </HStack>

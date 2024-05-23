@@ -34,7 +34,6 @@ const Header: FC<HeaderProps> = ({ user, linkItems, lang }) => {
   } = useDisclosure();
   const { data } = useSession();
   const userCollapseRef = useRef<HTMLDivElement>(null);
-
   useOutsideClick({
     ref: userCollapseRef,
     handler: () => {

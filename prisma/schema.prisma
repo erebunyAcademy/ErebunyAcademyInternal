@@ -87,15 +87,15 @@ model ScheduleSubject {
 }
 
 model Student {
-  id                  String            @id @default(uuid())
-  studentGrade        StudentGrade      @relation(fields: [studentGradeId], references: [id])
+  id                  String             @id @default(uuid())
+  studentGrade        StudentGrade       @relation(fields: [studentGradeId], references: [id])
   studentGradeId      String
-  faculty             Faculty           @relation(fields: [facultyId], references: [id])
+  faculty             Faculty            @relation(fields: [facultyId], references: [id])
   facultyId           String
-  studentGradeGroup   StudentGradeGroup @relation(fields: [studentGradeGroupId], references: [id])
+  studentGradeGroup   StudentGradeGroup? @relation(fields: [studentGradeGroupId], references: [id])
   studentGradeGroupId String
-  user                User              @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId              String            @unique
+  user                User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId              String             @unique
   studentExams        StudentExam[]
 
   createdAt DateTime @default(now()) @db.Timestamp(0)

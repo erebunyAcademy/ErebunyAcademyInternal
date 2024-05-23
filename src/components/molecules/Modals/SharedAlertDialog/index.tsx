@@ -45,10 +45,10 @@ const SharedAlertDialog: FC<SharedAlertDialogProps> = ({
           <AlertDialogBody>{body}</AlertDialogBody>
           <AlertDialogFooter>
             <Button ref={cancelRef} onClick={onClose} isDisabled={isLoading}>
-              {t('list.cancel')}
+              {t('cancel')}
             </Button>
             <Button colorScheme="red" onClick={deleteFn} ml={3} isLoading={isLoading}>
-              {t('list.delete')}
+              {t('delete')}
             </Button>
           </AlertDialogFooter>
         </AlertDialogContent>

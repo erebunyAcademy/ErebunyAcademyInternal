@@ -45,10 +45,10 @@ const Step2 = () => {
   return (
     <VStack spacing={32}>
       <Text fontWeight={'400'} fontSize={14} lineHeight={'normal'} textAlign={'center'}>
-        {t('common.resetPasswordMail')}
+        {t('resetPasswordMail')}
       </Text>
       <Text fontWeight={'600'} fontSize={20} lineHeight={'normal'} textAlign={'center'}>
-        {t('common.otpVerification')}
+        {t('otpVerification')}
       </Text>
       <Controller
         name="otpPassword"
@@ -63,7 +63,7 @@ const Step2 = () => {
         onClick={handleSubmit(onSubmit)}
         isDisabled={!isValid}
         isLoading={isPending}>
-        {t('common.next')}
+        {t('next')}
       </Button>
     </VStack>
   );

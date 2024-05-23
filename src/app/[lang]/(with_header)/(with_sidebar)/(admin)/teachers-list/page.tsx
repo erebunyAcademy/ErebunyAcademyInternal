@@ -59,27 +59,27 @@ export default function Users() {
     columnHelper.accessor('firstName', {
       id: uuidv4(),
       cell: info => info.getValue(),
-      header: t('user.firstName'),
+      header: t('firstName'),
     }),
     columnHelper.accessor('lastName', {
       id: uuidv4(),
       cell: info => info.getValue(),
-      header: t('user.lastName'),
+      header: t('lastName'),
     }),
     columnHelper.accessor('email', {
       id: uuidv4(),
       cell: info => info.getValue(),
-      header: t('user.email'),
+      header: t('email'),
     }),
     columnHelper.accessor('teacher.profession', {
       id: uuidv4(),
       cell: info => info.getValue(),
-      header: t('user.profession'),
+      header: t('profession'),
     }),
     columnHelper.accessor('teacher.workPlace', {
       id: uuidv4(),
       cell: info => info.getValue(),
-      header: t('user.workPlace'),
+      header: t('workPlace'),
     }),
     columnHelper.accessor('createdAt', {
       id: uuidv4(),
@@ -87,7 +87,7 @@ export default function Users() {
         const currentDate = dayjs(info.getValue());
         return currentDate.format('YYYY-MM-DD');
       },
-      header: t('list.createdAt'),
+      header: t('createdAt'),
     }),
     columnHelper.accessor('id', {
       id: uuidv4(),
@@ -98,18 +98,18 @@ export default function Users() {
             onClick={() => {
               confirmUserById(row.original.id);
             }}>
-            {t('list.confirm')}
+            {t('confirm')}
           </MenuItem>
         </ActionButtons>
       ),
-      header: t('list.actions'),
+      header: t('actions'),
     }),
   ];
 
   return (
     <>
       <SearchTable
-        title={t('list.teachersList')}
+        title={t('teachersList')}
         isLoading={isLoading}
         data={data?.users || []}
         count={data?.count || 0}

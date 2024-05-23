@@ -134,12 +134,12 @@ const StudentGradeGroup = () => {
     columnHelper.accessor('title', {
       id: uuidv4(),
       cell: info => info.getValue(),
-      header: t('list.title'),
+      header: t('title'),
     }),
     columnHelper.accessor('description', {
       id: uuidv4(),
       cell: info => info.getValue(),
-      header: t('list.description'),
+      header: t('description'),
     }),
 
     columnHelper.accessor('createdAt', {
@@ -148,7 +148,7 @@ const StudentGradeGroup = () => {
         const currentDate = dayjs(info.getValue());
         return currentDate.format('YYYY-MM-DD');
       },
-      header: t('list.createdAt'),
+      header: t('createdAt'),
     }),
     columnHelper.accessor('id', {
       id: uuidv4(),
@@ -163,7 +163,7 @@ const StudentGradeGroup = () => {
               setValue('studentGradeId', row.original.studentGradeId || '');
               openCreateEditModal();
             }}>
-            {t('list.edit')}
+            {t('edit')}
           </MenuItem>
           <MenuItem
             color="red"
@@ -171,11 +171,11 @@ const StudentGradeGroup = () => {
               setSelectedStudentGradeGroup(row.original);
               openDeleteModal();
             }}>
-            {t('list.delete')}
+            {t('delete')}
           </MenuItem>
         </ActionButtons>
       ),
-      header: t('list.actions'),
+      header: t('actions'),
     }),
   ];
 
@@ -197,7 +197,7 @@ const StudentGradeGroup = () => {
   return (
     <>
       <SearchTable
-        title={t('list.studentGradeGroupList')}
+        title={t('studentGradeGroupList')}
         isLoading={isLoading}
         data={data?.studentGradeGroups || []}
         count={data?.count || 0}
@@ -222,9 +222,9 @@ const StudentGradeGroup = () => {
       <Modal
         isOpen={isCreateEditModalOpen}
         onClose={closeCreateEditModal}
-        title={t('user.studentGradeGroup')}
+        title={t('studentGradeGroup')}
         primaryAction={handleSubmit(onSubmitHandler)}
-        actionText={selectedStudentGradeGroup ? t('list.update') : t('list.create')}>
+        actionText={selectedStudentGradeGroup ? t('update') : t('create')}>
         <Controller
           name="title"
           control={control}
@@ -235,9 +235,9 @@ const StudentGradeGroup = () => {
               isInvalid={!!errors.title?.message}
               name={name}
               type="text"
-              formLabelName={t('list.studentGradeGroupName')}
+              formLabelName={t('studentGradeGroupName')}
               value={value}
-              placeholder={t('list.enterTitle')}
+              placeholder={t('enterTitle')}
               handleInputChange={onChange}
               formErrorMessage={errors.title?.message}
             />
@@ -252,9 +252,9 @@ const StudentGradeGroup = () => {
               isInvalid={!!errors.description?.message}
               name={name}
               type="text"
-              formLabelName={t('list.studentGradeGroupDescription')}
+              formLabelName={t('studentGradeGroupDescription')}
               value={value}
-              placeholder={t('list.enterDescription')}
+              placeholder={t('enterDescription')}
               handleInputChange={onChange}
               formErrorMessage={errors.description?.message}
             />
@@ -267,7 +267,7 @@ const StudentGradeGroup = () => {
             <SelectLabel
               name={name}
               options={studentGradeQueryData || []}
-              labelName={t('user.studentGrade')}
+              labelName={t('studentGrade')}
               valueLabel="id"
               nameLabel="title"
               onChange={onChange}
@@ -280,14 +280,15 @@ const StudentGradeGroup = () => {
       <Modal
         isOpen={isDeleteModalOpen}
         onClose={closeDeleteModal}
-        title={t('user.studentGradeGroup')}
+        isDeleteVariant
+        title={t('studentGradeGroup')}
         primaryAction={() => {
           if (selectedStudentGradeGroup) {
             mutate(selectedStudentGradeGroup?.id);
           }
         }}
-        actionText={t('list.delete')}>
-        {t('list.deleteStudentGradeGroupQuestion')}
+        actionText={t('delete')}>
+        {t('deleteStudentGradeGroupQuestion')}
       </Modal>
     </>
   );

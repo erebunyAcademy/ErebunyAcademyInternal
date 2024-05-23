@@ -54,12 +54,12 @@ export default function Users() {
     columnHelper.accessor('title', {
       id: uuidv4(),
       cell: info => info.getValue(),
-      header: t('list.title'),
+      header: t('title'),
     }),
     columnHelper.accessor('description', {
       id: uuidv4(),
       cell: info => info.getValue(),
-      header: t('list.description'),
+      header: t('description'),
     }),
     columnHelper.accessor('createdAt', {
       id: uuidv4(),
@@ -67,14 +67,14 @@ export default function Users() {
         const currentDate = dayjs(info.getValue());
         return currentDate.format('YYYY-MM-DD');
       },
-      header: t('list.createdAt'),
+      header: t('createdAt'),
     }),
   ];
 
   return (
     <>
       <SearchTable
-        title={t('list.examList')}
+        title={t('examList')}
         isLoading={isLoading}
         data={data?.exams || []}
         count={data?.count || 0}

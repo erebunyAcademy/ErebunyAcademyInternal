@@ -96,22 +96,22 @@ export default function Users() {
           />
         );
       },
-      header: t('list.avatar'),
+      header: t('avatar'),
     }),
     columnHelper.accessor('firstName', {
       id: uuidv4(),
       cell: info => info.getValue(),
-      header: t('user.firstName'),
+      header: t('firstName'),
     }),
     columnHelper.accessor('lastName', {
       id: uuidv4(),
       cell: info => info.getValue(),
-      header: t('user.lastName'),
+      header: t('lastName'),
     }),
     columnHelper.accessor('email', {
       id: uuidv4(),
       cell: info => info.getValue(),
-      header: t('user.email'),
+      header: t('email'),
     }),
     columnHelper.accessor('attachment', {
       id: uuidv4(),
@@ -127,7 +127,7 @@ export default function Users() {
                       setAttachmentKey(item.key);
                       openAttachmentModal();
                     }}>
-                    {t('list.studentAttachmentButton')}
+                    {t('studentAttachmentButton')}
                   </Button>
                 ) : null}
               </React.Fragment>
@@ -135,22 +135,22 @@ export default function Users() {
           </>
         );
       },
-      header: t('user.attachment'),
+      header: t('attachment'),
     }),
     columnHelper.accessor('student.faculty.title', {
       id: uuidv4(),
       cell: info => info.getValue(),
-      header: t('user.faculty'),
+      header: t('faculty'),
     }),
     columnHelper.accessor('student.studentGrade.title', {
       id: uuidv4(),
       cell: info => info.getValue(),
-      header: t('user.studentGrade'),
+      header: t('studentGrade'),
     }),
     columnHelper.accessor('student.studentGradeGroup.title', {
       id: uuidv4(),
       cell: info => info.getValue(),
-      header: t('user.studentGradeGroup'),
+      header: t('studentGradeGroup'),
     }),
     columnHelper.accessor('createdAt', {
       id: uuidv4(),
@@ -158,7 +158,7 @@ export default function Users() {
         const currentDate = dayjs(info.getValue());
         return currentDate.format('YYYY-MM-DD');
       },
-      header: t('list.createdAt'),
+      header: t('createdAt'),
     }),
     columnHelper.accessor('id', {
       id: uuidv4(),
@@ -169,7 +169,7 @@ export default function Users() {
             onClick={() => {
               confirmUserById(row.original.id);
             }}>
-            {t('list.confirm')}
+            {t('confirm')}
           </MenuItem>
           <MenuItem
             color="red"
@@ -177,18 +177,18 @@ export default function Users() {
               onOpen();
               setSelectedStudent(row.original as unknown as User);
             }}>
-            {t('list.delete')}
+            {t('delete')}
           </MenuItem>
         </ActionButtons>
       ),
-      header: t('list.actions'),
+      header: t('actions'),
     }),
   ];
 
   return (
     <>
       <SearchTable
-        title={t('list.studentsList')}
+        title={t('studentsList')}
         isLoading={isLoading}
         data={data?.users || []}
         count={data?.count || 0}
@@ -211,9 +211,9 @@ export default function Users() {
       />
       {isOpen && (
         <SharedAlertDialog
-          body={`${t('list.deleteQuestion')} ${selectedStudent?.firstName} ?`}
+          body={`${t('deleteQuestion')} ${selectedStudent?.firstName} ?`}
           isOpen={isOpen}
-          title={t('list.deleteStudent')}
+          title={t('deleteStudent')}
           isLoading={isLoading}
           deleteFn={() => {
             if (selectedStudent?.id) {
@@ -226,7 +226,7 @@ export default function Users() {
       <Modal
         isOpen={isAttachmentModalOpen}
         onClose={closeAttachmentModal}
-        title={t('list.studentAttachment')}>
+        title={t('studentAttachment')}>
         <Image
           src={generateAWSUrl(attachmentKey)}
           width={400}

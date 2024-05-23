@@ -1,5 +1,5 @@
 'use client';
-import React, { ChangeEvent, FC, useCallback, useMemo, useState } from 'react';
+import React, { ChangeEvent, useCallback, useMemo, useState } from 'react';
 import {
   Avatar,
   Box,
@@ -17,24 +17,22 @@ import axios from 'axios';
 import { Country } from 'country-state-city';
 import { useRouter } from 'next/navigation';
 import { User } from 'next-auth';
+import { useSession } from 'next-auth/react';
 import { useTranslations } from 'next-intl';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { UserService } from '@/api/services/user.service';
 import { FormInput } from '@/components/atoms';
 import SelectLabel from '@/components/atoms/SelectLabel';
-import { ExcelUpload } from '@/components/molecules';
 import { generateUserAvatar } from '@/utils/helpers/aws';
 import { ChangePasswordValidation, UserProfileFormValidation } from '@/utils/validation/user';
 
 const resolver = classValidatorResolver(UserProfileFormValidation);
 const changePasswordResolver = classValidatorResolver(ChangePasswordValidation);
 
-interface Props {
-  sessionUser: User;
-}
-
-const Profile: FC<Props> = ({ sessionUser }) => {
+const Profile = () => {
   const [localImage, setLocalImage] = useState<{ file: File; localUrl: string } | null>(null);
+  const { data } = useSession();
+
   const [isLoading, setIsLoading] = useState(false);
   const toast = useToast();
   const router = useRouter();
@@ -46,13 +44,13 @@ const Profile: FC<Props> = ({ sessionUser }) => {
     formState: { errors, isDirty, isSubmitting },
   } = useForm<UserProfileFormValidation>({
     defaultValues: {
-      firstName: sessionUser?.firstName || '',
-      lastName: sessionUser?.lastName || '',
-      email: sessionUser?.email || '',
-      state: sessionUser?.state || '',
-      city: sessionUser?.city || '',
-      country: sessionUser?.country || 'Armenia',
-      address: sessionUser?.address || '',
+      firstName: data?.user?.firstName || '',
+      lastName: data?.user?.lastName || '',
+      email: data?.user?.email || '',
+      state: data?.user?.state || '',
+      city: data?.user?.city || '',
+      country: data?.user?.country || 'Armenia',
+      address: data?.user?.address || '',
     },
     resolver,
   });
@@ -84,13 +82,13 @@ const Profile: FC<Props> = ({ sessionUser }) => {
   });
 
   const onSubmit: SubmitHandler<UserProfileFormValidation> = useCallback(
-    async data => {
+    async payload => {
       setIsLoading(true);
-      const reqData = { ...data };
+      const reqData = { ...payload };
       try {
         if (localImage) {
           // todo, need to change aws url
-          reqData.avatar = `academy/users/${sessionUser?.id}/${localImage?.file.name}`;
+          reqData.avatar = `academy/users/${data?.user?.id || ''}/${localImage?.file.name}`;
           reqData.avatarMimetype = localImage?.file.type;
           const { url } = await UserService.getPreSignedUrl(reqData.avatar);
           await axios.put(url, localImage.file);
@@ -105,7 +103,7 @@ const Profile: FC<Props> = ({ sessionUser }) => {
         setIsLoading(false);
       }
     },
-    [localImage, router, sessionUser?.id, toast, updateUserProfileMutation],
+    [data?.user?.id, localImage, router, toast, updateUserProfileMutation],
   );
 
   const onFileSelect = useCallback(async (e: ChangeEvent<HTMLInputElement>) => {
@@ -133,15 +131,14 @@ const Profile: FC<Props> = ({ sessionUser }) => {
     if (localImage?.localUrl) {
       return localImage.localUrl;
     }
-    return generateUserAvatar(sessionUser);
-  }, [localImage?.localUrl, sessionUser]);
+    return generateUserAvatar(data?.user as User);
+  }, [localImage?.localUrl, data?.user]);
 
   return (
     <Box
       width="700px"
       margin="0 auto"
       p={{ base: '20px 16px 30px 16px', md: '96px 16px 159px 16px', xl: '96px 0 159px 0' }}>
-      <ExcelUpload />
       <Text
         display={{ base: 'none', sm: 'block' }}
         textAlign="center"
@@ -150,7 +147,7 @@ const Profile: FC<Props> = ({ sessionUser }) => {
         fontSize="44px"
         fontWeight={700}
         lineHeight="normal">
-        {t('common.editProfile')}
+        {t('editProfile')}
       </Text>
       <Flex
         gap={16}
@@ -160,7 +157,7 @@ const Profile: FC<Props> = ({ sessionUser }) => {
         alignItems={{ base: 'center', md: 'flex-start' }}>
         <Box borderRadius="50%" overflow="hidden" position="relative" width="101px" height="101px">
           <Avatar
-            name={`${sessionUser?.firstName} ${sessionUser?.lastName}`}
+            name={`${data?.user?.firstName} ${data?.user?.lastName}`}
             src={avatarSrc}
             bg="#F3F4F6"
             color="#C0C0C0"
@@ -173,7 +170,7 @@ const Profile: FC<Props> = ({ sessionUser }) => {
             fontWeight={700}
             lineHeight="normal"
             m={{ base: '0 0 8px 0', sm: '0 0 16px 0' }}>
-            {`${sessionUser?.firstName || ''} ${sessionUser?.lastName || ''}`}
+            {`${data?.user?.firstName || ''} ${data?.user?.lastName || ''}`}
           </Text>
           <Box
             cursor="pointer"
@@ -228,7 +225,7 @@ const Profile: FC<Props> = ({ sessionUser }) => {
                   />
                 )}
               />
-              {t('common.changeAvatar')}
+              {t('changeAvatar')}
             </ChakraButton>
           </Box>
         </Box>
@@ -246,8 +243,8 @@ const Profile: FC<Props> = ({ sessionUser }) => {
                 isRequired
                 name="firstName"
                 type="text"
-                formLabelName={t('user.firstName')}
-                placeholder={t('user.firstName')}
+                formLabelName={t('firstName')}
+                placeholder={t('firstName')}
                 value={value}
                 handleInputChange={onChange}
                 isInvalid={!!errors[name]?.message}
@@ -266,9 +263,9 @@ const Profile: FC<Props> = ({ sessionUser }) => {
                 isRequired
                 name="lastName"
                 type="text"
-                formLabelName={t('user.lastName')}
+                formLabelName={t('lastName')}
                 value={value}
-                placeholder={t('user.lastName')}
+                placeholder={t('lastName')}
                 handleInputChange={onChange}
                 isInvalid={!!errors[name]?.message}
                 formErrorMessage={errors[name]?.message}
@@ -288,7 +285,7 @@ const Profile: FC<Props> = ({ sessionUser }) => {
                 isRequired
                 name="email"
                 type="email"
-                formLabelName={t('user.email')}
+                formLabelName={t('email')}
                 placeholder="you@gmail.com"
                 value={value}
                 handleInputChange={onChange}
@@ -305,7 +302,7 @@ const Profile: FC<Props> = ({ sessionUser }) => {
                 isRequired
                 name="address"
                 type="text"
-                formLabelName={t('user.address')}
+                formLabelName={t('address')}
                 placeholder="33062 komitas, 5st."
                 value={value}
                 handleInputChange={onChange}
@@ -323,7 +320,7 @@ const Profile: FC<Props> = ({ sessionUser }) => {
             render={({ field: { onChange, value } }) => (
               <SelectLabel
                 options={Country.getAllCountries()}
-                labelName={t('user.country')}
+                labelName={t('country')}
                 valueLabel="name"
                 nameLabel="name"
                 onChange={onChange}
@@ -338,8 +335,8 @@ const Profile: FC<Props> = ({ sessionUser }) => {
               <FormInput
                 name="state"
                 type="text"
-                formLabelName={t('user.state')}
-                placeholder={t('user.enterYourState')}
+                formLabelName={t('state')}
+                placeholder={t('enterYourState')}
                 value={value}
                 handleInputChange={onChange}
                 isInvalid={!!errors[name]?.message}
@@ -354,8 +351,8 @@ const Profile: FC<Props> = ({ sessionUser }) => {
               <FormInput
                 name="city"
                 type="text"
-                formLabelName={t('user.city')}
-                placeholder={t('user.enterYourCity')}
+                formLabelName={t('city')}
+                placeholder={t('enterYourCity')}
                 value={value}
                 handleInputChange={onChange}
                 isInvalid={!!errors[name]?.message}
@@ -372,14 +369,14 @@ const Profile: FC<Props> = ({ sessionUser }) => {
             isDisabled={!isDirty}
             isLoading={loading}
             onClick={handleSubmit(onSubmit)}>
-            {t('common.saveChanges')}
+            {t('saveChanges')}
           </Button>
         </Flex>
       </Flex>
       <Divider paddingTop={{ base: '36px', md: '40px' }} />
       <Flex flexDirection="column" gap={24} mt={{ base: '12px', md: '40px' }}>
         <Text color="#000" fontSize={28} fontWeight={700}>
-          {t('common.privateSettings')}
+          {t('privateSettings')}
         </Text>
         <Flex gap={24} flexDirection="column">
           <Controller
@@ -391,11 +388,11 @@ const Profile: FC<Props> = ({ sessionUser }) => {
                 isInvalid={!!changePasswordErrors[name]?.message}
                 name="Current Password"
                 type="password"
-                formLabelName={t('common.currentPassword')}
-                placeholder={t('common.currentPassword')}
+                formLabelName={t('currentPassword')}
+                placeholder={t('currentPassword')}
                 value={value}
                 handleInputChange={onChange}
-                formHelperText={t('validations.passwordValidation')}
+                formHelperText={t('passwordValidation')}
                 formErrorMessage={changePasswordErrors[name]?.message}
               />
             )}
@@ -409,11 +406,11 @@ const Profile: FC<Props> = ({ sessionUser }) => {
                 isInvalid={!!changePasswordErrors[name]?.message}
                 name="New Password"
                 type="password"
-                formLabelName={t('common.newPassword')}
-                placeholder={t('common.newPassword')}
+                formLabelName={t('newPassword')}
+                placeholder={t('newPassword')}
                 value={value}
                 handleInputChange={onChange}
-                formHelperText={t('validations.passwordValidation')}
+                formHelperText={t('passwordValidation')}
                 formErrorMessage={changePasswordErrors[name]?.message}
               />
             )}
@@ -427,11 +424,11 @@ const Profile: FC<Props> = ({ sessionUser }) => {
                 isInvalid={!!changePasswordErrors[name]?.message}
                 name="Confirm Password"
                 type="password"
-                formLabelName={t('common.confirmPassword')}
-                placeholder={t('common.confirmPassword')}
+                formLabelName={t('confirmPassword')}
+                placeholder={t('confirmPassword')}
                 value={value}
                 handleInputChange={onChange}
-                formHelperText={t('validations.passwordValidation')}
+                formHelperText={t('passwordValidation')}
                 formErrorMessage={changePasswordErrors[name]?.message}
               />
             )}
@@ -445,7 +442,7 @@ const Profile: FC<Props> = ({ sessionUser }) => {
             isDisabled={!isDirty}
             isLoading={loading}
             onClick={passwordChangeHandlerSubmit(onPasswordChangeSubmit)}>
-            {t('common.changePassword')}
+            {t('changePassword')}
           </Button>
         </Flex>
       </Flex>

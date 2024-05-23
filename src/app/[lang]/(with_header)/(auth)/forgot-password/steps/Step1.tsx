@@ -18,7 +18,8 @@ const Step1 = () => {
   const {
     control,
     handleSubmit,
-    formState: { errors },
+
+    formState: { errors, isValid },
   } = useForm<ForgotPasswordStep1Validation>({ defaultValues: { email: '' }, resolver });
 
   const { mutate, isPending } = useMutation<
@@ -49,7 +50,7 @@ const Step1 = () => {
             isInvalid={!!errors.email?.message}
             name="email"
             type="email"
-            formLabelName={t('user.email')}
+            formLabelName={t('email')}
             value={value}
             placeholder="you@example.com"
             handleInputChange={onChange}
@@ -57,8 +58,12 @@ const Step1 = () => {
           />
         )}
       />
-      <Button width={'100%'} onClick={handleSubmit(onSubmit)} isLoading={isPending}>
-        {t('common.next')}
+      <Button
+        width={'100%'}
+        onClick={handleSubmit(onSubmit)}
+        isLoading={isPending}
+        isDisabled={!isValid}>
+        {t('next')}
       </Button>
     </VStack>
   );

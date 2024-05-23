@@ -64,7 +64,7 @@ const LanguagePicker: FC<Props> = ({ lang }) => {
             color: '#222',
           }}>
           <Flex gap="8px" alignItems="center" fontSize={{ base: '12px', md: '18px' }}>
-            {languageIconHandler(lang)} {t(`common.${lang}`)}
+            {languageIconHandler(lang)} {t(lang)}
           </Flex>
         </MenuButton>
         <MenuList>
@@ -76,7 +76,7 @@ const LanguagePicker: FC<Props> = ({ lang }) => {
               fontSize={{ base: '12px', md: '18px' }}
               href={changeLanguage(pathname!, option)}
               icon={languageIconHandler(option as Locale)}>
-              {t(`common.${option}`)}
+              {t(option)}
             </MenuItem>
           ))}
         </MenuList>
