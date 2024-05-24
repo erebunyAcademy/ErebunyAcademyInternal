@@ -84,7 +84,7 @@ const SignIn = ({ params }: { params: { lang: Locale } }) => {
               value={value}
               isInvalid={!!errors.email?.message}
               handleInputChange={onChange}
-              formErrorMessage={errors.email?.message}
+              formErrorMessage={t(errors.email?.message)}
             />
           )}
         />

@@ -139,6 +139,7 @@ const StudentSignUp = ({ lang }: { lang: Locale }) => {
                 formLabelName={t('firstName')}
                 value={value}
                 handleInputChange={onChange}
+                formErrorMessage={errors.firstName?.message}
               />
             )}
           />
