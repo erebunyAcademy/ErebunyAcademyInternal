@@ -101,5 +101,7 @@
   "addQuestion": "Add Question",
   "submitExam": "Submit Exam",
   "requiredField": "{{field}} is required",
-  "passwordValidation": "Your password must not be less than 6 characters."
+  "passwordValidation": "Your password must not be less than 6 characters.",
+
+  "userNotFound": "Օգտատերը գտնված չէ"
 }

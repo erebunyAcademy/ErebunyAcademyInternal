@@ -1,6 +1,4 @@
-import { createStandaloneToast } from '@chakra-ui/react';
 import axios, { AxiosError } from 'axios';
-import { toastDefaultOptions } from '@/utils/constants/chakra';
 
 const $apiClient = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
@@ -12,17 +10,13 @@ const handleError = (error: Error | AxiosError) => {
     console.log({ handleError: error });
     return;
   }
-  const { toast } = createStandaloneToast({
-    defaultOptions: { status: 'error', ...toastDefaultOptions },
-  });
+
   if (axios.isAxiosError(error) && !!error.response?.data?.message) {
-    toast({ title: error.response.data.message });
     if (error.response.status === 401) {
       // signOut({ callbackUrl:  });
     }
     return Promise.reject(error.response.data);
   } else {
-    toast({ title: error.message });
     return Promise.reject(error);
   }
 };
