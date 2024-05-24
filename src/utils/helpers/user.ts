@@ -48,7 +48,7 @@ export const getUserData = (user: NonNullable<User>) => {
           {
             id: 9,
             title: 'Student Grade group',
-            value: user.student?.studentGradeGroup.title,
+            value: user.student?.studentGradeGroup?.title,
           },
         ]
       : []),
