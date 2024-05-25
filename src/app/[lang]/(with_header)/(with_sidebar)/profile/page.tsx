@@ -1,8 +1,14 @@
 import React from 'react';
 import ProfilePage from '@/components/pages/ProfilePage';
+import { serverSession } from '@/pages/api/auth/[...nextauth]';
 
 const Profile = async () => {
-  return <ProfilePage />;
+  const session = await serverSession();
+  console.log({ session });
+
+  if (!session) return null;
+
+  return <ProfilePage sessionUser={session.user} />;
 };
 
 export default Profile;

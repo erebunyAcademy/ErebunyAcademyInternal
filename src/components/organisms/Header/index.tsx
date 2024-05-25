@@ -10,12 +10,15 @@ import {
   useDisclosure,
   useOutsideClick,
 } from '@chakra-ui/react';
+import Link from 'next/link';
 import { User } from 'next-auth';
 import { useSession } from 'next-auth/react';
 import LanguagePicker from '@/components/molecules/LanguagePicker';
 import { Locale } from '@/i18n';
 import LogoIcon from '@/icons/college_main_icon.svg';
+import { ROUTE_DASHBOARD } from '@/utils/constants/routes';
 import { generateUserAvatar } from '@/utils/helpers/aws';
+import { languagePathHelper } from '@/utils/helpers/language';
 import { LinkItemProps } from '@/utils/helpers/permissionRoutes';
 import { Maybe } from '@/utils/models/common';
 import ProfileNavItem from './ProfileNavItem';
@@ -66,10 +69,12 @@ const Header: FC<HeaderProps> = ({ user, linkItems, lang }) => {
         px={{ base: 4 }}
         align={'center'}>
         <Flex flex={{ base: 1 }} justifyContent="space-between" px={{ base: '10px' }}>
-          <Flex>
-            <Flex alignItems="center" height="100%">
-              <LogoIcon width={40} height={40} />
-            </Flex>
+          <Flex
+            alignItems="center"
+            height="100%"
+            as={Link}
+            href={languagePathHelper(lang, ROUTE_DASHBOARD)}>
+            <LogoIcon width={40} height={40} />
           </Flex>
           <Flex>
             <Flex

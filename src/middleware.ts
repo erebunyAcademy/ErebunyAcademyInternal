@@ -17,17 +17,24 @@ const isAuthPage = (pathname: string) => {
   return paths.includes(pathname);
 };
 
+const getLangFromPathname = (pathname: string): string | null => {
+  const parts = pathname.split('/');
+  const lang = parts[1];
+  return i18n.locales.includes(lang) ? lang : 'am';
+};
+
 export async function middleware(req: NextRequest) {
+  const lang = getLangFromPathname(req.nextUrl.pathname);
   try {
     const token = await getToken({ req, secret: process.env.JWT_SECRET });
 
     if (isAuthPage(req.nextUrl.pathname)) {
       if (!!token) {
-        return NextResponse.redirect(`${process.env.BASE_URL}/dashboard`);
+        return NextResponse.redirect(`${process.env.BASE_URL}/${lang}/dashboard`);
       }
     } else {
       if (!token) {
-        return NextResponse.redirect(`${process.env.BASE_URL}/signin`);
+        return NextResponse.redirect(`${process.env.BASE_URL}/${lang}/signin`);
       }
     }
 

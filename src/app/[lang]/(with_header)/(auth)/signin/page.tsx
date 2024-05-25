@@ -47,10 +47,10 @@ const SignIn = ({ params }: { params: { lang: Locale } }) => {
         router.push(res.url);
         router.refresh();
       } else {
-        toast({ title: res?.error, status: 'error' });
+        toast({ title: t(ERROR_MESSAGES.invalidCredentials), status: 'error' });
       }
     } catch (error) {
-      toast({ title: ERROR_MESSAGES.invalidCredentials, status: 'error' });
+      toast({ title: t(ERROR_MESSAGES.invalidCredentials), status: 'error' });
     }
   };
 

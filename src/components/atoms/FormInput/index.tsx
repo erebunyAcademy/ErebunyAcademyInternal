@@ -10,6 +10,7 @@ import {
   InputRightElement,
   Text,
 } from '@chakra-ui/react';
+import { useTranslations } from 'next-intl';
 import EyeCloseIcon from '@/icons/eye_closed.svg';
 import EyeOpenIcon from '@/icons/eye_open.svg';
 
@@ -44,11 +45,12 @@ const FormInput: FC<FormInputProps> = ({
   ...rest
 }) => {
   const [isPasswordType, setIsPasswordType] = useState(true);
+  const t = useTranslations();
 
   return (
     <FormControl isInvalid={isInvalid} id={name}>
       <FormLabel fontWeight={600} marginBottom={4} lineHeight="20px" fontSize={14} color="#222">
-        {formLabelName}
+        {t(formLabelName)}
         {isRequired && (
           <Text as="span" color="#222">
             *
@@ -117,11 +119,11 @@ const FormInput: FC<FormInputProps> = ({
       </InputGroup>
       {!isInvalid ? (
         <FormHelperText fontWeight={400} color="#5b5b5b" marginTop={4}>
-          {formHelperText}
+          {t(formHelperText)}
         </FormHelperText>
       ) : (
         <FormErrorMessage color="#DF1414" fontWeight={400} marginTop={4}>
-          {formErrorMessage}
+          {t(formErrorMessage)}
         </FormErrorMessage>
       )}
     </FormControl>

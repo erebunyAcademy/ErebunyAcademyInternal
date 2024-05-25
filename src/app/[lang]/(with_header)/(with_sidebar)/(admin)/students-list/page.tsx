@@ -6,20 +6,17 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { createColumnHelper, SortingState } from '@tanstack/react-table';
 import dayjs from 'dayjs';
 import Image from 'next/image';
-import { User } from 'next-auth';
 import { useTranslations } from 'next-intl';
 import { v4 as uuidv4 } from 'uuid';
 import { StudentService } from '@/api/services/student.service';
 import { UserService } from '@/api/services/user.service';
 import ActionButtons from '@/components/molecules/ActionButtons';
 import Modal from '@/components/molecules/Modal';
-import SharedAlertDialog from '@/components/molecules/Modals/SharedAlertDialog';
 import SearchTable from '@/components/organisms/SearchTable';
 import useDebounce from '@/hooks/useDebounce';
 import { ITEMS_PER_PAGE } from '@/utils/constants/common';
 import { generateAWSUrl } from '@/utils/helpers/aws';
 import { QUERY_KEY } from '@/utils/helpers/queryClient';
-import { Maybe } from '@/utils/models/common';
 import { StudentModel } from '@/utils/models/student';
 
 export default function Users() {
@@ -27,15 +24,8 @@ export default function Users() {
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const debouncedSearch = useDebounce(search);
-  const [selectedStudent, setSelectedStudent] = useState<Maybe<User>>(null);
   const [attachmentKey, setAttachmentKey] = useState('');
   const t = useTranslations();
-
-  const { isOpen, onOpen, onClose } = useDisclosure({
-    onClose() {
-      setSelectedStudent(null);
-    },
-  });
 
   const { data, isLoading, isPlaceholderData } = useQuery({
     queryKey: QUERY_KEY.allStudents(debouncedSearch, page),
@@ -53,10 +43,6 @@ export default function Users() {
     onOpen: openAttachmentModal,
     onClose: closeAttachmentModal,
   } = useDisclosure();
-
-  const { mutate: deleteUserById } = useMutation({
-    mutationFn: UserService.deleteStudentById,
-  });
 
   const { mutate: confirmUserById } = useMutation({
     mutationFn: UserService.confirmUserVerificationById,
@@ -171,14 +157,6 @@ export default function Users() {
             }}>
             {t('confirm')}
           </MenuItem>
-          <MenuItem
-            color="red"
-            onClick={() => {
-              onOpen();
-              setSelectedStudent(row.original as unknown as User);
-            }}>
-            {t('delete')}
-          </MenuItem>
         </ActionButtons>
       ),
       header: t('actions'),
@@ -209,20 +187,7 @@ export default function Users() {
         fetchNextPage={useCallback(() => setPage(prev => ++prev), [])}
         fetchPreviousPage={useCallback(() => setPage(prev => --prev), [])}
       />
-      {isOpen && (
-        <SharedAlertDialog
-          body={`${t('deleteQuestion')} ${selectedStudent?.firstName} ?`}
-          isOpen={isOpen}
-          title={t('deleteStudent')}
-          isLoading={isLoading}
-          deleteFn={() => {
-            if (selectedStudent?.id) {
-              deleteUserById(selectedStudent.id);
-            }
-          }}
-          onClose={onClose}
-        />
-      )}
+
       <Modal
         isOpen={isAttachmentModalOpen}
         onClose={closeAttachmentModal}

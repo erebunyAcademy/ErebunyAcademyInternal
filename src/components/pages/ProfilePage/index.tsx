@@ -28,7 +28,7 @@ import { ChangePasswordValidation, UserProfileFormValidation } from '@/utils/val
 const resolver = classValidatorResolver(UserProfileFormValidation);
 const changePasswordResolver = classValidatorResolver(ChangePasswordValidation);
 
-const Profile = () => {
+const Profile = ({ sessionUser }: { sessionUser: User }) => {
   const [localImage, setLocalImage] = useState<{ file: File; localUrl: string } | null>(null);
   const { data } = useSession();
 
@@ -43,13 +43,13 @@ const Profile = () => {
     formState: { errors, isDirty, isSubmitting },
   } = useForm<UserProfileFormValidation>({
     defaultValues: {
-      firstName: data?.user?.firstName || '',
-      lastName: data?.user?.lastName || '',
-      email: data?.user?.email || '',
-      state: data?.user?.state || '',
-      city: data?.user?.city || '',
-      country: data?.user?.country || 'Armenia',
-      address: data?.user?.address || '',
+      firstName: sessionUser?.firstName || '',
+      lastName: sessionUser?.lastName || '',
+      email: sessionUser?.email || '',
+      state: sessionUser?.state || '',
+      city: sessionUser?.city || '',
+      country: sessionUser?.country || 'Armenia',
+      address: sessionUser?.address || '',
     },
     resolver,
   });
@@ -383,15 +383,15 @@ const Profile = () => {
             render={({ field: { onChange, value, name } }) => (
               <FormInput
                 isRequired
-                isInvalid={!!changePasswordErrors[name]?.message}
-                name="Current Password"
+                isInvalid={!!changePasswordErrors.currentPassword?.message}
+                name={name}
                 type="password"
                 formLabelName={t('currentPassword')}
                 placeholder={t('currentPassword')}
                 value={value}
                 handleInputChange={onChange}
                 formHelperText={t('passwordValidation')}
-                formErrorMessage={t(changePasswordErrors[name]?.message)}
+                formErrorMessage={t(changePasswordErrors.currentPassword?.message)}
               />
             )}
           />
@@ -401,15 +401,15 @@ const Profile = () => {
             render={({ field: { onChange, value, name } }) => (
               <FormInput
                 isRequired
-                isInvalid={!!changePasswordErrors[name]?.message}
-                name="New Password"
+                isInvalid={!!changePasswordErrors.newPassword?.message}
+                name={name}
                 type="password"
                 formLabelName={t('newPassword')}
                 placeholder={t('newPassword')}
                 value={value}
                 handleInputChange={onChange}
                 formHelperText={t('passwordValidation')}
-                formErrorMessage={t(changePasswordErrors[name]?.message)}
+                formErrorMessage={t(changePasswordErrors.newPassword?.message)}
               />
             )}
           />
@@ -419,15 +419,15 @@ const Profile = () => {
             render={({ field: { onChange, value, name } }) => (
               <FormInput
                 isRequired
-                isInvalid={!!changePasswordErrors[name]?.message}
-                name="Confirm Password"
+                isInvalid={!!changePasswordErrors.confirmPassword?.message}
+                name={name}
                 type="password"
                 formLabelName={t('confirmPassword')}
                 placeholder={t('confirmPassword')}
                 value={value}
                 handleInputChange={onChange}
                 formHelperText={t('passwordValidation')}
-                formErrorMessage={t(changePasswordErrors[name]?.message)}
+                formErrorMessage={t(changePasswordErrors.confirmPassword?.message)}
               />
             )}
           />
