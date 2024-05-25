@@ -96,7 +96,7 @@ export class AuthResolver {
         userId: user.id,
         facultyId,
         studentGradeId,
-        studentGradeGroupId,
+        studentGradeGroupId: studentGradeGroupId || null,
       },
     });
 

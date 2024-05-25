@@ -40,7 +40,6 @@ model Teacher {
   scientificActivity String?          @db.VarChar(60)
   userId             String           @unique
   user               User             @relation(fields: [userId], references: [id], onDelete: Cascade)
-  schedules          Schedule[]
   subjectTeachers    SubjectTeacher[]
 
   createdAt DateTime @default(now()) @db.Timestamp(0)
@@ -57,35 +56,6 @@ model Admin {
   updatedAt DateTime @updatedAt @db.Timestamp(0)
 }
 
-model Schedule {
-  id                String            @id @default(uuid())
-  title             String?           @db.VarChar(60)
-  description       String?           @db.Text
-  academicYear      String?           @db.VarChar(60)
-  place             String?           @db.VarChar(60)
-  teacherId         Int
-  classDurationHour Float
-  examType          ExamTypeEnum
-  teacher           Teacher[]
-  scheduleSubjects  ScheduleSubject[]
-
-  createdAt DateTime @default(now()) @db.Timestamp(0)
-  updatedAt DateTime @updatedAt @db.Timestamp(0)
-}
-
-model ScheduleSubject {
-  id         String   @id @default(uuid())
-  scheduleId String
-  subjectId  String
-  schedule   Schedule @relation(fields: [scheduleId], references: [id])
-  subject    Subject  @relation(fields: [subjectId], references: [id])
-
-  createdAt DateTime @default(now()) @db.Timestamp(0)
-  updatedAt DateTime @updatedAt @db.Timestamp(0)
-
-  @@unique([scheduleId, subjectId], name: "scheduleSubjectId")
-}
-
 model Student {
   id                  String             @id @default(uuid())
   studentGrade        StudentGrade       @relation(fields: [studentGradeId], references: [id])
@@ -93,7 +63,7 @@ model Student {
   faculty             Faculty            @relation(fields: [facultyId], references: [id])
   facultyId           String
   studentGradeGroup   StudentGradeGroup? @relation(fields: [studentGradeGroupId], references: [id])
-  studentGradeGroupId String
+  studentGradeGroupId String?
   user                User               @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId              String             @unique
   studentExams        StudentExam[]
@@ -104,11 +74,10 @@ model Student {
 
 model Faculty {
   id            String         @id @default(uuid())
-  title         String?        @db.VarChar(60)
+  title         String         @db.VarChar(60)
   description   String?        @db.VarChar(60)
   students      Student[]
   studentGrades StudentGrade[]
-  exams         Exam[]
 
   createdAt DateTime @default(now()) @db.Timestamp(0)
   updatedAt DateTime @updatedAt @db.Timestamp(0)
@@ -129,14 +98,13 @@ model StudentGradeSubject {
 
 model StudentGrade {
   id                   String                @id @default(uuid())
-  title                String?               @db.VarChar(60)
+  title                String                @db.VarChar(60)
   description          String?               @db.VarChar(60)
   groups               StudentGradeGroup[]
   studentGradeSubjects StudentGradeSubject[]
   faculty              Faculty?              @relation(fields: [facultyId], references: [id])
   facultyId            String?
   students             Student[]
-  exams                Exam[]
 
   createdAt DateTime @default(now()) @db.Timestamp(0)
   updatedAt DateTime @updatedAt @db.Timestamp(0)
@@ -144,12 +112,11 @@ model StudentGrade {
 
 model StudentGradeGroup {
   id             String        @id @default(uuid())
-  title          String?       @db.VarChar(60)
+  title          String        @db.VarChar(60)
   description    String?       @db.VarChar(60)
   studentGradeId String?
   studentGrade   StudentGrade? @relation(fields: [studentGradeId], references: [id])
   students       Student[]
-  exams          Exam[]
 
   createdAt DateTime @default(now()) @db.Timestamp(0)
   updatedAt DateTime @updatedAt @db.Timestamp(0)
@@ -157,12 +124,24 @@ model StudentGradeGroup {
 
 model Subject {
   id                   String                @id @default(uuid())
-  title                String?               @db.VarChar(60)
+  title                String                @db.VarChar(60)
   description          String?               @db.VarChar(60)
   studentGradeSubjects StudentGradeSubject[]
   subjectTeacher       SubjectTeacher[]
   attachments          Attachment[]
-  scheduleSubject      ScheduleSubject[]
+  subjectCategories    SubjectCategory[]
+
+  createdAt DateTime @default(now()) @db.Timestamp(0)
+  updatedAt DateTime @updatedAt @db.Timestamp(0)
+}
+
+model SubjectCategory {
+  id            String         @id @default(uuid())
+  title         String         @db.VarChar(60)
+  description   String?        @db.VarChar(60)
+  subject       Subject?       @relation(fields: [subjectId], references: [id])
+  subjectId     String?
+  testQuestions TestQuestion[]
 
   createdAt DateTime @default(now()) @db.Timestamp(0)
   updatedAt DateTime @updatedAt @db.Timestamp(0)
@@ -211,15 +190,9 @@ model StudentExam {
 }
 
 model Exam {
-  id                  String             @id @default(uuid())
-  facultyId           String?
-  faculty             Faculty?           @relation(fields: [facultyId], references: [id])
-  studentExams        StudentExam[]
-  studentGradeGroup   StudentGradeGroup? @relation(fields: [studentGradeGroupId], references: [id])
-  studentGrade        StudentGrade?      @relation(fields: [studentGradeId], references: [id])
-  studentGradeId      String?
-  studentGradeGroupId String?
-  examLanguages       ExamTranslation[]
+  id            String            @id @default(uuid())
+  studentExams  StudentExam[]
+  examLanguages ExamTranslation[]
 
   updatedAt DateTime @updatedAt @db.Timestamp(0)
   createdAt DateTime @default(now()) @db.Timestamp(0)
@@ -236,6 +209,8 @@ model ExamTranslation {
 
   updatedAt DateTime @updatedAt @db.Timestamp(0)
   createdAt DateTime @default(now()) @db.Timestamp(0)
+
+  @@unique([examId, language], name: "examLanguage")
 }
 
 model TestQuestion {
@@ -247,9 +222,12 @@ model TestQuestion {
   skillLevel        TestQuestionLevelEnum
   examTranslation   ExamTranslation?      @relation(fields: [examTranslationId], references: [id])
   examTranslationId String?
+  language          LanguageTypeEnum
 
-  createdAt DateTime @default(now()) @db.Timestamp(0)
-  updatedAt DateTime @updatedAt @db.Timestamp(0)
+  createdAt         DateTime         @default(now()) @db.Timestamp(0)
+  updatedAt         DateTime         @updatedAt @db.Timestamp(0)
+  subjectCategory   SubjectCategory? @relation(fields: [subjectCategoryId], references: [id])
+  subjectCategoryId String?
 }
 
 model Option {

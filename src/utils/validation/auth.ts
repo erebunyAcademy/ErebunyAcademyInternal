@@ -1,4 +1,12 @@
-import { IsEmail, IsNotEmpty, IsNumber, IsString, Length, ValidateNested } from 'class-validator';
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+  Length,
+  ValidateNested,
+} from 'class-validator';
 
 export class SignInFormValidation {
   @IsEmail()
@@ -76,8 +84,8 @@ export class StudentSignUpValidation extends UserSignupValidation {
   studentGradeId: string;
 
   @IsString()
-  @IsNotEmpty({ message: 'Student grade group is required' })
-  studentGradeGroupId: string;
+  @IsOptional()
+  studentGradeGroupId?: string;
 
   @IsString()
   @IsNotEmpty({ message: 'Faculty is required' })

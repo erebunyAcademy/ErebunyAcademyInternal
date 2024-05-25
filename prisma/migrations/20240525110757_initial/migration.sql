@@ -110,7 +110,7 @@ CREATE TABLE "Student" (
 -- CreateTable
 CREATE TABLE "Faculty" (
     "id" TEXT NOT NULL,
-    "title" VARCHAR(60),
+    "title" VARCHAR(60) NOT NULL,
     "description" VARCHAR(60),
     "createdAt" TIMESTAMP(0) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(0) NOT NULL,
@@ -132,7 +132,7 @@ CREATE TABLE "StudentGradeSubject" (
 -- CreateTable
 CREATE TABLE "StudentGrade" (
     "id" TEXT NOT NULL,
-    "title" VARCHAR(60),
+    "title" VARCHAR(60) NOT NULL,
     "description" VARCHAR(60),
     "facultyId" TEXT,
     "createdAt" TIMESTAMP(0) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -144,7 +144,7 @@ CREATE TABLE "StudentGrade" (
 -- CreateTable
 CREATE TABLE "StudentGradeGroup" (
     "id" TEXT NOT NULL,
-    "title" VARCHAR(60),
+    "title" VARCHAR(60) NOT NULL,
     "description" VARCHAR(60),
     "studentGradeId" TEXT,
     "createdAt" TIMESTAMP(0) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -156,7 +156,7 @@ CREATE TABLE "StudentGradeGroup" (
 -- CreateTable
 CREATE TABLE "Subject" (
     "id" TEXT NOT NULL,
-    "title" VARCHAR(60),
+    "title" VARCHAR(60) NOT NULL,
     "description" VARCHAR(60),
     "createdAt" TIMESTAMP(0) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(0) NOT NULL,
@@ -359,7 +359,7 @@ ALTER TABLE "Exam" ADD CONSTRAINT "Exam_studentGradeGroupId_fkey" FOREIGN KEY ("
 ALTER TABLE "Exam" ADD CONSTRAINT "Exam_studentGradeId_fkey" FOREIGN KEY ("studentGradeId") REFERENCES "StudentGrade"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "ExamTranslation" ADD CONSTRAINT "ExamTranslation_examId_fkey" FOREIGN KEY ("examId") REFERENCES "Exam"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "ExamTranslation" ADD CONSTRAINT "ExamTranslation_examId_fkey" FOREIGN KEY ("examId") REFERENCES "Exam"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "TestQuestion" ADD CONSTRAINT "TestQuestion_examTranslationId_fkey" FOREIGN KEY ("examTranslationId") REFERENCES "ExamTranslation"("id") ON DELETE SET NULL ON UPDATE CASCADE;
