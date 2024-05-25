@@ -1,14 +1,13 @@
 export const ERROR_MESSAGES = {
-  somethingWentWrong: 'Something went wrong',
-  verifyYourEmail: 'Please verify your email',
-  invalidCredentials: 'Email or password is incorrect. Please enter valid credentials.',
-  userAlreadyExists: 'A user with this email address already exists.',
+  somethingWentWrong: 'somethingWentWrong',
+  verifyYourEmail: 'verifyYourEmail',
+  invalidCredentials: 'invalidCredentials',
+  userAlreadyExists: 'userAlreadyExists',
   userNotFound: 'userNotFound',
-  invalidNumber: 'Invalid number',
-  passwordDontMatch: "Password don't match",
-  invalidPassword: 'Invalid password',
-  contactCollegeRepresentative:
-    'Please contact college representative to allow confirm your account',
+  invalidNumber: 'invalidNumber',
+  passwordDontMatch: 'passwordDontMatch',
+  invalidPassword: 'invalidPassword',
+  contactCollegeRepresentative: 'contactCollegeRepresentative',
 };
 
 export const ITEMS_PER_PAGE = 20;

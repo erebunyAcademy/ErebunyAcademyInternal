@@ -4,7 +4,6 @@ import { MenuItem, useDisclosure } from '@chakra-ui/react';
 import { classValidatorResolver } from '@hookform/resolvers/class-validator';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { createColumnHelper, SortingState } from '@tanstack/react-table';
-import dayjs from 'dayjs';
 import { useTranslations } from 'next-intl';
 import { Controller, useForm } from 'react-hook-form';
 import { v4 as uuidv4 } from 'uuid';
@@ -35,7 +34,7 @@ const Subject = () => {
     handleSubmit,
     reset,
     setValue,
-    formState: { errors },
+    formState: { errors, isDirty },
   } = useForm<CreateEditSubjectValidation>({
     resolver,
     defaultValues: {
@@ -130,14 +129,7 @@ const Subject = () => {
       cell: info => info.getValue(),
       header: t('description'),
     }),
-    columnHelper.accessor('createdAt', {
-      id: uuidv4(),
-      cell: info => {
-        const currentDate = dayjs(info.getValue());
-        return currentDate.format('YYYY-MM-DD');
-      },
-      header: t('createdAt'),
-    }),
+
     columnHelper.accessor('id', {
       id: uuidv4(),
       cell: ({ row }) => (
@@ -212,11 +204,11 @@ const Subject = () => {
         onClose={closeCreateEditModal}
         title={t('subject')}
         primaryAction={handleSubmit(onSubmitHandler)}
+        isDisabled={!isDirty}
         actionText={selectedSubject ? t('update') : t('create')}>
         <Controller
           name="title"
           control={control}
-          rules={{ required: 'Subject name is required' }}
           render={({ field: { onChange, value, name } }) => (
             <FormInput
               isRequired
@@ -227,14 +219,13 @@ const Subject = () => {
               value={value}
               placeholder={t('enterTitle')}
               handleInputChange={onChange}
-              formErrorMessage={errors.title?.message}
+              formErrorMessage={t(errors.title?.message)}
             />
           )}
         />
         <Controller
           name="description"
           control={control}
-          rules={{ required: 'Subject description is required' }}
           render={({ field: { onChange, value, name } }) => (
             <FormInput
               isInvalid={!!errors.description?.message}

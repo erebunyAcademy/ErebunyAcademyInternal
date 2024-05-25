@@ -43,67 +43,68 @@ export class ExamsResolver {
   }
 
   static async createExam(input: ExamValidation) {
-    const {
-      title,
-      description,
-      facultyId,
-      studentGradeId,
-      studentGradeGroupId,
-      studentIds,
-      questions,
-    } = input;
+    console.log({ input });
+    // const {
+    //   title,
+    //   description,
+    //   facultyId,
+    //   studentGradeId,
+    //   studentGradeGroupId,
+    //   studentIds,
+    //   questions,
+    // } = input;
 
-    return await prisma.$transaction(async prisma => {
-      const exam = await prisma.exam.create({
-        data: {
-          facultyId,
-          studentGradeId,
-          studentGradeGroupId,
-          examLanguages: {
-            create: {
-              title,
-              description,
-              language: 'AM', // todo
-              testQuestions: {
-                create: questions.map(question => ({
-                  title: question.questionText,
-                  type: question.questionType,
-                  skillLevel: question.skillLevel,
-                  options: {
-                    create: question.answers.map(answer => ({
-                      title: answer.title,
-                      isRightAnswer: answer.isRightAnswer,
-                    })),
-                  },
-                })),
-              },
-            },
-          },
-        },
-        include: {
-          examLanguages: {
-            select: {
-              testQuestions: {
-                include: {
-                  options: true,
-                },
-              },
-            },
-          },
-        },
-      });
+    // return await prisma.$transaction(async prisma => {
+    //   const exam = await prisma.exam.create({
+    //     data: {
+    //       facultyId,
+    //       studentGradeId,
+    //       studentGradeGroupId,
+    //       examLanguages: {
+    //         create: {
+    //           title,
+    //           description,
+    //           language: 'AM', // todo
+    //           testQuestions: {
+    //             create: questions.map(question => ({
+    //               title: question.questionText,
+    //               type: question.questionType,
+    //               skillLevel: question.skillLevel,
+    //               options: {
+    //                 create: question.answers.map(answer => ({
+    //                   title: answer.title,
+    //                   isRightAnswer: answer.isRightAnswer,
+    //                 })),
+    //               },
+    //             })),
+    //           },
+    //         },
+    //       },
+    //     },
+    //     include: {
+    //       examLanguages: {
+    //         select: {
+    //           testQuestions: {
+    //             include: {
+    //               options: true,
+    //             },
+    //           },
+    //         },
+    //       },
+    //     },
+    //   });
 
-      for (const studentId of studentIds) {
-        await prisma.studentExam.create({
-          data: {
-            studentId,
-            examId: exam.id,
-          },
-        });
-      }
+    //   for (const studentId of studentIds) {
+    //     await prisma.studentExam.create({
+    //       data: {
+    //         studentId,
+    //         examId: exam.id,
+    //       },
+    //     });
+    //   }
 
-      return exam;
-    });
+    //   return exam;
+    // });
   }
 
   static async getExamById(id: string) {
@@ -135,61 +136,62 @@ export class ExamsResolver {
   }
 
   static async getExamDataById(examId: string) {
-    return prisma.exam.findUnique({
-      where: {
-        id: examId,
-      },
-      select: {
-        id: true,
-        studentExams: {
-          select: {
-            studentId: true,
-          },
-        },
-        faculty: {
-          select: {
-            id: true,
-            exams: {
-              select: {
-                id: true,
-                studentExams: {
-                  select: {
-                    student: {
-                      select: {
-                        id: true,
-                      },
-                    },
-                  },
-                },
-              },
-            },
-          },
-        },
-        studentGradeId: true,
-        studentGradeGroupId: true,
-        examLanguages: {
-          where: {
-            language: 'AM', // todo
-          },
-          select: {
-            title: true,
-            description: true,
-            language: true,
-            testQuestions: {
-              select: {
-                id: true,
-                title: true,
-                options: {
-                  select: {
-                    id: true,
-                    isRightAnswer: true,
-                  },
-                },
-              },
-            },
-          },
-        },
-      },
-    });
+    console.log({ examId });
+    // return prisma.exam.findUnique({
+    //   where: {
+    //     id: examId,
+    //   },
+    //   select: {
+    //     id: true,
+    //     studentExams: {
+    //       select: {
+    //         studentId: true,
+    //       },
+    //     },
+    //     faculty: {
+    //       select: {
+    //         id: true,
+    //         exams: {
+    //           select: {
+    //             id: true,
+    //             studentExams: {
+    //               select: {
+    //                 student: {
+    //                   select: {
+    //                     id: true,
+    //                   },
+    //                 },
+    //               },
+    //             },
+    //           },
+    //         },
+    //       },
+    //     },
+    //     studentGradeId: true,
+    //     studentGradeGroupId: true,
+    //     examLanguages: {
+    //       where: {
+    //         language: 'AM', // todo
+    //       },
+    //       select: {
+    //         title: true,
+    //         description: true,
+    //         language: true,
+    //         testQuestions: {
+    //           select: {
+    //             id: true,
+    //             title: true,
+    //             options: {
+    //               select: {
+    //                 id: true,
+    //                 isRightAnswer: true,
+    //               },
+    //             },
+    //           },
+    //         },
+    //       },
+    //     },
+    //   },
+    // });
   }
 }

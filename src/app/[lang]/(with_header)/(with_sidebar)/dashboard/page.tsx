@@ -60,7 +60,7 @@ const Dashboard = async () => {
           fontWeight={700}
           color="#1f2733"
           m="0 0 30px 10px">
-          Profile Information
+          {t('profileInformation')}
         </Text>
         <Flex>
           <UnorderedList>

@@ -23,7 +23,9 @@ const TeacherSignUp = ({ lang }: { lang: Locale }) => {
   const {
     control,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, 
+      // isValid 
+    },
   } = useForm<TeacherSignUpValidation>({
     resolver,
     defaultValues: {
@@ -79,6 +81,7 @@ const TeacherSignUp = ({ lang }: { lang: Locale }) => {
                 formLabelName={t('firstName')}
                 value={value}
                 handleInputChange={onChange}
+                formErrorMessage={t(errors.firstName?.message)}
               />
             )}
           />
@@ -95,6 +98,7 @@ const TeacherSignUp = ({ lang }: { lang: Locale }) => {
                 formLabelName={t('lastName')}
                 value={value}
                 handleInputChange={onChange}
+                formErrorMessage={t(errors.lastName?.message)}
               />
             )}
           />
@@ -114,6 +118,7 @@ const TeacherSignUp = ({ lang }: { lang: Locale }) => {
                 formLabelName={t('email')}
                 value={value}
                 handleInputChange={onChange}
+                formErrorMessage={t(errors.email?.message)}
               />
             )}
           />
@@ -124,12 +129,13 @@ const TeacherSignUp = ({ lang }: { lang: Locale }) => {
               <FormInput
                 isRequired
                 placeholder={t('profession')}
-                isInvalid={!!errors.firstName?.message}
-                name="firstName"
+                isInvalid={!!errors.profession?.message}
+                name="profession"
                 type="text"
                 formLabelName={t('profession')}
                 value={value}
                 handleInputChange={onChange}
+                formErrorMessage={t(errors.profession?.message)}
               />
             )}
           />
@@ -143,12 +149,13 @@ const TeacherSignUp = ({ lang }: { lang: Locale }) => {
               <FormInput
                 isRequired
                 placeholder={t('workPlace')}
-                isInvalid={!!errors.firstName?.message}
+                isInvalid={!!errors.workPlace?.message}
                 name={name}
                 type="text"
                 formLabelName={t('workPlace')}
                 value={value}
                 handleInputChange={onChange}
+                formErrorMessage={t(errors.workPlace?.message)}
               />
             )}
           />
@@ -159,12 +166,13 @@ const TeacherSignUp = ({ lang }: { lang: Locale }) => {
               <FormInput
                 isRequired
                 placeholder={t('scientificActivity')}
-                isInvalid={!!errors.firstName?.message}
+                isInvalid={!!errors.scientificActivity?.message}
                 name={name}
                 type="text"
                 formLabelName={t('scientificActivity')}
                 value={value}
                 handleInputChange={onChange}
+                formErrorMessage={t(errors.scientificActivity?.message)}
               />
             )}
           />
@@ -175,12 +183,15 @@ const TeacherSignUp = ({ lang }: { lang: Locale }) => {
           render={({ field: { onChange, value, name } }) => (
             <SelectLabel
               name={name}
+              isRequired
+              isInvalid={!!errors.teachingSubjectId?.message}
               options={data || []}
               labelName={t('teachingSubject')}
               valueLabel="id"
               nameLabel="title"
               onChange={onChange}
               value={value}
+              formErrorMessage={t(errors.teachingSubjectId?.message)}
             />
           )}
         />
@@ -199,6 +210,7 @@ const TeacherSignUp = ({ lang }: { lang: Locale }) => {
                 handleInputChange={onChange}
                 type="password"
                 formHelperText={t('passwordValidation')}
+                formErrorMessage={t(errors.password?.message)}
               />
             )}
           />
@@ -215,13 +227,18 @@ const TeacherSignUp = ({ lang }: { lang: Locale }) => {
                 value={value}
                 handleInputChange={onChange}
                 type="password"
+                formErrorMessage={t(errors.password?.message)}
               />
             )}
           />
         </Stack>
       </VStack>
       <VStack spacing={16} paddingTop={48}>
-        <Button w={'50%'} onClick={handleSubmit(onTeacherSubmit)}>
+        <Button
+          w={'50%'}
+          onClick={handleSubmit(onTeacherSubmit)}
+          // isDisabled={!isValid}
+        >
           {t('signUp')}
         </Button>
       </VStack>

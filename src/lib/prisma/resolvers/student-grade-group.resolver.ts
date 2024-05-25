@@ -16,7 +16,7 @@ export class StudentGradeGroupResolver {
         where: {
           OR: [{ title: { contains: search, mode: 'insensitive' } }],
         },
-        select: { id: true, title: true, description: true, createdAt: true, studentGradeId: true },
+        select: { id: true, title: true, description: true, studentGradeId: true },
         orderBy: sorting ? orderBy(sorting) : undefined,
         skip,
         take,

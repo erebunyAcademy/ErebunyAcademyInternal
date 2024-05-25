@@ -18,6 +18,7 @@ const Signup = ({ params }: { params: { lang: Locale } }) => {
     <AuthBox data={authBoxProps(params.lang).data} boxProps={authBoxProps(params.lang).boxProps}>
       <Box pb={{ base: '20px', sm: '32px' }}>
         <SelectLabel
+          isRequired
           name={'userType'}
           options={[{ name: UserRoleEnum.STUDENT }, { name: UserRoleEnum.TEACHER }]}
           labelName={t('userType')}

@@ -83,7 +83,10 @@ const StudentSignUp = ({ lang }: { lang: Locale }) => {
   const {
     control,
     handleSubmit,
-    formState: { errors },
+    formState: {
+      errors,
+      //  isValid
+    },
   } = useForm<StudentSignUpValidation>({
     resolver,
     defaultValues: {
@@ -139,7 +142,7 @@ const StudentSignUp = ({ lang }: { lang: Locale }) => {
                 formLabelName={t('firstName')}
                 value={value}
                 handleInputChange={onChange}
-                formErrorMessage={errors.firstName?.message}
+                formErrorMessage={t(errors.firstName?.message)}
               />
             )}
           />
@@ -156,6 +159,7 @@ const StudentSignUp = ({ lang }: { lang: Locale }) => {
                 formLabelName={t('lastName')}
                 value={value}
                 handleInputChange={onChange}
+                formErrorMessage={t(errors.lastName?.message)}
               />
             )}
           />
@@ -174,6 +178,7 @@ const StudentSignUp = ({ lang }: { lang: Locale }) => {
                 formLabelName={t('email')}
                 value={value}
                 handleInputChange={onChange}
+                formErrorMessage={t(errors.email?.message)}
               />
             )}
           />
@@ -182,13 +187,16 @@ const StudentSignUp = ({ lang }: { lang: Locale }) => {
             control={control}
             render={({ field: { onChange, value, name } }) => (
               <SelectLabel
+                isRequired
                 name={name}
+                isInvalid={!!errors.studentGradeId?.message}
                 options={data?.studentGradeList || []}
-                labelName={t('studentGrade')}
+                labelName="Student Grade"
                 valueLabel="id"
                 nameLabel="title"
                 onChange={onChange}
                 value={value}
+                formErrorMessage={t(errors.studentGradeId?.message)}
               />
             )}
           />
@@ -196,17 +204,37 @@ const StudentSignUp = ({ lang }: { lang: Locale }) => {
 
         <Stack direction={{ base: 'column', md: 'row' }} gap={{ base: '16px', sm: '8px' }}>
           <Controller
+            name="facultyId"
+            control={control}
+            render={({ field: { onChange, value, name } }) => (
+              <SelectLabel
+                isRequired
+                name={name}
+                options={data?.facultyList || []}
+                labelName={t('faculty')}
+                valueLabel="id"
+                nameLabel="title"
+                onChange={onChange}
+                value={value}
+                isInvalid={!!errors.facultyId?.message}
+                formErrorMessage={errors.facultyId?.message}
+              />
+            )}
+          />
+          <Controller
             name="studentGradeGroupId"
             control={control}
             render={({ field: { onChange, value, name } }) => (
               <SelectLabel
                 name={name}
+                isInvalid={!!errors.studentGradeGroupId?.message}
                 options={data?.studentGradeGroupList || []}
-                labelName={t('courseGroup')}
+                labelName={t('studentGradeGroup')}
                 valueLabel="id"
                 nameLabel="title"
                 onChange={onChange}
-                value={value}
+                value={value || ''}
+                formErrorMessage={t(errors.studentGradeGroupId?.message)}
               />
             )}
           />
@@ -216,12 +244,15 @@ const StudentSignUp = ({ lang }: { lang: Locale }) => {
             render={({ field: { onChange, value, name } }) => (
               <SelectLabel
                 name={name}
+                isRequired
+                isInvalid={!!errors.facultyId?.message}
                 options={data?.facultyList || []}
                 labelName={t('faculty')}
                 valueLabel="id"
                 nameLabel="title"
                 onChange={onChange}
                 value={value}
+                formErrorMessage={t(errors.facultyId?.message)}
               />
             )}
           />
@@ -242,6 +273,7 @@ const StudentSignUp = ({ lang }: { lang: Locale }) => {
                 handleInputChange={onChange}
                 type="password"
                 formHelperText={t('passwordValidation')}
+                formErrorMessage={t(errors.password?.message)}
               />
             )}
           />
@@ -258,6 +290,7 @@ const StudentSignUp = ({ lang }: { lang: Locale }) => {
                 value={value}
                 handleInputChange={onChange}
                 type="password"
+                formErrorMessage={t(errors.password?.message)}
               />
             )}
           />
@@ -309,7 +342,7 @@ const StudentSignUp = ({ lang }: { lang: Locale }) => {
                   backgroundColor: '#fff',
                 }}
               />
-              {t('uploadDocument')}
+              {t('uploadDocument')}*
             </ChakraButton>
           </Box>
           {localImage?.localUrl && (
@@ -317,7 +350,6 @@ const StudentSignUp = ({ lang }: { lang: Locale }) => {
               position="relative"
               width="200px"
               height="150px"
-              border="1px solid #ccc"
               borderRadius="8px"
               ml="30px"
               overflow="hidden"
@@ -327,7 +359,7 @@ const StudentSignUp = ({ lang }: { lang: Locale }) => {
                 alt={localImage?.file.name || ''}
                 fill
                 style={{
-                  objectFit: 'cover',
+                  objectFit: 'contain',
                 }}
               />
               <Text
@@ -351,7 +383,12 @@ const StudentSignUp = ({ lang }: { lang: Locale }) => {
         </VStack>
       </VStack>
       <VStack spacing={16} paddingTop={48}>
-        <Button w={'50%'} onClick={handleSubmit(onStudentSubmit)} isLoading={isPending}>
+        <Button
+          w={'50%'}
+          onClick={handleSubmit(onStudentSubmit)}
+          isLoading={isPending}
+          // isDisabled={!isValid}
+        >
           {t('signUp')}
         </Button>
       </VStack>
