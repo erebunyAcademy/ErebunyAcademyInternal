@@ -1,4 +1,4 @@
-import { FC, useRef } from 'react';
+import { FC, ReactNode, useRef } from 'react';
 import {
   AlertDialog,
   AlertDialogBody,
@@ -16,7 +16,7 @@ interface SharedAlertDialogProps {
   title: string | React.ReactNode;
   onClose: () => void;
   deleteFn: () => void;
-  body: string;
+  body: ReactNode | string;
 }
 
 const SharedAlertDialog: FC<SharedAlertDialogProps> = ({

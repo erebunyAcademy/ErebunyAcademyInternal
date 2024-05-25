@@ -23,7 +23,6 @@ import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { UserService } from '@/api/services/user.service';
 import { FormInput } from '@/components/atoms';
 import SelectLabel from '@/components/atoms/SelectLabel';
-import ExamsUploadByExcel from '@/components/organisms/ExamsUploadByExcel';
 import { generateUserAvatar } from '@/utils/helpers/aws';
 import { ChangePasswordValidation, UserProfileFormValidation } from '@/utils/validation/user';
 
@@ -140,7 +139,6 @@ const Profile = () => {
       width="700px"
       margin="0 auto"
       p={{ base: '20px 16px 30px 16px', md: '96px 16px 159px 16px', xl: '96px 0 159px 0' }}>
-      <ExamsUploadByExcel />
       <Text
         display={{ base: 'none', sm: 'block' }}
         textAlign="center"

@@ -1,4 +1,4 @@
-import { ChangeEventHandler, FC, memo, MouseEventHandler, useCallback, useState } from 'react';
+import { ChangeEventHandler, FC, memo, useCallback } from 'react';
 import { Box, Button, Input, useToast } from '@chakra-ui/react';
 import * as XLSX from 'xlsx';
 import { Maybe } from '@/utils/models/common';
@@ -18,11 +18,11 @@ interface Props {
 }
 
 const ExcelUpload: FC<Props> = ({ setExcelData, setValues }) => {
-  const [excelFile, setExcelFile] = useState<FileReader['result']>(null);
   const toast = useToast();
 
   const handleFile: ChangeEventHandler<HTMLInputElement> = useCallback(
     e => {
+      e.preventDefault();
       if (!e.target.files?.length) {
         toast({ title: 'Please select your file', status: 'warning' });
         return;
@@ -31,7 +31,7 @@ const ExcelUpload: FC<Props> = ({ setExcelData, setValues }) => {
 
       if (!fileTypes.includes(selectedFile.type)) {
         toast({ title: 'Please select only excel file types', status: 'error' });
-        setExcelFile(null);
+
         return;
       }
 
@@ -39,40 +39,31 @@ const ExcelUpload: FC<Props> = ({ setExcelData, setValues }) => {
       reader.readAsArrayBuffer(selectedFile);
       reader.onload = e => {
         if (e.target?.result) {
-          setExcelFile(e.target.result);
+          const excelFile = e.target?.result;
+
+          const workbook = XLSX.read(excelFile, { type: 'buffer' });
+          const worksheetName = workbook.SheetNames[0];
+          const worksheet = workbook.Sheets[worksheetName];
+          const data = XLSX.utils.sheet_to_json(worksheet, { defval: null });
+          const convertedDataKeys = data.flatMap(item => Object.keys(item as {}));
+          const uniqueKeys = Array.from(new Set(convertedDataKeys)).filter(
+            key => !key.startsWith('__EMPTY'),
+          );
+
+          if (!data.length) {
+            return toast({ title: 'You have imported an empty file', status: 'error' });
+          }
+          setExcelData(data as DataType);
+          setValues(uniqueKeys);
         } else {
           toast({ title: 'Something went wrong', status: 'error' });
-          setExcelFile(null);
         }
       };
     },
-    [toast],
+    [setExcelData, setValues, toast],
   );
 
-  const handleFileSubmit: MouseEventHandler<HTMLButtonElement> = useCallback(
-    e => {
-      e.preventDefault();
-      if (!excelFile) {
-        return toast({ title: 'Something went wrong', status: 'error' });
-      }
-
-      const workbook = XLSX.read(excelFile, { type: 'buffer' });
-      const worksheetName = workbook.SheetNames[0];
-      const worksheet = workbook.Sheets[worksheetName];
-      const data = XLSX.utils.sheet_to_json(worksheet, { defval: null });
-      const convertedDataKeys = data.flatMap(item => Object.keys(item as {}));
-      const uniqueKeys = Array.from(new Set(convertedDataKeys)).filter(
-        key => !key.startsWith('__EMPTY'),
-      );
-
-      setExcelData(data as DataType);
-      if (!data.length) {
-        return toast({ title: 'You have imported an empty file', status: 'error' });
-      }
-      setValues(uniqueKeys);
-    },
-    [excelFile, setExcelData, setValues, toast],
-  );
+  const handleFileSubmit = useCallback(() => {}, []);
 
   return (
     <Box>
