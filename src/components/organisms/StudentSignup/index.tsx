@@ -323,7 +323,6 @@ const StudentSignUp = ({ lang }: { lang: Locale }) => {
               position="relative"
               width="200px"
               height="150px"
-              border="1px solid #ccc"
               borderRadius="8px"
               ml="30px"
               overflow="hidden"
@@ -333,7 +332,7 @@ const StudentSignUp = ({ lang }: { lang: Locale }) => {
                 alt={localImage?.file.name || ''}
                 fill
                 style={{
-                  objectFit: 'cover',
+                  objectFit: 'contain',
                 }}
               />
               <Text

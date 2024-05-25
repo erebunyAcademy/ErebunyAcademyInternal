@@ -16,7 +16,7 @@ export class SubjectResolver {
         where: {
           OR: [{ title: { contains: search, mode: 'insensitive' } }],
         },
-        select: { id: true, title: true, description: true, createdAt: true },
+        select: { id: true, title: true, description: true },
         orderBy: sorting ? orderBy(sorting) : undefined,
         skip,
         take,

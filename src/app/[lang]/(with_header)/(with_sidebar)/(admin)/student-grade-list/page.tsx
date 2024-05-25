@@ -4,7 +4,6 @@ import { MenuItem, useDisclosure } from '@chakra-ui/react';
 import { classValidatorResolver } from '@hookform/resolvers/class-validator';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { createColumnHelper, SortingState } from '@tanstack/react-table';
-import dayjs from 'dayjs';
 import { useTranslations } from 'next-intl';
 import { Controller, useForm } from 'react-hook-form';
 import { v4 as uuidv4 } from 'uuid';
@@ -138,15 +137,6 @@ const StudentGrades = () => {
       id: uuidv4(),
       cell: info => info.getValue(),
       header: t('description'),
-    }),
-
-    columnHelper.accessor('createdAt', {
-      id: uuidv4(),
-      cell: info => {
-        const currentDate = dayjs(info.getValue());
-        return currentDate.format('YYYY-MM-DD');
-      },
-      header: t('createdAt'),
     }),
     columnHelper.accessor('id', {
       id: uuidv4(),
