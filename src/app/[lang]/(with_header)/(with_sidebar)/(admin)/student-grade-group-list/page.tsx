@@ -37,7 +37,7 @@ const StudentGradeGroup = () => {
     handleSubmit,
     reset,
     setValue,
-    formState: { errors },
+    formState: { errors, isDirty },
   } = useForm<CreateEditStudentGradeGroupValidation>({
     resolver,
     defaultValues: {
@@ -215,11 +215,11 @@ const StudentGradeGroup = () => {
         onClose={closeCreateEditModal}
         title={t('studentGradeGroup')}
         primaryAction={handleSubmit(onSubmitHandler)}
+        isDisabled={!isDirty}
         actionText={selectedStudentGradeGroup ? t('update') : t('create')}>
         <Controller
           name="title"
           control={control}
-          rules={{ required: 'Group name is required' }}
           render={({ field: { onChange, value, name } }) => (
             <FormInput
               isRequired
@@ -230,14 +230,13 @@ const StudentGradeGroup = () => {
               value={value}
               placeholder={t('enterTitle')}
               handleInputChange={onChange}
-              formErrorMessage={errors.title?.message}
+              formErrorMessage={t(errors.title?.message)}
             />
           )}
         />
         <Controller
           name="description"
           control={control}
-          rules={{ required: 'Group description is required' }}
           render={({ field: { onChange, value, name } }) => (
             <FormInput
               isInvalid={!!errors.description?.message}
@@ -257,12 +256,15 @@ const StudentGradeGroup = () => {
           render={({ field: { onChange, value, name } }) => (
             <SelectLabel
               name={name}
+              isRequired
               options={studentGradeQueryData || []}
               labelName={t('studentGrade')}
               valueLabel="id"
               nameLabel="title"
               onChange={onChange}
               value={value}
+              isInvalid={!!errors.studentGradeId?.message}
+              formErrorMessage={t(errors.studentGradeId?.message)}
             />
           )}
         />

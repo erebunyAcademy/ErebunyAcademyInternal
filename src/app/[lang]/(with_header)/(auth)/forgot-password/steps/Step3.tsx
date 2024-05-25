@@ -61,7 +61,7 @@ const Step3 = ({ lang }: { lang: Locale }) => {
             formLabelName={t('newPassword')}
             value={value}
             handleInputChange={onChange}
-            formErrorMessage={errors.newPassword?.message}
+            formErrorMessage={t(errors.newPassword?.message)}
           />
         )}
       />
@@ -78,7 +78,7 @@ const Step3 = ({ lang }: { lang: Locale }) => {
             formLabelName={t('confirmPassword')}
             value={value}
             handleInputChange={onChange}
-            formErrorMessage={errors.confirmPassword?.message}
+            formErrorMessage={t(errors.confirmPassword?.message)}
           />
         )}
       />

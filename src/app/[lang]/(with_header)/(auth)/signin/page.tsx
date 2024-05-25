@@ -66,8 +66,6 @@ const SignIn = ({ params }: { params: { lang: Locale } }) => {
     }
   }, [mutate, searchParams]);
 
-  // console.log(t("requiredField",{ field: errors.email?.message }), '**********');
-
   return (
     <AuthBox data={authBoxProps(params.lang).data} boxProps={authBoxProps(params.lang).boxProps}>
       {isSubmitting && <Loading isLoading={isSubmitting} />}
@@ -84,7 +82,7 @@ const SignIn = ({ params }: { params: { lang: Locale } }) => {
               value={value}
               isInvalid={!!errors.email?.message}
               handleInputChange={onChange}
-              formErrorMessage={errors.email?.message}
+              formErrorMessage={t(errors.email?.message)}
             />
           )}
         />
@@ -104,7 +102,7 @@ const SignIn = ({ params }: { params: { lang: Locale } }) => {
                 type="password"
                 formHelperText={t('passwordValidation')}
                 isInvalid={!!errors.password?.message}
-                formErrorMessage={errors.password?.message}
+                formErrorMessage={t(errors.password?.message)}
               />
             );
           }}

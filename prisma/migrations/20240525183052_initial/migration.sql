@@ -68,38 +68,11 @@ CREATE TABLE "Admin" (
 );
 
 -- CreateTable
-CREATE TABLE "Schedule" (
-    "id" TEXT NOT NULL,
-    "title" VARCHAR(60),
-    "description" TEXT,
-    "academicYear" VARCHAR(60),
-    "place" VARCHAR(60),
-    "teacherId" INTEGER NOT NULL,
-    "classDurationHour" DOUBLE PRECISION NOT NULL,
-    "examType" "ExamTypeEnum" NOT NULL,
-    "createdAt" TIMESTAMP(0) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(0) NOT NULL,
-
-    CONSTRAINT "Schedule_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "ScheduleSubject" (
-    "id" TEXT NOT NULL,
-    "scheduleId" TEXT NOT NULL,
-    "subjectId" TEXT NOT NULL,
-    "createdAt" TIMESTAMP(0) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(0) NOT NULL,
-
-    CONSTRAINT "ScheduleSubject_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
 CREATE TABLE "Student" (
     "id" TEXT NOT NULL,
     "studentGradeId" TEXT NOT NULL,
     "facultyId" TEXT NOT NULL,
-    "studentGradeGroupId" TEXT NOT NULL,
+    "studentGradeGroupId" TEXT,
     "userId" TEXT NOT NULL,
     "createdAt" TIMESTAMP(0) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(0) NOT NULL,
@@ -165,6 +138,18 @@ CREATE TABLE "Subject" (
 );
 
 -- CreateTable
+CREATE TABLE "SubjectCategory" (
+    "id" TEXT NOT NULL,
+    "title" VARCHAR(60) NOT NULL,
+    "description" VARCHAR(60),
+    "subjectId" TEXT,
+    "createdAt" TIMESTAMP(0) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(0) NOT NULL,
+
+    CONSTRAINT "SubjectCategory_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "SubjectTeacher" (
     "id" TEXT NOT NULL,
     "teacherId" TEXT NOT NULL,
@@ -205,9 +190,6 @@ CREATE TABLE "StudentExam" (
 -- CreateTable
 CREATE TABLE "Exam" (
     "id" TEXT NOT NULL,
-    "facultyId" TEXT,
-    "studentGradeId" TEXT,
-    "studentGradeGroupId" TEXT,
     "updatedAt" TIMESTAMP(0) NOT NULL,
     "createdAt" TIMESTAMP(0) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
@@ -235,8 +217,10 @@ CREATE TABLE "TestQuestion" (
     "type" "TestQuestionTypeEnum" NOT NULL,
     "skillLevel" "TestQuestionLevelEnum" NOT NULL,
     "examTranslationId" TEXT,
+    "language" "LanguageTypeEnum" NOT NULL,
     "createdAt" TIMESTAMP(0) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(0) NOT NULL,
+    "subjectCategoryId" TEXT,
 
     CONSTRAINT "TestQuestion_pkey" PRIMARY KEY ("id")
 );
@@ -251,12 +235,6 @@ CREATE TABLE "Option" (
     "updatedAt" TIMESTAMP(0) NOT NULL,
 
     CONSTRAINT "Option_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "_ScheduleToTeacher" (
-    "A" TEXT NOT NULL,
-    "B" TEXT NOT NULL
 );
 
 -- CreateIndex
@@ -275,9 +253,6 @@ CREATE UNIQUE INDEX "Teacher_userId_key" ON "Teacher"("userId");
 CREATE UNIQUE INDEX "Admin_userId_key" ON "Admin"("userId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "ScheduleSubject_scheduleId_subjectId_key" ON "ScheduleSubject"("scheduleId", "subjectId");
-
--- CreateIndex
 CREATE UNIQUE INDEX "Student_userId_key" ON "Student"("userId");
 
 -- CreateIndex
@@ -290,10 +265,7 @@ CREATE UNIQUE INDEX "SubjectTeacher_teacherId_subjectId_key" ON "SubjectTeacher"
 CREATE UNIQUE INDEX "StudentExam_examId_studentId_key" ON "StudentExam"("examId", "studentId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "_ScheduleToTeacher_AB_unique" ON "_ScheduleToTeacher"("A", "B");
-
--- CreateIndex
-CREATE INDEX "_ScheduleToTeacher_B_index" ON "_ScheduleToTeacher"("B");
+CREATE UNIQUE INDEX "ExamTranslation_examId_language_key" ON "ExamTranslation"("examId", "language");
 
 -- AddForeignKey
 ALTER TABLE "Teacher" ADD CONSTRAINT "Teacher_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -302,19 +274,13 @@ ALTER TABLE "Teacher" ADD CONSTRAINT "Teacher_userId_fkey" FOREIGN KEY ("userId"
 ALTER TABLE "Admin" ADD CONSTRAINT "Admin_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "ScheduleSubject" ADD CONSTRAINT "ScheduleSubject_scheduleId_fkey" FOREIGN KEY ("scheduleId") REFERENCES "Schedule"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "ScheduleSubject" ADD CONSTRAINT "ScheduleSubject_subjectId_fkey" FOREIGN KEY ("subjectId") REFERENCES "Subject"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
 ALTER TABLE "Student" ADD CONSTRAINT "Student_studentGradeId_fkey" FOREIGN KEY ("studentGradeId") REFERENCES "StudentGrade"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Student" ADD CONSTRAINT "Student_facultyId_fkey" FOREIGN KEY ("facultyId") REFERENCES "Faculty"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Student" ADD CONSTRAINT "Student_studentGradeGroupId_fkey" FOREIGN KEY ("studentGradeGroupId") REFERENCES "StudentGradeGroup"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Student" ADD CONSTRAINT "Student_studentGradeGroupId_fkey" FOREIGN KEY ("studentGradeGroupId") REFERENCES "StudentGradeGroup"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Student" ADD CONSTRAINT "Student_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -330,6 +296,9 @@ ALTER TABLE "StudentGrade" ADD CONSTRAINT "StudentGrade_facultyId_fkey" FOREIGN 
 
 -- AddForeignKey
 ALTER TABLE "StudentGradeGroup" ADD CONSTRAINT "StudentGradeGroup_studentGradeId_fkey" FOREIGN KEY ("studentGradeId") REFERENCES "StudentGrade"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "SubjectCategory" ADD CONSTRAINT "SubjectCategory_subjectId_fkey" FOREIGN KEY ("subjectId") REFERENCES "Subject"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "SubjectTeacher" ADD CONSTRAINT "SubjectTeacher_teacherId_fkey" FOREIGN KEY ("teacherId") REFERENCES "Teacher"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -350,25 +319,13 @@ ALTER TABLE "StudentExam" ADD CONSTRAINT "StudentExam_examId_fkey" FOREIGN KEY (
 ALTER TABLE "StudentExam" ADD CONSTRAINT "StudentExam_studentId_fkey" FOREIGN KEY ("studentId") REFERENCES "Student"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Exam" ADD CONSTRAINT "Exam_facultyId_fkey" FOREIGN KEY ("facultyId") REFERENCES "Faculty"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Exam" ADD CONSTRAINT "Exam_studentGradeGroupId_fkey" FOREIGN KEY ("studentGradeGroupId") REFERENCES "StudentGradeGroup"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Exam" ADD CONSTRAINT "Exam_studentGradeId_fkey" FOREIGN KEY ("studentGradeId") REFERENCES "StudentGrade"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
 ALTER TABLE "ExamTranslation" ADD CONSTRAINT "ExamTranslation_examId_fkey" FOREIGN KEY ("examId") REFERENCES "Exam"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "TestQuestion" ADD CONSTRAINT "TestQuestion_examTranslationId_fkey" FOREIGN KEY ("examTranslationId") REFERENCES "ExamTranslation"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "TestQuestion" ADD CONSTRAINT "TestQuestion_subjectCategoryId_fkey" FOREIGN KEY ("subjectCategoryId") REFERENCES "SubjectCategory"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "Option" ADD CONSTRAINT "Option_testQuestionId_fkey" FOREIGN KEY ("testQuestionId") REFERENCES "TestQuestion"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "_ScheduleToTeacher" ADD CONSTRAINT "_ScheduleToTeacher_A_fkey" FOREIGN KEY ("A") REFERENCES "Schedule"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "_ScheduleToTeacher" ADD CONSTRAINT "_ScheduleToTeacher_B_fkey" FOREIGN KEY ("B") REFERENCES "Teacher"("id") ON DELETE CASCADE ON UPDATE CASCADE;

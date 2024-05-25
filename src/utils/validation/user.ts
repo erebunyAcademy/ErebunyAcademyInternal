@@ -1,16 +1,16 @@
-import { IsEmail, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsNumber, IsOptional, IsString, Length } from 'class-validator';
 
 export class UserProfileFormValidation {
   @IsString()
-  @IsNotEmpty({ message: 'First name is required' })
+  @IsNotEmpty({ message: 'firstNameMessage' })
   firstName: string;
 
   @IsString()
-  @IsNotEmpty({ message: 'Last name is required' })
+  @IsNotEmpty({ message: 'lastNameMessage' })
   lastName: string;
 
-  @IsEmail()
-  @IsNotEmpty({ message: 'Email is required' })
+  @IsEmail({}, { message: 'notValidEmailMessage' })
+  @IsNotEmpty({ message: 'emailMessage' })
   email: string;
 
   @IsString()
@@ -52,15 +52,17 @@ export class VerifySMSCodeValidation {
 
 export class ChangePasswordValidation {
   @IsString()
-  @IsNotEmpty({ message: 'Current password is required' })
+  @IsNotEmpty({ message: 'currentPasswordMessage' })
   currentPassword: string;
 
   @IsString()
-  @IsNotEmpty({ message: 'New password is required' })
+  @Length(6, 20, { message: 'passwordValidation' })
+  @IsNotEmpty({ message: 'newPasswordMessage' })
   newPassword: string;
 
   @IsString()
-  @IsNotEmpty({ message: 'Confirm password is required' })
+  @Length(6, 20, { message: 'passwordValidation' })
+  @IsNotEmpty({ message: 'passwordConfirmationMessage' })
   confirmPassword: string;
 }
 

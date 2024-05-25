@@ -19,6 +19,7 @@ type ModalProps = {
   actionText?: string;
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | '6xl' | 'full';
   isDeleteVariant?: boolean;
+  isDisabled?: boolean;
 };
 
 const Modal: FC<PropsWithChildren<ModalProps>> = ({
@@ -30,6 +31,7 @@ const Modal: FC<PropsWithChildren<ModalProps>> = ({
   size = '2xl',
   actionText,
   isDeleteVariant = false,
+  isDisabled,
 }) => {
   const t = useTranslations();
   return (
@@ -66,6 +68,7 @@ const Modal: FC<PropsWithChildren<ModalProps>> = ({
             </Button>
             <Button
               onClick={primaryAction}
+              isDisabled={isDisabled}
               colorScheme={isDeleteVariant ? 'red' : 'teal'}
               size="lg">
               {actionText}

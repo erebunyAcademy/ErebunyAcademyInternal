@@ -1,5 +1,5 @@
 'use client';
-import React, { FC, useEffect } from 'react';
+import React, { FC } from 'react';
 import { DeleteIcon } from '@chakra-ui/icons';
 import { Avatar, Box, Button, Flex, Heading, IconButton, Stack } from '@chakra-ui/react';
 import { classValidatorResolver } from '@hookform/resolvers/class-validator';
@@ -75,22 +75,25 @@ const defaultValues = {
 };
 
 const CreateEditExam: FC<CreateEditExamProps> = ({ exam }) => {
-  const { control, watch, handleSubmit, reset } = useForm<ExamValidation>({
+  const { control, watch, handleSubmit } = useForm<ExamValidation>({
     resolver,
     defaultValues,
   });
 
-  useEffect(() => {
-    if (exam && exam.studentGradeId && exam.studentGradeGroupId) {
-      reset({
-        title: exam.examLanguages.find(({ language }) => language === 'AM')?.title,
-        facultyId: exam.faculty?.id,
-        studentGradeId: exam.studentGradeId,
-        studentGradeGroupId: exam.studentGradeGroupId,
-        studentIds: exam.studentExams.map(studentExam => studentExam.studentId),
-      });
-    }
-  }, [exam, reset]);
+  console.log(exam);
+
+  // TODO change this and set it to be default value
+  // useEffect(() => {
+  //   if (exam && exam.studentGradeId && exam.studentGradeGroupId) {
+  //     reset({
+  //       title: exam.examLanguages.find(({ language }) => language === 'AM')?.title,
+  //       facultyId: exam.faculty?.id,
+  //       studentGradeId: exam.studentGradeId,
+  //       studentGradeGroupId: exam.studentGradeGroupId,
+  //       studentIds: exam.studentExams.map(studentExam => studentExam.studentId),
+  //     });
+  //   }
+  // }, [exam, reset]);
 
   const {
     fields: questionFields,

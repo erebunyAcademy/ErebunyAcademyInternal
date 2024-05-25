@@ -2,7 +2,7 @@ import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class CreateEditFacultyValidation {
   @IsString()
-  @IsNotEmpty({ message: 'Faculty title is required' })
+  @IsNotEmpty({ message: 'facultyTitleMessage' })
   title: string;
 
   @IsString()

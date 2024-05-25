@@ -5,32 +5,32 @@ export const getUserData = (user: NonNullable<User>) => {
   return [
     {
       id: 1,
-      title: 'First name',
+      title: 'firstName',
       value: user.firstName,
     },
     {
       id: 2,
-      title: 'Last name',
+      title: 'lastName',
       value: user.lastName,
     },
     {
       id: 3,
-      title: 'Email',
+      title: 'email',
       value: user.email,
     },
     {
       id: 4,
-      title: 'Country',
+      title: 'country',
       value: user.country,
     },
     {
       id: 5,
-      title: 'State',
+      title: 'state',
       value: user.state,
     },
     {
       id: 6,
-      title: 'City',
+      title: 'city',
       value: user.city,
     },
     ...(user.role === UserRoleEnum.STUDENT

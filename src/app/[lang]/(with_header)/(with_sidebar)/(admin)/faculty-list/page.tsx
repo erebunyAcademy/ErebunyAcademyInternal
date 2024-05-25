@@ -34,7 +34,7 @@ const Faculty = () => {
     handleSubmit,
     reset,
     setValue,
-    formState: { errors },
+    formState: { errors, isDirty },
   } = useForm<CreateEditFacultyValidation>({
     resolver,
     defaultValues: {
@@ -203,11 +203,11 @@ const Faculty = () => {
         onClose={closeCreateEditModal}
         title={t('faculty')}
         primaryAction={handleSubmit(onSubmitHandler)}
+        isDisabled={!isDirty}
         actionText={selectedFaculty ? t('update') : t('create')}>
         <Controller
           name="title"
           control={control}
-          rules={{ required: 'Faculty name is required' }}
           render={({ field: { onChange, value, name } }) => (
             <FormInput
               isRequired
@@ -218,14 +218,13 @@ const Faculty = () => {
               value={value}
               placeholder={t('enterTitle')}
               handleInputChange={onChange}
-              formErrorMessage={errors.title?.message}
+              formErrorMessage={t(errors.title?.message)}
             />
           )}
         />
         <Controller
           name="description"
           control={control}
-          rules={{ required: 'Faculty description is required' }}
           render={({ field: { onChange, value, name } }) => (
             <FormInput
               isInvalid={!!errors.description?.message}

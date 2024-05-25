@@ -1,11 +1,13 @@
 import React from 'react';
 import { Avatar, Box, Container, Flex, ListItem, Text, UnorderedList } from '@chakra-ui/react';
+import { getTranslations } from 'next-intl/server';
 import { serverSession } from '@/pages/api/auth/[...nextauth]';
 import { generateUserAvatar } from '@/utils/helpers/aws';
 import { getUserData } from '@/utils/helpers/user';
 
 const Dashboard = async () => {
   const session = await serverSession();
+  const t = await getTranslations();
 
   if (!session?.user) {
     return null;
@@ -58,7 +60,7 @@ const Dashboard = async () => {
           fontWeight={700}
           color="#1f2733"
           m="0 0 30px 10px">
-          Profile Information
+          {t('profileInformation')}
         </Text>
         <Flex>
           <UnorderedList>
@@ -69,7 +71,7 @@ const Dashboard = async () => {
                 color="#1f2733"
                 fontSize={{ base: '16px', sm: '20px' }}>
                 <Text as="span" color="#1f2733" fontWeight={700} lineHeight="normal" mr="20px">
-                  {field.title}:
+                  {t(field.title)}:
                 </Text>
                 <Text color="#718096">{field.value}</Text>
               </ListItem>
