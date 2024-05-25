@@ -181,6 +181,7 @@ const StudentSignUp = ({ lang }: { lang: Locale }) => {
             control={control}
             render={({ field: { onChange, value, name } }) => (
               <SelectLabel
+                isRequired
                 name={name}
                 options={data?.studentGradeList || []}
                 labelName={t('studentGrade')}
@@ -188,12 +189,32 @@ const StudentSignUp = ({ lang }: { lang: Locale }) => {
                 nameLabel="title"
                 onChange={onChange}
                 value={value}
+                isInvalid={!!errors.studentGradeId?.message}
+                formErrorMessage={errors.studentGradeId?.message}
               />
             )}
           />
         </Stack>
 
         <Stack direction={{ base: 'column', md: 'row' }} gap={{ base: '16px', sm: '8px' }}>
+          <Controller
+            name="facultyId"
+            control={control}
+            render={({ field: { onChange, value, name } }) => (
+              <SelectLabel
+                isRequired
+                name={name}
+                options={data?.facultyList || []}
+                labelName={t('faculty')}
+                valueLabel="id"
+                nameLabel="title"
+                onChange={onChange}
+                value={value}
+                isInvalid={!!errors.facultyId?.message}
+                formErrorMessage={errors.facultyId?.message}
+              />
+            )}
+          />
           <Controller
             name="studentGradeGroupId"
             control={control}
@@ -205,22 +226,8 @@ const StudentSignUp = ({ lang }: { lang: Locale }) => {
                 valueLabel="id"
                 nameLabel="title"
                 onChange={onChange}
-                value={value}
-              />
-            )}
-          />
-          <Controller
-            name="facultyId"
-            control={control}
-            render={({ field: { onChange, value, name } }) => (
-              <SelectLabel
-                name={name}
-                options={data?.facultyList || []}
-                labelName={t('faculty')}
-                valueLabel="id"
-                nameLabel="title"
-                onChange={onChange}
-                value={value}
+                value={value || ''}
+                formHelperText="You can skip choosing this field"
               />
             )}
           />
