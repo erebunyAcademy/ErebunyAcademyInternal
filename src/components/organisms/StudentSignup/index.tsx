@@ -25,6 +25,7 @@ import { UserService } from '@/api/services/user.service';
 import { Locale } from '@/i18n';
 import { ROUTE_SIGN_IN } from '@/utils/constants/routes';
 import { languagePathHelper } from '@/utils/helpers/language';
+import { Maybe } from '@/utils/models/common';
 import { StudentSignUpValidation } from '@/utils/validation';
 import { FormInput, SelectLabel } from '../../atoms';
 
@@ -46,7 +47,7 @@ const fetchFormData = async () => {
 const StudentSignUp = ({ lang }: { lang: Locale }) => {
   const router = useRouter();
   const toast = useToast();
-  const [localImage, setLocalImage] = useState<{ file: File; localUrl: string } | null>(null);
+  const [localImage, setLocalImage] = useState<Maybe<{ file: File; localUrl: string }>>(null);
   const t = useTranslations();
   const { mutate, isPending } = useMutation({
     mutationFn: AuthService.studentSignUp,
@@ -83,10 +84,7 @@ const StudentSignUp = ({ lang }: { lang: Locale }) => {
   const {
     control,
     handleSubmit,
-    formState: {
-      errors,
-      //  isValid
-    },
+    formState: { errors, isValid },
   } = useForm<StudentSignUpValidation>({
     resolver,
     defaultValues: {
@@ -183,6 +181,27 @@ const StudentSignUp = ({ lang }: { lang: Locale }) => {
             )}
           />
           <Controller
+            name="facultyId"
+            control={control}
+            render={({ field: { onChange, value, name } }) => (
+              <SelectLabel
+                isRequired
+                name={name}
+                options={data?.facultyList || []}
+                labelName={t('faculty')}
+                valueLabel="id"
+                nameLabel="title"
+                onChange={onChange}
+                value={value}
+                isInvalid={!!errors.facultyId?.message}
+                formErrorMessage={t(errors.facultyId?.message)}
+              />
+            )}
+          />
+        </Stack>
+
+        <Stack direction={{ base: 'column', md: 'row' }} gap={{ base: '16px', sm: '8px' }}>
+          <Controller
             name="studentGradeId"
             control={control}
             render={({ field: { onChange, value, name } }) => (
@@ -200,27 +219,6 @@ const StudentSignUp = ({ lang }: { lang: Locale }) => {
               />
             )}
           />
-        </Stack>
-
-        <Stack direction={{ base: 'column', md: 'row' }} gap={{ base: '16px', sm: '8px' }}>
-          <Controller
-            name="facultyId"
-            control={control}
-            render={({ field: { onChange, value, name } }) => (
-              <SelectLabel
-                isRequired
-                name={name}
-                options={data?.facultyList || []}
-                labelName={t('faculty')}
-                valueLabel="id"
-                nameLabel="title"
-                onChange={onChange}
-                value={value}
-                isInvalid={!!errors.facultyId?.message}
-                formErrorMessage={errors.facultyId?.message}
-              />
-            )}
-          />
           <Controller
             name="studentGradeGroupId"
             control={control}
@@ -235,24 +233,7 @@ const StudentSignUp = ({ lang }: { lang: Locale }) => {
                 onChange={onChange}
                 value={value || ''}
                 formErrorMessage={t(errors.studentGradeGroupId?.message)}
-              />
-            )}
-          />
-          <Controller
-            name="facultyId"
-            control={control}
-            render={({ field: { onChange, value, name } }) => (
-              <SelectLabel
-                name={name}
-                isRequired
-                isInvalid={!!errors.facultyId?.message}
-                options={data?.facultyList || []}
-                labelName={t('faculty')}
-                valueLabel="id"
-                nameLabel="title"
-                onChange={onChange}
-                value={value}
-                formErrorMessage={t(errors.facultyId?.message)}
+                formHelperText="Student grade group is not required"
               />
             )}
           />
@@ -323,6 +304,7 @@ const StudentSignUp = ({ lang }: { lang: Locale }) => {
                 as="input"
                 name="attachments"
                 type="file"
+                accept="image/*"
                 width="100%"
                 position="absolute"
                 left={0}
@@ -331,6 +313,7 @@ const StudentSignUp = ({ lang }: { lang: Locale }) => {
                 opacity={0}
                 cursor="pointer"
                 onChange={onFileSelect}
+                value={localImage?.localUrl ? '' : undefined}
                 color="#1F1646"
                 backgroundColor="#fff"
                 _hover={{
@@ -352,8 +335,7 @@ const StudentSignUp = ({ lang }: { lang: Locale }) => {
               height="150px"
               borderRadius="8px"
               ml="30px"
-              overflow="hidden"
-              boxShadow="0 2px 8px rgba(0, 0, 0, 0.1)">
+              overflow="hidden">
               <Image
                 src={localImage?.localUrl || ''}
                 alt={localImage?.file.name || ''}
@@ -387,8 +369,7 @@ const StudentSignUp = ({ lang }: { lang: Locale }) => {
           w={'50%'}
           onClick={handleSubmit(onStudentSubmit)}
           isLoading={isPending}
-          // isDisabled={!isValid}
-        >
+          isDisabled={!isValid}>
           {t('signUp')}
         </Button>
       </VStack>

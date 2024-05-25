@@ -23,9 +23,7 @@ const TeacherSignUp = ({ lang }: { lang: Locale }) => {
   const {
     control,
     handleSubmit,
-    formState: { errors, 
-      // isValid 
-    },
+    formState: { errors, isValid },
   } = useForm<TeacherSignUpValidation>({
     resolver,
     defaultValues: {
@@ -129,12 +127,12 @@ const TeacherSignUp = ({ lang }: { lang: Locale }) => {
               <FormInput
                 isRequired
                 placeholder={t('profession')}
-                isInvalid={!!errors.profession?.message}
                 name="profession"
                 type="text"
                 formLabelName={t('profession')}
                 value={value}
                 handleInputChange={onChange}
+                isInvalid={!!errors.profession?.message}
                 formErrorMessage={t(errors.profession?.message)}
               />
             )}
@@ -147,14 +145,13 @@ const TeacherSignUp = ({ lang }: { lang: Locale }) => {
             control={control}
             render={({ field: { onChange, value, name } }) => (
               <FormInput
-                isRequired
                 placeholder={t('workPlace')}
-                isInvalid={!!errors.workPlace?.message}
                 name={name}
                 type="text"
                 formLabelName={t('workPlace')}
                 value={value}
                 handleInputChange={onChange}
+                isInvalid={!!errors.workPlace?.message}
                 formErrorMessage={t(errors.workPlace?.message)}
               />
             )}
@@ -164,7 +161,6 @@ const TeacherSignUp = ({ lang }: { lang: Locale }) => {
             control={control}
             render={({ field: { onChange, value, name } }) => (
               <FormInput
-                isRequired
                 placeholder={t('scientificActivity')}
                 isInvalid={!!errors.scientificActivity?.message}
                 name={name}
@@ -220,25 +216,21 @@ const TeacherSignUp = ({ lang }: { lang: Locale }) => {
             render={({ field: { onChange, value } }) => (
               <FormInput
                 isRequired
-                isInvalid={!!errors.password?.message}
+                isInvalid={!!errors.confirmPassword?.message}
                 name="password"
                 formLabelName={t('confirmPassword')}
                 placeholder={t('confirmPassword')}
                 value={value}
                 handleInputChange={onChange}
                 type="password"
-                formErrorMessage={t(errors.password?.message)}
+                formErrorMessage={t(errors.confirmPassword?.message)}
               />
             )}
           />
         </Stack>
       </VStack>
       <VStack spacing={16} paddingTop={48}>
-        <Button
-          w={'50%'}
-          onClick={handleSubmit(onTeacherSubmit)}
-          // isDisabled={!isValid}
-        >
+        <Button w={'50%'} onClick={handleSubmit(onTeacherSubmit)} isDisabled={!isValid}>
           {t('signUp')}
         </Button>
       </VStack>

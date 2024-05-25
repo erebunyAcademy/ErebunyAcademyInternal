@@ -66,11 +66,13 @@ export class TeacherSignUpValidation extends UserSignupValidation {
   profession: string;
 
   @IsString()
-  @IsNotEmpty({ message: 'workingPlaceMessage' })
+  @IsOptional()
+  // @IsNotEmpty({ message: 'workingPlaceMessage' })
   workPlace: string;
 
   @IsString()
-  @IsNotEmpty({ message: 'scientificActivityMessage' })
+  // @IsNotEmpty({ message: 'scientificActivityMessage' })
+  @IsOptional()
   scientificActivity: string;
 
   @IsString()

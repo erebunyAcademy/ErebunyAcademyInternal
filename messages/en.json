@@ -122,7 +122,7 @@
   "passwordValidation": "Your password must not be less than 6 characters.",
   "requiredPasswordMessage": "Password is required.",
   "newPasswordMessage": "New password is required.",
-  "passwordConfirmationMessage": "Password confirmation is required.",
+  "passwordConfirmationMessage": "Confirm password is required.",
   "currentPasswordMessage": "Current password is required.",
 
   "facultyTitleMessage": "Faculty title is required.",
@@ -134,7 +134,7 @@
   "verifyYourEmail": "Please verify your email",
   "invalidCredentials": "Email or password is incorrect. Please enter valid credentials.",
   "userAlreadyExists": "A user with this email address already exists.",
-  "userNotFound": "userNotFound",
+  "userNotFound": "User with this email was not found",
   "invalidNumber": "Invalid number",
   "passwordDontMatch": "Password don't match",
   "invalidPassword": "Invalid password",
