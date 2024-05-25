@@ -10,9 +10,9 @@
   "city": "City",
   "attachment": "Attachment",
   "enterYourCity": "Enter your City",
+
   "studentGrade": "Student grade",
   "studentGradeGroup": "Student grade group",
-  "courseGroup": "Student grade group",
   "faculty": "Faculty",
   "profession": "Profession",
   "workPlace": "Working place",
@@ -33,6 +33,7 @@
   "ru": "ru",
   "am": "arm",
   "next": "Next",
+
   "saveChanges": "Save Changes",
   "editProfile": "Edit Profile",
   "changeAvatar": "Change Avatar",
@@ -50,6 +51,7 @@
   "otpVerification": "OTP verification",
   "resetPasswordMail": "An email with password reset instructions has been sent to your email address",
   "searchInput": "Type here to search",
+
   "facultyList": "Faculty List",
   "studentsList": "Students List",
   "teachersList": "Teachers List",
@@ -57,6 +59,7 @@
   "studentGradeGroupList": "Students Grade Group List",
   "examList": "Exam List",
   "subjectList": "Subject List",
+
   "count": "Count",
   "title": "Title",
   "avatar": "Avatar",
@@ -71,6 +74,7 @@
   "confirm": "Confirm",
   "update": "Update",
   "close": "Close",
+
   "enterTitle": "Please enter title",
   "enterDescription": "Please enter description",
   "facultyName": "Faculty name",
@@ -100,6 +104,39 @@
   "addAnswer": "Add Answer",
   "addQuestion": "Add Question",
   "submitExam": "Submit Exam",
-  "requiredField": "{{field}} is required",
-  "passwordValidation": "Your password must not be less than 6 characters."
+
+  "firstNameMessage": "First name is required.",
+  "lastNameMessage": "Last name is required.",
+  "emailMessage": "Email is required.",
+  "notValidEmailMessage": "Email is not valid.",
+
+  "professionMessage": "Profession is required.",
+  "workingPlaceMessage": "Working place is required.",
+  "scientificActivityMessage": "Scientific activity is required.",
+  "teachingSubjectMessage": "Teaching subject is required.",
+
+  "studentGradeMessage": "Student grade is required.",
+  "studentGradeGroupMessage": "Student grade group is required.",
+  "facultyMessage": "Faculty is required.",
+
+  "passwordValidation": "Your password must not be less than 6 characters.",
+  "requiredPasswordMessage": "Password is required.",
+  "newPasswordMessage": "New password is required.",
+  "passwordConfirmationMessage": "Password confirmation is required.",
+  "currentPasswordMessage": "Current password is required.",
+
+  "facultyTitleMessage": "Faculty title is required.",
+  "studentGradeTitleMessage": "Student grade title is required.",
+  "studentGroupTitleMessage": "Student grade group title is required.",
+  "subjectTitleMessage": "Subject title is required.",
+
+  "somethingWentWrong": "Something went wrong.",
+  "verifyYourEmail": "Please verify your email",
+  "invalidCredentials": "Email or password is incorrect. Please enter valid credentials.",
+  "userAlreadyExists": "A user with this email address already exists.",
+  "userNotFound": "userNotFound",
+  "invalidNumber": "Invalid number",
+  "passwordDontMatch": "Password don't match",
+  "invalidPassword": "Invalid password",
+  "contactCollegeRepresentative": "Please contact college representative to allow confirm your account."
 }

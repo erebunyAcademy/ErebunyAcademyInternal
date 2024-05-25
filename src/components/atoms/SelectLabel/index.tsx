@@ -1,5 +1,5 @@
 import React, { FC, memo } from 'react';
-import { FormControl, FormLabel, Select } from '@chakra-ui/react';
+import { FormControl, FormErrorMessage, FormLabel, Select, Text } from '@chakra-ui/react';
 
 type SelectLabelProps = {
   options: any[];
@@ -10,6 +10,9 @@ type SelectLabelProps = {
   value: string;
   name?: string;
   placeholder?: string;
+  formErrorMessage?: string;
+  isInvalid?: boolean;
+  isRequired?: boolean;
 };
 
 const SelectLabel: FC<SelectLabelProps> = ({
@@ -21,11 +24,19 @@ const SelectLabel: FC<SelectLabelProps> = ({
   onChange,
   value,
   placeholder,
+  formErrorMessage,
+  isInvalid,
+  isRequired,
 }) => {
   return (
-    <FormControl>
+    <FormControl isInvalid={isInvalid} id={name}>
       <FormLabel fontWeight={600} marginBottom={4} lineHeight="20px" fontSize={14} color="#222">
         {labelName}
+        {isRequired && (
+          <Text as="span" color="#222">
+            *
+          </Text>
+        )}
       </FormLabel>
       <Select onChange={onChange} value={value} name={name} placeholder={placeholder}>
         <option selected value="" disabled>
@@ -37,6 +48,11 @@ const SelectLabel: FC<SelectLabelProps> = ({
           </option>
         ))}
       </Select>
+      {isInvalid && (
+        <FormErrorMessage color="#DF1414" fontWeight={400} marginTop={4}>
+          {formErrorMessage}
+        </FormErrorMessage>
+      )}
     </FormControl>
   );
 };

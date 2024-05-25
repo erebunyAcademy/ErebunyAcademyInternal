@@ -35,7 +35,7 @@ const Subject = () => {
     handleSubmit,
     reset,
     setValue,
-    formState: { errors },
+    formState: { errors, isDirty },
   } = useForm<CreateEditSubjectValidation>({
     resolver,
     defaultValues: {
@@ -212,11 +212,11 @@ const Subject = () => {
         onClose={closeCreateEditModal}
         title={t('subject')}
         primaryAction={handleSubmit(onSubmitHandler)}
+        isDisabled={!isDirty}
         actionText={selectedSubject ? t('update') : t('create')}>
         <Controller
           name="title"
           control={control}
-          rules={{ required: 'Subject name is required' }}
           render={({ field: { onChange, value, name } }) => (
             <FormInput
               isRequired
@@ -227,14 +227,13 @@ const Subject = () => {
               value={value}
               placeholder={t('enterTitle')}
               handleInputChange={onChange}
-              formErrorMessage={errors.title?.message}
+              formErrorMessage={t(errors.title?.message)}
             />
           )}
         />
         <Controller
           name="description"
           control={control}
-          rules={{ required: 'Subject description is required' }}
           render={({ field: { onChange, value, name } }) => (
             <FormInput
               isInvalid={!!errors.description?.message}

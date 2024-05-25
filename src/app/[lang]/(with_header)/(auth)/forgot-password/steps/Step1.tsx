@@ -54,7 +54,7 @@ const Step1 = () => {
             value={value}
             placeholder="you@example.com"
             handleInputChange={onChange}
-            formErrorMessage={errors.email?.message}
+            formErrorMessage={t(errors.email?.message)}
           />
         )}
       />

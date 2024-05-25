@@ -143,7 +143,7 @@ function SearchTable<T>({
         </InputGroup>
       </FormControl>
       <Box overflow="auto" maxWidth={{ base: '340px', sm: '670px', lg: '700px', xl: '100%' }}>
-        <Table borderTop="1px solid rgb(226, 232, 240)" height="100%">
+        <Table borderTop="1px solid rgb(226, 232, 240)" height="100%" width="max-content">
           <Thead>
             {getHeaderGroups().map(headerGroup => (
               <Tr key={headerGroup.id}>
@@ -178,6 +178,7 @@ function SearchTable<T>({
               </Tr>
             ))}
           </Thead>
+
           <Tbody>
             {getRowModel().rows.map(row => {
               return (
@@ -210,14 +211,15 @@ function SearchTable<T>({
               );
             })}
           </Tbody>
+
           <Tfoot width="100%">
-            <Tr>
-              <Td align="left" colSpan={5}>
+            <Tr display="flex" justifyContent="space-between" alignItems="center">
+              <Td colSpan={5}>
                 <Text>
                   {t('count')} - {count}
                 </Text>
               </Td>
-              <Td align="right">
+              <Td ml="30px">
                 <HStack>
                   <IconButton
                     className="border rounded p-1"

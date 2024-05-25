@@ -37,7 +37,7 @@ const StudentGrades = () => {
     handleSubmit,
     reset,
     setValue,
-    formState: { errors },
+    formState: { errors, isDirty },
   } = useForm<CreateEditStudentGradeValidation>({
     resolver,
     defaultValues: {
@@ -158,7 +158,6 @@ const StudentGrades = () => {
               setSelectedStudentGrade(row.original);
               setValue('title', row.original.title || '');
               setValue('description', row.original.description || '');
-              console.log(row.original.facultyId, '-----------');
               setValue('facultyId', row.original.facultyId || '');
               openCreateEditModal();
             }}>
@@ -224,11 +223,11 @@ const StudentGrades = () => {
         onClose={closeCreateEditModal}
         title={t('studentGrade')}
         primaryAction={handleSubmit(onSubmitHandler)}
+        isDisabled={!isDirty}
         actionText={selectedStudentGrade ? t('update') : t('create')}>
         <Controller
           name="title"
           control={control}
-          rules={{ required: 'Student grade title is required' }}
           render={({ field: { onChange, value, name } }) => (
             <FormInput
               isRequired
@@ -239,7 +238,7 @@ const StudentGrades = () => {
               value={value}
               placeholder={t('enterTitle')}
               handleInputChange={onChange}
-              formErrorMessage={errors.title?.message}
+              formErrorMessage={t(errors.title?.message)}
             />
           )}
         />
@@ -265,12 +264,15 @@ const StudentGrades = () => {
           render={({ field: { onChange, value, name } }) => (
             <SelectLabel
               name={name}
+              isRequired
               options={facultyQueryData || []}
               labelName={t('faculty')}
               valueLabel="id"
               nameLabel="title"
               onChange={onChange}
               value={value}
+              isInvalid={!!errors.facultyId?.message}
+              formErrorMessage={t(errors.facultyId?.message)}
             />
           )}
         />

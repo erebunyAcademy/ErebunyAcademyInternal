@@ -1,12 +1,12 @@
 import { IsEmail, IsNotEmpty, IsNumber, IsString, Length, ValidateNested } from 'class-validator';
 
 export class SignInFormValidation {
-  @IsEmail()
-  @IsNotEmpty({ message: 'Email is required' })
+  @IsEmail({}, { message: 'notValidEmailMessage' })
+  @IsNotEmpty({ message: 'requiredEmailMessage' })
   email: string;
 
   @IsString()
-  @IsNotEmpty({ message: 'Password' })
+  @IsNotEmpty({ message: 'requiredPasswordMessage' })
   password: string;
 }
 
@@ -29,58 +29,58 @@ export class AttachmentValidation {
 
 export class UserSignupValidation {
   @IsString()
-  @IsNotEmpty({ message: 'First name is required' })
+  @IsNotEmpty({ message: 'firstNameMessage' })
   firstName: string;
 
   @IsString()
-  @IsNotEmpty({ message: 'Last name is required' })
+  @IsNotEmpty({ message: 'lastNameMessage' })
   lastName: string;
 
-  @IsEmail()
+  @IsEmail({}, { message: 'notValidEmailMessage' })
   @IsString()
-  @IsNotEmpty({ message: 'Email is required' })
+  @IsNotEmpty({ message: 'emailMessage' })
   email: string;
 
   @IsString()
-  @IsNotEmpty({ message: 'Password is required' })
-  @Length(6, 20)
+  @Length(6, 20, { message: 'passwordValidation' })
+  @IsNotEmpty({ message: 'requiredPasswordMessage' })
   password: string;
 
   @IsString()
-  @IsNotEmpty({ message: 'Confirm password is required' })
-  @Length(6, 20)
+  @Length(6, 20, { message: 'passwordValidation' })
+  @IsNotEmpty({ message: 'passwordConfirmationMessage' })
   confirmPassword: string;
 }
 
 export class TeacherSignUpValidation extends UserSignupValidation {
   @IsString()
-  @IsNotEmpty({ message: 'Profession is required' })
+  @IsNotEmpty({ message: 'professionMessage' })
   profession: string;
 
   @IsString()
-  @IsNotEmpty({ message: 'Working place is required' })
+  @IsNotEmpty({ message: 'workingPlaceMessage' })
   workPlace: string;
 
   @IsString()
-  @IsNotEmpty({ message: 'Scientific activity is required' })
+  @IsNotEmpty({ message: 'scientificActivityMessage' })
   scientificActivity: string;
 
   @IsString()
-  @IsNotEmpty()
+  @IsNotEmpty({ message: 'teachingSubjectMessage' })
   teachingSubjectId: string;
 }
 
 export class StudentSignUpValidation extends UserSignupValidation {
   @IsString()
-  @IsNotEmpty({ message: 'Student grade is required' })
+  @IsNotEmpty({ message: 'studentGradeMessage' })
   studentGradeId: string;
 
   @IsString()
-  @IsNotEmpty({ message: 'Student grade group is required' })
+  @IsNotEmpty({ message: 'studentGradeGroupMessage' })
   studentGradeGroupId: string;
 
   @IsString()
-  @IsNotEmpty({ message: 'Faculty is required' })
+  @IsNotEmpty({ message: 'facultyMessage' })
   facultyId: string;
 
   @ValidateNested()
@@ -88,8 +88,8 @@ export class StudentSignUpValidation extends UserSignupValidation {
 }
 
 export class ForgotPasswordStep1Validation {
-  @IsEmail()
-  @IsNotEmpty({ message: 'Email is required' })
+  @IsEmail({}, { message: 'notValidEmailMessage' })
+  @IsNotEmpty({ message: 'requiredEmailMessage' })
   email: string;
 }
 
@@ -102,19 +102,19 @@ export class ForgotPasswordStep2Validation {
 
 export class ResendEmailValidation extends ForgotPasswordStep1Validation {
   @IsString()
-  @IsNotEmpty({ message: 'First name is required' })
+  @IsNotEmpty({ message: 'firstNameMessage' })
   firstName: string;
 }
 
 export class ForgotPasswordStep3Validation {
   @IsString()
-  @IsNotEmpty()
-  @Length(6, 20)
+  @IsNotEmpty({ message: 'newPasswordMessage' })
+  @Length(6, 20, { message: 'passwordValidation' })
   newPassword: string;
 
   @IsString()
-  @IsNotEmpty()
-  @Length(6, 20)
+  @IsNotEmpty({ message: 'passwordConfirmationMessage' })
+  @Length(6, 20, { message: 'passwordValidation' })
   confirmPassword: string;
 
   @IsNumber()

@@ -250,7 +250,7 @@ const Profile = () => {
                 value={value}
                 handleInputChange={onChange}
                 isInvalid={!!errors[name]?.message}
-                formErrorMessage={errors[name]?.message}
+                formErrorMessage={t(errors[name]?.message)}
               />
             )}
           />
@@ -270,7 +270,7 @@ const Profile = () => {
                 placeholder={t('lastName')}
                 handleInputChange={onChange}
                 isInvalid={!!errors[name]?.message}
-                formErrorMessage={errors[name]?.message}
+                formErrorMessage={t(errors[name]?.message)}
               />
             )}
           />
@@ -292,7 +292,7 @@ const Profile = () => {
                 value={value}
                 handleInputChange={onChange}
                 isInvalid={!!errors[name]?.message}
-                formErrorMessage={errors[name]?.message}
+                formErrorMessage={t(errors[name]?.message)}
               />
             )}
           />
@@ -301,7 +301,6 @@ const Profile = () => {
             control={control}
             render={({ field: { onChange, value, name } }) => (
               <FormInput
-                isRequired
                 name="address"
                 type="text"
                 formLabelName={t('address')}
@@ -395,7 +394,7 @@ const Profile = () => {
                 value={value}
                 handleInputChange={onChange}
                 formHelperText={t('passwordValidation')}
-                formErrorMessage={changePasswordErrors[name]?.message}
+                formErrorMessage={t(changePasswordErrors[name]?.message)}
               />
             )}
           />
@@ -413,7 +412,7 @@ const Profile = () => {
                 value={value}
                 handleInputChange={onChange}
                 formHelperText={t('passwordValidation')}
-                formErrorMessage={changePasswordErrors[name]?.message}
+                formErrorMessage={t(changePasswordErrors[name]?.message)}
               />
             )}
           />
@@ -431,7 +430,7 @@ const Profile = () => {
                 value={value}
                 handleInputChange={onChange}
                 formHelperText={t('passwordValidation')}
-                formErrorMessage={changePasswordErrors[name]?.message}
+                formErrorMessage={t(changePasswordErrors[name]?.message)}
               />
             )}
           />
