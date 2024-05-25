@@ -16,7 +16,16 @@ export class StudentGradeResolver {
         where: {
           OR: [{ title: { contains: search, mode: 'insensitive' } }],
         },
-        select: { id: true, title: true, description: true, facultyId: true },
+        select: {
+          id: true,
+          title: true,
+          description: true,
+          faculty: {
+            select: {
+              title: true,
+            },
+          },
+        },
         orderBy: sorting ? orderBy(sorting) : undefined,
         skip,
         take,

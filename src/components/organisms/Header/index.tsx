@@ -12,7 +12,6 @@ import {
 } from '@chakra-ui/react';
 import Link from 'next/link';
 import { User } from 'next-auth';
-import { useSession } from 'next-auth/react';
 import LanguagePicker from '@/components/molecules/LanguagePicker';
 import { Locale } from '@/i18n';
 import LogoIcon from '@/icons/college_main_icon.svg';
@@ -35,7 +34,6 @@ const Header: FC<HeaderProps> = ({ user, linkItems, lang }) => {
     onToggle: toggleUserDropdown,
     onClose: closeUserProfile,
   } = useDisclosure();
-  const { data } = useSession();
   const userCollapseRef = useRef<HTMLDivElement>(null);
   useOutsideClick({
     ref: userCollapseRef,
@@ -109,7 +107,7 @@ const Header: FC<HeaderProps> = ({ user, linkItems, lang }) => {
         <Accordion allowToggle defaultIndex={0}>
           <ProfileNavItem
             lang={lang}
-            user={user || data?.user || null}
+            user={user || null}
             onClose={closeUserProfile}
             linkItems={linkItems!}
           />
