@@ -1,8 +1,9 @@
-import { TestQuestionLevelEnum, TestQuestionTypeEnum } from '@prisma/client';
+import { LanguageTypeEnum, TestQuestionLevelEnum, TestQuestionTypeEnum } from '@prisma/client';
 import { Type } from 'class-transformer';
 import {
   IsArray,
   IsBoolean,
+  IsEnum,
   IsNotEmpty,
   IsOptional,
   IsString,
@@ -44,6 +45,13 @@ class Question {
   answers: Answer[];
 }
 
+export class TestQuestionValidation {
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => Question)
+  questions: Question[];
+}
+
 export class ExamValidation {
   @IsString()
   @IsNotEmpty({ message: 'Exam title is required' })
@@ -69,8 +77,15 @@ export class ExamValidation {
   @IsNotEmpty({ message: 'Students are required' })
   studentIds: string[];
 
+  @IsString()
+  @IsNotEmpty({ message: 'Subject is required' })
+  subjectId: string;
+
+  @IsEnum(LanguageTypeEnum)
+  @IsNotEmpty({ message: 'Language is required' })
+  language: LanguageTypeEnum;
+
   @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => Question)
-  questions: Question[];
+  @IsNotEmpty({ message: 'Tests are required' })
+  testQuestionIds: string[];
 }

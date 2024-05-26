@@ -138,18 +138,6 @@ CREATE TABLE "Subject" (
 );
 
 -- CreateTable
-CREATE TABLE "SubjectCategory" (
-    "id" TEXT NOT NULL,
-    "title" VARCHAR(60) NOT NULL,
-    "description" VARCHAR(60),
-    "subjectId" TEXT,
-    "createdAt" TIMESTAMP(0) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(0) NOT NULL,
-
-    CONSTRAINT "SubjectCategory_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
 CREATE TABLE "SubjectTeacher" (
     "id" TEXT NOT NULL,
     "teacherId" TEXT NOT NULL,
@@ -190,6 +178,7 @@ CREATE TABLE "StudentExam" (
 -- CreateTable
 CREATE TABLE "Exam" (
     "id" TEXT NOT NULL,
+    "subjectId" TEXT NOT NULL,
     "updatedAt" TIMESTAMP(0) NOT NULL,
     "createdAt" TIMESTAMP(0) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
@@ -218,9 +207,9 @@ CREATE TABLE "TestQuestion" (
     "skillLevel" "TestQuestionLevelEnum" NOT NULL,
     "examTranslationId" TEXT,
     "language" "LanguageTypeEnum" NOT NULL,
+    "subjectId" TEXT,
     "createdAt" TIMESTAMP(0) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(0) NOT NULL,
-    "subjectCategoryId" TEXT,
 
     CONSTRAINT "TestQuestion_pkey" PRIMARY KEY ("id")
 );
@@ -298,9 +287,6 @@ ALTER TABLE "StudentGrade" ADD CONSTRAINT "StudentGrade_facultyId_fkey" FOREIGN 
 ALTER TABLE "StudentGradeGroup" ADD CONSTRAINT "StudentGradeGroup_studentGradeId_fkey" FOREIGN KEY ("studentGradeId") REFERENCES "StudentGrade"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "SubjectCategory" ADD CONSTRAINT "SubjectCategory_subjectId_fkey" FOREIGN KEY ("subjectId") REFERENCES "Subject"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
 ALTER TABLE "SubjectTeacher" ADD CONSTRAINT "SubjectTeacher_teacherId_fkey" FOREIGN KEY ("teacherId") REFERENCES "Teacher"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
@@ -319,13 +305,16 @@ ALTER TABLE "StudentExam" ADD CONSTRAINT "StudentExam_examId_fkey" FOREIGN KEY (
 ALTER TABLE "StudentExam" ADD CONSTRAINT "StudentExam_studentId_fkey" FOREIGN KEY ("studentId") REFERENCES "Student"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "Exam" ADD CONSTRAINT "Exam_subjectId_fkey" FOREIGN KEY ("subjectId") REFERENCES "Subject"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "ExamTranslation" ADD CONSTRAINT "ExamTranslation_examId_fkey" FOREIGN KEY ("examId") REFERENCES "Exam"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "TestQuestion" ADD CONSTRAINT "TestQuestion_examTranslationId_fkey" FOREIGN KEY ("examTranslationId") REFERENCES "ExamTranslation"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "TestQuestion" ADD CONSTRAINT "TestQuestion_subjectCategoryId_fkey" FOREIGN KEY ("subjectCategoryId") REFERENCES "SubjectCategory"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "TestQuestion" ADD CONSTRAINT "TestQuestion_subjectId_fkey" FOREIGN KEY ("subjectId") REFERENCES "Subject"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Option" ADD CONSTRAINT "Option_testQuestionId_fkey" FOREIGN KEY ("testQuestionId") REFERENCES "TestQuestion"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

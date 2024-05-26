@@ -5,10 +5,10 @@ import { TestQuestionTypeEnum } from '@prisma/client';
 import { Control, Controller, useFieldArray } from 'react-hook-form';
 import { v4 } from 'uuid';
 import { FormInput } from '@/components/atoms';
-import { ExamValidation } from '@/utils/validation/exam';
+import { TestQuestionValidation } from '@/utils/validation/exam';
 
 interface AnswersControlProps {
-  control: Control<ExamValidation>;
+  control: Control<TestQuestionValidation>;
   questionIndex: number;
   questionType: TestQuestionTypeEnum;
 }
