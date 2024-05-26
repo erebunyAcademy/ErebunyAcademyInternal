@@ -109,7 +109,7 @@ export default function Users() {
   return (
     <>
       <SearchTable
-        title={t('teachersList')}
+        title={'teachersList'}
         isLoading={isLoading}
         data={data?.users || []}
         count={data?.count || 0}

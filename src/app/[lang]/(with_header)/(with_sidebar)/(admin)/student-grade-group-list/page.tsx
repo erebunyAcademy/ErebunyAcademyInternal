@@ -37,7 +37,7 @@ const StudentGradeGroup = () => {
     handleSubmit,
     reset,
     setValue,
-    formState: { errors, isDirty },
+    formState: { errors, isValid },
   } = useForm<CreateEditStudentGradeGroupValidation>({
     resolver,
     defaultValues: {
@@ -188,7 +188,7 @@ const StudentGradeGroup = () => {
   return (
     <>
       <SearchTable
-        title={t('studentGradeGroupList')}
+        title={'studentGradeGroupList'}
         isLoading={isLoading}
         data={data?.studentGradeGroups || []}
         count={data?.count || 0}
@@ -213,24 +213,24 @@ const StudentGradeGroup = () => {
       <Modal
         isOpen={isCreateEditModalOpen}
         onClose={closeCreateEditModal}
-        title={t('studentGradeGroup')}
+        title={'studentGradeGroup'}
         primaryAction={handleSubmit(onSubmitHandler)}
-        isDisabled={!isDirty}
-        actionText={selectedStudentGradeGroup ? t('update') : t('create')}>
+        isDisabled={!isValid}
+        actionText={selectedStudentGradeGroup ? 'update' : 'create'}>
         <Controller
           name="title"
           control={control}
           render={({ field: { onChange, value, name } }) => (
             <FormInput
               isRequired
-              isInvalid={!!errors.title?.message}
               name={name}
               type="text"
-              formLabelName={t('studentGradeGroupName')}
+              formLabelName={'studentGradeGroupName'}
               value={value}
               placeholder={t('enterTitle')}
               handleInputChange={onChange}
-              formErrorMessage={t(errors.title?.message)}
+              isInvalid={!!errors.title?.message}
+              formErrorMessage={errors.title?.message}
             />
           )}
         />
@@ -239,13 +239,13 @@ const StudentGradeGroup = () => {
           control={control}
           render={({ field: { onChange, value, name } }) => (
             <FormInput
-              isInvalid={!!errors.description?.message}
               name={name}
               type="text"
-              formLabelName={t('studentGradeGroupDescription')}
+              formLabelName={'studentGradeGroupDescription'}
               value={value}
               placeholder={t('enterDescription')}
               handleInputChange={onChange}
+              isInvalid={!!errors.description?.message}
               formErrorMessage={errors.description?.message}
             />
           )}
@@ -258,13 +258,13 @@ const StudentGradeGroup = () => {
               name={name}
               isRequired
               options={studentGradeQueryData || []}
-              labelName={t('studentGrade')}
+              labelName={'studentGrade'}
               valueLabel="id"
               nameLabel="title"
               onChange={onChange}
               value={value}
               isInvalid={!!errors.studentGradeId?.message}
-              formErrorMessage={t(errors.studentGradeId?.message)}
+              formErrorMessage={errors.studentGradeId?.message}
             />
           )}
         />
@@ -274,13 +274,13 @@ const StudentGradeGroup = () => {
         isOpen={isDeleteModalOpen}
         onClose={closeDeleteModal}
         isDeleteVariant
-        title={t('studentGradeGroup')}
+        title={'studentGradeGroup'}
         primaryAction={() => {
           if (selectedStudentGradeGroup) {
             mutate(selectedStudentGradeGroup?.id);
           }
         }}
-        actionText={t('delete')}>
+        actionText={'delete'}>
         {t('deleteStudentGradeGroupQuestion')}
       </Modal>
     </>

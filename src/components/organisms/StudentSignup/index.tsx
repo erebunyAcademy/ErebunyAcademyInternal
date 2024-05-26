@@ -233,7 +233,7 @@ const StudentSignUp = ({ lang }: { lang: Locale }) => {
                 onChange={onChange}
                 value={value || ''}
                 formErrorMessage={t(errors.studentGradeGroupId?.message)}
-                formHelperText="Student grade group is not required"
+                formHelperText={t('studentGradeGroupNotRequired')}
               />
             )}
           />

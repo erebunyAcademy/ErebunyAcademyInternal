@@ -7,6 +7,10 @@ export const QUERY_KEY = {
   ],
   allTeachers: (search: string, page: number) => [search ? `teachers/${search}` : 'teachers', page],
   allSubjects: (search: string, page: number) => [search ? `subjects/${search}` : 'subjects', page],
+  allSubjectCategories: (search: string, page: number) => [
+    search ? `subject-categories/${search}` : 'subject-categories',
+    page,
+  ],
   allStudentGrades: (search: string, page: number) => [
     search ? `student-grades/${search}` : 'student-grades',
     page,

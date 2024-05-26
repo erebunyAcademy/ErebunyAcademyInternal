@@ -39,7 +39,7 @@ const Modal: FC<PropsWithChildren<ModalProps>> = ({
       <ModalOverlay />
       <ModalContent py="20px">
         <ModalHeader>
-          {actionText} {title}
+          {t(actionText)} {t(title)}
         </ModalHeader>
         <ModalCloseButton />
         <ModalBody display="flex" gap="20px" flexDirection="column">
@@ -71,7 +71,7 @@ const Modal: FC<PropsWithChildren<ModalProps>> = ({
               isDisabled={isDisabled}
               colorScheme={isDeleteVariant ? 'red' : 'teal'}
               size="lg">
-              {actionText}
+              {t(actionText)}
             </Button>
           </ModalFooter>
         )}
