@@ -1,108 +1,64 @@
 'use client';
 import React, { FC } from 'react';
-import { DeleteIcon } from '@chakra-ui/icons';
-import { Avatar, Box, Button, Flex, Heading, IconButton, Stack } from '@chakra-ui/react';
+import { Avatar, Box, Button, Flex, Heading, Stack } from '@chakra-ui/react';
 import { classValidatorResolver } from '@hookform/resolvers/class-validator';
-import {
-  Attachment,
-  AttachmentTypeEnum,
-  TestQuestionLevelEnum,
-  TestQuestionTypeEnum,
-} from '@prisma/client';
+import { Attachment, AttachmentTypeEnum, LanguageTypeEnum } from '@prisma/client';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { createColumnHelper } from '@tanstack/react-table';
-import { Controller, useFieldArray, useForm } from 'react-hook-form';
-import { v4 as uuidv4, v4 } from 'uuid';
+import { Controller, useForm } from 'react-hook-form';
+import { v4 as uuidv4 } from 'uuid';
 import { ExamService } from '@/api/services/exam.service';
 import { FacultyService } from '@/api/services/faculty.service';
 import { StudentGradeGroupService } from '@/api/services/student-grade-group.service';
 import { StudentGradeService } from '@/api/services/student-grade.service';
 import { StudentService } from '@/api/services/student.service';
+import { SubjectService } from '@/api/services/subject.service';
 import { FormInput, SelectLabel } from '@/components/atoms';
-import AnswersControl from '@/components/molecules/AnswerControl';
 import TableCheckbox from '@/components/organisms/TableCheckbox';
+import { TestQuestionResolver } from '@/lib/prisma/resolvers/test-question.resolver';
 import { generateAWSUrl } from '@/utils/helpers/aws';
 import { ExamDataListModel } from '@/utils/models/exam';
 import { StudentsExamListModel } from '@/utils/models/student';
+import { SubjectSignupListModel } from '@/utils/models/subject';
+import { TestQuestionListModel } from '@/utils/models/test-question.model';
 import { ExamValidation } from '@/utils/validation/exam';
 
 const resolver = classValidatorResolver(ExamValidation);
-
-const initValue = {
-  questionText: '',
-  questionType: TestQuestionTypeEnum.CHECKBOX,
-  skillLevel: TestQuestionLevelEnum.BEGINNER,
-  answers: [{ title: '', isRightAnswer: false, optionId: v4() }],
-};
-const questionTypes = [
-  {
-    id: TestQuestionTypeEnum.RADIO,
-    type: 'Single',
-  },
-  {
-    id: TestQuestionTypeEnum.CHECKBOX,
-    type: 'Multiple',
-  },
-];
-
-const skillLevels = [
-  {
-    id: TestQuestionLevelEnum.BEGINNER,
-    skillLevel: 'Beginner',
-  },
-  {
-    id: TestQuestionLevelEnum.INTERMEDIATE,
-    skillLevel: 'Intermediate',
-  },
-  {
-    id: TestQuestionLevelEnum.ADVANCED,
-    skillLevel: 'Advanced',
-  },
-];
 
 type CreateEditExamProps = {
   exam?: ExamDataListModel;
 };
 
-const defaultValues = {
-  title: '',
-  description: '',
-  facultyId: '',
-  studentGradeId: '',
-  studentGradeGroupId: '',
-  studentIds: [],
-  questions: [initValue],
-};
-
-const CreateEditExam: FC<CreateEditExamProps> = ({ exam }) => {
+const CreateEditExam: FC<CreateEditExamProps> = () => {
   const { control, watch, handleSubmit } = useForm<ExamValidation>({
     resolver,
-    defaultValues,
+    defaultValues: {
+      title: '',
+      description: '',
+      facultyId: '',
+      studentGradeId: '',
+      studentGradeGroupId: '',
+      studentIds: [],
+      subjectId: '',
+      testQuestionIds: [],
+      language: LanguageTypeEnum.AM,
+    },
   });
 
-  console.log(exam);
-
-  // TODO change this and set it to be default value
-  // useEffect(() => {
-  //   if (exam && exam.studentGradeId && exam.studentGradeGroupId) {
-  //     reset({
-  //       title: exam.examLanguages.find(({ language }) => language === 'AM')?.title,
-  //       facultyId: exam.faculty?.id,
-  //       studentGradeId: exam.studentGradeId,
-  //       studentGradeGroupId: exam.studentGradeGroupId,
-  //       studentIds: exam.studentExams.map(studentExam => studentExam.studentId),
-  //     });
-  //   }
-  // }, [exam, reset]);
-
-  const {
-    fields: questionFields,
-    append: appendQuestion,
-    remove: removeQuestion,
-  } = useFieldArray({
-    control,
-    name: 'questions',
-  });
+  const languageTypes = [
+    {
+      id: LanguageTypeEnum.AM,
+      type: 'Armenian',
+    },
+    {
+      id: LanguageTypeEnum.RU,
+      type: 'Russian',
+    },
+    {
+      id: LanguageTypeEnum.EN,
+      type: 'English',
+    },
+  ];
 
   const isFacultySelected = watch('facultyId');
   const isStudentGradeSelected = watch('studentGradeId');
@@ -130,6 +86,19 @@ const CreateEditExam: FC<CreateEditExamProps> = ({ exam }) => {
     queryKey: ['students', isStudentGradeGroupSelected],
     queryFn: () => StudentService.getStudentsByStudentGradeGroupId(isStudentGradeGroupSelected),
     enabled: !!isStudentGradeGroupSelected,
+  });
+
+  const { data: subjectQueryData } = useQuery<SubjectSignupListModel>({
+    queryKey: ['subject'],
+    queryFn: SubjectService.list,
+  });
+
+  const subjectId = watch('subjectId');
+
+  const { data: testQuestionQueryData } = useQuery<TestQuestionListModel>({
+    queryKey: ['testQuestion'],
+    queryFn: TestQuestionResolver.getTestQuestionsBySubjectId.bind(null, subjectId),
+    enabled: !!subjectId,
   });
 
   const columnHelper = createColumnHelper<StudentsExamListModel>();
@@ -166,6 +135,22 @@ const CreateEditExam: FC<CreateEditExamProps> = ({ exam }) => {
       id: uuidv4(),
       cell: info => info.getValue(),
       header: 'Email',
+    }),
+  ];
+
+  const testQuestionCcolumnHelper = createColumnHelper<TestQuestionListModel>();
+
+  const testQuestionColumns = [
+    testQuestionCcolumnHelper.accessor('title', {
+      id: uuidv4(),
+      cell: info => info.getValue(),
+      header: 'Question',
+    }),
+    testQuestionCcolumnHelper.accessor('options', {
+      id: uuidv4(),
+      cell: info =>
+        (info.getValue() as any).map(({ title }: { title: string }) => title).join('\n'),
+      header: 'Answers',
     }),
   ];
 
@@ -224,7 +209,23 @@ const CreateEditExam: FC<CreateEditExamProps> = ({ exam }) => {
             />
           </Flex>
 
-          <Flex width="33.3%" />
+          <Flex width="33.3%">
+            <Controller
+              name="language"
+              control={control}
+              render={({ field: { onChange, value, name } }) => (
+                <SelectLabel
+                  name={name}
+                  options={languageTypes}
+                  labelName="Please select exam language"
+                  valueLabel="id"
+                  nameLabel="type"
+                  onChange={onChange}
+                  value={value}
+                />
+              )}
+            />
+          </Flex>
         </Flex>
 
         <Flex gap="30px">
@@ -304,90 +305,42 @@ const CreateEditExam: FC<CreateEditExamProps> = ({ exam }) => {
       </Stack>
 
       <Box my="50px">
-        <Heading textAlign="center">Create Exam Questions</Heading>
-        {questionFields.map((question, questionIndex) => {
-          const questionType = watch(`questions.${questionIndex}.questionType`);
-          return (
-            <Stack
-              key={question.id}
-              borderWidth="1px"
-              borderRadius="lg"
-              px="24px"
-              py="32px"
-              mt="20px">
-              <Flex justifyContent="space-between" alignItems="center">
-                <Heading size="md">Question {questionIndex + 1}</Heading>
-                {questionIndex > 0 && (
-                  <IconButton
-                    colorScheme="red"
-                    aria-label="Delete question"
-                    icon={<DeleteIcon />}
-                    onClick={() => removeQuestion(questionIndex)}
-                  />
-                )}
-              </Flex>
-              <Flex gap="30px">
-                <Controller
-                  name={`questions.${questionIndex}.questionText`}
-                  control={control}
-                  render={({ field: { onChange, value, name } }) => (
-                    <FormInput
-                      isRequired
-                      placeholder="Question"
-                      name={name}
-                      type="text"
-                      formLabelName="Question"
-                      value={value}
-                      handleInputChange={onChange}
-                    />
-                  )}
-                />
-                <Controller
-                  name={`questions.${questionIndex}.questionType`}
-                  control={control}
-                  render={({ field: { onChange, value, name } }) => (
-                    <SelectLabel
-                      name={name}
-                      options={questionTypes}
-                      labelName="Question type"
-                      valueLabel="id"
-                      nameLabel="type"
-                      onChange={onChange}
-                      value={value}
-                    />
-                  )}
-                />
-                <Controller
-                  name={`questions.${questionIndex}.skillLevel`}
-                  control={control}
-                  render={({ field: { onChange, value, name } }) => (
-                    <SelectLabel
-                      name={name}
-                      options={skillLevels}
-                      labelName="Skill level"
-                      valueLabel="id"
-                      nameLabel="skillLevel"
-                      onChange={onChange}
-                      value={value}
-                    />
-                  )}
-                />
-              </Flex>
-
-              <AnswersControl
-                control={control}
-                questionIndex={questionIndex}
-                questionType={questionType}
+        <Heading textAlign="center">Choose text questions</Heading>
+        <Flex width="25%" my="50px">
+          <Controller
+            name="subjectId"
+            control={control}
+            render={({ field: { onChange, value, name } }) => (
+              <SelectLabel
+                name={name}
+                options={subjectQueryData || []}
+                labelName="Select Subject"
+                valueLabel="id"
+                nameLabel="title"
+                onChange={onChange}
+                value={value}
               />
+            )}
+          />
+        </Flex>
 
-              {questionIndex === questionFields.length - 1 && (
-                <Button onClick={() => appendQuestion(initValue)} width="50%">
-                  Add Question
-                </Button>
-              )}
-            </Stack>
-          );
-        })}
+        {subjectId && (
+          <Controller
+            name="studentIds"
+            control={control}
+            render={({ field: { onChange, value } }) => (
+              <TableCheckbox
+                title="Select tests"
+                data={testQuestionQueryData || []}
+                selectedValues={value}
+                onChange={onChange}
+                // @ts-ignore
+                columns={testQuestionColumns || []}
+              />
+            )}
+          />
+        )}
+
         <Button colorScheme="teal" type="submit" width="50%">
           Submit Exam
         </Button>

@@ -19,7 +19,7 @@ import { QUERY_KEY } from '@/utils/helpers/queryClient';
 import { Maybe } from '@/utils/models/common';
 import { StudentGradeSignupListModel } from '@/utils/models/studentGrade';
 import { StudentGradeGroupModel } from '@/utils/models/studentGradeGroup';
-import { CreateEditStudentGradeGroupValidation } from '@/utils/validation/studentGradeGroup';
+import { CreateEditStudentGradeGroupValidation } from '@/studentGradeGroup';
 
 const resolver = classValidatorResolver(CreateEditStudentGradeGroupValidation);
 

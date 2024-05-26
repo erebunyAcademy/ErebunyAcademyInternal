@@ -11,4 +11,3 @@ export const ROUTE_FACULTIES = '/faculty-list';
 export const ROUTE_STUDENT_GRADES = '/student-grade-list';
 export const ROUTE_STUDENT_GRADE_GROUPS = '/student-grade-group-list';
 export const ROUTE_SUBJECTS = '/subject-list';
-export const ROUTE_SUBJECT_CATEGORIES = '/subject-category-list';

@@ -19,7 +19,6 @@ import {
   ROUTE_STUDENT_GRADE_GROUPS,
   ROUTE_STUDENT_GRADES,
   ROUTE_STUDENTS,
-  ROUTE_SUBJECT_CATEGORIES,
   ROUTE_SUBJECTS,
   ROUTE_TEACHERS,
 } from '../constants/routes';
@@ -59,7 +58,6 @@ export const linkItems: LinkItemsFunction = (user: Maybe<User>) => {
         { id: 6, name: 'exams', icon: <ExamsIcon />, href: ROUTE_EXAMS },
         { id: 7, name: 'teachers', icon: <TeacherIcon />, href: ROUTE_TEACHERS },
         { id: 8, name: 'subjects', icon: <SubjectsIcon />, href: ROUTE_SUBJECTS },
-        { id: 11, name: 'subjectCategory', icon: <SubjectsIcon />, href: ROUTE_SUBJECT_CATEGORIES },
         commonLinks[2],
       ];
     case UserRoleEnum.TEACHER:
