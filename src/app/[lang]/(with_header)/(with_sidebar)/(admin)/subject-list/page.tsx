@@ -34,7 +34,7 @@ const Subject = () => {
     handleSubmit,
     reset,
     setValue,
-    formState: { errors, isDirty },
+    formState: { errors, isValid },
   } = useForm<CreateEditSubjectValidation>({
     resolver,
     defaultValues: {
@@ -176,7 +176,7 @@ const Subject = () => {
   return (
     <>
       <SearchTable
-        title={t('subjectList')}
+        title={'subjectList'}
         isLoading={isLoading}
         data={data?.subjects || []}
         count={data?.count || 0}
@@ -202,24 +202,24 @@ const Subject = () => {
       <Modal
         isOpen={isCreateEditModalOpen}
         onClose={closeCreateEditModal}
-        title={t('subject')}
+        title={'subject'}
         primaryAction={handleSubmit(onSubmitHandler)}
-        isDisabled={!isDirty}
-        actionText={selectedSubject ? t('update') : t('create')}>
+        isDisabled={!isValid}
+        actionText={selectedSubject ? 'update' : 'create'}>
         <Controller
           name="title"
           control={control}
           render={({ field: { onChange, value, name } }) => (
             <FormInput
               isRequired
-              isInvalid={!!errors.title?.message}
               name={name}
               type="text"
-              formLabelName={t('subjectName')}
+              formLabelName={'subjectName'}
               value={value}
-              placeholder={t('enterTitle')}
+              placeholder={'enterTitle'}
               handleInputChange={onChange}
-              formErrorMessage={t(errors.title?.message)}
+              isInvalid={!!errors.title?.message}
+              formErrorMessage={errors.title?.message}
             />
           )}
         />
@@ -228,13 +228,13 @@ const Subject = () => {
           control={control}
           render={({ field: { onChange, value, name } }) => (
             <FormInput
-              isInvalid={!!errors.description?.message}
               name={name}
               type="text"
-              formLabelName={t('subjectDescription')}
+              formLabelName={'subjectDescription'}
               value={value}
-              placeholder={t('enterDescription')}
+              placeholder={'enterDescription'}
               handleInputChange={onChange}
+              isInvalid={!!errors.description?.message}
               formErrorMessage={errors.description?.message}
             />
           )}
@@ -244,13 +244,13 @@ const Subject = () => {
         isOpen={isDeleteModalOpen}
         isDeleteVariant
         onClose={closeDeleteModal}
-        title={t('subject')}
+        title={'subject'}
         primaryAction={() => {
           if (selectedSubject) {
             mutate(selectedSubject?.id);
           }
         }}
-        actionText={t('delete')}>
+        actionText={'delete'}>
         {t('deleteSubjectQuestion')}
       </Modal>
     </>

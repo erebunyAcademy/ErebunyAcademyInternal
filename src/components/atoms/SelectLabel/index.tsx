@@ -7,6 +7,7 @@ import {
   Select,
   Text,
 } from '@chakra-ui/react';
+import { useTranslations } from 'use-intl';
 
 type SelectLabelProps = {
   options: { [key: string]: string }[] | [];
@@ -37,10 +38,12 @@ const SelectLabel: FC<SelectLabelProps> = ({
   formErrorMessage,
   isInvalid,
 }) => {
+  const t = useTranslations();
+
   return (
     <FormControl isInvalid={isInvalid}>
       <FormLabel fontWeight="bold" mb={4} lineHeight="20px" fontSize="14px" color="#222">
-        {labelName}
+        {t(labelName)}
         {isRequired && (
           <Text as="span" color="#222">
             {' '}
@@ -50,7 +53,7 @@ const SelectLabel: FC<SelectLabelProps> = ({
       </FormLabel>
       <Select onChange={onChange} value={value} name={name} placeholder={placeholder}>
         <option value="" disabled>
-          Select an option
+          {t('selectOption')}
         </option>
         {options.map((option, index) => (
           <option key={index} value={option[valueLabel]}>
@@ -60,12 +63,12 @@ const SelectLabel: FC<SelectLabelProps> = ({
       </Select>
       {!isInvalid && formHelperText && (
         <FormHelperText fontWeight="normal" color="#5b5b5b" mt={4}>
-          {formHelperText}
+          {t(formHelperText)}
         </FormHelperText>
       )}
       {isInvalid && formErrorMessage && (
         <FormErrorMessage color="#DF1414" fontWeight="normal" mt={4}>
-          {formErrorMessage}
+          {t(formErrorMessage)}
         </FormErrorMessage>
       )}
     </FormControl>

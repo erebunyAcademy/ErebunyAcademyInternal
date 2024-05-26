@@ -166,7 +166,7 @@ export default function Users() {
   return (
     <>
       <SearchTable
-        title={t('studentsList')}
+        title={'studentsList'}
         isLoading={isLoading}
         data={data?.users || []}
         count={data?.count || 0}
@@ -191,7 +191,7 @@ export default function Users() {
       <Modal
         isOpen={isAttachmentModalOpen}
         onClose={closeAttachmentModal}
-        title={t('studentAttachment')}>
+        title={'studentAttachment'}>
         <Image
           src={generateAWSUrl(attachmentKey)}
           width={400}

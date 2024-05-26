@@ -120,7 +120,7 @@ function SearchTable<T>({
     <Box minHeight="700px" width="100%">
       <Flex justifyContent="space-between" p="20px 0 20px 0" width="100%">
         <Text as="h2" fontSize={24} textAlign="center">
-          {title}
+          {t(title)}
         </Text>
         {addNew && (
           <Button px="12px" py="8px" onClick={addNew}>

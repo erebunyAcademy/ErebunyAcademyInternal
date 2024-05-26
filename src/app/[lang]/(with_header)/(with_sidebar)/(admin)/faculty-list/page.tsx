@@ -34,7 +34,7 @@ const Faculty = () => {
     handleSubmit,
     reset,
     setValue,
-    formState: { errors, isDirty },
+    formState: { errors, isValid },
   } = useForm<CreateEditFacultyValidation>({
     resolver,
     defaultValues: {
@@ -175,7 +175,7 @@ const Faculty = () => {
   return (
     <>
       <SearchTable
-        title={t('facultyList')}
+        title={'facultyList'}
         isLoading={isLoading}
         data={data?.faculties || []}
         count={data?.count || 0}
@@ -201,10 +201,10 @@ const Faculty = () => {
       <Modal
         isOpen={isCreateEditModalOpen}
         onClose={closeCreateEditModal}
-        title={t('faculty')}
+        title={'faculty'}
         primaryAction={handleSubmit(onSubmitHandler)}
-        isDisabled={!isDirty}
-        actionText={selectedFaculty ? t('update') : t('create')}>
+        isDisabled={!isValid}
+        actionText={selectedFaculty ? 'update' : 'create'}>
         <Controller
           name="title"
           control={control}
@@ -214,11 +214,11 @@ const Faculty = () => {
               isInvalid={!!errors.title?.message}
               name={name}
               type="text"
-              formLabelName={t('facultyName')}
+              formLabelName={'facultyName'}
               value={value}
-              placeholder={t('enterTitle')}
+              placeholder={'enterTitle'}
               handleInputChange={onChange}
-              formErrorMessage={t(errors.title?.message)}
+              formErrorMessage={errors.title?.message}
             />
           )}
         />
@@ -230,9 +230,9 @@ const Faculty = () => {
               isInvalid={!!errors.description?.message}
               name={name}
               type="text"
-              formLabelName={t('facultyDescription')}
+              formLabelName={'facultyDescription'}
               value={value}
-              placeholder={t('enterDescription')}
+              placeholder={'enterDescription'}
               handleInputChange={onChange}
               formErrorMessage={errors.description?.message}
             />
@@ -243,13 +243,13 @@ const Faculty = () => {
         isOpen={isDeleteModalOpen}
         onClose={closeDeleteModal}
         isDeleteVariant
-        title={t('faculty')}
+        title={'faculty'}
         primaryAction={() => {
           if (selectedFaculty) {
             mutate(selectedFaculty?.id);
           }
         }}
-        actionText={t('delete')}>
+        actionText={'delete'}>
         {t('deleteFacultyQuestion')}
       </Modal>
     </>
