@@ -1,8 +1,8 @@
+import { CreateEditStudentGradeGroupValidation } from '@/studentGradeGroup';
 import {
   StudentGradeGroupAdminListModel,
   StudentGradeGroupSignupListModel,
 } from '@/utils/models/studentGradeGroup';
-import { CreateEditStudentGradeGroupValidation } from '@/studentGradeGroup';
 import $apiClient from '../axiosClient';
 import { QueryParams } from '../types/common';
 

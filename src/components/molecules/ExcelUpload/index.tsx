@@ -1,5 +1,5 @@
-import { ChangeEventHandler, FC, memo, useCallback } from 'react';
-import { Box, Button, Input, useToast } from '@chakra-ui/react';
+import { ChangeEventHandler, FC, memo, useCallback, useRef } from 'react';
+import { Button, Input, useToast } from '@chakra-ui/react';
 import * as XLSX from 'xlsx';
 import { Maybe } from '@/utils/models/common';
 
@@ -10,15 +10,17 @@ const fileTypes = [
   'text/csv',
 ];
 
-export type DataType = Maybe<Array<Record<string, Maybe<string>>>>;
+export type ExcelDataType<T = string> = Maybe<Array<Record<string, Maybe<T>>>>;
 
 interface Props {
-  setExcelData: React.Dispatch<React.SetStateAction<DataType>>;
+  setExcelData: React.Dispatch<React.SetStateAction<ExcelDataType>>;
   setValues: (uniqueKeys: Array<string>) => void;
 }
 
 const ExcelUpload: FC<Props> = ({ setExcelData, setValues }) => {
   const toast = useToast();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const uploadFileClick = useCallback(() => fileInputRef.current?.click(), []);
 
   const handleFile: ChangeEventHandler<HTMLInputElement> = useCallback(
     e => {
@@ -53,7 +55,7 @@ const ExcelUpload: FC<Props> = ({ setExcelData, setValues }) => {
           if (!data.length) {
             return toast({ title: 'You have imported an empty file', status: 'error' });
           }
-          setExcelData(data as DataType);
+          setExcelData(data as ExcelDataType);
           setValues(uniqueKeys);
         } else {
           toast({ title: 'Something went wrong', status: 'error' });
@@ -63,13 +65,26 @@ const ExcelUpload: FC<Props> = ({ setExcelData, setValues }) => {
     [setExcelData, setValues, toast],
   );
 
-  const handleFileSubmit = useCallback(() => {}, []);
-
   return (
-    <Box>
-      <Input required type="file" onChange={handleFile} />
-      <Button onClick={handleFileSubmit}>UPLOAD</Button>
-    </Box>
+    <>
+      <Button fontSize="14px" size="sm" onClick={uploadFileClick}>
+        Upload excel file
+      </Button>
+      <Input
+        required
+        ref={fileInputRef}
+        multiple={false}
+        type="file"
+        name="file"
+        title=""
+        position="absolute"
+        display="none"
+        top={0}
+        bottom={0}
+        left={0}
+        onChange={handleFile}
+      />
+    </>
   );
 };
 

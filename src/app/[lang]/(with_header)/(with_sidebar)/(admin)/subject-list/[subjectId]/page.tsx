@@ -1,14 +1,14 @@
 'use client';
-import React from 'react';
+import React, { useState } from 'react';
 import { DeleteIcon } from '@chakra-ui/icons';
-import { Box, Button, Flex, Heading, IconButton, Stack } from '@chakra-ui/react';
+import { Box, Button, Flex, Heading, HStack, IconButton, Stack } from '@chakra-ui/react';
 import { classValidatorResolver } from '@hookform/resolvers/class-validator';
 import { TestQuestionLevelEnum, TestQuestionTypeEnum } from '@prisma/client';
-import { useParams } from 'next/navigation';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import { v4 } from 'uuid';
 import { FormInput, SelectLabel } from '@/components/atoms';
 import AnswersControl from '@/components/molecules/AnswerControl';
+import ExamsUploadByExcel, { UploadedExcelData } from '@/components/organisms/ExamsUploadByExcel';
 import { ExamValidation, TestQuestionValidation } from '@/utils/validation/exam';
 
 const questionTypes = [
@@ -47,7 +47,7 @@ const initValue = {
 const resolver = classValidatorResolver(ExamValidation);
 
 const CreateTestQuestions = () => {
-  const params = useParams();
+  const [excelData, setExcelData] = useState<UploadedExcelData>(null);
   const { control, watch, handleSubmit } = useForm<TestQuestionValidation>({
     resolver,
     defaultValues: {
@@ -68,11 +68,15 @@ const CreateTestQuestions = () => {
     console.log(data);
   };
 
-  console.log(params);
+  console.log(excelData);
+
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Box my="50px">
-        <Heading textAlign="center">Create Exam Questions</Heading>
+        <HStack spacing={10}>
+          <Heading textAlign="center">Create Exam Questions</Heading>
+          <ExamsUploadByExcel setUploadedResults={setExcelData} />
+        </HStack>
         {questionFields.map((question, questionIndex) => {
           const questionType = watch(`questions.${questionIndex}.questionType`);
           return (

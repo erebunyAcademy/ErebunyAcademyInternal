@@ -14,12 +14,12 @@ import ActionButtons from '@/components/molecules/ActionButtons';
 import Modal from '@/components/molecules/Modal';
 import SearchTable from '@/components/organisms/SearchTable';
 import useDebounce from '@/hooks/useDebounce';
+import { CreateEditStudentGradeGroupValidation } from '@/studentGradeGroup';
 import { ITEMS_PER_PAGE } from '@/utils/constants/common';
 import { QUERY_KEY } from '@/utils/helpers/queryClient';
 import { Maybe } from '@/utils/models/common';
 import { StudentGradeSignupListModel } from '@/utils/models/studentGrade';
 import { StudentGradeGroupModel } from '@/utils/models/studentGradeGroup';
-import { CreateEditStudentGradeGroupValidation } from '@/studentGradeGroup';
 
 const resolver = classValidatorResolver(CreateEditStudentGradeGroupValidation);
 
