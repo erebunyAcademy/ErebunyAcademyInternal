@@ -129,19 +129,8 @@ model Subject {
   studentGradeSubjects StudentGradeSubject[]
   subjectTeacher       SubjectTeacher[]
   attachments          Attachment[]
-  subjectCategories    SubjectCategory[]
-
-  createdAt DateTime @default(now()) @db.Timestamp(0)
-  updatedAt DateTime @updatedAt @db.Timestamp(0)
-}
-
-model SubjectCategory {
-  id            String         @id @default(uuid())
-  title         String         @db.VarChar(60)
-  description   String?        @db.VarChar(60)
-  subject       Subject?       @relation(fields: [subjectId], references: [id])
-  subjectId     String?
-  testQuestions TestQuestion[]
+  testQuestions        TestQuestion[]
+  exams                Exam[]
 
   createdAt DateTime @default(now()) @db.Timestamp(0)
   updatedAt DateTime @updatedAt @db.Timestamp(0)
@@ -193,6 +182,8 @@ model Exam {
   id            String            @id @default(uuid())
   studentExams  StudentExam[]
   examLanguages ExamTranslation[]
+  subject       Subject           @relation(fields: [subjectId], references: [id])
+  subjectId     String
 
   updatedAt DateTime @updatedAt @db.Timestamp(0)
   createdAt DateTime @default(now()) @db.Timestamp(0)
@@ -223,11 +214,11 @@ model TestQuestion {
   examTranslation   ExamTranslation?      @relation(fields: [examTranslationId], references: [id])
   examTranslationId String?
   language          LanguageTypeEnum
+  subject           Subject?              @relation(fields: [subjectId], references: [id])
+  subjectId         String?
 
-  createdAt         DateTime         @default(now()) @db.Timestamp(0)
-  updatedAt         DateTime         @updatedAt @db.Timestamp(0)
-  subjectCategory   SubjectCategory? @relation(fields: [subjectCategoryId], references: [id])
-  subjectCategoryId String?
+  createdAt DateTime @default(now()) @db.Timestamp(0)
+  updatedAt DateTime @updatedAt @db.Timestamp(0)
 }
 
 model Option {
