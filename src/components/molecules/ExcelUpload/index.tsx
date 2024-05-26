@@ -10,7 +10,9 @@ const fileTypes = [
   'text/csv',
 ];
 
-export type ExcelDataType<T = string> = Maybe<Array<Record<string, Maybe<T>>>>;
+export type ExcelDataType<T extends string = string, K = string> = Maybe<
+  Array<Record<T, Maybe<K>>>
+>;
 
 interface Props {
   setExcelData: React.Dispatch<React.SetStateAction<ExcelDataType>>;

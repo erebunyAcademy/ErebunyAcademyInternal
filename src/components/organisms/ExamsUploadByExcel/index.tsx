@@ -39,7 +39,10 @@ const reducer = (state: State, action: ExcelReducerActions) => {
   };
 };
 
-export type UploadedExcelData = ExcelDataType<string | Maybe<Record<string, string>>[]>;
+export type UploadedExcelData = ExcelDataType<
+  EXAM_FIELD_KEY,
+  string | Maybe<Record<string, string>>[] | Maybe<Array<Maybe<string>>>
+>;
 
 interface Props {
   setUploadedResults: React.Dispatch<React.SetStateAction<UploadedExcelData>>;

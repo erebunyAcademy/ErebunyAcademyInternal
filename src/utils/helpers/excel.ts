@@ -56,9 +56,9 @@ export const prepareExcelAnswersForExam = (data: Record<string, Maybe<string>>, 
     .filter(line => line.trim() !== '');
 
   return answers
-    .map((answer, idx) => {
+    .map(answer => {
       if (answer.length === 1) {
-        return { [`answer-${idx + 1}`]: answer.toLowerCase() };
+        return answer.toLowerCase().trim();
       } else {
         toast({
           title: 'Invalid answer format:',

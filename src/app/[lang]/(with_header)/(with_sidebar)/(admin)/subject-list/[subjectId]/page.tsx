@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { DeleteIcon } from '@chakra-ui/icons';
 import { Box, Button, Flex, Heading, HStack, IconButton, Stack } from '@chakra-ui/react';
 import { classValidatorResolver } from '@hookform/resolvers/class-validator';
@@ -9,6 +9,7 @@ import { v4 } from 'uuid';
 import { FormInput, SelectLabel } from '@/components/atoms';
 import AnswersControl from '@/components/molecules/AnswerControl';
 import ExamsUploadByExcel, { UploadedExcelData } from '@/components/organisms/ExamsUploadByExcel';
+import { Maybe } from '@/utils/models/common';
 import { ExamValidation, TestQuestionValidation } from '@/utils/validation/exam';
 
 const questionTypes = [
@@ -48,7 +49,7 @@ const resolver = classValidatorResolver(ExamValidation);
 
 const CreateTestQuestions = () => {
   const [excelData, setExcelData] = useState<UploadedExcelData>(null);
-  const { control, watch, handleSubmit } = useForm<TestQuestionValidation>({
+  const { control, watch, handleSubmit, reset } = useForm<TestQuestionValidation>({
     resolver,
     defaultValues: {
       questions: [initValue],
@@ -68,7 +69,34 @@ const CreateTestQuestions = () => {
     console.log(data);
   };
 
-  console.log(excelData);
+  useEffect(() => {
+    if (excelData) {
+      reset({
+        questions: excelData.map(item => ({
+          questionText: item.question as string,
+          questionType:
+            item.answers?.length || 0 > 1
+              ? TestQuestionTypeEnum.CHECKBOX
+              : TestQuestionTypeEnum.RADIO,
+          skillLevel: item.level as TestQuestionLevelEnum,
+          answers: Array.isArray(item.options)
+            ? item.options.map(opt => {
+                if (!opt) {
+                  return {};
+                }
+                const arr = Object.entries(opt);
+                return {
+                  title: arr[0][1] as string,
+                  isRightAnswer: !!(item.answers as Maybe<string[]>)?.includes(arr[0][0]),
+                  optionId: v4(),
+                };
+              })
+            : [],
+        })),
+      });
+      setExcelData(null);
+    }
+  }, [excelData, reset]);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
