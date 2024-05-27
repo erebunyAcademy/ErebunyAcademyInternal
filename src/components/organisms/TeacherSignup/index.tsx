@@ -11,10 +11,9 @@ import { Locale } from '@/i18n';
 import { ROUTE_SIGN_IN } from '@/utils/constants/routes';
 import { languagePathHelper } from '@/utils/helpers/language';
 import { TeacherSignUpValidation } from '@/utils/validation';
-import { FormInput, SelectLabel } from '../../atoms';
+import { FormInput, Loading, SelectLabel } from '../../atoms';
 
 const resolver = classValidatorResolver(TeacherSignUpValidation);
-// todo for me
 const TeacherSignUp = ({ lang }: { lang: Locale }) => {
   const toast = useToast();
   const router = useRouter();
@@ -23,7 +22,7 @@ const TeacherSignUp = ({ lang }: { lang: Locale }) => {
   const {
     control,
     handleSubmit,
-    formState: { errors, isValid },
+    formState: { errors, isValid, isSubmitting },
   } = useForm<TeacherSignUpValidation>({
     resolver,
     defaultValues: {
@@ -65,6 +64,7 @@ const TeacherSignUp = ({ lang }: { lang: Locale }) => {
   return (
     <>
       <VStack spacing={32} display="grid" gridTemplateColumns={{ base: '1fr' }}>
+        <Loading isLoading={isSubmitting} />
         <Stack direction={{ base: 'column', md: 'row' }} gap={{ base: '16px', sm: '8px' }}>
           <Controller
             name="firstName"

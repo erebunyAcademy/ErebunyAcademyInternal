@@ -40,6 +40,14 @@ class UserHandler {
     return UserResolver.confirmuser(id);
   }
 
+  @Post('/reject-user/:studentId')
+  _rejectUser(
+    @Param('studentId') studentId: string,
+    @Body(ValidationPipe) input: { message: string },
+  ) {
+    return UserResolver.rejectUser(studentId, input.message);
+  }
+
   @AuthMiddleware()
   @Put('/update-profile')
   updateProfile(

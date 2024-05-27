@@ -1,3 +1,4 @@
+import { RejectUserType } from '@/utils/input/user';
 import { ChangePasswordValidation, UserProfileFormValidation } from '@/utils/validation/user';
 import $apiClient from '../axiosClient';
 
@@ -13,6 +14,9 @@ export class UserService {
   }
   static confirmUserEmail(code: string): Promise<boolean> {
     return $apiClient.post('users/confirm-user-email', { code });
+  }
+  static rejectUserEmail(input: RejectUserType): Promise<boolean> {
+    return $apiClient.post(`users/reject-user/${input.userId}`, { message: input.message });
   }
   static deleteStudentById(id: string) {
     return $apiClient.delete(`/users/${id}`);

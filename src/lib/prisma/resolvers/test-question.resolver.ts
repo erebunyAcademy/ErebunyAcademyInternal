@@ -1,3 +1,6 @@
+import { LanguageTypeEnum } from '@prisma/client';
+import { TestQuestionValidation } from '@/utils/validation/exam';
+import { SubjectResolver } from './subject.resolver';
 import prisma from '..';
 
 export class TestQuestionResolver {
@@ -15,6 +18,22 @@ export class TestQuestionResolver {
         title: true,
         id: true,
       },
+    });
+  }
+
+  static createTestQuestions(subjectId: string, input: TestQuestionValidation) {
+    const subject = SubjectResolver.getSubjectById(subjectId);
+
+    console.log({ subject });
+
+    const data = input.questions.map(question => ({
+      ...question,
+      subjectId,
+      language: LanguageTypeEnum.AM,
+    }));
+
+    return prisma.testQuestion.createMany({
+      data,
     });
   }
 }

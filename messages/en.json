@@ -11,8 +11,8 @@
   "attachment": "Attachment",
   "enterYourCity": "Enter your City",
 
-  "studentGrade": "Student grade",
-  "studentGradeGroup": "Student grade group",
+  "studentGrade": "Course",
+  "studentGradeGroup": "Course group",
   "faculty": "Faculty",
   "profession": "Profession",
   "workPlace": "Working place",
@@ -147,5 +147,6 @@
   "invalidNumber": "Invalid number",
   "passwordDontMatch": "Password don't match",
   "invalidPassword": "Invalid password",
-  "contactCollegeRepresentative": "Please contact college representative to allow confirm your account."
+  "contactCollegeRepresentative": "Please contact college representative to allow confirm your account.",
+  "reject": "Reject"
 }

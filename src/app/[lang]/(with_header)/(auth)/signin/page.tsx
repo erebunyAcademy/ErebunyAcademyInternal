@@ -47,7 +47,7 @@ const SignIn = ({ params }: { params: { lang: Locale } }) => {
         router.push(res.url);
         router.refresh();
       } else {
-        toast({ title: t(ERROR_MESSAGES.invalidCredentials), status: 'error' });
+        toast({ title: t(res?.error?.split(': ')[1]), status: 'error' });
       }
     } catch (error) {
       toast({ title: t(ERROR_MESSAGES.invalidCredentials), status: 'error' });
@@ -68,7 +68,7 @@ const SignIn = ({ params }: { params: { lang: Locale } }) => {
 
   return (
     <AuthBox data={authBoxProps(params.lang).data} boxProps={authBoxProps(params.lang).boxProps}>
-      {isSubmitting && <Loading isLoading={isSubmitting} />}
+      <Loading isLoading={isSubmitting} />
       <VStack spacing={32}>
         <Controller
           name="email"

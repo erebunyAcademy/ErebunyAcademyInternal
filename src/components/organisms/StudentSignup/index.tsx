@@ -27,7 +27,7 @@ import { ROUTE_SIGN_IN } from '@/utils/constants/routes';
 import { languagePathHelper } from '@/utils/helpers/language';
 import { Maybe } from '@/utils/models/common';
 import { StudentSignUpValidation } from '@/utils/validation';
-import { FormInput, SelectLabel } from '../../atoms';
+import { FormInput, Loading, SelectLabel } from '../../atoms';
 
 const resolver = classValidatorResolver(StudentSignUpValidation);
 
@@ -48,6 +48,8 @@ const StudentSignUp = ({ lang }: { lang: Locale }) => {
   const router = useRouter();
   const toast = useToast();
   const [localImage, setLocalImage] = useState<Maybe<{ file: File; localUrl: string }>>(null);
+  const [isLoading, setIsLoading] = useState(false);
+
   const t = useTranslations();
   const { mutate, isPending } = useMutation({
     mutationFn: AuthService.studentSignUp,
@@ -64,20 +66,27 @@ const StudentSignUp = ({ lang }: { lang: Locale }) => {
   });
 
   const onStudentSubmit: SubmitHandler<StudentSignUpValidation> = async data => {
-    if (localImage) {
-      const attachmentId = uuid();
-      const key = `students/${attachmentId}/attachments/${Date.now()}_${localImage.file.name}`;
-      const { url } = await UserService.getPreSignedUrl(key);
-      await axios.put(url, localImage.file);
-      mutate({
-        ...data,
-        attachment: {
-          mimetype: localImage.file.type,
-          title: localImage.file.name,
-          key,
-          attachmentKey: attachmentId,
-        },
-      });
+    setIsLoading(true);
+    try {
+      if (localImage) {
+        const attachmentId = uuid();
+        const key = `students/${attachmentId}/attachments/${Date.now()}_${localImage.file.name}`;
+        const { url } = await UserService.getPreSignedUrl(key);
+        await axios.put(url, localImage.file);
+        mutate({
+          ...data,
+          attachment: {
+            mimetype: localImage.file.type,
+            title: localImage.file.name,
+            key,
+            attachmentKey: attachmentId,
+          },
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -122,6 +131,7 @@ const StudentSignUp = ({ lang }: { lang: Locale }) => {
 
   return (
     <>
+      <Loading isLoading={isLoading} />
       <VStack
         spacing={{ base: '16px', sm: '32px' }}
         display="grid"

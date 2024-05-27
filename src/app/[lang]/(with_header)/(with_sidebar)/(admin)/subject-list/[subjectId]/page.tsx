@@ -5,12 +5,11 @@ import { Box, Button, Flex, Heading, HStack, IconButton, Stack } from '@chakra-u
 import { classValidatorResolver } from '@hookform/resolvers/class-validator';
 import { TestQuestionLevelEnum, TestQuestionTypeEnum } from '@prisma/client';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
-import { v4 } from 'uuid';
 import { FormInput, SelectLabel } from '@/components/atoms';
 import AnswersControl from '@/components/molecules/AnswerControl';
 import ExamsUploadByExcel, { UploadedExcelData } from '@/components/organisms/ExamsUploadByExcel';
 import { Maybe } from '@/utils/models/common';
-import { ExamValidation, TestQuestionValidation } from '@/utils/validation/exam';
+import { TestQuestionValidation } from '@/utils/validation/exam';
 
 const questionTypes = [
   {
@@ -39,13 +38,14 @@ const skillLevels = [
 ];
 
 const initValue = {
-  questionText: '',
-  questionType: TestQuestionTypeEnum.CHECKBOX,
+  title: '',
+  type: TestQuestionTypeEnum.CHECKBOX,
+  subjectId: '',
   skillLevel: TestQuestionLevelEnum.BEGINNER,
-  answers: [{ title: '', isRightAnswer: false, optionId: v4() }],
+  options: [{ title: '', isRightAnswer: false }],
 };
 
-const resolver = classValidatorResolver(ExamValidation);
+const resolver = classValidatorResolver(TestQuestionValidation);
 
 const CreateTestQuestions = () => {
   const [excelData, setExcelData] = useState<UploadedExcelData>(null);
@@ -65,7 +65,7 @@ const CreateTestQuestions = () => {
     name: 'questions',
   });
 
-  const onSubmit = (data: any) => {
+  const onSubmit = (data: TestQuestionValidation) => {
     console.log(data);
   };
 
@@ -73,13 +73,13 @@ const CreateTestQuestions = () => {
     if (excelData) {
       reset({
         questions: excelData.map(item => ({
-          questionText: item.question as string,
-          questionType:
+          title: item.question as string,
+          type:
             item.answers?.length || 0 > 1
               ? TestQuestionTypeEnum.CHECKBOX
               : TestQuestionTypeEnum.RADIO,
           skillLevel: item.level as TestQuestionLevelEnum,
-          answers: Array.isArray(item.options)
+          options: Array.isArray(item.options)
             ? item.options.map(opt => {
                 if (!opt) {
                   return {};
@@ -88,7 +88,6 @@ const CreateTestQuestions = () => {
                 return {
                   title: arr[0][1] as string,
                   isRightAnswer: !!(item.answers as Maybe<string[]>)?.includes(arr[0][0]),
-                  optionId: v4(),
                 };
               })
             : [],
@@ -106,7 +105,7 @@ const CreateTestQuestions = () => {
           <ExamsUploadByExcel setUploadedResults={setExcelData} />
         </HStack>
         {questionFields.map((question, questionIndex) => {
-          const questionType = watch(`questions.${questionIndex}.questionType`);
+          const questionType = watch(`questions.${questionIndex}.type`);
           return (
             <Stack
               key={question.id}
@@ -128,7 +127,7 @@ const CreateTestQuestions = () => {
               </Flex>
               <Flex gap="30px">
                 <Controller
-                  name={`questions.${questionIndex}.questionText`}
+                  name={`questions.${questionIndex}.title`}
                   control={control}
                   render={({ field: { onChange, value, name } }) => (
                     <FormInput
@@ -143,7 +142,7 @@ const CreateTestQuestions = () => {
                   )}
                 />
                 <Controller
-                  name={`questions.${questionIndex}.questionType`}
+                  name={`questions.${questionIndex}.type`}
                   control={control}
                   render={({ field: { onChange, value, name } }) => (
                     <SelectLabel

@@ -19,16 +19,12 @@ class Answer {
   @IsBoolean()
   @IsOptional()
   isRightAnswer: boolean;
-
-  @IsString()
-  @IsNotEmpty({ message: 'Answer id is required' })
-  optionId: string;
 }
 
 class Question {
   @IsString()
   @IsNotEmpty({ message: 'Question type is required' })
-  questionType: TestQuestionTypeEnum;
+  type: TestQuestionTypeEnum;
 
   @IsString()
   @IsNotEmpty({ message: 'Skill level is required' })
@@ -36,13 +32,13 @@ class Question {
 
   @IsString()
   @IsNotEmpty({ message: 'Question text is required' })
-  questionText: string;
+  title: string;
 
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => Answer)
   @AtLeastOneCorrectAnswer({ message: 'At least one answer must be marked as correct' })
-  answers: Answer[];
+  options: Answer[];
 }
 
 export class TestQuestionValidation {

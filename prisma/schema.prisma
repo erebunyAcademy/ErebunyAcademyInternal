@@ -213,7 +213,7 @@ model TestQuestion {
   skillLevel        TestQuestionLevelEnum
   examTranslation   ExamTranslation?      @relation(fields: [examTranslationId], references: [id])
   examTranslationId String?
-  language          LanguageTypeEnum
+  language          LanguageTypeEnum?
   subject           Subject?              @relation(fields: [subjectId], references: [id])
   subjectId         String?
 

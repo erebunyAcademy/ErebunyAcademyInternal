@@ -1,5 +1,5 @@
 'use client';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { ChangeEvent, useCallback, useMemo, useState } from 'react';
 import { Avatar, Button, MenuItem, useDisclosure } from '@chakra-ui/react';
 import { AttachmentTypeEnum } from '@prisma/client';
 import { useMutation, useQuery } from '@tanstack/react-query';
@@ -10,6 +10,7 @@ import { useTranslations } from 'next-intl';
 import { v4 as uuidv4 } from 'uuid';
 import { StudentService } from '@/api/services/student.service';
 import { UserService } from '@/api/services/user.service';
+import FormTextarea from '@/components/atoms/FormTextarea';
 import ActionButtons from '@/components/molecules/ActionButtons';
 import Modal from '@/components/molecules/Modal';
 import SearchTable from '@/components/organisms/SearchTable';
@@ -17,6 +18,7 @@ import useDebounce from '@/hooks/useDebounce';
 import { ITEMS_PER_PAGE } from '@/utils/constants/common';
 import { generateAWSUrl } from '@/utils/helpers/aws';
 import { QUERY_KEY } from '@/utils/helpers/queryClient';
+import { Maybe } from '@/utils/models/common';
 import { StudentModel } from '@/utils/models/student';
 
 export default function Users() {
@@ -25,6 +27,8 @@ export default function Users() {
   const [page, setPage] = useState(1);
   const debouncedSearch = useDebounce(search);
   const [attachmentKey, setAttachmentKey] = useState('');
+  const [rejectionText, setRejectionText] = useState('');
+  const [selectedStudentId, setSelectedStudentId] = useState<Maybe<string>>(null);
   const t = useTranslations();
 
   const { data, isLoading, isPlaceholderData } = useQuery({
@@ -44,8 +48,21 @@ export default function Users() {
     onClose: closeAttachmentModal,
   } = useDisclosure();
 
+  const {
+    isOpen: isRejectStudentModalIsOpen,
+    onOpen: openStudentRejectModal,
+    onClose: closeStudentRejectModal,
+  } = useDisclosure();
+
   const { mutate: confirmUserById } = useMutation({
     mutationFn: UserService.confirmUserVerificationById,
+  });
+
+  const { mutate: rejectUser, isPending } = useMutation({
+    mutationFn: UserService.rejectUserEmail,
+    onSuccess() {
+      closeStudentRejectModal();
+    },
   });
 
   const pageCount = useMemo(() => {
@@ -157,11 +174,23 @@ export default function Users() {
             }}>
             {t('confirm')}
           </MenuItem>
+          <MenuItem
+            color="green"
+            onClick={() => {
+              openStudentRejectModal();
+              setSelectedStudentId(row.original.id);
+            }}>
+            {t('reject')}
+          </MenuItem>
         </ActionButtons>
       ),
       header: t('actions'),
     }),
   ];
+
+  const valueChangeHandler = useCallback((e: ChangeEvent<HTMLTextAreaElement>) => {
+    setRejectionText(e.target.value);
+  }, []);
 
   return (
     <>
@@ -187,6 +216,26 @@ export default function Users() {
         fetchNextPage={useCallback(() => setPage(prev => ++prev), [])}
         fetchPreviousPage={useCallback(() => setPage(prev => --prev), [])}
       />
+
+      <Modal
+        isOpen={isRejectStudentModalIsOpen}
+        onClose={closeStudentRejectModal}
+        title={'studentAttachment'}>
+        <FormTextarea
+          handleInputChange={valueChangeHandler}
+          value={rejectionText}
+          name="reject-message"
+        />
+        <Button
+          isLoading={isPending}
+          onClick={() => {
+            if (selectedStudentId) {
+              rejectUser({ userId: selectedStudentId, message: rejectionText });
+            }
+          }}>
+          Send
+        </Button>
+      </Modal>
 
       <Modal
         isOpen={isAttachmentModalOpen}

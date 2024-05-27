@@ -3,7 +3,6 @@ import { DeleteIcon } from '@chakra-ui/icons';
 import { Button, Checkbox, Flex, Heading, IconButton, Radio, Stack } from '@chakra-ui/react';
 import { TestQuestionTypeEnum } from '@prisma/client';
 import { Control, Controller, useFieldArray } from 'react-hook-form';
-import { v4 } from 'uuid';
 import { FormInput } from '@/components/atoms';
 import { TestQuestionValidation } from '@/utils/validation/exam';
 
@@ -16,7 +15,7 @@ interface AnswersControlProps {
 const AnswersControl: FC<AnswersControlProps> = ({ control, questionIndex, questionType }) => {
   const { fields, append, remove, update } = useFieldArray({
     control,
-    name: `questions.${questionIndex}.answers`,
+    name: `questions.${questionIndex}.options`,
   });
 
   const handleRadioChange = (index: number) => {
@@ -33,7 +32,7 @@ const AnswersControl: FC<AnswersControlProps> = ({ control, questionIndex, quest
           <Flex display="flex" alignItems="center" height="100%">
             {questionType === TestQuestionTypeEnum.RADIO ? (
               <Controller
-                name={`questions.${questionIndex}.answers.${answerIndex}.isRightAnswer`}
+                name={`questions.${questionIndex}.options.${answerIndex}.isRightAnswer`}
                 control={control}
                 render={({ field }) => (
                   <Radio
@@ -48,7 +47,7 @@ const AnswersControl: FC<AnswersControlProps> = ({ control, questionIndex, quest
               />
             ) : (
               <Controller
-                name={`questions.${questionIndex}.answers.${answerIndex}.isRightAnswer`}
+                name={`questions.${questionIndex}.options.${answerIndex}.isRightAnswer`}
                 control={control}
                 render={({ field: { name, value, onChange } }) => (
                   <Checkbox
@@ -65,7 +64,7 @@ const AnswersControl: FC<AnswersControlProps> = ({ control, questionIndex, quest
 
           <Flex flexGrow={1}>
             <Controller
-              name={`questions.${questionIndex}.answers.${answerIndex}.title`}
+              name={`questions.${questionIndex}.options.${answerIndex}.title`}
               control={control}
               render={({ field: { onChange, value, name } }) => (
                 <FormInput
@@ -92,9 +91,7 @@ const AnswersControl: FC<AnswersControlProps> = ({ control, questionIndex, quest
           </Flex>
         </Flex>
       ))}
-      <Button
-        onClick={() => append({ title: '', isRightAnswer: false, optionId: v4() })}
-        width="50%">
+      <Button onClick={() => append({ title: '', isRightAnswer: false })} width="50%">
         Add Answer
       </Button>
     </Stack>

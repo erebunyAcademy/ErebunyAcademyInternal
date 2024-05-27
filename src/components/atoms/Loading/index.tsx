@@ -6,36 +6,42 @@ interface LoadingProps extends BoxProps {
   isLoading?: boolean;
 }
 
-const Loading: FC<LoadingProps> = ({ isLoading = false, ...rest }) => {
+const Loading: FC<LoadingProps> = ({ isLoading, ...rest }) => {
   const isFetching = useIsFetching();
   const isMutating = useIsMutating();
 
-  if (!isFetching && !isMutating && !isLoading) {
-    return null;
-  }
-
   return (
-    <Box {...rest}>
-      <Box
-        position="fixed"
-        top={0}
-        bottom={0}
-        right={0}
-        left={0}
-        backgroundColor="#fff"
-        opacity={0.8}
-        zIndex={10}
-      />
-      <Box
-        position="fixed"
-        left="50%"
-        top="50%"
-        transform="translate(-50%,-50%)"
-        zIndex={100}
-        width="100px">
-        <Spinner thickness="4px" speed="0.65s" emptyColor="gray.200" color="#319795" size="xl" />
-      </Box>
-    </Box>
+    <>
+      {isFetching || isMutating || isLoading ? (
+        <Box {...rest}>
+          <Box
+            position="fixed"
+            top={0}
+            bottom={0}
+            right={0}
+            left={0}
+            backgroundColor="#fff"
+            opacity={0.8}
+            zIndex={10}
+          />
+          <Box
+            position="fixed"
+            left="50%"
+            top="50%"
+            transform="translate(-50%,-50%)"
+            zIndex={100}
+            width="100px">
+            <Spinner
+              thickness="4px"
+              speed="0.65s"
+              emptyColor="gray.200"
+              color="#319795"
+              size="xl"
+            />
+          </Box>
+        </Box>
+      ) : null}
+    </>
   );
 };
 

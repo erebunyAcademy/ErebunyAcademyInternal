@@ -10,6 +10,7 @@ import {
 } from '@/utils/validation/user';
 import prisma from '../index';
 import { AWSService } from '../services/AWS.service';
+import { Email } from '../services/Sendgrid.service';
 
 export class UserResolver {
   static async findUserWithEmail(email: string) {
@@ -118,7 +119,7 @@ export class UserResolver {
     if (!user) {
       throw new NotFoundException('User with provided id was not found');
     }
-    return prisma.user.update({
+    prisma.user.update({
       where: {
         id,
       },
@@ -126,6 +127,15 @@ export class UserResolver {
         isAdminVerified: true,
       },
     });
+
+    await Email.approveUserAccountEmail(user.email, user.firstName)
+      .then(res => {
+        console.log({ approveUserAccountEmail: res });
+      })
+      .catch(err => {
+        console.log({ approveUserAccountEmail: err });
+      });
+    return true;
   }
   static async deleteUser(id: string) {
     // todo
@@ -173,6 +183,22 @@ export class UserResolver {
       where: { id: user.id },
       data: userData,
     });
+  }
+
+  static async rejectUser(id: string, message: string) {
+    const user = await prisma.user.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    if (!user) {
+      throw new NotFoundException('User is not found');
+    }
+
+    await Email.rejectUserAccountEmail(user.email, user.firstName, message);
+
+    return true;
   }
 
   static async updatePassword(input: ChangePasswordValidation, user: NonNullable<User>) {
