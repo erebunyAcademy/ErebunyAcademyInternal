@@ -206,8 +206,8 @@ model ExamTranslation {
 
 model TestQuestion {
   id                String                @id @default(uuid())
-  title             String                @db.VarChar(60)
-  description       String?               @db.VarChar(60)
+  title             String                @db.Text
+  description       String?               @db.Text
   type              TestQuestionTypeEnum
   options           Option[]
   skillLevel        TestQuestionLevelEnum
@@ -223,7 +223,7 @@ model TestQuestion {
 
 model Option {
   id             String       @id @default(uuid())
-  title          String       @db.VarChar(60)
+  title          String       @db.Text
   isRightAnswer  Boolean      @default(false)
   testquestion   TestQuestion @relation(fields: [testQuestionId], references: [id])
   testQuestionId String
