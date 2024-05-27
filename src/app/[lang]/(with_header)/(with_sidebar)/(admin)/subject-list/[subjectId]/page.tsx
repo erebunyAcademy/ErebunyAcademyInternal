@@ -4,7 +4,9 @@ import { DeleteIcon } from '@chakra-ui/icons';
 import { Box, Button, Flex, Heading, HStack, IconButton, Stack } from '@chakra-ui/react';
 import { classValidatorResolver } from '@hookform/resolvers/class-validator';
 import { TestQuestionLevelEnum, TestQuestionTypeEnum } from '@prisma/client';
+import { useMutation } from '@tanstack/react-query';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
+import { TestQuestionService } from '@/api/services/test-question.service';
 import { FormInput, SelectLabel } from '@/components/atoms';
 import AnswersControl from '@/components/molecules/AnswerControl';
 import ExamsUploadByExcel, { UploadedExcelData } from '@/components/organisms/ExamsUploadByExcel';
@@ -47,7 +49,7 @@ const initValue = {
 
 const resolver = classValidatorResolver(TestQuestionValidation);
 
-const CreateTestQuestions = () => {
+const CreateTestQuestions = ({ params }: { params: { subjectId: string } }) => {
   const [excelData, setExcelData] = useState<UploadedExcelData>(null);
   const { control, watch, handleSubmit, reset } = useForm<TestQuestionValidation>({
     resolver,
@@ -65,8 +67,14 @@ const CreateTestQuestions = () => {
     name: 'questions',
   });
 
+  const { mutate: createTestQuestions } = useMutation({
+    mutationFn: (params: { subjectId: string; input: TestQuestionValidation }) => {
+      return TestQuestionService.createTestQuestions(params.subjectId, params.input);
+    },
+  });
+
   const onSubmit = (data: TestQuestionValidation) => {
-    console.log(data);
+    createTestQuestions({ subjectId: params?.subjectId! || '', input: data });
   };
 
   useEffect(() => {

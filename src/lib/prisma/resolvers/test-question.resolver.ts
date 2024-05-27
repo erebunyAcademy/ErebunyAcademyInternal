@@ -21,8 +21,8 @@ export class TestQuestionResolver {
     });
   }
 
-  static createTestQuestions(subjectId: string, input: TestQuestionValidation) {
-    const subject = SubjectResolver.getSubjectById(subjectId);
+  static async createTestQuestions(subjectId: string, input: TestQuestionValidation) {
+    const subject = await SubjectResolver.getSubjectById(subjectId);
 
     console.log({ subject });
 
