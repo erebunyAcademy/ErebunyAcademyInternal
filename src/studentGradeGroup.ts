@@ -15,5 +15,5 @@ export class CreateEditStudentGradeGroupValidation {
 
   @IsString()
   @IsNotEmpty({ message: 'studentGradeMessage' })
-  studentGradeId: string;
+  courseId: string;
 }

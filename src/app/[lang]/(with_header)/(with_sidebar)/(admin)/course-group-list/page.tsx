@@ -7,8 +7,8 @@ import { createColumnHelper, SortingState } from '@tanstack/react-table';
 import { useTranslations } from 'next-intl';
 import { Controller, useForm } from 'react-hook-form';
 import { v4 as uuidv4 } from 'uuid';
-import { StudentGradeGroupService } from '@/api/services/student-grade-group.service';
-import { StudentGradeService } from '@/api/services/student-grade.service';
+import { CourseGroupService } from '@/api/services/course-group.service';
+import { CourseService } from '@/api/services/courses.service';
 import { FormInput, SelectLabel } from '@/components/atoms';
 import ActionButtons from '@/components/molecules/ActionButtons';
 import Modal from '@/components/molecules/Modal';
@@ -18,8 +18,8 @@ import { CreateEditStudentGradeGroupValidation } from '@/studentGradeGroup';
 import { ITEMS_PER_PAGE } from '@/utils/constants/common';
 import { QUERY_KEY } from '@/utils/helpers/queryClient';
 import { Maybe } from '@/utils/models/common';
-import { StudentGradeSignupListModel } from '@/utils/models/studentGrade';
-import { StudentGradeGroupModel } from '@/utils/models/studentGradeGroup';
+import { GetCoursesListModel } from '@/utils/models/course';
+import { CourseGroupSingleModel } from '@/utils/models/courseGroup';
 
 const resolver = classValidatorResolver(CreateEditStudentGradeGroupValidation);
 
@@ -30,7 +30,7 @@ const StudentGradeGroup = () => {
   const [page, setPage] = useState(1);
   const debouncedSearch = useDebounce(search);
   const [selectedStudentGradeGroup, setSelectedStudentGradeGroup] =
-    useState<Maybe<StudentGradeGroupModel>>(null);
+    useState<Maybe<CourseGroupSingleModel>>(null);
 
   const {
     control,
@@ -43,7 +43,7 @@ const StudentGradeGroup = () => {
     defaultValues: {
       title: '',
       description: '',
-      studentGradeId: '',
+      courseId: '',
     },
   });
 
@@ -71,7 +71,7 @@ const StudentGradeGroup = () => {
   const { data, isLoading, isPlaceholderData, refetch } = useQuery({
     queryKey: QUERY_KEY.allStudentGradeGroups(debouncedSearch, page),
     queryFn: () =>
-      StudentGradeGroupService.studentGradeGroupList({
+      CourseGroupService.studentGradeGroupList({
         offset: page === 1 ? 0 : (page - 1) * ITEMS_PER_PAGE,
         limit: ITEMS_PER_PAGE,
         sorting: sorting,
@@ -79,14 +79,14 @@ const StudentGradeGroup = () => {
       }),
   });
 
-  const { data: studentGradeQueryData } = useQuery<StudentGradeSignupListModel>({
+  const { data: courseQueryData } = useQuery<GetCoursesListModel>({
     queryKey: ['student-grade'],
-    queryFn: StudentGradeService.list,
+    queryFn: CourseService.list,
     enabled: isCreateEditModalOpen,
   });
 
   const { mutate: createStudentGradeGroup } = useMutation({
-    mutationFn: StudentGradeGroupService.createStudentGradeGroup,
+    mutationFn: CourseGroupService.createStudentGradeGroup,
     onSuccess() {
       refetch();
       reset();
@@ -95,7 +95,7 @@ const StudentGradeGroup = () => {
   });
 
   const { mutate: updateStudentGradeGroup } = useMutation({
-    mutationFn: StudentGradeGroupService.updateStudentGradeGroup,
+    mutationFn: CourseGroupService.updateStudentGradeGroup,
     onSuccess() {
       refetch();
       reset();
@@ -104,7 +104,7 @@ const StudentGradeGroup = () => {
   });
 
   const { mutate } = useMutation({
-    mutationFn: StudentGradeGroupService.deleteStudentGradeGroup,
+    mutationFn: CourseGroupService.deleteStudentGradeGroup,
     onSuccess() {
       closeDeleteModal();
       refetch();
@@ -127,7 +127,7 @@ const StudentGradeGroup = () => {
     [page],
   );
 
-  const columnHelper = createColumnHelper<StudentGradeGroupModel>();
+  const columnHelper = createColumnHelper<CourseGroupSingleModel>();
 
   const columns = [
     columnHelper.accessor('title', {
@@ -151,7 +151,7 @@ const StudentGradeGroup = () => {
               setSelectedStudentGradeGroup(row.original);
               setValue('title', row.original.title || '');
               setValue('description', row.original.description || '');
-              setValue('studentGradeId', row.original.studentGradeId || '');
+              setValue('courseId', row.original.course?.id || '');
               openCreateEditModal();
             }}>
             {t('edit')}
@@ -190,7 +190,7 @@ const StudentGradeGroup = () => {
       <SearchTable
         title={'studentGradeGroupList'}
         isLoading={isLoading}
-        data={data?.studentGradeGroups || []}
+        data={data?.courseGroups || []}
         count={data?.count || 0}
         // @ts-ignore
         columns={columns}
@@ -251,20 +251,20 @@ const StudentGradeGroup = () => {
           )}
         />
         <Controller
-          name="studentGradeId"
+          name="courseId"
           control={control}
           render={({ field: { onChange, value, name } }) => (
             <SelectLabel
               name={name}
               isRequired
-              options={studentGradeQueryData || []}
+              options={courseQueryData || []}
               labelName={'studentGrade'}
               valueLabel="id"
               nameLabel="title"
               onChange={onChange}
               value={value}
-              isInvalid={!!errors.studentGradeId?.message}
-              formErrorMessage={errors.studentGradeId?.message}
+              isInvalid={!!errors.courseId?.message}
+              formErrorMessage={errors.courseId?.message}
             />
           )}
         />

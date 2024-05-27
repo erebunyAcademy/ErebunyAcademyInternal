@@ -15,9 +15,9 @@ class StudentsHandler {
     return StudentResolver.list(+skip, +take, search, sorting);
   }
 
-  @Get('/student-grade-group/:studentGradeGroupId')
-  getStudentsByGradeGroupId(@Param('studentGradeGroupId') studentGradeGroupId: string) {
-    return StudentResolver.getStudentsByStudentGradeGroupId(studentGradeGroupId);
+  @Get('/course-group/:courseGroupId')
+  getStudentsByCourseId(@Param('courseGroupId') courseGroupId: string) {
+    return StudentResolver.getStudentsByCourseGroupId(courseGroupId);
   }
 }
 

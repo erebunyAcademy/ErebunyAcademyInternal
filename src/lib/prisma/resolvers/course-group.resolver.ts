@@ -1,18 +1,18 @@
-import { StudentGradeGroup, Subject } from '@prisma/client';
+import { CourseGroup, Subject } from '@prisma/client';
 import { NotFoundException } from 'next-api-decorators';
 import { SortingType } from '@/api/types/common';
 import { orderBy } from './utils/common';
 import prisma from '..';
 
-export class StudentGradeGroupResolver {
+export class CourseGroupResolver {
   static async list(skip: number, take: number, search: string, sorting: SortingType[]) {
     return Promise.all([
-      prisma.studentGradeGroup.count({
+      prisma.courseGroup.count({
         where: {
           OR: [{ title: { contains: search, mode: 'insensitive' } }],
         },
       }),
-      prisma.studentGradeGroup.findMany({
+      prisma.courseGroup.findMany({
         where: {
           OR: [{ title: { contains: search, mode: 'insensitive' } }],
         },
@@ -20,8 +20,9 @@ export class StudentGradeGroupResolver {
           id: true,
           title: true,
           description: true,
-          studentGrade: {
+          course: {
             select: {
+              id: true,
               title: true,
               faculty: {
                 select: {
@@ -35,14 +36,14 @@ export class StudentGradeGroupResolver {
         skip,
         take,
       }),
-    ]).then(([count, studentGradeGroups]) => ({
+    ]).then(([count, courseGroups]) => ({
       count,
-      studentGradeGroups,
+      courseGroups,
     }));
   }
 
-  static getStudentGradeGroupList() {
-    return prisma.studentGradeGroup.findMany({
+  static getCourseGroupList() {
+    return prisma.courseGroup.findMany({
       select: {
         id: true,
         title: true,
@@ -50,10 +51,10 @@ export class StudentGradeGroupResolver {
     });
   }
 
-  static getStudentGradeGroupListByStudentGradeId(studentGradeId: string) {
-    return prisma.studentGradeGroup.findMany({
+  static getCourseGroupListByCourseId(courseId: string) {
+    return prisma.courseGroup.findMany({
       where: {
-        studentGradeId,
+        courseId,
       },
       select: {
         id: true,
@@ -62,12 +63,12 @@ export class StudentGradeGroupResolver {
     });
   }
 
-  static createStudentGradeGroup(data: Pick<StudentGradeGroup, 'title' | 'description'>) {
-    return prisma.studentGradeGroup.create({ data });
+  static createCourseGroup(data: Pick<CourseGroup, 'title' | 'description'>) {
+    return prisma.courseGroup.create({ data });
   }
 
-  static async getStudentGradeGroupById(id: string) {
-    return prisma.studentGradeGroup
+  static async getCourseGroupById(id: string) {
+    return prisma.courseGroup
       .findUnique({
         where: { id },
       })
@@ -79,10 +80,10 @@ export class StudentGradeGroupResolver {
       });
   }
 
-  static async updateStudentGradeGroupById(studentGradeGroupId: string, data: Partial<Subject>) {
-    const { id } = await this.getStudentGradeGroupById(studentGradeGroupId);
+  static async updateCourseById(studentGradeGroupId: string, data: Partial<Subject>) {
+    const { id } = await this.getCourseGroupById(studentGradeGroupId);
 
-    return prisma.studentGradeGroup.update({
+    return prisma.courseGroup.update({
       where: {
         id,
       },
@@ -90,10 +91,9 @@ export class StudentGradeGroupResolver {
     });
   }
 
-  static async deleteStudentGradeGroupById(studentGradeGroupId: string) {
-    // todo
-    const { id } = await this.getStudentGradeGroupById(studentGradeGroupId);
-    return prisma.studentGradeGroup.delete({
+  static async deleteCourseGroupById(studentGradeGroupId: string) {
+    const { id } = await this.getCourseGroupById(studentGradeGroupId);
+    return prisma.courseGroup.delete({
       where: {
         id,
       },

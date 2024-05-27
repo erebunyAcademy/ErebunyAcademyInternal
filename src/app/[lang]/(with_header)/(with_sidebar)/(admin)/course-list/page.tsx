@@ -7,8 +7,8 @@ import { createColumnHelper, SortingState } from '@tanstack/react-table';
 import { useTranslations } from 'next-intl';
 import { Controller, useForm } from 'react-hook-form';
 import { v4 as uuidv4 } from 'uuid';
+import { CourseService } from '@/api/services/courses.service';
 import { FacultyService } from '@/api/services/faculty.service';
-import { StudentGradeService } from '@/api/services/student-grade.service';
 import { FormInput, SelectLabel } from '@/components/atoms';
 import ActionButtons from '@/components/molecules/ActionButtons';
 import Modal from '@/components/molecules/Modal';
@@ -17,8 +17,8 @@ import useDebounce from '@/hooks/useDebounce';
 import { ITEMS_PER_PAGE } from '@/utils/constants/common';
 import { QUERY_KEY } from '@/utils/helpers/queryClient';
 import { Maybe } from '@/utils/models/common';
+import { CourseModel } from '@/utils/models/course';
 import { FacultySignupListModel } from '@/utils/models/faculty';
-import { StudentGradeModel } from '@/utils/models/studentGrade';
 import { CreateEditStudentGradeValidation } from '@/utils/validation/studentGrade';
 
 const resolver = classValidatorResolver(CreateEditStudentGradeValidation);
@@ -29,7 +29,7 @@ const StudentGrades = () => {
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const debouncedSearch = useDebounce(search);
-  const [selectedStudentGrade, setSelectedStudentGrade] = useState<Maybe<StudentGradeModel>>(null);
+  const [selectedCourse, setSelectedCourse] = useState<Maybe<CourseModel>>(null);
 
   const {
     control,
@@ -53,7 +53,7 @@ const StudentGrades = () => {
   } = useDisclosure({
     onClose() {
       reset();
-      setSelectedStudentGrade(null);
+      setSelectedCourse(null);
     },
   });
 
@@ -69,14 +69,14 @@ const StudentGrades = () => {
     onClose: closeDeleteModal,
   } = useDisclosure({
     onClose() {
-      setSelectedStudentGrade(null);
+      setSelectedCourse(null);
     },
   });
 
   const { data, isLoading, isPlaceholderData, refetch } = useQuery({
     queryKey: QUERY_KEY.allStudentGrades(debouncedSearch, page),
     queryFn: () =>
-      StudentGradeService.studentGradeList({
+      CourseService.courseList({
         offset: page === 1 ? 0 : (page - 1) * ITEMS_PER_PAGE,
         limit: ITEMS_PER_PAGE,
         sorting: sorting,
@@ -85,7 +85,7 @@ const StudentGrades = () => {
   });
 
   const { mutate: createStudentGrade } = useMutation({
-    mutationFn: StudentGradeService.createStudentGrade,
+    mutationFn: CourseService.createCourse,
     onSuccess() {
       refetch();
       reset();
@@ -94,7 +94,7 @@ const StudentGrades = () => {
   });
 
   const { mutate: updateStudentGrade } = useMutation({
-    mutationFn: StudentGradeService.updateStudentGrade,
+    mutationFn: CourseService.updateCourse,
     onSuccess() {
       refetch();
       reset();
@@ -102,7 +102,7 @@ const StudentGrades = () => {
     },
   });
   const { mutate } = useMutation({
-    mutationFn: StudentGradeService.deleteStudentGrade,
+    mutationFn: CourseService.deleteCourse,
     onSuccess() {
       closeDeleteModal();
       refetch();
@@ -125,7 +125,7 @@ const StudentGrades = () => {
     [page],
   );
 
-  const columnHelper = createColumnHelper<StudentGradeModel>();
+  const columnHelper = createColumnHelper<CourseModel>();
 
   const columns = [
     columnHelper.accessor('title', {
@@ -138,6 +138,11 @@ const StudentGrades = () => {
       cell: info => info.getValue(),
       header: t('description'),
     }),
+    columnHelper.accessor('faculty.title', {
+      id: uuidv4(),
+      cell: info => info.getValue(),
+      header: t('faculty'),
+    }),
     columnHelper.accessor('id', {
       id: uuidv4(),
       cell: ({ row }) => (
@@ -145,10 +150,10 @@ const StudentGrades = () => {
           <MenuItem
             color="green"
             onClick={() => {
-              setSelectedStudentGrade(row.original);
+              setSelectedCourse(row.original);
               setValue('title', row.original.title || '');
               setValue('description', row.original.description || '');
-              setValue('facultyId', row.original.facultyId || '');
+              setValue('facultyId', row.original.faculty?.id || '');
               openCreateEditModal();
             }}>
             {t('edit')}
@@ -156,7 +161,7 @@ const StudentGrades = () => {
           <MenuItem
             color="red"
             onClick={() => {
-              setSelectedStudentGrade(row.original);
+              setSelectedCourse(row.original);
               openDeleteModal();
             }}>
             {t('delete')}
@@ -173,13 +178,13 @@ const StudentGrades = () => {
 
   const onSubmitHandler = useCallback(
     (data: CreateEditStudentGradeValidation) => {
-      if (selectedStudentGrade) {
-        updateStudentGrade({ data, id: selectedStudentGrade.id });
+      if (selectedCourse) {
+        updateStudentGrade({ data, id: selectedCourse.id });
       } else {
         createStudentGrade(data);
       }
     },
-    [createStudentGrade, selectedStudentGrade, updateStudentGrade],
+    [createStudentGrade, selectedCourse, updateStudentGrade],
   );
 
   return (
@@ -187,7 +192,7 @@ const StudentGrades = () => {
       <SearchTable
         title={'studentGradeList'}
         isLoading={isLoading}
-        data={data?.studentGrades || []}
+        data={data?.courses || []}
         count={data?.count || 0}
         // @ts-ignore
         columns={columns}
@@ -214,7 +219,7 @@ const StudentGrades = () => {
         title={'studentGrade'}
         primaryAction={handleSubmit(onSubmitHandler)}
         isDisabled={!isValid}
-        actionText={selectedStudentGrade ? 'update' : 'create'}>
+        actionText={selectedCourse ? 'update' : 'create'}>
         <Controller
           name="title"
           control={control}
@@ -273,8 +278,8 @@ const StudentGrades = () => {
         onClose={closeDeleteModal}
         title={'studentGrade'}
         primaryAction={() => {
-          if (selectedStudentGrade) {
-            mutate(selectedStudentGrade?.id);
+          if (selectedCourse) {
+            mutate(selectedCourse?.id);
           }
         }}
         actionText={'delete'}>

@@ -83,11 +83,11 @@ export class TeacherSignUpValidation extends UserSignupValidation {
 export class StudentSignUpValidation extends UserSignupValidation {
   @IsString()
   @IsNotEmpty({ message: 'studentGradeMessage' })
-  studentGradeId: string;
+  courseId: string;
 
   @IsString()
   @IsOptional()
-  studentGradeGroupId?: string;
+  courseGroupId?: string;
 
   @IsString()
   @IsNotEmpty({ message: 'facultyMessage' })

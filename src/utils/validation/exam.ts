@@ -63,11 +63,11 @@ export class ExamValidation {
 
   @IsString()
   @IsNotEmpty({ message: 'Student grade is required' })
-  studentGradeId: string;
+  courseId: string;
 
   @IsString()
   @IsNotEmpty({ message: 'Student grade group is required' })
-  studentGradeGroupId: string;
+  courseGroupId: string;
 
   @IsArray()
   @IsNotEmpty({ message: 'Students are required' })
