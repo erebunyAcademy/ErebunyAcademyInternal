@@ -77,7 +77,7 @@ export class AuthResolver {
   }
 
   static async studentSignUp(input: StudentSignUpValidation) {
-    const { facultyId, studentGradeGroupId, studentGradeId, attachment } = input;
+    const { facultyId, courseId, courseGroupId, attachment } = input;
 
     const user = await createUser(input, UserRoleEnum.STUDENT);
 
@@ -95,8 +95,8 @@ export class AuthResolver {
       data: {
         userId: user.id,
         facultyId,
-        studentGradeId,
-        studentGradeGroupId,
+        courseId,
+        courseGroupId,
       },
     });
 

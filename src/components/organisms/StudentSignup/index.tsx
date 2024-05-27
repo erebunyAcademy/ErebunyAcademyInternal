@@ -18,9 +18,9 @@ import { useTranslations } from 'next-intl';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { v4 as uuid } from 'uuid';
 import { AuthService } from '@/api/services/auth.service';
+import { CourseGroupService } from '@/api/services/course-group.service';
+import { CourseService } from '@/api/services/courses.service';
 import { FacultyService } from '@/api/services/faculty.service';
-import { StudentGradeGroupService } from '@/api/services/student-grade-group.service';
-import { StudentGradeService } from '@/api/services/student-grade.service';
 import { UserService } from '@/api/services/user.service';
 import { Locale } from '@/i18n';
 import { ROUTE_SIGN_IN } from '@/utils/constants/routes';
@@ -34,8 +34,8 @@ const resolver = classValidatorResolver(StudentSignUpValidation);
 const fetchFormData = async () => {
   try {
     const [studentGradeList, studentGradeGroupList, facultyList] = await Promise.all([
-      StudentGradeService.list(),
-      StudentGradeGroupService.list(),
+      CourseService.list(),
+      CourseGroupService.list(),
       FacultyService.list(),
     ]);
     return { studentGradeList, studentGradeGroupList, facultyList };
@@ -102,9 +102,9 @@ const StudentSignUp = ({ lang }: { lang: Locale }) => {
       email: '',
       password: '',
       confirmPassword: '',
-      studentGradeId: '',
+      courseId: '',
       facultyId: '',
-      studentGradeGroupId: '',
+      courseGroupId: '',
       attachment: {
         mimetype: '',
         key: '',
@@ -212,37 +212,37 @@ const StudentSignUp = ({ lang }: { lang: Locale }) => {
 
         <Stack direction={{ base: 'column', md: 'row' }} gap={{ base: '16px', sm: '8px' }}>
           <Controller
-            name="studentGradeId"
+            name="courseId"
             control={control}
             render={({ field: { onChange, value, name } }) => (
               <SelectLabel
                 isRequired
                 name={name}
-                isInvalid={!!errors.studentGradeId?.message}
+                isInvalid={!!errors.courseId?.message}
                 options={data?.studentGradeList || []}
                 labelName="Student Grade"
                 valueLabel="id"
                 nameLabel="title"
                 onChange={onChange}
                 value={value}
-                formErrorMessage={t(errors.studentGradeId?.message)}
+                formErrorMessage={t(errors.courseId?.message)}
               />
             )}
           />
           <Controller
-            name="studentGradeGroupId"
+            name="courseGroupId"
             control={control}
             render={({ field: { onChange, value, name } }) => (
               <SelectLabel
                 name={name}
-                isInvalid={!!errors.studentGradeGroupId?.message}
+                isInvalid={!!errors.courseGroupId?.message}
                 options={data?.studentGradeGroupList || []}
                 labelName={t('studentGradeGroup')}
                 valueLabel="id"
                 nameLabel="title"
                 onChange={onChange}
                 value={value || ''}
-                formErrorMessage={t(errors.studentGradeGroupId?.message)}
+                formErrorMessage={t(errors.courseGroupId?.message)}
                 formHelperText={t('studentGradeGroupNotRequired')}
               />
             )}

@@ -1,18 +1,18 @@
-import { StudentGrade } from '@prisma/client';
+import { Course } from '@prisma/client';
 import { NotFoundException } from 'next-api-decorators';
 import { SortingType } from '@/api/types/common';
 import { orderBy } from './utils/common';
 import prisma from '..';
 
-export class StudentGradeResolver {
+export class CourseResolver {
   static async list(skip: number, take: number, search: string, sorting: SortingType[]) {
     return Promise.all([
-      prisma.studentGrade.count({
+      prisma.course.count({
         where: {
           OR: [{ title: { contains: search, mode: 'insensitive' } }],
         },
       }),
-      prisma.studentGrade.findMany({
+      prisma.course.findMany({
         where: {
           OR: [{ title: { contains: search, mode: 'insensitive' } }],
         },
@@ -22,6 +22,7 @@ export class StudentGradeResolver {
           description: true,
           faculty: {
             select: {
+              id: true,
               title: true,
             },
           },
@@ -30,14 +31,14 @@ export class StudentGradeResolver {
         skip,
         take,
       }),
-    ]).then(([count, studentGrades]) => ({
+    ]).then(([count, courses]) => ({
       count,
-      studentGrades,
+      courses,
     }));
   }
 
-  static getStudentGradeList() {
-    return prisma.studentGrade.findMany({
+  static getCoursesList() {
+    return prisma.course.findMany({
       select: {
         id: true,
         title: true,
@@ -45,8 +46,8 @@ export class StudentGradeResolver {
     });
   }
 
-  static getStudentGradeListByFacultyId(facultyId: string) {
-    return prisma.studentGrade.findMany({
+  static getCoursesListByFacultyId(facultyId: string) {
+    return prisma.course.findMany({
       where: {
         facultyId,
       },
@@ -57,12 +58,12 @@ export class StudentGradeResolver {
     });
   }
 
-  static createStudentGrade(data: Pick<StudentGrade, 'title' | 'description'>) {
-    return prisma.studentGrade.create({ data });
+  static createCourses(data: Pick<Course, 'title' | 'description'>) {
+    return prisma.course.create({ data });
   }
 
-  static async getStudentGradeById(id: string) {
-    return prisma.studentGrade
+  static async getCourseById(id: string) {
+    return prisma.course
       .findUnique({
         where: { id },
       })
@@ -74,10 +75,10 @@ export class StudentGradeResolver {
       });
   }
 
-  static async updateStudentGradeById(gradIid: string, data: Partial<StudentGrade>) {
-    const { id } = await this.getStudentGradeById(gradIid);
+  static async updateCourseById(gradIid: string, data: Partial<Course>) {
+    const { id } = await this.getCourseById(gradIid);
 
-    return prisma.studentGrade.update({
+    return prisma.course.update({
       where: {
         id,
       },
@@ -85,10 +86,10 @@ export class StudentGradeResolver {
     });
   }
 
-  static async deleteStudentGradeById(gradeId: string) {
+  static async deleteCourseById(gradeId: string) {
     // todo
-    const { id } = await this.getStudentGradeById(gradeId);
-    return prisma.studentGrade.delete({
+    const { id } = await this.getCourseById(gradeId);
+    return prisma.course.delete({
       where: {
         id,
       },

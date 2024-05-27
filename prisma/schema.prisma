@@ -57,80 +57,80 @@ model Admin {
 }
 
 model Student {
-  id                  String             @id @default(uuid())
-  studentGrade        StudentGrade       @relation(fields: [studentGradeId], references: [id])
-  studentGradeId      String
-  faculty             Faculty            @relation(fields: [facultyId], references: [id])
-  facultyId           String
-  studentGradeGroup   StudentGradeGroup? @relation(fields: [studentGradeGroupId], references: [id])
-  studentGradeGroupId String?
-  user                User               @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId              String             @unique
-  studentExams        StudentExam[]
+  id            String        @id @default(uuid())
+  course        Course        @relation(fields: [courseId], references: [id])
+  courseId      String
+  faculty       Faculty       @relation(fields: [facultyId], references: [id])
+  facultyId     String
+  courseGroup   CourseGroup?  @relation(fields: [courseGroupId], references: [id])
+  courseGroupId String?
+  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId        String        @unique
+  studentExams  StudentExam[]
 
   createdAt DateTime @default(now()) @db.Timestamp(0)
   updatedAt DateTime @updatedAt @db.Timestamp(0)
 }
 
 model Faculty {
-  id            String         @id @default(uuid())
-  title         String         @db.VarChar(60)
-  description   String?        @db.VarChar(60)
-  students      Student[]
-  studentGrades StudentGrade[]
+  id          String    @id @default(uuid())
+  title       String    @db.VarChar(60)
+  description String?   @db.VarChar(60)
+  students    Student[]
+  courses     Course[]
 
   createdAt DateTime @default(now()) @db.Timestamp(0)
   updatedAt DateTime @updatedAt @db.Timestamp(0)
 }
 
-model StudentGradeSubject {
-  id             String       @id @default(uuid())
-  studentGradeId String
-  subjectId      String
-  studentGrade   StudentGrade @relation(fields: [studentGradeId], references: [id])
-  subject        Subject      @relation(fields: [subjectId], references: [id])
+model CourseSubject {
+  id        String  @id @default(uuid())
+  courseId  String
+  subjectId String
+  course    Course  @relation(fields: [courseId], references: [id])
+  subject   Subject @relation(fields: [subjectId], references: [id])
 
   createdAt DateTime @default(now()) @db.Timestamp(0)
   updatedAt DateTime @updatedAt @db.Timestamp(0)
 
-  @@unique([studentGradeId, subjectId], name: "courseSubjectId")
+  @@unique([courseId, subjectId], name: "courseSubjectId")
 }
 
-model StudentGrade {
-  id                   String                @id @default(uuid())
-  title                String                @db.VarChar(60)
-  description          String?               @db.VarChar(60)
-  groups               StudentGradeGroup[]
-  studentGradeSubjects StudentGradeSubject[]
-  faculty              Faculty?              @relation(fields: [facultyId], references: [id])
-  facultyId            String?
-  students             Student[]
-
-  createdAt DateTime @default(now()) @db.Timestamp(0)
-  updatedAt DateTime @updatedAt @db.Timestamp(0)
-}
-
-model StudentGradeGroup {
-  id             String        @id @default(uuid())
-  title          String        @db.VarChar(60)
-  description    String?       @db.VarChar(60)
-  studentGradeId String?
-  studentGrade   StudentGrade? @relation(fields: [studentGradeId], references: [id])
+model Course {
+  id             String          @id @default(uuid())
+  title          String          @db.VarChar(60)
+  description    String?         @db.VarChar(60)
+  groups         CourseGroup[]
+  courseSubjects CourseSubject[]
+  faculty        Faculty?        @relation(fields: [facultyId], references: [id])
+  facultyId      String?
   students       Student[]
 
   createdAt DateTime @default(now()) @db.Timestamp(0)
   updatedAt DateTime @updatedAt @db.Timestamp(0)
 }
 
+model CourseGroup {
+  id          String    @id @default(uuid())
+  title       String    @db.VarChar(60)
+  description String?   @db.VarChar(60)
+  courseId    String?
+  course      Course?   @relation(fields: [courseId], references: [id])
+  students    Student[]
+
+  createdAt DateTime @default(now()) @db.Timestamp(0)
+  updatedAt DateTime @updatedAt @db.Timestamp(0)
+}
+
 model Subject {
-  id                   String                @id @default(uuid())
-  title                String                @db.VarChar(60)
-  description          String?               @db.VarChar(60)
-  studentGradeSubjects StudentGradeSubject[]
-  subjectTeacher       SubjectTeacher[]
-  attachments          Attachment[]
-  testQuestions        TestQuestion[]
-  exams                Exam[]
+  id             String           @id @default(uuid())
+  title          String           @db.VarChar(60)
+  description    String?          @db.VarChar(60)
+  courseSubjects CourseSubject[]
+  subjectTeacher SubjectTeacher[]
+  attachments    Attachment[]
+  testQuestions  TestQuestion[]
+  exams          Exam[]
 
   createdAt DateTime @default(now()) @db.Timestamp(0)
   updatedAt DateTime @updatedAt @db.Timestamp(0)

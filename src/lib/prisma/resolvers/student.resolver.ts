@@ -45,12 +45,12 @@ export class StudentResolver {
                   title: true,
                 },
               },
-              studentGrade: {
+              course: {
                 select: {
                   title: true,
                 },
               },
-              studentGradeGroup: {
+              courseGroup: {
                 select: {
                   title: true,
                 },
@@ -82,10 +82,10 @@ export class StudentResolver {
       });
   }
 
-  static getStudentsByStudentGradeGroupId(studentGradeGroupId: string) {
+  static getStudentsByCourseGroupId(courseGroupId: string) {
     return prisma.student.findMany({
       where: {
-        studentGradeGroupId,
+        courseGroupId,
       },
       select: {
         id: true,

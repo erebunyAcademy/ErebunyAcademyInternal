@@ -7,10 +7,10 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { createColumnHelper } from '@tanstack/react-table';
 import { Controller, useForm } from 'react-hook-form';
 import { v4 as uuidv4 } from 'uuid';
+import { CourseGroupService } from '@/api/services/course-group.service';
+import { CourseService } from '@/api/services/courses.service';
 import { ExamService } from '@/api/services/exam.service';
 import { FacultyService } from '@/api/services/faculty.service';
-import { StudentGradeGroupService } from '@/api/services/student-grade-group.service';
-import { StudentGradeService } from '@/api/services/student-grade.service';
 import { StudentService } from '@/api/services/student.service';
 import { SubjectService } from '@/api/services/subject.service';
 import { TestQuestionService } from '@/api/services/test-question.service';
@@ -18,7 +18,7 @@ import { FormInput, SelectLabel } from '@/components/atoms';
 import TableCheckbox from '@/components/organisms/TableCheckbox';
 import { generateAWSUrl } from '@/utils/helpers/aws';
 import { ExamDataListModel } from '@/utils/models/exam';
-import { StudentsExamListModel } from '@/utils/models/student';
+import { UserStudentModel } from '@/utils/models/student';
 import { SubjectSignupListModel } from '@/utils/models/subject';
 import { TestQuestionListModel } from '@/utils/models/test-question.model';
 import { ExamValidation } from '@/utils/validation/exam';
@@ -36,8 +36,8 @@ const CreateEditExam: FC<CreateEditExamProps> = () => {
       title: '',
       description: '',
       facultyId: '',
-      studentGradeId: '',
-      studentGradeGroupId: '',
+      courseId: '',
+      courseGroupId: '',
       studentIds: [],
       subjectId: '',
       testQuestionIds: [],
@@ -61,8 +61,8 @@ const CreateEditExam: FC<CreateEditExamProps> = () => {
   ];
 
   const isFacultySelected = watch('facultyId');
-  const isStudentGradeSelected = watch('studentGradeId');
-  const isStudentGradeGroupSelected = watch('studentGradeGroupId');
+  const isCourseSelected = watch('courseId');
+  const isCourseGroupSelected = watch('courseGroupId');
 
   const { data: facultyQueryData } = useQuery({
     queryKey: ['faculty'],
@@ -71,21 +71,20 @@ const CreateEditExam: FC<CreateEditExamProps> = () => {
 
   const { data: studentGradeQueryData } = useQuery({
     queryKey: ['student-grade', isFacultySelected],
-    queryFn: () => StudentGradeService.getStudentGradeByFacultyId(isFacultySelected),
+    queryFn: () => CourseService.getCourseByFacultyId(isFacultySelected),
     enabled: !!isFacultySelected,
   });
 
   const { data: studentGradeGroupQueryData } = useQuery({
-    queryKey: ['student-grade-group', isStudentGradeSelected],
-    queryFn: () =>
-      StudentGradeGroupService.getStudentGradeGroupByStudentGradeId(isStudentGradeSelected),
-    enabled: !!isStudentGradeSelected,
+    queryKey: ['student-grade-group', isCourseGroupSelected],
+    queryFn: () => CourseGroupService.getStudentGradeGroupByStudentGradeId(isCourseSelected),
+    enabled: !!isCourseSelected,
   });
 
   const { data: studentsData } = useQuery({
-    queryKey: ['students', isStudentGradeGroupSelected],
-    queryFn: () => StudentService.getStudentsByStudentGradeGroupId(isStudentGradeGroupSelected),
-    enabled: !!isStudentGradeGroupSelected,
+    queryKey: ['students', isCourseGroupSelected],
+    queryFn: () => StudentService.getStudentsByCourseGroupId(isCourseGroupSelected),
+    enabled: !!isCourseGroupSelected,
   });
 
   const { data: subjectQueryData } = useQuery<SubjectSignupListModel>({
@@ -101,7 +100,7 @@ const CreateEditExam: FC<CreateEditExamProps> = () => {
     enabled: !!subjectId,
   });
 
-  const columnHelper = createColumnHelper<StudentsExamListModel>();
+  const columnHelper = createColumnHelper<UserStudentModel>();
 
   const columns = [
     columnHelper.accessor('user.attachment', {
@@ -249,7 +248,7 @@ const CreateEditExam: FC<CreateEditExamProps> = () => {
           <Flex width="33.3%">
             {isFacultySelected && (
               <Controller
-                name="studentGradeId"
+                name="courseId"
                 control={control}
                 render={({ field: { onChange, value, name } }) => (
                   <SelectLabel
@@ -266,9 +265,9 @@ const CreateEditExam: FC<CreateEditExamProps> = () => {
             )}
           </Flex>
           <Flex width="33.3%">
-            {isStudentGradeSelected && (
+            {isCourseSelected && (
               <Controller
-                name="studentGradeGroupId"
+                name="courseGroupId"
                 control={control}
                 render={({ field: { onChange, value, name } }) => (
                   <SelectLabel
