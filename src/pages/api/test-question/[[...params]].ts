@@ -10,12 +10,12 @@ class TestQuestionHandler {
     return TestQuestionResolver.getTestQuestionsBySubjectId(subjectId);
   }
 
-  @Post('/subjects/:subjectId')
-  _createTestQuestion(
-    @Param('subjectId') subjectId: string,
-    @Body(ValidationPipe) input: TestQuestionValidation,
+  @Post('/create/:subjectId')
+  create(
+    @Body(ValidationPipe) body: TestQuestionValidation,
+    @Param('subjectId') subjectId?: string,
   ) {
-    return TestQuestionResolver.createTestQuestions(subjectId, input);
+    return TestQuestionResolver.create(body, subjectId);
   }
 }
 

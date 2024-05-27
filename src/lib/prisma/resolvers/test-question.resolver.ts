@@ -1,6 +1,5 @@
-import { LanguageTypeEnum } from '@prisma/client';
+import { BadRequestException } from 'next-api-decorators';
 import { TestQuestionValidation } from '@/utils/validation/exam';
-import { SubjectResolver } from './subject.resolver';
 import prisma from '..';
 
 export class TestQuestionResolver {
@@ -21,19 +20,33 @@ export class TestQuestionResolver {
     });
   }
 
-  static async createTestQuestions(subjectId: string, input: TestQuestionValidation) {
-    const subject = await SubjectResolver.getSubjectById(subjectId);
+  static async create(body: TestQuestionValidation, subjectId?: string) {
+    if (!subjectId) {
+      throw new BadRequestException('Invalid data');
+    }
 
-    console.log({ subject });
-
-    const data = input.questions.map(question => ({
-      ...question,
-      subjectId,
-      language: LanguageTypeEnum.AM,
-    }));
-
-    return prisma.testQuestion.createMany({
-      data,
+    const createOptions = body.questions.map(item => {
+      return prisma.testQuestion.create({
+        data: {
+          subjectId,
+          title: item.title,
+          type: item.type,
+          skillLevel: 'BEGINNER',
+          language: 'AM',
+          options: {
+            createMany: {
+              data: item.options.map(el => ({
+                title: el.title,
+                isRightAnswer: el.isRightAnswer,
+              })),
+            },
+          },
+        },
+      });
     });
+
+    await Promise.all(createOptions);
+
+    return true;
   }
 }

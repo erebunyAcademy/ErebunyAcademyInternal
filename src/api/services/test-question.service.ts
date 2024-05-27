@@ -6,7 +6,7 @@ export class TestQuestionService {
   static getTestQuestionsBySubjectId(subjectId: string) {
     return $apiClient.get<TestQuestionListModel>(`/test-question/subject/${subjectId}`);
   }
-  static createTestQuestions(subjectId: string, input: TestQuestionValidation) {
-    return $apiClient.post(`/test-question/subjects/${subjectId}`, input);
+  static createTestQuestions(data: TestQuestionValidation, subjectId: string) {
+    return $apiClient.post<boolean>(`/test-question/create/${subjectId}`, data);
   }
 }

@@ -5,7 +5,8 @@ import { Box, Button, Flex, Heading, HStack, IconButton, Stack } from '@chakra-u
 import { classValidatorResolver } from '@hookform/resolvers/class-validator';
 import { TestQuestionLevelEnum, TestQuestionTypeEnum } from '@prisma/client';
 import { useMutation } from '@tanstack/react-query';
-import { Controller, useFieldArray, useForm } from 'react-hook-form';
+import { useParams } from 'next/navigation';
+import { Controller, SubmitHandler, useFieldArray, useForm } from 'react-hook-form';
 import { TestQuestionService } from '@/api/services/test-question.service';
 import { FormInput, SelectLabel } from '@/components/atoms';
 import AnswersControl from '@/components/molecules/AnswerControl';
@@ -49,7 +50,8 @@ const initValue = {
 
 const resolver = classValidatorResolver(TestQuestionValidation);
 
-const CreateTestQuestions = ({ params }: { params: { subjectId: string } }) => {
+const CreateTestQuestions = () => {
+  const params = useParams();
   const [excelData, setExcelData] = useState<UploadedExcelData>(null);
   const { control, watch, handleSubmit, reset } = useForm<TestQuestionValidation>({
     resolver,
@@ -67,14 +69,12 @@ const CreateTestQuestions = ({ params }: { params: { subjectId: string } }) => {
     name: 'questions',
   });
 
-  const { mutate: createTestQuestions } = useMutation({
-    mutationFn: (params: { subjectId: string; input: TestQuestionValidation }) => {
-      return TestQuestionService.createTestQuestions(params.subjectId, params.input);
-    },
+  const { mutate, isPending } = useMutation<boolean, { message: string }, TestQuestionValidation>({
+    mutationFn: data => TestQuestionService.createTestQuestions(data, params?.subjectId as string),
   });
 
-  const onSubmit = (data: TestQuestionValidation) => {
-    createTestQuestions({ subjectId: params?.subjectId! || '', input: data });
+  const onSubmit: SubmitHandler<TestQuestionValidation> = data => {
+    mutate(data, { onSuccess: () => {} });
   };
 
   useEffect(() => {
@@ -195,8 +195,8 @@ const CreateTestQuestions = ({ params }: { params: { subjectId: string } }) => {
             </Stack>
           );
         })}
-        <Button colorScheme="teal" type="submit" width="50%">
-          Submit Exam
+        <Button colorScheme="teal" type="submit" width="50%" isLoading={isPending}>
+          Submit Test Questions
         </Button>
       </Box>
     </form>

@@ -13,9 +13,9 @@ import { StudentGradeGroupService } from '@/api/services/student-grade-group.ser
 import { StudentGradeService } from '@/api/services/student-grade.service';
 import { StudentService } from '@/api/services/student.service';
 import { SubjectService } from '@/api/services/subject.service';
+import { TestQuestionService } from '@/api/services/test-question.service';
 import { FormInput, SelectLabel } from '@/components/atoms';
 import TableCheckbox from '@/components/organisms/TableCheckbox';
-import { TestQuestionResolver } from '@/lib/prisma/resolvers/test-question.resolver';
 import { generateAWSUrl } from '@/utils/helpers/aws';
 import { ExamDataListModel } from '@/utils/models/exam';
 import { StudentsExamListModel } from '@/utils/models/student';
@@ -97,7 +97,7 @@ const CreateEditExam: FC<CreateEditExamProps> = () => {
 
   const { data: testQuestionQueryData } = useQuery<TestQuestionListModel>({
     queryKey: ['testQuestion'],
-    queryFn: TestQuestionResolver.getTestQuestionsBySubjectId.bind(null, subjectId),
+    queryFn: () => TestQuestionService.getTestQuestionsBySubjectId(subjectId),
     enabled: !!subjectId,
   });
 
