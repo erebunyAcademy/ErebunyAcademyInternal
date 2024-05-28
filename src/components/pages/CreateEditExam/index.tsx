@@ -167,7 +167,7 @@ const CreateEditExam: FC<CreateEditExamProps> = () => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <Heading textAlign="center">Exam Description</Heading>
+      <Heading textAlign="center">Exam</Heading>
       <Stack
         direction={{ base: 'column', md: 'column' }}
         gap={{ base: '16px', sm: '8px' }}
@@ -189,7 +189,6 @@ const CreateEditExam: FC<CreateEditExamProps> = () => {
                   formLabelName="Title"
                   value={value}
                   handleInputChange={onChange}
-                  formHelperText={value}
                 />
               )}
             />
