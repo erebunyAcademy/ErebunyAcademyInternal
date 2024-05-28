@@ -119,7 +119,7 @@ export class UserResolver {
     if (!user) {
       throw new NotFoundException('User with provided id was not found');
     }
-    prisma.user.update({
+    await prisma.user.update({
       where: {
         id,
       },
