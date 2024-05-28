@@ -84,7 +84,7 @@ const CreateEditExam: FC<CreateEditExamProps> = ({ subjectId, examId }) => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <Heading textAlign="center">Exam Description</Heading>
+      <Heading textAlign="center">Exam</Heading>
       <Stack
         direction={{ base: 'column', md: 'column' }}
         gap={{ base: '16px', sm: '8px' }}
