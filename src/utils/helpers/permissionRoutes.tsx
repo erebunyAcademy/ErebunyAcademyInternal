@@ -1,23 +1,23 @@
 import { ReactNode } from 'react';
 import { UserRoleEnum } from '@prisma/client';
 import { User } from 'next-auth';
+import CourseGroupIcon from '@/icons/course_group_icon.svg';
+import CourseIcon from '@/icons/course_icon.svg';
 import DashboardIcon from '@/icons/dashboard-icon.svg';
 import ExamsIcon from '@/icons/exam_icon.svg';
 import FacultiesIcon from '@/icons/faculty_icon.svg';
 import LogoutIcon from '@/icons/log-out.svg';
 import ProfileIcon from '@/icons/profile.svg';
 import StudentIcon from '@/icons/student_icon.svg';
-import StudentGradeGroupIcon from '@/icons/students_grade_group_icon.svg';
-import StudentGradeIcon from '@/icons/students_grade_icon.svg';
 import SubjectsIcon from '@/icons/subjects_icon.svg';
 import TeacherIcon from '@/icons/teacher_icon.svg';
 import {
+  ROUTE_COURSE,
+  ROUTE_COURSE_GROUP,
   ROUTE_DASHBOARD,
   ROUTE_EXAMS,
   ROUTE_FACULTIES,
   ROUTE_PROFILE,
-  ROUTE_STUDENT_GRADE_GROUPS,
-  ROUTE_STUDENT_GRADES,
   ROUTE_STUDENTS,
   ROUTE_SUBJECTS,
   ROUTE_TEACHERS,
@@ -48,12 +48,12 @@ export const linkItems: LinkItemsFunction = (user: Maybe<User>) => {
         ...commonLinks.slice(0, 2),
         { id: 2, name: 'faculty', icon: <FacultiesIcon />, href: ROUTE_FACULTIES },
         { id: 3, name: 'students', icon: <StudentIcon />, href: ROUTE_STUDENTS },
-        { id: 4, name: 'studentGrade', icon: <StudentGradeIcon />, href: ROUTE_STUDENT_GRADES },
+        { id: 4, name: 'course', icon: <CourseIcon />, href: ROUTE_COURSE },
         {
           id: 5,
-          name: 'studentGradeGroup',
-          icon: <StudentGradeGroupIcon />,
-          href: ROUTE_STUDENT_GRADE_GROUPS,
+          name: 'courseGroup',
+          icon: <CourseGroupIcon />,
+          href: ROUTE_COURSE_GROUP,
         },
         { id: 6, name: 'exams', icon: <ExamsIcon />, href: ROUTE_EXAMS },
         { id: 7, name: 'teachers', icon: <TeacherIcon />, href: ROUTE_TEACHERS },

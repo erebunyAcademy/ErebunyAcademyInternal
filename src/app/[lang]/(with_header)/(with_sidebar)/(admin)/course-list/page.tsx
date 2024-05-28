@@ -19,11 +19,11 @@ import { QUERY_KEY } from '@/utils/helpers/queryClient';
 import { Maybe } from '@/utils/models/common';
 import { CourseModel } from '@/utils/models/course';
 import { FacultySignupListModel } from '@/utils/models/faculty';
-import { CreateEditStudentGradeValidation } from '@/utils/validation/studentGrade';
+import { CreateEditCourseValidation } from '@/utils/validation/courses';
 
-const resolver = classValidatorResolver(CreateEditStudentGradeValidation);
+const resolver = classValidatorResolver(CreateEditCourseValidation);
 
-const StudentGrades = () => {
+const Courses = () => {
   const t = useTranslations();
   const [sorting, setSorting] = useState<SortingState>([]);
   const [search, setSearch] = useState('');
@@ -37,7 +37,7 @@ const StudentGrades = () => {
     reset,
     setValue,
     formState: { errors, isValid },
-  } = useForm<CreateEditStudentGradeValidation>({
+  } = useForm<CreateEditCourseValidation>({
     resolver,
     defaultValues: {
       title: '',
@@ -74,7 +74,7 @@ const StudentGrades = () => {
   });
 
   const { data, isLoading, isPlaceholderData, refetch } = useQuery({
-    queryKey: QUERY_KEY.allStudentGrades(debouncedSearch, page),
+    queryKey: QUERY_KEY.allCourses(debouncedSearch, page),
     queryFn: () =>
       CourseService.courseList({
         offset: page === 1 ? 0 : (page - 1) * ITEMS_PER_PAGE,
@@ -84,7 +84,7 @@ const StudentGrades = () => {
       }),
   });
 
-  const { mutate: createStudentGrade } = useMutation({
+  const { mutate: createCourse } = useMutation({
     mutationFn: CourseService.createCourse,
     onSuccess() {
       refetch();
@@ -93,7 +93,7 @@ const StudentGrades = () => {
     },
   });
 
-  const { mutate: updateStudentGrade } = useMutation({
+  const { mutate: updateCourse } = useMutation({
     mutationFn: CourseService.updateCourse,
     onSuccess() {
       refetch();
@@ -172,25 +172,25 @@ const StudentGrades = () => {
     }),
   ];
 
-  const addNewStudentGradeHandler = useCallback(() => {
+  const addNewCourseHandler = useCallback(() => {
     openCreateEditModal();
   }, [openCreateEditModal]);
 
   const onSubmitHandler = useCallback(
-    (data: CreateEditStudentGradeValidation) => {
+    (data: CreateEditCourseValidation) => {
       if (selectedCourse) {
-        updateStudentGrade({ data, id: selectedCourse.id });
+        updateCourse({ data, id: selectedCourse.id });
       } else {
-        createStudentGrade(data);
+        createCourse(data);
       }
     },
-    [createStudentGrade, selectedCourse, updateStudentGrade],
+    [createCourse, selectedCourse, updateCourse],
   );
 
   return (
     <>
       <SearchTable
-        title={'studentGradeList'}
+        title={'courseList'}
         isLoading={isLoading}
         data={data?.courses || []}
         count={data?.count || 0}
@@ -210,13 +210,13 @@ const StudentGrades = () => {
         )}
         fetchNextPage={useCallback(() => setPage(prev => ++prev), [])}
         fetchPreviousPage={useCallback(() => setPage(prev => --prev), [])}
-        addNew={addNewStudentGradeHandler}
+        addNew={addNewCourseHandler}
       />
 
       <Modal
         isOpen={isCreateEditModalOpen}
         onClose={closeCreateEditModal}
-        title={'studentGrade'}
+        title={'course'}
         primaryAction={handleSubmit(onSubmitHandler)}
         isDisabled={!isValid}
         actionText={selectedCourse ? 'update' : 'create'}>
@@ -229,7 +229,7 @@ const StudentGrades = () => {
               isInvalid={!!errors.title?.message}
               name={name}
               type="text"
-              formLabelName={'studentGradeTitle'}
+              formLabelName={'courseTitle'}
               value={value}
               placeholder={'enterTitle'}
               handleInputChange={onChange}
@@ -245,7 +245,7 @@ const StudentGrades = () => {
               isInvalid={!!errors.description?.message}
               name={name}
               type="text"
-              formLabelName={'studentGradeDescription'}
+              formLabelName={'courseDescription'}
               value={value}
               placeholder={'enterDescription'}
               handleInputChange={onChange}
@@ -276,17 +276,17 @@ const StudentGrades = () => {
         isOpen={isDeleteModalOpen}
         isDeleteVariant
         onClose={closeDeleteModal}
-        title={'studentGrade'}
+        title={'course'}
         primaryAction={() => {
           if (selectedCourse) {
             mutate(selectedCourse?.id);
           }
         }}
         actionText={'delete'}>
-        {t('deleteStudentGradeQuestion')}
+        {t('deleteCourseQuestion')}
       </Modal>
     </>
   );
 };
 
-export default StudentGrades;
+export default Courses;

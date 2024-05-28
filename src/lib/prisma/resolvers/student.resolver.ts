@@ -32,6 +32,7 @@ export class StudentResolver {
           firstName: true,
           lastName: true,
           createdAt: true,
+          isAdminVerified:true,
           attachment: {
             select: {
               key: true,
