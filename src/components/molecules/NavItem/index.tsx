@@ -4,7 +4,7 @@ import { Box, Flex, FlexProps } from '@chakra-ui/react';
 import Link from 'next/link';
 import { signOut } from 'next-auth/react';
 import { Locale } from '@/i18n';
-import { ROUTE_SIGN_IN } from '@/utils/constants/routes';
+import { ROUTE_DASHBOARD, ROUTE_SIGN_IN } from '@/utils/constants/routes';
 import { languagePathHelper } from '@/utils/helpers/language';
 
 interface NavItemProps extends FlexProps {
@@ -17,7 +17,7 @@ const NavItem = ({ href, icon, children, lang, ...rest }: NavItemProps) => {
   return (
     <Box
       as={Link}
-      href={href || ''}
+      href={languagePathHelper(lang, href || ROUTE_DASHBOARD) || ''}
       style={{ textDecoration: 'none' }}
       _focus={{ boxShadow: 'none' }}
       paddingLeft={24}

@@ -2,7 +2,11 @@ import { Exam, Prisma } from '@prisma/client';
 import { ExamsResolver } from '@/lib/prisma/resolvers/exam.resolver';
 
 export type ExamListModel = Prisma.PromiseReturnType<typeof ExamsResolver.list>;
-export type ExamDataListModel = Prisma.PromiseReturnType<typeof ExamsResolver.getExamDataById>;
+
+export type ExamDataListModel = Awaited<ReturnType<typeof ExamsResolver.list>>['exams'];
+
+export type ExamModel = ExamDataListModel extends (infer SingleType)[] ? SingleType : never;
+
 export interface FacultyModel extends Exam {}
 
 export type ExamColumnNamesType =

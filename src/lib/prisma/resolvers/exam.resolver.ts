@@ -1,37 +1,44 @@
-import { Exam, LanguageTypeEnum } from '@prisma/client';
-import { NotFoundException } from 'next-api-decorators';
+import { Exam } from '@prisma/client';
+import { ConflictException, NotFoundException } from 'next-api-decorators';
 import { SortingType } from '@/api/types/common';
-import { ExamValidation } from '@/utils/validation/exam';
+import { CreateExamValidation, ExamValidation } from '@/utils/validation/exam';
 import { orderBy } from './utils/common';
 import prisma from '..';
 
 export class ExamsResolver {
   static async list(skip: number, take: number, search: string, sorting: SortingType[]) {
     return Promise.all([
-      prisma.exam.count({
-        where: {
-          examLanguages: {
-            every: {
-              AND: {
-                language: 'AM', // todo, need to set current lang
-                OR: [{ title: { contains: search, mode: 'insensitive' } }],
-              },
-            },
-          },
-        },
-      }),
+      prisma.exam.count(),
       prisma.exam.findMany({
-        where: {
+        select: {
+          id: true,
           examLanguages: {
-            every: {
-              AND: {
-                language: 'AM', // todo
-                OR: [{ title: { contains: search, mode: 'insensitive' } }],
+            select: {
+              language: true,
+              testQuestions: {
+                select: {
+                  id: true,
+                },
               },
             },
           },
+          course: {
+            select: {
+              title: true,
+            },
+          },
+          courseGroup: {
+            select: {
+              title: true,
+            },
+          },
+          subject: {
+            select: {
+              title: true,
+            },
+          },
+          createdAt: true,
         },
-        select: { id: true, examLanguages: true, createdAt: true },
         orderBy: sorting ? orderBy(sorting) : undefined,
         skip,
         take,
@@ -42,32 +49,40 @@ export class ExamsResolver {
     }));
   }
 
-  static async createExamBySubjectId(subjectId: string) {
-    return prisma.exam.create({
+  static async createExam(data: CreateExamValidation) {
+    const { subjectId, courseId, courseGroupId, studentIds } = data;
+    const createdExam = await prisma.exam.create({
       data: {
+        courseId,
+        courseGroupId,
         subjectId,
       },
       select: {
         id: true,
       },
     });
-  }
 
-  static async createExam(input: ExamValidation, examId?: string) {
-    const { title, description, subjectId, studentIds } = input;
-
-    let exam = await prisma.exam.findUnique({
-      where: {
-        id: examId,
-      },
+    await prisma.studentExam.createMany({
+      data: studentIds.map(studentId => ({
+        studentId,
+        examId: createdExam.id,
+      })),
     });
 
+    return createdExam;
+  }
+
+  static async createExamTranslation(input: ExamValidation, examId?: string) {
+    const { title, description, testQuestionIds, language } = input;
+
+    if (!examId) {
+      throw new ConflictException('No exam id provided');
+    }
+
+    const exam = await this.getExamById(examId);
+
     if (!exam) {
-      exam = await prisma.exam.create({
-        data: {
-          subjectId,
-        },
-      });
+      throw new ConflictException('Exam with provided id is not found');
     }
 
     const createdTranslation = await prisma.examTranslation.create({
@@ -75,30 +90,22 @@ export class ExamsResolver {
         examId: exam.id,
         title,
         description,
-        language: LanguageTypeEnum.AM,
+        language,
       },
     });
 
-    await Promise.all([
-      prisma.testQuestion.updateMany({
-        where: {
-          id: {
-            in: input.testQuestionIds,
-          },
+    await prisma.testQuestion.updateMany({
+      where: {
+        id: {
+          in: testQuestionIds,
         },
-        data: {
-          examTranslationId: createdTranslation.id,
-        },
-      }),
-      prisma.studentExam.createMany({
-        data: studentIds.map(id => ({
-          examId: exam.id,
-          studentId: id,
-        })),
-      }),
-    ]);
+      },
+      data: {
+        examTranslationId: createdTranslation.id,
+      },
+    });
 
-    return exam;
+    return true;
   }
 
   static async getExamById(id: string) {
@@ -131,61 +138,5 @@ export class ExamsResolver {
 
   static async getExamDataById(examId: string) {
     console.log({ examId });
-    // return prisma.exam.findUnique({
-    //   where: {
-    //     id: examId,
-    //   },
-    //   select: {
-    //     id: true,
-    //     studentExams: {
-    //       select: {
-    //         studentId: true,
-    //       },
-    //     },
-    //     faculty: {
-    //       select: {
-    //         id: true,
-    //         exams: {
-    //           select: {
-    //             id: true,
-    //             studentExams: {
-    //               select: {
-    //                 student: {
-    //                   select: {
-    //                     id: true,
-    //                   },
-    //                 },
-    //               },
-    //             },
-    //           },
-    //         },
-    //       },
-    //     },
-    //     studentGradeId: true,
-    //     studentGradeGroupId: true,
-    //     examLanguages: {
-    //       where: {
-    //         language: 'AM', // todo
-    //       },
-    //       select: {
-    //         title: true,
-    //         description: true,
-    //         language: true,
-    //         testQuestions: {
-    //           select: {
-    //             id: true,
-    //             title: true,
-    //             options: {
-    //               select: {
-    //                 id: true,
-    //                 isRightAnswer: true,
-    //               },
-    //             },
-    //           },
-    //         },
-    //       },
-    //     },
-    //   },
-    // });
   }
 }

@@ -82,8 +82,14 @@ function TableCheckbox<T extends { id: string }>({
         </Text>
       </Flex>
 
-      <Box overflow="auto" maxWidth={{ base: '340px', sm: '670px', lg: '700px', xl: '100%' }}>
-        <Table borderTop="1px solid rgb(226, 232, 240)" height="100%">
+      <Box maxWidth={{ base: '340px', sm: '670px', lg: '700px', xl: '100%' }}>
+        <Table
+          borderTop="1px solid rgb(226, 232, 240)"
+          maxHeight="800px"
+          overflow="auto"
+          height="100%"
+          minWidth="100%"
+          width="max-content">
           <Thead>
             {getHeaderGroups().map(headerGroup => (
               <Tr key={headerGroup.id}>
@@ -121,6 +127,7 @@ function TableCheckbox<T extends { id: string }>({
               return (
                 <Tr
                   key={row.id}
+                  maxHeight="200px"
                   {...(rowCondition
                     ? {
                         backgroundColor: (row.original as any)[rowCondition]

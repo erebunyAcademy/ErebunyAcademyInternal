@@ -48,14 +48,10 @@ export class TestQuestionValidation {
   questions: Question[];
 }
 
-export class ExamValidation {
+export class CreateExamValidation {
   @IsString()
-  @IsNotEmpty({ message: 'Exam title is required' })
-  title: string;
-
-  @IsString()
-  @IsOptional()
-  description: string;
+  @IsNotEmpty({ message: 'Subject is required' })
+  subjectId: string;
 
   @IsString()
   @IsNotEmpty({ message: 'Faculty is required' })
@@ -72,10 +68,16 @@ export class ExamValidation {
   @IsArray()
   @IsNotEmpty({ message: 'Students are required' })
   studentIds: string[];
+}
+
+export class ExamValidation {
+  @IsString()
+  @IsNotEmpty({ message: 'Exam title is required' })
+  title: string;
 
   @IsString()
-  @IsNotEmpty({ message: 'Subject is required' })
-  subjectId: string;
+  @IsOptional()
+  description: string;
 
   @IsEnum(LanguageTypeEnum)
   @IsNotEmpty({ message: 'Language is required' })

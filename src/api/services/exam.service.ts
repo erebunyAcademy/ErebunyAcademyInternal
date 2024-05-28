@@ -1,5 +1,5 @@
 import { ExamDataListModel, ExamListModel } from '@/utils/models/exam';
-import { ExamValidation } from '@/utils/validation/exam';
+import { CreateExamValidation, ExamValidation } from '@/utils/validation/exam';
 import $apiClient from '../axiosClient';
 import { QueryParams } from '../types/common';
 
@@ -7,13 +7,13 @@ export class ExamService {
   static list(params?: QueryParams) {
     return $apiClient.get<ExamListModel>('/exams/list', { params });
   }
-  static createExam(exam: ExamValidation) {
-    return $apiClient.post('/exams', exam);
+  static createExamTranslation(input: ExamValidation, examId: string) {
+    return $apiClient.post(`/exams/${examId}`, input);
   }
   static getExamById(id: string): Promise<ExamDataListModel> {
     return $apiClient.get(`/exams/${id}`);
   }
-  static createExamBySubjectId(subjectId: string) {
-    return $apiClient.post(`exams/subjects/${subjectId}`);
+  static createExam(input: CreateExamValidation) {
+    return $apiClient.post('/exams', input);
   }
 }

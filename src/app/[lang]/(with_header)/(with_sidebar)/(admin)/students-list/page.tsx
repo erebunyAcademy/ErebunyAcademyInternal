@@ -167,13 +167,16 @@ export default function Users() {
       id: uuidv4(),
       cell: ({ row }) => (
         <ActionButtons>
-          <MenuItem
-            color="green"
-            onClick={() => {
-              confirmUserById(row.original.id);
-            }}>
-            {t('confirm')}
-          </MenuItem>
+          {!row.original.isAdminVerified && (
+            <MenuItem
+              color="green"
+              disabled={row.original.isAdminVerified}
+              onClick={() => {
+                confirmUserById(row.original.id);
+              }}>
+              {t('confirm')}
+            </MenuItem>
+          )}
           <MenuItem
             color="red"
             onClick={() => {
@@ -215,6 +218,7 @@ export default function Users() {
         )}
         fetchNextPage={useCallback(() => setPage(prev => ++prev), [])}
         fetchPreviousPage={useCallback(() => setPage(prev => --prev), [])}
+        rowCondition="isAdminVerified"
       />
 
       <Modal

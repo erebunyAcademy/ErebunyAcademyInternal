@@ -7,7 +7,6 @@ import {
   Checkbox,
   Flex,
   FormControl,
-  HStack,
   IconButton,
   Input,
   InputGroup,
@@ -101,19 +100,6 @@ function SearchTable<T>({
     }));
   };
 
-  const toggleSelectAll = (isChecked: boolean) => {
-    const allRowIds = getRowModel().rows.map(row => row.id);
-    const newSelectedRows = allRowIds.reduce(
-      (acc, rowId) => {
-        acc[rowId] = isChecked;
-        return acc;
-      },
-      {} as Record<string, boolean>,
-    );
-    setSelectedRows(newSelectedRows);
-  };
-
-  const isAllSelected = getRowModel().rows.every(row => selectedRows[row.id]);
   const t = useTranslations();
 
   return (
@@ -143,18 +129,14 @@ function SearchTable<T>({
         </InputGroup>
       </FormControl>
       <Box overflow="auto" maxWidth={{ base: '340px', sm: '670px', lg: '700px', xl: '100%' }}>
-        <Table borderTop="1px solid rgb(226, 232, 240)" height="100%" width="max-content">
+        <Table
+          borderTop="1px solid rgb(226, 232, 240)"
+          height="100%"
+          minWidth="100%"
+          width="max-content">
           <Thead>
             {getHeaderGroups().map(headerGroup => (
               <Tr key={headerGroup.id}>
-                {withCheckbox && (
-                  <Th>
-                    <Checkbox
-                      isChecked={isAllSelected}
-                      onChange={e => toggleSelectAll(e.target.checked)}
-                    />
-                  </Th>
-                )}
                 {headerGroup.headers.map(header => {
                   const meta: any = header.column.columnDef.meta;
                   return (
@@ -187,8 +169,8 @@ function SearchTable<T>({
                   {...(rowCondition
                     ? {
                         backgroundColor: (row.original as any)[rowCondition]
-                          ? 'red.100'
-                          : 'green.100',
+                          ? 'green.50'
+                          : 'red.50',
                       }
                     : {})}>
                   {withCheckbox && (
@@ -213,33 +195,31 @@ function SearchTable<T>({
           </Tbody>
 
           <Tfoot width="100%" borderBottom="1px solid #DEDEDE">
-            <Tr display="flex" justifyContent="space-between" alignItems="center">
-              <Td colSpan={5} border="none">
+            <Tr>
+              <Td colSpan={1} border="none">
                 <Text>
                   {t('count')} - {count}
                 </Text>
               </Td>
-              <Td ml="30px" border="none">
-                <HStack>
-                  <IconButton
-                    className="border rounded p-1"
-                    aria-label="chevron-left"
-                    onClick={fetchPreviousPage}
-                    bg="transparent"
-                    icon={<ChevronLeft />}
-                    isDisabled={!hasPreviousPage}>
-                    {'<'}
-                  </IconButton>
-                  <IconButton
-                    aria-label="chevron-right"
-                    className="border rounded p-1"
-                    bg="transparent"
-                    onClick={fetchNextPage}
-                    icon={<ChevronRight />}
-                    isDisabled={!hasNextPage}>
-                    {'>'}
-                  </IconButton>
-                </HStack>
+              <Td border="none" colSpan={getHeaderGroups()[0].headers.length} textAlign="right">
+                <IconButton
+                  className="border rounded p-1"
+                  aria-label="chevron-left"
+                  onClick={fetchPreviousPage}
+                  bg="transparent"
+                  icon={<ChevronLeft />}
+                  isDisabled={!hasPreviousPage}>
+                  {'<'}
+                </IconButton>
+                <IconButton
+                  aria-label="chevron-right"
+                  className="border rounded p-1"
+                  bg="transparent"
+                  onClick={fetchNextPage}
+                  icon={<ChevronRight />}
+                  isDisabled={!hasNextPage}>
+                  {'>'}
+                </IconButton>
               </Td>
             </Tr>
           </Tfoot>

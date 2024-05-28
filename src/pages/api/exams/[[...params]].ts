@@ -11,7 +11,7 @@ import {
 import { SortingType } from '@/api/types/common';
 import { exceptionHandler } from '@/lib/prisma/error';
 import { ExamsResolver } from '@/lib/prisma/resolvers/exam.resolver';
-import { ExamValidation } from '@/utils/validation/exam';
+import { CreateExamValidation, ExamValidation } from '@/utils/validation/exam';
 
 @Catch(exceptionHandler)
 class ExamsHandler {
@@ -29,14 +29,17 @@ class ExamsHandler {
   _getExamById(@Param('id') id: string) {
     return ExamsResolver.getExamDataById(id);
   }
-  @Post()
-  _createExam(@Body(ValidationPipe) input: ExamValidation) {
-    return ExamsResolver.createExam(input);
+  @Post('/:examId')
+  _createExamTranslation(
+    @Body(ValidationPipe) input: ExamValidation,
+    @Param('examId') examId?: string,
+  ) {
+    return ExamsResolver.createExamTranslation(input, examId);
   }
 
-  @Post('/subjects/:subjectId')
-  _createExamBySubjectId(@Param('subjectId') subjectId: string) {
-    return ExamsResolver.createExamBySubjectId(subjectId);
+  @Post()
+  _createExam(@Body(ValidationPipe) input: CreateExamValidation) {
+    return ExamsResolver.createExam(input);
   }
 }
 
