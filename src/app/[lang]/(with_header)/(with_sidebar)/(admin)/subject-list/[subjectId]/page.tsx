@@ -5,12 +5,15 @@ import { Box, Button, Flex, Heading, HStack, IconButton, Stack } from '@chakra-u
 import { classValidatorResolver } from '@hookform/resolvers/class-validator';
 import { TestQuestionLevelEnum, TestQuestionTypeEnum } from '@prisma/client';
 import { useMutation } from '@tanstack/react-query';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { Controller, SubmitHandler, useFieldArray, useForm } from 'react-hook-form';
 import { TestQuestionService } from '@/api/services/test-question.service';
 import { FormInput, SelectLabel } from '@/components/atoms';
 import AnswersControl from '@/components/molecules/AnswerControl';
 import ExamsUploadByExcel, { UploadedExcelData } from '@/components/organisms/ExamsUploadByExcel';
+import { Locale } from '@/i18n';
+import { ROUTE_SUBJECTS } from '@/utils/constants/routes';
+import { languagePathHelper } from '@/utils/helpers/language';
 import { Maybe } from '@/utils/models/common';
 import { TestQuestionValidation } from '@/utils/validation/exam';
 
@@ -51,7 +54,8 @@ const initValue = {
 const resolver = classValidatorResolver(TestQuestionValidation);
 
 const CreateTestQuestions = () => {
-  const params = useParams();
+  const params: Maybe<{ lang: Locale; subjectId: string }> = useParams();
+  const router = useRouter();
   const [excelData, setExcelData] = useState<UploadedExcelData>(null);
   const { control, watch, handleSubmit, reset } = useForm<TestQuestionValidation>({
     resolver,
@@ -74,7 +78,11 @@ const CreateTestQuestions = () => {
   });
 
   const onSubmit: SubmitHandler<TestQuestionValidation> = data => {
-    mutate(data, { onSuccess: () => {} });
+    mutate(data, {
+      onSuccess: () => {
+        router.push(languagePathHelper(params?.lang || 'am', ROUTE_SUBJECTS));
+      },
+    });
   };
 
   useEffect(() => {

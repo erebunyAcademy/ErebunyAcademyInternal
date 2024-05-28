@@ -145,12 +145,12 @@ export default function Users() {
       cell: info => info.getValue(),
       header: t('faculty'),
     }),
-    columnHelper.accessor('student.studentGrade.title', {
+    columnHelper.accessor('student.course.title', {
       id: uuidv4(),
       cell: info => info.getValue(),
       header: t('studentGrade'),
     }),
-    columnHelper.accessor('student.studentGradeGroup.title', {
+    columnHelper.accessor('student.courseGroup.title', {
       id: uuidv4(),
       cell: info => info.getValue(),
       header: t('studentGradeGroup'),

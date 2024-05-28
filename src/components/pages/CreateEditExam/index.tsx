@@ -95,7 +95,7 @@ const CreateEditExam: FC<CreateEditExamProps> = () => {
   const subjectId = watch('subjectId');
 
   const { data: testQuestionQueryData } = useQuery<TestQuestionListModel>({
-    queryKey: ['testQuestion'],
+    queryKey: ['testQuestion', subjectId],
     queryFn: () => TestQuestionService.getTestQuestionsBySubjectId(subjectId),
     enabled: !!subjectId,
   });
@@ -148,7 +148,11 @@ const CreateEditExam: FC<CreateEditExamProps> = () => {
     testQuestionCcolumnHelper.accessor('options', {
       id: uuidv4(),
       cell: info =>
-        (info.getValue() as any).map(({ title }: { title: string }) => title).join('\n'),
+        (info.getValue() as any).map(({ title }: { title: string }) => (
+          <Box key={title} my={2}>
+            {title}
+          </Box>
+        )),
       header: 'Answers',
     }),
   ];

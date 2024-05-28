@@ -48,7 +48,7 @@ export class UserResolver {
         },
         student: {
           select: {
-            studentGrade: {
+            course: {
               select: {
                 title: true,
               },
@@ -58,7 +58,7 @@ export class UserResolver {
                 title: true,
               },
             },
-            studentGradeGroup: {
+            courseGroup: {
               select: {
                 title: true,
               },

@@ -1,4 +1,4 @@
-import { Exam } from '@prisma/client';
+import { Exam, LanguageTypeEnum } from '@prisma/client';
 import { NotFoundException } from 'next-api-decorators';
 import { SortingType } from '@/api/types/common';
 import { ExamValidation } from '@/utils/validation/exam';
@@ -42,69 +42,63 @@ export class ExamsResolver {
     }));
   }
 
-  static async createExam(input: ExamValidation) {
-    console.log({ input });
-    // const {
-    //   title,
-    //   description,
-    //   facultyId,
-    //   studentGradeId,
-    //   studentGradeGroupId,
-    //   studentIds,
-    //   questions,
-    // } = input;
+  static async createExamBySubjectId(subjectId: string) {
+    return prisma.exam.create({
+      data: {
+        subjectId,
+      },
+      select: {
+        id: true,
+      },
+    });
+  }
 
-    // return await prisma.$transaction(async prisma => {
-    //   const exam = await prisma.exam.create({
-    //     data: {
-    //       facultyId,
-    //       studentGradeId,
-    //       studentGradeGroupId,
-    //       examLanguages: {
-    //         create: {
-    //           title,
-    //           description,
-    //           language: 'AM', // todo
-    //           testQuestions: {
-    //             create: questions.map(question => ({
-    //               title: question.questionText,
-    //               type: question.questionType,
-    //               skillLevel: question.skillLevel,
-    //               options: {
-    //                 create: question.answers.map(answer => ({
-    //                   title: answer.title,
-    //                   isRightAnswer: answer.isRightAnswer,
-    //                 })),
-    //               },
-    //             })),
-    //           },
-    //         },
-    //       },
-    //     },
-    //     include: {
-    //       examLanguages: {
-    //         select: {
-    //           testQuestions: {
-    //             include: {
-    //               options: true,
-    //             },
-    //           },
-    //         },
-    //       },
-    //     },
-    //   });
+  static async createExam(input: ExamValidation, examId?: string) {
+    const { title, description, subjectId, studentIds } = input;
 
-    //   for (const studentId of studentIds) {
-    //     await prisma.studentExam.create({
-    //       data: {
-    //         studentId,
-    //         examId: exam.id,
-    //       },
-    //     });
-    //   }
+    let exam = await prisma.exam.findUnique({
+      where: {
+        id: examId,
+      },
+    });
 
-    //   return exam;
-    // });
+    if (!exam) {
+      exam = await prisma.exam.create({
+        data: {
+          subjectId,
+        },
+      });
+    }
+
+    const createdTranslation = await prisma.examTranslation.create({
+      data: {
+        examId: exam.id,
+        title,
+        description,
+        language: LanguageTypeEnum.AM,
+      },
+    });
+
+    await Promise.all([
+      prisma.testQuestion.updateMany({
+        where: {
+          id: {
+            in: input.testQuestionIds,
+          },
+        },
+        data: {
+          examTranslationId: createdTranslation.id,
+        },
+      }),
+      prisma.studentExam.createMany({
+        data: studentIds.map(id => ({
+          examId: exam.id,
+          studentId: id,
+        })),
+      }),
+    ]);
+
+    return exam;
   }
 
   static async getExamById(id: string) {

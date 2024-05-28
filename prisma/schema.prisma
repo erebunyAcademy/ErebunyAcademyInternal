@@ -130,7 +130,7 @@ model Subject {
   subjectTeacher SubjectTeacher[]
   attachments    Attachment[]
   testQuestions  TestQuestion[]
-  exams          Exam[]
+  exam           Exam[]
 
   createdAt DateTime @default(now()) @db.Timestamp(0)
   updatedAt DateTime @updatedAt @db.Timestamp(0)
@@ -182,7 +182,7 @@ model Exam {
   id            String            @id @default(uuid())
   studentExams  StudentExam[]
   examLanguages ExamTranslation[]
-  subject       Subject           @relation(fields: [subjectId], references: [id])
+  subject       Subject?          @relation(fields: [subjectId], references: [id])
   subjectId     String
 
   updatedAt DateTime @updatedAt @db.Timestamp(0)

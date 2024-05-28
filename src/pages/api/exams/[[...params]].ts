@@ -33,6 +33,11 @@ class ExamsHandler {
   _createExam(@Body(ValidationPipe) input: ExamValidation) {
     return ExamsResolver.createExam(input);
   }
+
+  @Post('/subjects/:subjectId')
+  _createExamBySubjectId(@Param('subjectId') subjectId: string) {
+    return ExamsResolver.createExamBySubjectId(subjectId);
+  }
 }
 
 export default createHandler(ExamsHandler);

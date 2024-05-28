@@ -201,8 +201,8 @@ CREATE TABLE "ExamTranslation" (
 -- CreateTable
 CREATE TABLE "TestQuestion" (
     "id" TEXT NOT NULL,
-    "title" VARCHAR(60) NOT NULL,
-    "description" VARCHAR(60),
+    "title" TEXT NOT NULL,
+    "description" TEXT,
     "type" "TestQuestionTypeEnum" NOT NULL,
     "skillLevel" "TestQuestionLevelEnum" NOT NULL,
     "examTranslationId" TEXT,
@@ -217,7 +217,7 @@ CREATE TABLE "TestQuestion" (
 -- CreateTable
 CREATE TABLE "Option" (
     "id" TEXT NOT NULL,
-    "title" VARCHAR(60) NOT NULL,
+    "title" TEXT NOT NULL,
     "isRightAnswer" BOOLEAN NOT NULL DEFAULT false,
     "testQuestionId" TEXT NOT NULL,
     "createdAt" TIMESTAMP(0) NOT NULL DEFAULT CURRENT_TIMESTAMP,

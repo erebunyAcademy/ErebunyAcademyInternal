@@ -13,4 +13,7 @@ export class ExamService {
   static getExamById(id: string): Promise<ExamDataListModel> {
     return $apiClient.get(`/exams/${id}`);
   }
+  static createExamBySubjectId(subjectId: string) {
+    return $apiClient.post(`exams/subjects/${subjectId}`);
+  }
 }

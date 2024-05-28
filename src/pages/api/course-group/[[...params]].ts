@@ -32,7 +32,7 @@ class CourseGroupHandler {
     return CourseGroupResolver.getCourseGroupList();
   }
 
-  @Get('/course/:courseId')
+  @Get('/courses/:courseId')
   getCourseGroupsByCourseId(@Param('courseId') courseId: string) {
     return CourseGroupResolver.getCourseGroupListByCourseId(courseId);
   }
