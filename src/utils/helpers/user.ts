@@ -43,12 +43,12 @@ export const getUserData = (user: NonNullable<User>) => {
           {
             id: 8,
             title: 'Student Grade',
-            value: user.student?.studentGrade.title,
+            value: user.student?.course.title,
           },
           {
             id: 9,
             title: 'Student Grade group',
-            value: user.student?.studentGradeGroup?.title,
+            value: user.student?.courseGroup?.title,
           },
         ]
       : []),
