@@ -41,6 +41,7 @@ const createUser = async (
       lastName,
       password: hashedPassword,
       confirmationCode,
+      ...(role === UserRoleEnum.TEACHER ? { isAdminVerified: true } : {}),
       role,
       ...((input as StudentSignUpValidation).attachment?.attachmentKey
         ? {
