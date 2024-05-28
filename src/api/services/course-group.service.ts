@@ -1,15 +1,15 @@
-import { CreateEditStudentGradeGroupValidation } from '@/studentGradeGroup';
 import { CourseGroupAdminListModel, PublicCourseGroupListModel } from '@/utils/models/courseGroup';
+import { CreateEditCourseGroupValidation } from '@/utils/validation/courseGroup';
 import $apiClient from '../axiosClient';
 import { QueryParams } from '../types/common';
 
-type UpdateStudentGradeGroupArgs = {
-  data: CreateEditStudentGradeGroupValidation;
+type UpdateCourseGroupArgs = {
+  data: CreateEditCourseGroupValidation;
   id: string;
 };
 
 export class CourseGroupService {
-  static studentGradeGroupList(params?: QueryParams) {
+  static courseGroupList(params?: QueryParams) {
     return $apiClient.get<CourseGroupAdminListModel>('/course-group/list', {
       params,
     });
@@ -18,18 +18,18 @@ export class CourseGroupService {
     return $apiClient.get<PublicCourseGroupListModel>('/course-group');
   }
 
-  static createStudentGradeGroup(input: CreateEditStudentGradeGroupValidation) {
-    return $apiClient.post<CreateEditStudentGradeGroupValidation>('/course-group', input);
+  static createCourseGroup(input: CreateEditCourseGroupValidation) {
+    return $apiClient.post<CreateEditCourseGroupValidation>('/course-group', input);
   }
-  static updateStudentGradeGroup(input: UpdateStudentGradeGroupArgs) {
+  static updateCourseGroup(input: UpdateCourseGroupArgs) {
     const { id, data } = input;
-    return $apiClient.patch<CreateEditStudentGradeGroupValidation>(`/course-group/${id}`, data);
+    return $apiClient.patch<CreateEditCourseGroupValidation>(`/course-group/${id}`, data);
   }
-  static deleteStudentGradeGroup(id: string) {
-    return $apiClient.delete<CreateEditStudentGradeGroupValidation>(`/course-group/${id}`);
+  static deleteCourseGroup(id: string) {
+    return $apiClient.delete<CreateEditCourseGroupValidation>(`/course-group/${id}`);
   }
 
-  static getStudentGradeGroupByStudentGradeId(id: string) {
+  static getCourseGroupByCourseId(id: string) {
     return $apiClient.get(`/course-group/courses/${id}`);
   }
 }

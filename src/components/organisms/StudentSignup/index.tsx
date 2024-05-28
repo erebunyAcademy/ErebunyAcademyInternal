@@ -33,12 +33,12 @@ const resolver = classValidatorResolver(StudentSignUpValidation);
 
 const fetchFormData = async () => {
   try {
-    const [studentGradeList, studentGradeGroupList, facultyList] = await Promise.all([
+    const [courseList, courseGroupList, facultyList] = await Promise.all([
       CourseService.list(),
       CourseGroupService.list(),
       FacultyService.list(),
     ]);
-    return { studentGradeList, studentGradeGroupList, facultyList };
+    return { courseList, courseGroupList, facultyList };
   } catch {
     console.error();
   }
@@ -114,7 +114,7 @@ const StudentSignUp = ({ lang }: { lang: Locale }) => {
   });
 
   const { data } = useQuery({
-    queryKey: ['faculty', 'student-grade', 'student-grade-group'],
+    queryKey: ['faculty', 'course', 'course-group'],
     queryFn: fetchFormData,
   });
 
@@ -219,8 +219,8 @@ const StudentSignUp = ({ lang }: { lang: Locale }) => {
                 isRequired
                 name={name}
                 isInvalid={!!errors.courseId?.message}
-                options={data?.studentGradeList || []}
-                labelName="Student Grade"
+                options={data?.courseList || []}
+                labelName={t('course')}
                 valueLabel="id"
                 nameLabel="title"
                 onChange={onChange}
@@ -236,14 +236,14 @@ const StudentSignUp = ({ lang }: { lang: Locale }) => {
               <SelectLabel
                 name={name}
                 isInvalid={!!errors.courseGroupId?.message}
-                options={data?.studentGradeGroupList || []}
-                labelName={t('studentGradeGroup')}
+                options={data?.courseGroupList || []}
+                labelName={t('courseGroup')}
                 valueLabel="id"
                 nameLabel="title"
                 onChange={onChange}
                 value={value || ''}
                 formErrorMessage={t(errors.courseGroupId?.message)}
-                formHelperText={t('studentGradeGroupNotRequired')}
+                formHelperText={t('courseGroupNotRequired')}
               />
             )}
           />

@@ -1,8 +1,8 @@
 import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
-export class CreateEditStudentGradeValidation {
+export class CreateEditCourseValidation {
   @IsString()
-  @IsNotEmpty({ message: 'studentGradeTitleMessage' })
+  @IsNotEmpty({ message: 'courseTitleMessage' })
   title: string;
 
   @IsString()

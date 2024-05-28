@@ -1,14 +1,11 @@
 'use client';
 import React, { useCallback, useMemo, useState } from 'react';
-import { MenuItem } from '@chakra-ui/react';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { createColumnHelper, SortingState } from '@tanstack/react-table';
 import dayjs from 'dayjs';
 import { useTranslations } from 'next-intl';
 import { v4 as uuidv4 } from 'uuid';
 import { TeacherService } from '@/api/services/teacher.service';
-import { UserService } from '@/api/services/user.service';
-import ActionButtons from '@/components/molecules/ActionButtons';
 import SearchTable from '@/components/organisms/SearchTable';
 import useDebounce from '@/hooks/useDebounce';
 import { ITEMS_PER_PAGE } from '@/utils/constants/common';
@@ -31,10 +28,6 @@ export default function Users() {
         sorting: sorting,
         search: debouncedSearch,
       }),
-  });
-
-  const { mutate: confirmUserById } = useMutation({
-    mutationFn: UserService.confirmUserVerificationById,
   });
 
   const pageCount = useMemo(() => {
@@ -88,21 +81,6 @@ export default function Users() {
         return currentDate.format('YYYY-MM-DD');
       },
       header: t('createdAt'),
-    }),
-    columnHelper.accessor('id', {
-      id: uuidv4(),
-      cell: ({ row }) => (
-        <ActionButtons>
-          <MenuItem
-            color="green"
-            onClick={() => {
-              confirmUserById(row.original.id);
-            }}>
-            {t('confirm')}
-          </MenuItem>
-        </ActionButtons>
-      ),
-      header: t('actions'),
     }),
   ];
 

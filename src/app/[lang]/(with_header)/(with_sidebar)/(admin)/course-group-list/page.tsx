@@ -14,22 +14,22 @@ import ActionButtons from '@/components/molecules/ActionButtons';
 import Modal from '@/components/molecules/Modal';
 import SearchTable from '@/components/organisms/SearchTable';
 import useDebounce from '@/hooks/useDebounce';
-import { CreateEditStudentGradeGroupValidation } from '@/studentGradeGroup';
 import { ITEMS_PER_PAGE } from '@/utils/constants/common';
 import { QUERY_KEY } from '@/utils/helpers/queryClient';
 import { Maybe } from '@/utils/models/common';
 import { GetCoursesListModel } from '@/utils/models/course';
 import { CourseGroupSingleModel } from '@/utils/models/courseGroup';
+import { CreateEditCourseGroupValidation } from '@/utils/validation/courseGroup';
 
-const resolver = classValidatorResolver(CreateEditStudentGradeGroupValidation);
+const resolver = classValidatorResolver(CreateEditCourseGroupValidation);
 
-const StudentGradeGroup = () => {
+const CourseGroup = () => {
   const t = useTranslations();
   const [sorting, setSorting] = useState<SortingState>([]);
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const debouncedSearch = useDebounce(search);
-  const [selectedStudentGradeGroup, setSelectedStudentGradeGroup] =
+  const [selectedCourseGroup, setSelectedCourseGroup] =
     useState<Maybe<CourseGroupSingleModel>>(null);
 
   const {
@@ -38,7 +38,7 @@ const StudentGradeGroup = () => {
     reset,
     setValue,
     formState: { errors, isValid },
-  } = useForm<CreateEditStudentGradeGroupValidation>({
+  } = useForm<CreateEditCourseGroupValidation>({
     resolver,
     defaultValues: {
       title: '',
@@ -54,7 +54,7 @@ const StudentGradeGroup = () => {
   } = useDisclosure({
     onClose() {
       reset();
-      setSelectedStudentGradeGroup(null);
+      setSelectedCourseGroup(null);
     },
   });
 
@@ -64,14 +64,14 @@ const StudentGradeGroup = () => {
     onClose: closeDeleteModal,
   } = useDisclosure({
     onClose() {
-      setSelectedStudentGradeGroup(null);
+      setSelectedCourseGroup(null);
     },
   });
 
   const { data, isLoading, isPlaceholderData, refetch } = useQuery({
-    queryKey: QUERY_KEY.allStudentGradeGroups(debouncedSearch, page),
+    queryKey: QUERY_KEY.allCourseGroups(debouncedSearch, page),
     queryFn: () =>
-      CourseGroupService.studentGradeGroupList({
+      CourseGroupService.courseGroupList({
         offset: page === 1 ? 0 : (page - 1) * ITEMS_PER_PAGE,
         limit: ITEMS_PER_PAGE,
         sorting: sorting,
@@ -80,13 +80,13 @@ const StudentGradeGroup = () => {
   });
 
   const { data: courseQueryData } = useQuery<GetCoursesListModel>({
-    queryKey: ['student-grade'],
+    queryKey: ['course'],
     queryFn: CourseService.list,
     enabled: isCreateEditModalOpen,
   });
 
-  const { mutate: createStudentGradeGroup } = useMutation({
-    mutationFn: CourseGroupService.createStudentGradeGroup,
+  const { mutate: createCourseGroup } = useMutation({
+    mutationFn: CourseGroupService.createCourseGroup,
     onSuccess() {
       refetch();
       reset();
@@ -94,8 +94,8 @@ const StudentGradeGroup = () => {
     },
   });
 
-  const { mutate: updateStudentGradeGroup } = useMutation({
-    mutationFn: CourseGroupService.updateStudentGradeGroup,
+  const { mutate: updateCourseGroup } = useMutation({
+    mutationFn: CourseGroupService.updateCourseGroup,
     onSuccess() {
       refetch();
       reset();
@@ -104,7 +104,7 @@ const StudentGradeGroup = () => {
   });
 
   const { mutate } = useMutation({
-    mutationFn: CourseGroupService.deleteStudentGradeGroup,
+    mutationFn: CourseGroupService.deleteCourseGroup,
     onSuccess() {
       closeDeleteModal();
       refetch();
@@ -148,7 +148,7 @@ const StudentGradeGroup = () => {
           <MenuItem
             color="green"
             onClick={() => {
-              setSelectedStudentGradeGroup(row.original);
+              setSelectedCourseGroup(row.original);
               setValue('title', row.original.title || '');
               setValue('description', row.original.description || '');
               setValue('courseId', row.original.course?.id || '');
@@ -159,7 +159,7 @@ const StudentGradeGroup = () => {
           <MenuItem
             color="red"
             onClick={() => {
-              setSelectedStudentGradeGroup(row.original);
+              setSelectedCourseGroup(row.original);
               openDeleteModal();
             }}>
             {t('delete')}
@@ -175,20 +175,20 @@ const StudentGradeGroup = () => {
   }, [openCreateEditModal]);
 
   const onSubmitHandler = useCallback(
-    (data: CreateEditStudentGradeGroupValidation) => {
-      if (selectedStudentGradeGroup) {
-        updateStudentGradeGroup({ data, id: selectedStudentGradeGroup.id });
+    (data: CreateEditCourseGroupValidation) => {
+      if (selectedCourseGroup) {
+        updateCourseGroup({ data, id: selectedCourseGroup.id });
       } else {
-        createStudentGradeGroup(data);
+        createCourseGroup(data);
       }
     },
-    [createStudentGradeGroup, selectedStudentGradeGroup, updateStudentGradeGroup],
+    [createCourseGroup, selectedCourseGroup, updateCourseGroup],
   );
 
   return (
     <>
       <SearchTable
-        title={'studentGradeGroupList'}
+        title={'courseGroupList'}
         isLoading={isLoading}
         data={data?.courseGroups || []}
         count={data?.count || 0}
@@ -213,10 +213,10 @@ const StudentGradeGroup = () => {
       <Modal
         isOpen={isCreateEditModalOpen}
         onClose={closeCreateEditModal}
-        title={'studentGradeGroup'}
+        title={'courseGroup'}
         primaryAction={handleSubmit(onSubmitHandler)}
         isDisabled={!isValid}
-        actionText={selectedStudentGradeGroup ? 'update' : 'create'}>
+        actionText={selectedCourseGroup ? 'update' : 'create'}>
         <Controller
           name="title"
           control={control}
@@ -225,7 +225,7 @@ const StudentGradeGroup = () => {
               isRequired
               name={name}
               type="text"
-              formLabelName={'studentGradeGroupName'}
+              formLabelName={'courseGroupName'}
               value={value}
               placeholder={t('enterTitle')}
               handleInputChange={onChange}
@@ -241,7 +241,7 @@ const StudentGradeGroup = () => {
             <FormInput
               name={name}
               type="text"
-              formLabelName={'studentGradeGroupDescription'}
+              formLabelName={'courseGroupDescription'}
               value={value}
               placeholder={t('enterDescription')}
               handleInputChange={onChange}
@@ -258,7 +258,7 @@ const StudentGradeGroup = () => {
               name={name}
               isRequired
               options={courseQueryData || []}
-              labelName={'studentGrade'}
+              labelName={'course'}
               valueLabel="id"
               nameLabel="title"
               onChange={onChange}
@@ -274,17 +274,17 @@ const StudentGradeGroup = () => {
         isOpen={isDeleteModalOpen}
         onClose={closeDeleteModal}
         isDeleteVariant
-        title={'studentGradeGroup'}
+        title={'courseGroup'}
         primaryAction={() => {
-          if (selectedStudentGradeGroup) {
-            mutate(selectedStudentGradeGroup?.id);
+          if (selectedCourseGroup) {
+            mutate(selectedCourseGroup?.id);
           }
         }}
         actionText={'delete'}>
-        {t('deleteStudentGradeGroupQuestion')}
+        {t('deleteCourseGroupQuestion')}
       </Modal>
     </>
   );
 };
 
-export default StudentGradeGroup;
+export default CourseGroup;

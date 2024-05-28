@@ -148,12 +148,12 @@ export default function Users() {
     columnHelper.accessor('student.course.title', {
       id: uuidv4(),
       cell: info => info.getValue(),
-      header: t('studentGrade'),
+      header: t('course'),
     }),
     columnHelper.accessor('student.courseGroup.title', {
       id: uuidv4(),
       cell: info => info.getValue(),
-      header: t('studentGradeGroup'),
+      header: t('courseGroup'),
     }),
     columnHelper.accessor('createdAt', {
       id: uuidv4(),
@@ -175,7 +175,7 @@ export default function Users() {
             {t('confirm')}
           </MenuItem>
           <MenuItem
-            color="green"
+            color="red"
             onClick={() => {
               openStudentRejectModal();
               setSelectedStudentId(row.original.id);

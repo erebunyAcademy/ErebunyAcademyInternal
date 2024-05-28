@@ -82,7 +82,7 @@ export class TeacherSignUpValidation extends UserSignupValidation {
 
 export class StudentSignUpValidation extends UserSignupValidation {
   @IsString()
-  @IsNotEmpty({ message: 'studentGradeMessage' })
+  @IsNotEmpty({ message: 'courseMessage' })
   courseId: string;
 
   @IsString()

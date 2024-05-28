@@ -202,7 +202,7 @@ function SearchTable<T>({
                   {row.getVisibleCells().map(cell => {
                     const meta: any = cell.column.columnDef.meta;
                     return (
-                      <Td key={cell.id} isNumeric={meta?.isNumeric}>
+                      <Td key={cell.id} isNumeric={meta?.isNumeric} height="65px">
                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
                       </Td>
                     );
@@ -212,14 +212,14 @@ function SearchTable<T>({
             })}
           </Tbody>
 
-          <Tfoot width="100%">
+          <Tfoot width="100%" borderBottom="1px solid #DEDEDE">
             <Tr display="flex" justifyContent="space-between" alignItems="center">
-              <Td colSpan={5}>
+              <Td colSpan={5} border="none">
                 <Text>
                   {t('count')} - {count}
                 </Text>
               </Td>
-              <Td ml="30px">
+              <Td ml="30px" border="none">
                 <HStack>
                   <IconButton
                     className="border rounded p-1"
