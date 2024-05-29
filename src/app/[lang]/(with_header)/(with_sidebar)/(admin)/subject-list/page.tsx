@@ -141,10 +141,10 @@ const Subject = () => {
           as={Link}
           href={`${languagePathHelper(params?.lang as any, ROUTE_SUBJECTS)}/${row.original.id}`}
           variant="link">
-          Create Test Questions
+          {t('createTestQuestions')}
         </Button>
       ),
-      header: t('description'),
+      header: t('createTestQuestions'),
     }),
     columnHelper.accessor('id', {
       id: uuidv4(),

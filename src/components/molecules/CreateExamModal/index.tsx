@@ -99,22 +99,22 @@ const CreateExamModal: FC<CreateExamModalProps> = ({ isOpen, onClose }) => {
           />
         );
       },
-      header: 'Avatar',
+      header: t('avatar'),
     }),
     columnHelper.accessor('user.firstName', {
       id: uuidv4(),
       cell: info => info.getValue(),
-      header: 'First Name',
+      header: t('firstName'),
     }),
     columnHelper.accessor('user.lastName', {
       id: uuidv4(),
       cell: info => info.getValue(),
-      header: 'Last Name',
+      header: t('lastName'),
     }),
     columnHelper.accessor('user.email', {
       id: uuidv4(),
       cell: info => info.getValue(),
-      header: 'Email',
+      header: t('email'),
     }),
   ];
 
@@ -123,7 +123,7 @@ const CreateExamModal: FC<CreateExamModalProps> = ({ isOpen, onClose }) => {
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title={'createExam'} size="6xl">
+    <Modal isOpen={isOpen} onClose={onClose} title="createExam" size="6xl">
       <Flex gap="30px">
         <Flex width="25%">
           <Controller
@@ -133,7 +133,7 @@ const CreateExamModal: FC<CreateExamModalProps> = ({ isOpen, onClose }) => {
               <SelectLabel
                 name={name}
                 options={(facultyQueryData || []) as any}
-                labelName="Select faculty"
+                labelName="selectFaculty"
                 valueLabel="id"
                 nameLabel="title"
                 onChange={e => {
@@ -153,7 +153,7 @@ const CreateExamModal: FC<CreateExamModalProps> = ({ isOpen, onClose }) => {
               <SelectLabel
                 name={name}
                 options={courseQueryData || []}
-                labelName="Select course"
+                labelName="selectCourse"
                 valueLabel="id"
                 nameLabel="title"
                 onChange={e => {
@@ -173,7 +173,7 @@ const CreateExamModal: FC<CreateExamModalProps> = ({ isOpen, onClose }) => {
               <SelectLabel
                 name={name}
                 options={studentGradeGroupQueryData || []}
-                labelName="Select course group"
+                labelName="selectCourseGroup"
                 valueLabel="id"
                 nameLabel="title"
                 onChange={e => {
@@ -193,7 +193,7 @@ const CreateExamModal: FC<CreateExamModalProps> = ({ isOpen, onClose }) => {
               <SelectLabel
                 name={name}
                 options={subjectList || []}
-                labelName="Select Subject"
+                labelName="selectSubject"
                 valueLabel="id"
                 nameLabel="title"
                 onChange={onChange}
@@ -209,7 +209,7 @@ const CreateExamModal: FC<CreateExamModalProps> = ({ isOpen, onClose }) => {
           control={control}
           render={({ field: { onChange, value } }) => (
             <TableCheckbox
-              title="Select students to participate in exam"
+              title="selectStudentsForExam"
               data={studentsData || []}
               selectedValues={value}
               onChange={onChange}

@@ -1,5 +1,6 @@
 import { ChangeEventHandler, FC, memo, useCallback, useRef } from 'react';
 import { Button, Input, useToast } from '@chakra-ui/react';
+import { useTranslations } from 'next-intl';
 import * as XLSX from 'xlsx';
 import { Maybe } from '@/utils/models/common';
 
@@ -23,6 +24,7 @@ const ExcelUpload: FC<Props> = ({ setExcelData, setValues }) => {
   const toast = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const uploadFileClick = useCallback(() => fileInputRef.current?.click(), []);
+  const t = useTranslations();
 
   const handleFile: ChangeEventHandler<HTMLInputElement> = useCallback(
     e => {
@@ -70,7 +72,7 @@ const ExcelUpload: FC<Props> = ({ setExcelData, setValues }) => {
   return (
     <>
       <Button fontSize="14px" size="sm" onClick={uploadFileClick}>
-        Upload excel file
+        {t('uploadExcelFile')}
       </Button>
       <Input
         required

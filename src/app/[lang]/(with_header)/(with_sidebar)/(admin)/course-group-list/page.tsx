@@ -140,6 +140,16 @@ const CourseGroup = () => {
       cell: info => info.getValue(),
       header: t('description'),
     }),
+    columnHelper.accessor('course.title', {
+      id: uuidv4(),
+      cell: info => info.getValue(),
+      header: t('course'),
+    }),
+    columnHelper.accessor('course.faculty.title', {
+      id: uuidv4(),
+      cell: info => info.getValue(),
+      header: t('faculty'),
+    }),
 
     columnHelper.accessor('id', {
       id: uuidv4(),

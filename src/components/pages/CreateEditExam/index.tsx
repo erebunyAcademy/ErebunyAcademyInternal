@@ -5,6 +5,7 @@ import { classValidatorResolver } from '@hookform/resolvers/class-validator';
 import { ExamTranslation, LanguageTypeEnum } from '@prisma/client';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { createColumnHelper } from '@tanstack/react-table';
+import { useTranslations } from 'next-intl';
 import { Controller, useForm } from 'react-hook-form';
 import { v4 as uuidv4 } from 'uuid';
 import { ExamService } from '@/api/services/exam.service';
@@ -38,6 +39,8 @@ type CreateEditExamProps = {
 };
 
 const CreateEditExam: FC<CreateEditExamProps> = ({ subjectId, examId }) => {
+  const t = useTranslations();
+
   const { control, handleSubmit } = useForm<ExamValidation>({
     resolver,
     defaultValues: {
@@ -64,7 +67,7 @@ const CreateEditExam: FC<CreateEditExamProps> = ({ subjectId, examId }) => {
     testQuestionCcolumnHelper.accessor('title', {
       id: uuidv4(),
       cell: info => info.getValue(),
-      header: 'Question',
+      header: t('question'),
     }),
     testQuestionCcolumnHelper.accessor('options', {
       id: uuidv4(),
@@ -74,7 +77,7 @@ const CreateEditExam: FC<CreateEditExamProps> = ({ subjectId, examId }) => {
             {title}
           </Box>
         )),
-      header: 'Answers',
+      header: t('answers'),
     }),
   ];
 
@@ -101,10 +104,10 @@ const CreateEditExam: FC<CreateEditExamProps> = ({ subjectId, examId }) => {
               render={({ field: { onChange, value, name } }) => (
                 <FormInput
                   isRequired
-                  placeholder="Title"
+                  placeholder={t('title')}
                   name={name}
                   type="text"
-                  formLabelName="Title"
+                  formLabelName={t('title')}
                   value={value}
                   handleInputChange={onChange}
                 />
@@ -120,8 +123,8 @@ const CreateEditExam: FC<CreateEditExamProps> = ({ subjectId, examId }) => {
                 <FormInput
                   name={name}
                   type="text"
-                  placeholder="Description"
-                  formLabelName="Description"
+                  placeholder={t('description')}
+                  formLabelName={t('description')}
                   value={value}
                   handleInputChange={onChange}
                 />
@@ -138,7 +141,7 @@ const CreateEditExam: FC<CreateEditExamProps> = ({ subjectId, examId }) => {
                   isRequired
                   name={name}
                   options={languageTypes}
-                  labelName="Please select exam language"
+                  labelName={t('selectExamLanguage')}
                   valueLabel="id"
                   nameLabel="type"
                   onChange={onChange}
@@ -154,7 +157,7 @@ const CreateEditExam: FC<CreateEditExamProps> = ({ subjectId, examId }) => {
             control={control}
             render={({ field: { onChange, value } }) => (
               <TableCheckbox
-                title="Select tests"
+                title="selectTests"
                 data={testQuestionQueryData || []}
                 selectedValues={value}
                 onChange={onChange}
@@ -168,7 +171,7 @@ const CreateEditExam: FC<CreateEditExamProps> = ({ subjectId, examId }) => {
 
       <Box my="50px">
         <Button colorScheme="teal" type="submit" width="50%">
-          Submit Exam
+          {t('submitExam')}
         </Button>
       </Box>
     </form>
