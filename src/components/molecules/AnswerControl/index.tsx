@@ -1,10 +1,10 @@
 import { FC, memo } from 'react';
 import { DeleteIcon } from '@chakra-ui/icons';
-import { Button, Checkbox, Flex, Heading, IconButton, Radio, Stack } from '@chakra-ui/react';
+import { Box, Button, Checkbox, Flex, Heading, IconButton, Radio, Stack } from '@chakra-ui/react';
 import { TestQuestionTypeEnum } from '@prisma/client';
 import { useTranslations } from 'next-intl';
 import { Control, Controller, useFieldArray } from 'react-hook-form';
-import { FormInput } from '@/components/atoms';
+import FormTextarea from '@/components/atoms/FormTextarea';
 import { TestQuestionValidation } from '@/utils/validation/exam';
 
 interface AnswersControlProps {
@@ -30,50 +30,69 @@ const AnswersControl: FC<AnswersControlProps> = ({ control, questionIndex, quest
     <Stack>
       <Heading size="sm">{t('answers')}</Heading>
       {fields.map((answer, answerIndex) => (
-        <Flex key={answer.id} alignItems="center" gap={24}>
-          <Flex display="flex" alignItems="center" height="100%">
-            {questionType === TestQuestionTypeEnum.RADIO ? (
-              <Controller
-                name={`questions.${questionIndex}.options.${answerIndex}.isRightAnswer`}
-                control={control}
-                render={({ field }) => (
-                  <Radio
-                    isChecked={field.value}
-                    onChange={() => {
-                      handleRadioChange(answerIndex);
-                      field.onChange(true);
-                    }}>
-                    {t('correct')}
-                  </Radio>
-                )}
+        <Flex
+          key={answer.id}
+          alignItems={{ base: 'flex-start', sm: 'center' }}
+          gap={{ base: '15px', sm: '24px' }}
+          flexDirection={{ base: 'column', sm: 'row' }}>
+          <Flex
+            width={{ base: '100%', sm: 'auto' }}
+            alignItems="center"
+            height="100%"
+            justifyContent="space-between">
+            <Box>
+              {questionType === TestQuestionTypeEnum.RADIO ? (
+                <Controller
+                  name={`questions.${questionIndex}.options.${answerIndex}.isRightAnswer`}
+                  control={control}
+                  render={({ field }) => (
+                    <Radio
+                      isChecked={field.value}
+                      onChange={() => {
+                        handleRadioChange(answerIndex);
+                        field.onChange(true);
+                      }}>
+                      {t('correct')}
+                    </Radio>
+                  )}
+                />
+              ) : (
+                <Controller
+                  name={`questions.${questionIndex}.options.${answerIndex}.isRightAnswer`}
+                  control={control}
+                  render={({ field: { name, value, onChange } }) => (
+                    <Checkbox
+                      name={name}
+                      isChecked={value}
+                      onChange={e => onChange(e.target.checked)}
+                      ml="4">
+                      {t('correct')}
+                    </Checkbox>
+                  )}
+                />
+              )}
+            </Box>
+            <Box display={{ base: 'block', sm: 'none' }}>
+              <IconButton
+                size="sm"
+                colorScheme="red"
+                aria-label={t('deleteAnswer')}
+                icon={<DeleteIcon />}
+                onClick={() => remove(answerIndex)}
+                ml="4"
               />
-            ) : (
-              <Controller
-                name={`questions.${questionIndex}.options.${answerIndex}.isRightAnswer`}
-                control={control}
-                render={({ field: { name, value, onChange } }) => (
-                  <Checkbox
-                    name={name}
-                    isChecked={value}
-                    onChange={e => onChange(e.target.checked)}
-                    ml="4">
-                    {t('correct')}
-                  </Checkbox>
-                )}
-              />
-            )}
+            </Box>
           </Flex>
 
-          <Flex flexGrow={1}>
+          <Flex width="100%">
             <Controller
               name={`questions.${questionIndex}.options.${answerIndex}.title`}
               control={control}
               render={({ field: { onChange, value, name } }) => (
-                <FormInput
+                <FormTextarea
                   isRequired
                   placeholder={t('answer')}
                   name={name}
-                  type="text"
                   formLabelName={`${t('answer')} ${answerIndex + 1}`}
                   value={value}
                   handleInputChange={onChange}
@@ -82,18 +101,24 @@ const AnswersControl: FC<AnswersControlProps> = ({ control, questionIndex, quest
             />
           </Flex>
 
-          <Flex>
-            <IconButton
-              colorScheme="red"
-              aria-label={t('deleteAnswer')}
-              icon={<DeleteIcon />}
-              onClick={() => remove(answerIndex)}
-              ml="4"
-            />
+          <Flex mt={{ base: '0', sm: '16px' }}>
+            <Box display={{ base: 'none', sm: 'block' }}>
+              <IconButton
+                size={{ base: 'sm', lg: 'lg' }}
+                colorScheme="red"
+                aria-label={t('deleteAnswer')}
+                icon={<DeleteIcon />}
+                onClick={() => remove(answerIndex)}
+                ml="4"
+              />
+            </Box>
           </Flex>
         </Flex>
       ))}
-      <Button onClick={() => append({ title: '', isRightAnswer: false })} width="50%">
+      <Button
+        onClick={() => append({ title: '', isRightAnswer: false })}
+        width="50%"
+        fontSize={{ base: '16px', lg: '20px' }}>
         {t('addAnswer')}
       </Button>
     </Stack>

@@ -9,7 +9,8 @@ import { useParams, useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { Controller, SubmitHandler, useFieldArray, useForm } from 'react-hook-form';
 import { TestQuestionService } from '@/api/services/test-question.service';
-import { FormInput, SelectLabel } from '@/components/atoms';
+import { SelectLabel } from '@/components/atoms';
+import FormTextarea from '@/components/atoms/FormTextarea';
 import AnswersControl from '@/components/molecules/AnswerControl';
 import ExamsUploadByExcel, { UploadedExcelData } from '@/components/organisms/ExamsUploadByExcel';
 import { Locale } from '@/i18n';
@@ -117,9 +118,11 @@ const CreateTestQuestions = () => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <Box my="50px">
+      <Box my={{ base: '25px', md: '50px' }}>
         <HStack spacing={10}>
-          <Heading textAlign="center">{t('createExamQuestions')}</Heading>
+          <Heading textAlign="center" fontSize={{ base: '22px', md: '28px' }}>
+            {t('createExamQuestions')}
+          </Heading>
           <ExamsUploadByExcel setUploadedResults={setExcelData} />
         </HStack>
         {questionFields.map((question, questionIndex) => {
@@ -138,6 +141,7 @@ const CreateTestQuestions = () => {
                 </Heading>
                 {questionIndex > 0 && (
                   <IconButton
+                    size={{ base: 'sm', lg: 'lg' }}
                     colorScheme="red"
                     aria-label={t('deleteQuestion')}
                     icon={<DeleteIcon />}
@@ -145,16 +149,18 @@ const CreateTestQuestions = () => {
                   />
                 )}
               </Flex>
-              <Flex gap="30px">
+              <Flex
+                mb="15px"
+                gap={{ base: '20px', lg: '30px' }}
+                flexDirection={{ base: 'column', lg: 'row' }}>
                 <Controller
                   name={`questions.${questionIndex}.title`}
                   control={control}
                   render={({ field: { onChange, value, name } }) => (
-                    <FormInput
+                    <FormTextarea
                       isRequired
                       placeholder={t('question')}
                       name={name}
-                      type="text"
                       formLabelName={t('question')}
                       value={value}
                       handleInputChange={onChange}
@@ -200,14 +206,25 @@ const CreateTestQuestions = () => {
               />
 
               {questionIndex === questionFields.length - 1 && (
-                <Button onClick={() => appendQuestion(initValue)} width="50%">
+                <Button
+                  onClick={() => appendQuestion(initValue)}
+                  width="50%"
+                  fontSize={{ base: '16px', lg: '20px' }}>
                   {t('addQuestion')}
                 </Button>
               )}
             </Stack>
           );
         })}
-        <Button colorScheme="teal" type="submit" width="50%" isLoading={isPending}>
+        <Button
+          mt="15px"
+          colorScheme="teal"
+          type="submit"
+          width="50%"
+          isLoading={isPending}
+          fontSize={{ base: '16px', lg: '20px' }}
+          overflowWrap="break-word"
+          whiteSpace="normal">
           {t('submitTestQuestions')}
         </Button>
       </Box>
