@@ -124,83 +124,97 @@ const CreateExamModal: FC<CreateExamModalProps> = ({ isOpen, onClose }) => {
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="createExam" size="6xl">
-      <Flex gap="30px">
-        <Flex width="25%">
-          <Controller
-            name="facultyId"
-            control={control}
-            render={({ field: { onChange, value, name } }) => (
-              <SelectLabel
-                name={name}
-                options={(facultyQueryData || []) as any}
-                labelName="selectFaculty"
-                valueLabel="id"
-                nameLabel="title"
-                onChange={e => {
-                  onChange(e.target.value);
-                  setValue('courseId', '');
-                }}
-                value={value}
-              />
-            )}
-          />
+      <Flex
+        gap={{ base: '18px', sm: '30px' }}
+        flexDirection={{ base: 'column', sm: 'row' }}
+        alignItems="center">
+        <Flex
+          width="50%"
+          gap={{ base: '18px', sm: '30px' }}
+          flexDirection={{ base: 'column', xl: 'row' }}>
+          <Flex width={{ base: '100%', xl: '50%' }}>
+            <Controller
+              name="facultyId"
+              control={control}
+              render={({ field: { onChange, value, name } }) => (
+                <SelectLabel
+                  name={name}
+                  options={(facultyQueryData || []) as any}
+                  labelName="selectFaculty"
+                  valueLabel="id"
+                  nameLabel="title"
+                  onChange={e => {
+                    onChange(e.target.value);
+                    setValue('courseId', '');
+                  }}
+                  value={value}
+                />
+              )}
+            />
+          </Flex>
+          <Flex width={{ base: '100%', xl: '50%' }}>
+            <Controller
+              name="courseId"
+              control={control}
+              render={({ field: { onChange, value, name } }) => (
+                <SelectLabel
+                  name={name}
+                  options={courseQueryData || []}
+                  labelName="selectCourse"
+                  valueLabel="id"
+                  nameLabel="title"
+                  onChange={e => {
+                    onChange(e.target.value);
+                    setValue('courseGroupId', '');
+                  }}
+                  value={value}
+                />
+              )}
+            />
+          </Flex>
         </Flex>
-        <Flex width="25%">
-          <Controller
-            name="courseId"
-            control={control}
-            render={({ field: { onChange, value, name } }) => (
-              <SelectLabel
-                name={name}
-                options={courseQueryData || []}
-                labelName="selectCourse"
-                valueLabel="id"
-                nameLabel="title"
-                onChange={e => {
-                  onChange(e.target.value);
-                  setValue('courseGroupId', '');
-                }}
-                value={value}
-              />
-            )}
-          />
-        </Flex>
-        <Flex width="25%">
-          <Controller
-            name="courseGroupId"
-            control={control}
-            render={({ field: { onChange, value, name } }) => (
-              <SelectLabel
-                name={name}
-                options={studentGradeGroupQueryData || []}
-                labelName="selectCourseGroup"
-                valueLabel="id"
-                nameLabel="title"
-                onChange={e => {
-                  onChange(e.target.value);
-                  setValue('studentIds', []);
-                }}
-                value={value}
-              />
-            )}
-          />
-        </Flex>
-        <Flex width="25%">
-          <Controller
-            name="subjectId"
-            control={control}
-            render={({ field: { onChange, value, name } }) => (
-              <SelectLabel
-                name={name}
-                options={subjectList || []}
-                labelName="selectSubject"
-                valueLabel="id"
-                nameLabel="title"
-                onChange={onChange}
-                value={value}
-              />
-            )}
-          />
+
+        <Flex
+          width="50%"
+          gap={{ base: '18px', sm: '30px' }}
+          flexDirection={{ base: 'column', xl: 'row' }}>
+          <Flex width={{ base: '100%', xl: '50%' }}>
+            <Controller
+              name="courseGroupId"
+              control={control}
+              render={({ field: { onChange, value, name } }) => (
+                <SelectLabel
+                  name={name}
+                  options={studentGradeGroupQueryData || []}
+                  labelName="selectCourseGroup"
+                  valueLabel="id"
+                  nameLabel="title"
+                  onChange={e => {
+                    onChange(e.target.value);
+                    setValue('studentIds', []);
+                  }}
+                  value={value}
+                />
+              )}
+            />
+          </Flex>
+          <Flex width={{ base: '100%', xl: '50%' }}>
+            <Controller
+              name="subjectId"
+              control={control}
+              render={({ field: { onChange, value, name } }) => (
+                <SelectLabel
+                  name={name}
+                  options={subjectList || []}
+                  labelName="selectSubject"
+                  valueLabel="id"
+                  nameLabel="title"
+                  onChange={onChange}
+                  value={value}
+                />
+              )}
+            />
+          </Flex>
         </Flex>
       </Flex>
       <Flex maxHeight="400px" height={600} overflowY="auto">

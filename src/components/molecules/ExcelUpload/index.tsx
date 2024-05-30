@@ -71,7 +71,12 @@ const ExcelUpload: FC<Props> = ({ setExcelData, setValues }) => {
 
   return (
     <>
-      <Button fontSize="14px" size="sm" onClick={uploadFileClick}>
+      <Button
+        p="12px"
+        fontSize={{ base: '14px', lg: '18px' }}
+        onClick={uploadFileClick}
+        overflowWrap="break-word"
+        whiteSpace="normal">
         {t('uploadExcelFile')}
       </Button>
       <Input

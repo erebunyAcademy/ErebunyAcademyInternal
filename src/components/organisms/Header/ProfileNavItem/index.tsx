@@ -15,8 +15,9 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { User } from 'next-auth';
 import { signOut } from 'next-auth/react';
+import { useTranslations } from 'next-intl';
 import { Locale } from '@/i18n';
-import { ROUTE_PROFILE, ROUTE_SIGN_IN } from '@/utils/constants/routes';
+import { ROUTE_DASHBOARD, ROUTE_PROFILE, ROUTE_SIGN_IN } from '@/utils/constants/routes';
 import { generateUserAvatar } from '@/utils/helpers/aws';
 import { languagePathHelper } from '@/utils/helpers/language';
 import { LinkItemProps } from '@/utils/helpers/permissionRoutes';
@@ -30,6 +31,7 @@ type ProfileNavItemProps = {
 
 const ProfileNavItem: FC<ProfileNavItemProps> = ({ user, onClose, linkItems, lang }) => {
   const router = useRouter();
+  const t = useTranslations();
   const name = useMemo(
     () => `${user?.firstName} ${user?.lastName}`,
     [user?.firstName, user?.lastName],
@@ -56,7 +58,7 @@ const ProfileNavItem: FC<ProfileNavItemProps> = ({ user, onClose, linkItems, lan
               {name}
             </Text>
             <Text color="#5B5B5B" fontSize="14px" fontWeight={400}>
-              My Profile
+              {t('myProfile')}
             </Text>
           </Flex>
         </Flex>
@@ -69,10 +71,12 @@ const ProfileNavItem: FC<ProfileNavItemProps> = ({ user, onClose, linkItems, lan
           {linkItems.map(({ href, name, icon, id }) => (
             <AccordionItem key={id}>
               <AccordionButton
-                {...(href ? { as: Link, href } : { onClick: id === 9 ? logout : () => {} })}>
+                {...(href
+                  ? { as: Link, href: languagePathHelper(lang, href || ROUTE_DASHBOARD) || '' }
+                  : { onClick: id === 9 ? logout : () => {} })}>
                 <Flex as="span" flex="1" textAlign="left" pl="24px" alignItems="center" gap="8px">
                   {icon}
-                  {name}
+                  {t(name)}
                 </Flex>
               </AccordionButton>
             </AccordionItem>

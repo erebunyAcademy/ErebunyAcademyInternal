@@ -17,7 +17,7 @@ const SidebarContent: FC<SidebarProps> = ({ linkItems, lang, ...props }) => {
       <Flex padding="64px 46px" flexDirection="column">
         {linkItems.map(link => (
           <NavItem key={link.name} icon={link.icon} href={link.href} lang={lang}>
-            {t(link.name)}
+            {t(link.name)} 
           </NavItem>
         ))}
       </Flex>
