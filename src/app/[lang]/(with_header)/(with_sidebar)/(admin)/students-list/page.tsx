@@ -31,7 +31,7 @@ export default function Users() {
   const [selectedStudentId, setSelectedStudentId] = useState<Maybe<string>>(null);
   const t = useTranslations();
 
-  const { data, isLoading, isPlaceholderData } = useQuery({
+  const { data, isLoading, isPlaceholderData, refetch } = useQuery({
     queryKey: QUERY_KEY.allStudents(debouncedSearch, page),
     queryFn: () =>
       StudentService.list({
@@ -56,6 +56,9 @@ export default function Users() {
 
   const { mutate: confirmUserById } = useMutation({
     mutationFn: UserService.confirmUserVerificationById,
+    onSuccess() {
+      refetch();
+    },
   });
 
   const { mutate: rejectUser, isPending } = useMutation({
@@ -224,7 +227,7 @@ export default function Users() {
       <Modal
         isOpen={isRejectStudentModalIsOpen}
         onClose={closeStudentRejectModal}
-        title={'studentAttachment'}>
+        title={'rejectionMessage'}>
         <FormTextarea
           handleInputChange={valueChangeHandler}
           value={rejectionText}
@@ -237,7 +240,7 @@ export default function Users() {
               rejectUser({ userId: selectedStudentId, message: rejectionText });
             }
           }}>
-          Send
+          {t('send')}
         </Button>
       </Modal>
 

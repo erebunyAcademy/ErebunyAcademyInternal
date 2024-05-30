@@ -2,6 +2,7 @@ import { FC, memo } from 'react';
 import { DeleteIcon } from '@chakra-ui/icons';
 import { Button, Checkbox, Flex, Heading, IconButton, Radio, Stack } from '@chakra-ui/react';
 import { TestQuestionTypeEnum } from '@prisma/client';
+import { useTranslations } from 'next-intl';
 import { Control, Controller, useFieldArray } from 'react-hook-form';
 import { FormInput } from '@/components/atoms';
 import { TestQuestionValidation } from '@/utils/validation/exam';
@@ -13,6 +14,8 @@ interface AnswersControlProps {
 }
 
 const AnswersControl: FC<AnswersControlProps> = ({ control, questionIndex, questionType }) => {
+  const t = useTranslations();
+
   const { fields, append, remove, update } = useFieldArray({
     control,
     name: `questions.${questionIndex}.options`,
@@ -23,10 +26,9 @@ const AnswersControl: FC<AnswersControlProps> = ({ control, questionIndex, quest
       update(i, { ...field, isRightAnswer: i === index });
     });
   };
-
   return (
     <Stack>
-      <Heading size="sm">Answers</Heading>
+      <Heading size="sm">{t('answers')}</Heading>
       {fields.map((answer, answerIndex) => (
         <Flex key={answer.id} alignItems="center" gap={24}>
           <Flex display="flex" alignItems="center" height="100%">
@@ -41,7 +43,7 @@ const AnswersControl: FC<AnswersControlProps> = ({ control, questionIndex, quest
                       handleRadioChange(answerIndex);
                       field.onChange(true);
                     }}>
-                    Correct
+                    {t('correct')}
                   </Radio>
                 )}
               />
@@ -55,7 +57,7 @@ const AnswersControl: FC<AnswersControlProps> = ({ control, questionIndex, quest
                     isChecked={value}
                     onChange={e => onChange(e.target.checked)}
                     ml="4">
-                    Correct
+                    {t('correct')}
                   </Checkbox>
                 )}
               />
@@ -69,10 +71,10 @@ const AnswersControl: FC<AnswersControlProps> = ({ control, questionIndex, quest
               render={({ field: { onChange, value, name } }) => (
                 <FormInput
                   isRequired
-                  placeholder="Answer"
+                  placeholder={t('answer')}
                   name={name}
                   type="text"
-                  formLabelName={`Answer ${answerIndex + 1}`}
+                  formLabelName={`${t('answer')} ${answerIndex + 1}`}
                   value={value}
                   handleInputChange={onChange}
                 />
@@ -83,7 +85,7 @@ const AnswersControl: FC<AnswersControlProps> = ({ control, questionIndex, quest
           <Flex>
             <IconButton
               colorScheme="red"
-              aria-label="Delete answer"
+              aria-label={t('deleteAnswer')}
               icon={<DeleteIcon />}
               onClick={() => remove(answerIndex)}
               ml="4"
@@ -92,7 +94,7 @@ const AnswersControl: FC<AnswersControlProps> = ({ control, questionIndex, quest
         </Flex>
       ))}
       <Button onClick={() => append({ title: '', isRightAnswer: false })} width="50%">
-        Add Answer
+        {t('addAnswer')}
       </Button>
     </Stack>
   );

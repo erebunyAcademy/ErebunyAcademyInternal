@@ -6,6 +6,7 @@ import { classValidatorResolver } from '@hookform/resolvers/class-validator';
 import { TestQuestionLevelEnum, TestQuestionTypeEnum } from '@prisma/client';
 import { useMutation } from '@tanstack/react-query';
 import { useParams, useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { Controller, SubmitHandler, useFieldArray, useForm } from 'react-hook-form';
 import { TestQuestionService } from '@/api/services/test-question.service';
 import { FormInput, SelectLabel } from '@/components/atoms';
@@ -56,6 +57,7 @@ const resolver = classValidatorResolver(TestQuestionValidation);
 const CreateTestQuestions = () => {
   const params: Maybe<{ lang: Locale; subjectId: string }> = useParams();
   const router = useRouter();
+  const t = useTranslations();
   const [excelData, setExcelData] = useState<UploadedExcelData>(null);
   const { control, watch, handleSubmit, reset } = useForm<TestQuestionValidation>({
     resolver,
@@ -117,7 +119,7 @@ const CreateTestQuestions = () => {
     <form onSubmit={handleSubmit(onSubmit)}>
       <Box my="50px">
         <HStack spacing={10}>
-          <Heading textAlign="center">Create Exam Questions</Heading>
+          <Heading textAlign="center">{t('createExamQuestions')}</Heading>
           <ExamsUploadByExcel setUploadedResults={setExcelData} />
         </HStack>
         {questionFields.map((question, questionIndex) => {
@@ -131,11 +133,13 @@ const CreateTestQuestions = () => {
               py="32px"
               mt="20px">
               <Flex justifyContent="space-between" alignItems="center">
-                <Heading size="md">Question {questionIndex + 1}</Heading>
+                <Heading size="md">
+                  {t('question')} {questionIndex + 1}
+                </Heading>
                 {questionIndex > 0 && (
                   <IconButton
                     colorScheme="red"
-                    aria-label="Delete question"
+                    aria-label={t('deleteQuestion')}
                     icon={<DeleteIcon />}
                     onClick={() => removeQuestion(questionIndex)}
                   />
@@ -148,10 +152,10 @@ const CreateTestQuestions = () => {
                   render={({ field: { onChange, value, name } }) => (
                     <FormInput
                       isRequired
-                      placeholder="Question"
+                      placeholder={t('question')}
                       name={name}
                       type="text"
-                      formLabelName="Question"
+                      formLabelName={t('question')}
                       value={value}
                       handleInputChange={onChange}
                     />
@@ -164,7 +168,7 @@ const CreateTestQuestions = () => {
                     <SelectLabel
                       name={name}
                       options={questionTypes}
-                      labelName="Question type"
+                      labelName={t('questionType')}
                       valueLabel="id"
                       nameLabel="type"
                       onChange={onChange}
@@ -179,7 +183,7 @@ const CreateTestQuestions = () => {
                     <SelectLabel
                       name={name}
                       options={skillLevels}
-                      labelName="Skill level"
+                      labelName={t('skillLevel')}
                       valueLabel="id"
                       nameLabel="skillLevel"
                       onChange={onChange}
@@ -197,14 +201,14 @@ const CreateTestQuestions = () => {
 
               {questionIndex === questionFields.length - 1 && (
                 <Button onClick={() => appendQuestion(initValue)} width="50%">
-                  Add Question
+                  {t('addQuestion')}
                 </Button>
               )}
             </Stack>
           );
         })}
         <Button colorScheme="teal" type="submit" width="50%" isLoading={isPending}>
-          Submit Test Questions
+          {t('submitTestQuestions')}
         </Button>
       </Box>
     </form>

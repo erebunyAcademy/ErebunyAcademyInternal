@@ -29,6 +29,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { useTranslations } from 'next-intl';
+import NoDataFound from '@/components/molecules/NoDataFound';
 import ChevronLeft from '@/icons/chevron_left.svg';
 import ChevronRight from '@/icons/chevron_right.svg';
 import InputSearchIcon from '@/icons/search_icon.svg';
@@ -162,36 +163,44 @@ function SearchTable<T>({
           </Thead>
 
           <Tbody>
-            {getRowModel().rows.map(row => {
-              return (
-                <Tr
-                  key={row.id}
-                  {...(rowCondition
-                    ? {
-                        backgroundColor: (row.original as any)[rowCondition]
-                          ? 'green.50'
-                          : 'red.50',
-                      }
-                    : {})}>
-                  {withCheckbox && (
-                    <Td>
-                      <Checkbox
-                        isChecked={selectedRows[row.id] || false}
-                        onChange={() => toggleRowSelected(row.id)}
-                      />
-                    </Td>
-                  )}
-                  {row.getVisibleCells().map(cell => {
-                    const meta: any = cell.column.columnDef.meta;
-                    return (
-                      <Td key={cell.id} isNumeric={meta?.isNumeric} height="65px">
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+            {getRowModel().rows.length > 0 ? (
+              getRowModel().rows.map(row => {
+                return (
+                  <Tr
+                    key={row.id}
+                    {...(rowCondition
+                      ? {
+                          backgroundColor: (row.original as any)[rowCondition]
+                            ? 'green.50'
+                            : 'red.50',
+                        }
+                      : {})}>
+                    {withCheckbox && (
+                      <Td>
+                        <Checkbox
+                          isChecked={selectedRows[row.id] || false}
+                          onChange={() => toggleRowSelected(row.id)}
+                        />
                       </Td>
-                    );
-                  })}
-                </Tr>
-              );
-            })}
+                    )}
+                    {row.getVisibleCells().map(cell => {
+                      const meta: any = cell.column.columnDef.meta;
+                      return (
+                        <Td key={cell.id} isNumeric={meta?.isNumeric} height="65px">
+                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        </Td>
+                      );
+                    })}
+                  </Tr>
+                );
+              })
+            ) : (
+              <Tr>
+                <Td border="none">
+                  <NoDataFound />
+                </Td>
+              </Tr>
+            )}
           </Tbody>
 
           <Tfoot width="100%" borderBottom="1px solid #DEDEDE">

@@ -20,6 +20,8 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table';
+import { useTranslations } from 'use-intl';
+import NoDataFound from '@/components/molecules/NoDataFound';
 
 export type DataTableProps<T> = {
   title?: string;
@@ -38,6 +40,7 @@ function TableCheckbox<T extends { id: string }>({
   onChange,
 }: DataTableProps<T>) {
   const [selectedRows, setSelectedRows] = useState<Record<string, boolean>>({});
+  const t = useTranslations();
 
   const { getHeaderGroups, getRowModel } = useReactTable({
     columns,
@@ -78,7 +81,7 @@ function TableCheckbox<T extends { id: string }>({
     <Box width="100%" my="50px">
       <Flex justifyContent="space-between" p="20px 0 20px 0" width="100%">
         <Text as="h2" fontSize={24} textAlign="center">
-          {title}
+          {t(title)}
         </Text>
       </Flex>
 
@@ -123,35 +126,43 @@ function TableCheckbox<T extends { id: string }>({
             ))}
           </Thead>
           <Tbody>
-            {getRowModel().rows.map(row => {
-              return (
-                <Tr
-                  key={row.id}
-                  maxHeight="200px"
-                  {...(rowCondition
-                    ? {
-                        backgroundColor: (row.original as any)[rowCondition]
-                          ? 'red.100'
-                          : 'green.100',
-                      }
-                    : {})}>
-                  <Td>
-                    <Checkbox
-                      isChecked={selectedRows[row.id] || false}
-                      onChange={() => toggleRowSelected(row.id)}
-                    />
-                  </Td>
-                  {row.getVisibleCells().map(cell => {
-                    const meta: any = cell.column.columnDef.meta;
-                    return (
-                      <Td key={cell.id} isNumeric={meta?.isNumeric}>
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                      </Td>
-                    );
-                  })}
-                </Tr>
-              );
-            })}
+            {getRowModel().rows.length > 0 ? (
+              getRowModel().rows.map(row => {
+                return (
+                  <Tr
+                    key={row.id}
+                    maxHeight="200px"
+                    {...(rowCondition
+                      ? {
+                          backgroundColor: (row.original as any)[rowCondition]
+                            ? 'red.100'
+                            : 'green.100',
+                        }
+                      : {})}>
+                    <Td>
+                      <Checkbox
+                        isChecked={selectedRows[row.id] || false}
+                        onChange={() => toggleRowSelected(row.id)}
+                      />
+                    </Td>
+                    {row.getVisibleCells().map(cell => {
+                      const meta: any = cell.column.columnDef.meta;
+                      return (
+                        <Td key={cell.id} isNumeric={meta?.isNumeric}>
+                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        </Td>
+                      );
+                    })}
+                  </Tr>
+                );
+              })
+            ) : (
+              <Tr>
+                <Td border="none">
+                  <NoDataFound />
+                </Td>
+              </Tr>
+            )}
           </Tbody>
         </Table>
       </Box>
