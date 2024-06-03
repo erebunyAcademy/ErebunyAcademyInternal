@@ -1,4 +1,6 @@
+import { LanguageTypeEnum } from '@prisma/client';
 import { BadRequestException } from 'next-api-decorators';
+import { Locale } from '@/i18n';
 import { TestQuestionValidation } from '@/utils/validation/exam';
 import prisma from '..';
 
@@ -20,7 +22,7 @@ export class TestQuestionResolver {
     });
   }
 
-  static async create(body: TestQuestionValidation, subjectId?: string) {
+  static async create(body: TestQuestionValidation, subjectId: string, language: Locale) {
     if (!subjectId) {
       throw new BadRequestException('Invalid data');
     }
@@ -31,8 +33,8 @@ export class TestQuestionResolver {
           subjectId,
           title: item.title,
           type: item.type,
-          skillLevel: 'BEGINNER',
-          language: 'AM',
+          skillLevel: 'EASY',
+          language: language.toUpperCase() as LanguageTypeEnum,
           options: {
             createMany: {
               data: item.options.map(el => ({

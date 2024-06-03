@@ -50,12 +50,13 @@ export class ExamsResolver {
   }
 
   static async createExam(data: CreateExamValidation) {
-    const { subjectId, courseId, courseGroupId, studentIds } = data;
+    const { subjectId, courseId, courseGroupId, studentIds, duration } = data;
     const createdExam = await prisma.exam.create({
       data: {
         courseId,
         courseGroupId,
         subjectId,
+        duration: +duration,
       },
       select: {
         id: true,

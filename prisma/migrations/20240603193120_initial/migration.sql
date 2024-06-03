@@ -5,7 +5,7 @@ CREATE TYPE "UserRoleEnum" AS ENUM ('STUDENT', 'TEACHER', 'ADMIN');
 CREATE TYPE "LanguageTypeEnum" AS ENUM ('AM', 'RU', 'EN');
 
 -- CreateEnum
-CREATE TYPE "TestQuestionLevelEnum" AS ENUM ('BEGINNER', 'INTERMEDIATE', 'ADVANCED');
+CREATE TYPE "TestQuestionLevelEnum" AS ENUM ('EASY', 'MEDIUM', 'HARD');
 
 -- CreateEnum
 CREATE TYPE "ExamTypeEnum" AS ENUM ('VERBAL', 'TEST');
@@ -23,6 +23,7 @@ CREATE TYPE "AdminRoleEnum" AS ENUM ('SYS_ADMIN', 'RECTORAT', 'ACCOUNTANT', 'OPE
 CREATE TABLE "User" (
     "id" TEXT NOT NULL,
     "email" TEXT NOT NULL,
+    "uniqueUserId" INTEGER NOT NULL,
     "firstName" VARCHAR(45) NOT NULL,
     "lastName" VARCHAR(45) NOT NULL,
     "password" VARCHAR(60) NOT NULL,
@@ -179,6 +180,11 @@ CREATE TABLE "StudentExam" (
 CREATE TABLE "Exam" (
     "id" TEXT NOT NULL,
     "subjectId" TEXT NOT NULL,
+    "facultyId" TEXT,
+    "courseId" TEXT,
+    "courseGroupId" TEXT,
+    "duration" DOUBLE PRECISION,
+    "enabled" BOOLEAN NOT NULL DEFAULT false,
     "updatedAt" TIMESTAMP(0) NOT NULL,
     "createdAt" TIMESTAMP(0) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
@@ -208,6 +214,9 @@ CREATE TABLE "TestQuestion" (
     "examTranslationId" TEXT,
     "language" "LanguageTypeEnum",
     "subjectId" TEXT,
+    "category" TEXT,
+    "topic" TEXT,
+    "subTopic" TEXT,
     "createdAt" TIMESTAMP(0) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(0) NOT NULL,
 
@@ -228,6 +237,9 @@ CREATE TABLE "Option" (
 
 -- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "User_uniqueUserId_key" ON "User"("uniqueUserId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "User_confirmationCode_key" ON "User"("confirmationCode");
@@ -306,6 +318,15 @@ ALTER TABLE "StudentExam" ADD CONSTRAINT "StudentExam_studentId_fkey" FOREIGN KE
 
 -- AddForeignKey
 ALTER TABLE "Exam" ADD CONSTRAINT "Exam_subjectId_fkey" FOREIGN KEY ("subjectId") REFERENCES "Subject"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Exam" ADD CONSTRAINT "Exam_facultyId_fkey" FOREIGN KEY ("facultyId") REFERENCES "Faculty"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Exam" ADD CONSTRAINT "Exam_courseId_fkey" FOREIGN KEY ("courseId") REFERENCES "Course"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Exam" ADD CONSTRAINT "Exam_courseGroupId_fkey" FOREIGN KEY ("courseGroupId") REFERENCES "CourseGroup"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "ExamTranslation" ADD CONSTRAINT "ExamTranslation_examId_fkey" FOREIGN KEY ("examId") REFERENCES "Exam"("id") ON DELETE CASCADE ON UPDATE CASCADE;

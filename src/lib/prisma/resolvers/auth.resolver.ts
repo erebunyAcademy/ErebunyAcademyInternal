@@ -26,7 +26,7 @@ const createUser = async (
 ) => {
   const { email, firstName, lastName, password } = input;
   const existingUser = await prisma.user.findUnique({ where: { email } });
-
+  const uniqueUserId = generateRandomNumber(8);
   if (existingUser) {
     throw new BadRequestException(ERROR_MESSAGES.userAlreadyExists);
   }
@@ -40,6 +40,7 @@ const createUser = async (
       firstName,
       lastName,
       password: hashedPassword,
+      uniqueUserId,
       confirmationCode,
       ...(role === UserRoleEnum.TEACHER ? { isAdminVerified: true } : {}),
       role,

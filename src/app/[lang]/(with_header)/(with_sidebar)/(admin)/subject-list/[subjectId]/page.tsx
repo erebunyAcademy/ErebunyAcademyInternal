@@ -16,7 +16,7 @@ import {
 import { classValidatorResolver } from '@hookform/resolvers/class-validator';
 import { TestQuestionLevelEnum, TestQuestionTypeEnum } from '@prisma/client';
 import { useMutation } from '@tanstack/react-query';
-import { useParams, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { Controller, SubmitHandler, useFieldArray, useForm } from 'react-hook-form';
 import { TestQuestionService } from '@/api/services/test-question.service';
@@ -44,15 +44,15 @@ const questionTypes = [
 
 const skillLevels = [
   {
-    id: TestQuestionLevelEnum.BEGINNER,
+    id: TestQuestionLevelEnum.EASY,
     skillLevel: 'Beginner',
   },
   {
-    id: TestQuestionLevelEnum.INTERMEDIATE,
+    id: TestQuestionLevelEnum.MEDIUM,
     skillLevel: 'Intermediate',
   },
   {
-    id: TestQuestionLevelEnum.ADVANCED,
+    id: TestQuestionLevelEnum.HARD,
     skillLevel: 'Advanced',
   },
 ];
@@ -61,14 +61,17 @@ const initValue = {
   title: '',
   type: TestQuestionTypeEnum.CHECKBOX,
   subjectId: '',
-  skillLevel: TestQuestionLevelEnum.BEGINNER,
+  skillLevel: TestQuestionLevelEnum.EASY,
   options: [{ title: '', isRightAnswer: false }],
 };
 
 const resolver = classValidatorResolver(TestQuestionValidation);
 
-const CreateTestQuestions = () => {
-  const params: Maybe<{ lang: Locale; subjectId: string }> = useParams();
+const CreateTestQuestions = ({
+  params: { lang, subjectId },
+}: {
+  params: { lang: Locale; subjectId: string };
+}) => {
   const router = useRouter();
   const t = useTranslations();
   const [excelData, setExcelData] = useState<UploadedExcelData>(null);
@@ -96,13 +99,13 @@ const CreateTestQuestions = () => {
   });
 
   const { mutate, isPending } = useMutation<boolean, { message: string }, TestQuestionValidation>({
-    mutationFn: data => TestQuestionService.createTestQuestions(data, params?.subjectId as string),
+    mutationFn: data => TestQuestionService.createTestQuestions(data, subjectId, lang),
   });
 
   const onSubmit: SubmitHandler<TestQuestionValidation> = data => {
     mutate(data, {
       onSuccess: () => {
-        router.push(languagePathHelper(params?.lang || 'am', ROUTE_SUBJECTS));
+        router.push(languagePathHelper(lang || 'am', ROUTE_SUBJECTS));
       },
     });
   };
@@ -258,27 +261,27 @@ const CreateTestQuestions = () => {
             {t('submitTestQuestions')}
           </Button>
         </Box>
-      </form>
 
-      <Modal
-        isOpen={isCreateEditModalOpen}
-        onClose={closeCreateEditModal}
-        title="languageSelectionForTest">
-        <RadioGroup onChange={setTestLanguage} value={testLanguage}>
-          <Stack spacing={[1, 5]} direction="column">
-            <Radio value="en" size="lg" colorScheme="teal">
-              English
-            </Radio>
-            <Radio value="arm" size="lg" colorScheme="teal">
-              Armenian
-            </Radio>
-            <Radio value="rus" size="lg" colorScheme="teal">
-              Russian
-            </Radio>
-          </Stack>
-        </RadioGroup>
-        <Button>Submit</Button>
-      </Modal>
+        <Modal
+          isOpen={isCreateEditModalOpen}
+          onClose={closeCreateEditModal}
+          title="languageSelectionForTest">
+          <RadioGroup onChange={setTestLanguage} value={testLanguage}>
+            <Stack spacing={[1, 5]} direction="column">
+              <Radio value="en" size="lg" colorScheme="teal">
+                English
+              </Radio>
+              <Radio value="arm" size="lg" colorScheme="teal">
+                Armenian
+              </Radio>
+              <Radio value="rus" size="lg" colorScheme="teal">
+                Russian
+              </Radio>
+            </Stack>
+          </RadioGroup>
+          <Button onClick={handleSubmit(onSubmit)}>Submit</Button>
+        </Modal>
+      </form>
     </>
   );
 };

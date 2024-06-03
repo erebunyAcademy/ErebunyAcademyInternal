@@ -10,6 +10,7 @@ datasource db {
 model User {
   id               String       @id @default(uuid())
   email            String       @unique
+  uniqueUserId     Int          @unique
   firstName        String       @db.VarChar(45)
   lastName         String       @db.VarChar(45)
   password         String       @db.VarChar(60)
@@ -187,15 +188,17 @@ model Exam {
   examLanguages ExamTranslation[]
   subject       Subject?          @relation(fields: [subjectId], references: [id])
   subjectId     String
-
-  updatedAt     DateTime     @updatedAt @db.Timestamp(0)
-  createdAt     DateTime     @default(now()) @db.Timestamp(0)
-  Faculty       Faculty?     @relation(fields: [facultyId], references: [id])
+  Faculty       Faculty?          @relation(fields: [facultyId], references: [id])
   facultyId     String?
-  course        Course?      @relation(fields: [courseId], references: [id])
+  course        Course?           @relation(fields: [courseId], references: [id])
   courseId      String?
-  courseGroup   CourseGroup? @relation(fields: [courseGroupId], references: [id])
+  courseGroup   CourseGroup?      @relation(fields: [courseGroupId], references: [id])
   courseGroupId String?
+  duration      Float?
+  enabled       Boolean           @default(false)
+
+  updatedAt DateTime @updatedAt @db.Timestamp(0)
+  createdAt DateTime @default(now()) @db.Timestamp(0)
 }
 
 model ExamTranslation {
@@ -225,6 +228,9 @@ model TestQuestion {
   language          LanguageTypeEnum?
   subject           Subject?              @relation(fields: [subjectId], references: [id])
   subjectId         String?
+  category          String?
+  topic             String?
+  subTopic          String?
 
   createdAt DateTime @default(now()) @db.Timestamp(0)
   updatedAt DateTime @updatedAt @db.Timestamp(0)
@@ -254,9 +260,9 @@ enum LanguageTypeEnum {
 }
 
 enum TestQuestionLevelEnum {
-  BEGINNER
-  INTERMEDIATE
-  ADVANCED
+  EASY
+  MEDIUM
+  HARD
 }
 
 enum ExamTypeEnum {
