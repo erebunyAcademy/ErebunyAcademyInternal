@@ -226,7 +226,7 @@ const CourseGroup = () => {
         title={'courseGroup'}
         primaryAction={handleSubmit(onSubmitHandler)}
         isDisabled={!isValid}
-        actionText={selectedCourseGroup ? 'update' : 'create'}>
+        actionText={selectedCourseGroup ? 'edit' : 'create'}>
         <Controller
           name="title"
           control={control}

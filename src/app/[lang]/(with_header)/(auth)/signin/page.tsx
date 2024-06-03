@@ -80,8 +80,8 @@ const SignIn = ({ params }: { params: { lang: Locale } }) => {
               type="email"
               formLabelName={t('email')}
               value={value}
-              isInvalid={!!errors.email?.message}
               handleInputChange={onChange}
+              isInvalid={!!errors.email?.message}
               formErrorMessage={t(errors.email?.message)}
             />
           )}
@@ -89,7 +89,6 @@ const SignIn = ({ params }: { params: { lang: Locale } }) => {
         <Controller
           name="password"
           control={control}
-          rules={{ required: 'This field is required' }}
           render={({ field: { onChange, value, name }, fieldState: { error } }) => {
             console.log({ error });
             return (

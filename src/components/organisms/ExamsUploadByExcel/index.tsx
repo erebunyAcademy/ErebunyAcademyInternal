@@ -1,5 +1,6 @@
 import React, { FC, memo, useCallback, useEffect, useReducer, useState } from 'react';
 import { useToast } from '@chakra-ui/react';
+import { useTranslations } from 'use-intl';
 import { ExcelUpload } from '@/components/molecules';
 import { ExcelDataType } from '@/components/molecules/ExcelUpload';
 import { prepareExcelAnswersForExam, prepareExcelOptionsForExam } from '@/utils/helpers/excel';
@@ -49,6 +50,7 @@ interface Props {
 }
 
 const ExamsUploadByExcel: FC<Props> = ({ setUploadedResults }) => {
+  const t = useTranslations();
   const toast = useToast();
   const [excelData, setExcelData] = useState<Maybe<ExcelDataType>>(null);
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -76,7 +78,7 @@ const ExamsUploadByExcel: FC<Props> = ({ setUploadedResults }) => {
     const stateItems = Object.entries(state) as [ExamColumnNamesType, string][];
     stateItems.forEach(el => {
       if (!el[1]) {
-        errors[el[0]] = { message: 'This field is required' };
+        errors[el[0]] = { message: t('fieldIsRequired') };
       }
     });
 
@@ -86,21 +88,21 @@ const ExamsUploadByExcel: FC<Props> = ({ setUploadedResults }) => {
 
     excelData?.forEach(el => {
       if (!prepareExcelOptionsForExam(el, state.optionsColumnName)) {
-        errors.optionsColumnName = { message: 'Invalid data' };
+        errors.optionsColumnName = { message: t('invalidData') };
       }
       if (!prepareExcelAnswersForExam(el, state.answerColumnName)) {
-        errors.answerColumnName = { message: 'Invalid data' };
+        errors.answerColumnName = { message: t('invalidData') };
       }
     });
 
     return !!Object.keys(errors).length;
-  }, [excelData, state]);
+  }, [excelData, state, t]);
 
   useEffect(() => {
     if (excelData?.length) {
       if (checkAndSetErrors()) {
         if (!toast.isActive('opAs')) {
-          toast({ title: 'You have imported an invalid file', status: 'warning' });
+          toast({ title: t('invalidFileIsImported'), status: 'warning' });
         }
       } else {
         const { questionColumnName, optionsColumnName, answerColumnName, levelColumnName } = state;
@@ -117,7 +119,7 @@ const ExamsUploadByExcel: FC<Props> = ({ setUploadedResults }) => {
         );
       }
     }
-  }, [checkAndSetErrors, excelData, setUploadedResults, state, toast]);
+  }, [checkAndSetErrors, excelData, setUploadedResults, state, t, toast]);
 
   return <ExcelUpload setExcelData={setExcelData} setValues={setExamValues} />;
 };

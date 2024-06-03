@@ -55,8 +55,8 @@ const StudentSignUp = ({ lang }: { lang: Locale }) => {
     mutationFn: AuthService.studentSignUp,
     onSuccess() {
       toast({
-        title: 'You have successfully signed up.',
-        description: 'Please verify your email.',
+        title: t('successfullySignedUp'),
+        description: t('verifyYourEmail'),
         status: 'success',
         duration: 4000,
         isClosable: false,
@@ -144,12 +144,12 @@ const StudentSignUp = ({ lang }: { lang: Locale }) => {
               <FormInput
                 isRequired
                 placeholder={t('firstName')}
-                isInvalid={!!errors.firstName?.message}
                 name="firstName"
                 type="text"
                 formLabelName={t('firstName')}
                 value={value}
                 handleInputChange={onChange}
+                isInvalid={!!errors.firstName?.message}
                 formErrorMessage={t(errors.firstName?.message)}
               />
             )}
@@ -160,13 +160,13 @@ const StudentSignUp = ({ lang }: { lang: Locale }) => {
             render={({ field: { onChange, value } }) => (
               <FormInput
                 isRequired
-                isInvalid={!!errors.lastName?.message}
                 name="lastName"
                 type="text"
                 placeholder={t('lastName')}
                 formLabelName={t('lastName')}
                 value={value}
                 handleInputChange={onChange}
+                isInvalid={!!errors.lastName?.message}
                 formErrorMessage={t(errors.lastName?.message)}
               />
             )}
@@ -179,13 +179,13 @@ const StudentSignUp = ({ lang }: { lang: Locale }) => {
             render={({ field: { onChange, value } }) => (
               <FormInput
                 isRequired
-                isInvalid={!!errors.email?.message}
                 name="email"
                 type="email"
                 placeholder={t('email')}
                 formLabelName={t('email')}
                 value={value}
                 handleInputChange={onChange}
+                isInvalid={!!errors.email?.message}
                 formErrorMessage={t(errors.email?.message)}
               />
             )}
@@ -218,13 +218,13 @@ const StudentSignUp = ({ lang }: { lang: Locale }) => {
               <SelectLabel
                 isRequired
                 name={name}
-                isInvalid={!!errors.courseId?.message}
                 options={data?.courseList || []}
                 labelName={t('course')}
                 valueLabel="id"
                 nameLabel="title"
                 onChange={onChange}
                 value={value}
+                isInvalid={!!errors.courseId?.message}
                 formErrorMessage={t(errors.courseId?.message)}
               />
             )}
@@ -235,7 +235,6 @@ const StudentSignUp = ({ lang }: { lang: Locale }) => {
             render={({ field: { onChange, value, name } }) => (
               <SelectLabel
                 name={name}
-                isInvalid={!!errors.courseGroupId?.message}
                 options={data?.courseGroupList || []}
                 labelName={t('courseGroup')}
                 valueLabel="id"
@@ -243,6 +242,7 @@ const StudentSignUp = ({ lang }: { lang: Locale }) => {
                 onChange={onChange}
                 value={value || ''}
                 formErrorMessage={t(errors.courseGroupId?.message)}
+                isInvalid={!!errors.courseGroupId?.message}
                 formHelperText={t('courseGroupNotRequired')}
               />
             )}
@@ -256,7 +256,6 @@ const StudentSignUp = ({ lang }: { lang: Locale }) => {
             render={({ field: { onChange, value } }) => (
               <FormInput
                 isRequired
-                isInvalid={!!errors.password?.message}
                 name="password"
                 formLabelName={t('password')}
                 placeholder={t('password')}
@@ -264,6 +263,7 @@ const StudentSignUp = ({ lang }: { lang: Locale }) => {
                 handleInputChange={onChange}
                 type="password"
                 formHelperText={t('passwordValidation')}
+                isInvalid={!!errors.password?.message}
                 formErrorMessage={t(errors.password?.message)}
               />
             )}
@@ -274,13 +274,13 @@ const StudentSignUp = ({ lang }: { lang: Locale }) => {
             render={({ field: { onChange, value } }) => (
               <FormInput
                 isRequired
-                isInvalid={!!errors.password?.message}
                 name="password"
                 formLabelName={t('confirmPassword')}
                 placeholder={t('confirmPassword')}
                 value={value}
                 handleInputChange={onChange}
                 type="password"
+                isInvalid={!!errors.password?.message}
                 formErrorMessage={t(errors.password?.message)}
               />
             )}

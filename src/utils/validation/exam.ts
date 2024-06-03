@@ -50,23 +50,27 @@ export class TestQuestionValidation {
 
 export class CreateExamValidation {
   @IsString()
-  @IsNotEmpty({ message: 'Subject is required' })
+  @IsNotEmpty({ message: 'examDurationMessage' })
+  duration: string;
+
+  @IsString()
+  @IsNotEmpty({ message: 'subjectMessage' })
   subjectId: string;
 
   @IsString()
-  @IsNotEmpty({ message: 'Faculty is required' })
+  @IsNotEmpty({ message: 'facultyMessage' })
   facultyId: string;
 
   @IsString()
-  @IsNotEmpty({ message: 'Student grade is required' })
+  @IsNotEmpty({ message: 'courseMessage' })
   courseId: string;
 
   @IsString()
-  @IsNotEmpty({ message: 'Student grade group is required' })
+  @IsNotEmpty({ message: 'courseGroupMessage' })
   courseGroupId: string;
 
   @IsArray()
-  @IsNotEmpty({ message: 'Students are required' })
+  @IsNotEmpty({ message: 'studentsRequiredMessage' })
   studentIds: string[];
 }
 

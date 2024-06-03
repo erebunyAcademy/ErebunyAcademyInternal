@@ -14,7 +14,7 @@ import { ExamService } from '@/api/services/exam.service';
 import { FacultyService } from '@/api/services/faculty.service';
 import { StudentService } from '@/api/services/student.service';
 import { SubjectService } from '@/api/services/subject.service';
-import { SelectLabel } from '@/components/atoms';
+import { FormInput, SelectLabel } from '@/components/atoms';
 import TableCheckbox from '@/components/organisms/TableCheckbox';
 import { ROUTE_EXAMS } from '@/utils/constants/routes';
 import { generateAWSUrl } from '@/utils/helpers/aws';
@@ -32,13 +32,20 @@ const resolver = classValidatorResolver(CreateExamValidation);
 const CreateExamModal: FC<CreateExamModalProps> = ({ isOpen, onClose }) => {
   const t = useTranslations();
   const router = useRouter();
-  const { control, watch, handleSubmit, setValue } = useForm<CreateExamValidation>({
+  const {
+    control,
+    watch,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+  } = useForm<CreateExamValidation>({
     resolver,
     defaultValues: {
       facultyId: '',
       subjectId: '',
       courseId: '',
       courseGroupId: '',
+      duration: '',
       studentIds: [],
     },
   });
@@ -129,7 +136,7 @@ const CreateExamModal: FC<CreateExamModalProps> = ({ isOpen, onClose }) => {
         flexDirection={{ base: 'column', sm: 'row' }}
         alignItems="center">
         <Flex
-          width="50%"
+          width={{ base: '100%', sm: '50%' }}
           gap={{ base: '18px', sm: '30px' }}
           flexDirection={{ base: 'column', xl: 'row' }}>
           <Flex width={{ base: '100%', xl: '50%' }}>
@@ -138,6 +145,7 @@ const CreateExamModal: FC<CreateExamModalProps> = ({ isOpen, onClose }) => {
               control={control}
               render={({ field: { onChange, value, name } }) => (
                 <SelectLabel
+                  isRequired
                   name={name}
                   options={(facultyQueryData || []) as any}
                   labelName="selectFaculty"
@@ -148,6 +156,8 @@ const CreateExamModal: FC<CreateExamModalProps> = ({ isOpen, onClose }) => {
                     setValue('courseId', '');
                   }}
                   value={value}
+                  isInvalid={!!errors.facultyId?.message}
+                  formErrorMessage={errors.facultyId?.message}
                 />
               )}
             />
@@ -158,6 +168,7 @@ const CreateExamModal: FC<CreateExamModalProps> = ({ isOpen, onClose }) => {
               control={control}
               render={({ field: { onChange, value, name } }) => (
                 <SelectLabel
+                  isRequired
                   name={name}
                   options={courseQueryData || []}
                   labelName="selectCourse"
@@ -168,6 +179,8 @@ const CreateExamModal: FC<CreateExamModalProps> = ({ isOpen, onClose }) => {
                     setValue('courseGroupId', '');
                   }}
                   value={value}
+                  isInvalid={!!errors.courseId?.message}
+                  formErrorMessage={errors.courseId?.message}
                 />
               )}
             />
@@ -175,7 +188,7 @@ const CreateExamModal: FC<CreateExamModalProps> = ({ isOpen, onClose }) => {
         </Flex>
 
         <Flex
-          width="50%"
+          width={{ base: '100%', sm: '50%' }}
           gap={{ base: '18px', sm: '30px' }}
           flexDirection={{ base: 'column', xl: 'row' }}>
           <Flex width={{ base: '100%', xl: '50%' }}>
@@ -184,6 +197,7 @@ const CreateExamModal: FC<CreateExamModalProps> = ({ isOpen, onClose }) => {
               control={control}
               render={({ field: { onChange, value, name } }) => (
                 <SelectLabel
+                  isRequired
                   name={name}
                   options={studentGradeGroupQueryData || []}
                   labelName="selectCourseGroup"
@@ -194,6 +208,8 @@ const CreateExamModal: FC<CreateExamModalProps> = ({ isOpen, onClose }) => {
                     setValue('studentIds', []);
                   }}
                   value={value}
+                  isInvalid={!!errors.courseGroupId?.message}
+                  formErrorMessage={errors.courseGroupId?.message}
                 />
               )}
             />
@@ -204,6 +220,7 @@ const CreateExamModal: FC<CreateExamModalProps> = ({ isOpen, onClose }) => {
               control={control}
               render={({ field: { onChange, value, name } }) => (
                 <SelectLabel
+                  isRequired
                   name={name}
                   options={subjectList || []}
                   labelName="selectSubject"
@@ -211,24 +228,48 @@ const CreateExamModal: FC<CreateExamModalProps> = ({ isOpen, onClose }) => {
                   nameLabel="title"
                   onChange={onChange}
                   value={value}
+                  isInvalid={!!errors.subjectId?.message}
+                  formErrorMessage={errors.subjectId?.message}
                 />
               )}
             />
           </Flex>
         </Flex>
       </Flex>
+      <Flex width={{ base: '100%', sm: '50%', xl: '254px' }}>
+        <Controller
+          name="duration"
+          control={control}
+          render={({ field: { onChange, value, name } }) => (
+            <FormInput
+              isRequired
+              name={name}
+              type="number"
+              formLabelName={t('examDurationLabelName')}
+              handleInputChange={onChange}
+              value={value}
+              isInvalid={!!errors.duration?.message}
+              formErrorMessage={errors.duration?.message}
+            />
+          )}
+        />
+      </Flex>
+
       <Flex maxHeight="400px" height={600} overflowY="auto">
         <Controller
           name="studentIds"
           control={control}
           render={({ field: { onChange, value } }) => (
             <TableCheckbox
+              isRequired
               title="selectStudentsForExam"
               data={studentsData || []}
               selectedValues={value}
               onChange={onChange}
               // @ts-ignore
               columns={columns || []}
+              isInvalid={!!errors.studentIds?.message}
+              formErrorMessage={errors.studentIds?.message}
             />
           )}
         />

@@ -204,20 +204,20 @@ const Faculty = () => {
         title={'faculty'}
         primaryAction={handleSubmit(onSubmitHandler)}
         isDisabled={!isValid}
-        actionText={selectedFaculty ? 'update' : 'create'}>
+        actionText={selectedFaculty ? 'edit' : 'create'}>
         <Controller
           name="title"
           control={control}
           render={({ field: { onChange, value, name } }) => (
             <FormInput
               isRequired
-              isInvalid={!!errors.title?.message}
               name={name}
               type="text"
               formLabelName={'facultyName'}
               value={value}
               placeholder={'enterTitle'}
               handleInputChange={onChange}
+              isInvalid={!!errors.title?.message}
               formErrorMessage={errors.title?.message}
             />
           )}
@@ -227,13 +227,13 @@ const Faculty = () => {
           control={control}
           render={({ field: { onChange, value, name } }) => (
             <FormInput
-              isInvalid={!!errors.description?.message}
               name={name}
               type="text"
               formLabelName={'facultyDescription'}
               value={value}
               placeholder={'enterDescription'}
               handleInputChange={onChange}
+              isInvalid={!!errors.description?.message}
               formErrorMessage={errors.description?.message}
             />
           )}

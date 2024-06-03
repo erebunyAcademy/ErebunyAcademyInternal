@@ -8,6 +8,7 @@ import {
   Textarea,
   TextareaProps,
 } from '@chakra-ui/react';
+import { useTranslations } from 'use-intl';
 
 type Props = {
   isInvalid?: boolean;
@@ -36,10 +37,12 @@ const FormTextarea: FC<Props> = ({
   name,
   textareaProps,
 }) => {
+  const t = useTranslations();
+
   return (
     <FormControl isInvalid={isInvalid} id={name}>
       <FormLabel fontWeight={600} marginBottom={4} lineHeight="20px" fontSize={14} color="#222">
-        {formLabelName}
+        {t(formLabelName)}
         {isRequired && (
           <Text as="span" color="#222">
             *
@@ -49,7 +52,7 @@ const FormTextarea: FC<Props> = ({
       <Textarea
         value={value}
         onChange={handleInputChange}
-        placeholder={placeholder}
+        placeholder={t(placeholder)}
         isReadOnly={isReadOnly}
         isRequired={isRequired}
         bg="#fff"
@@ -80,11 +83,11 @@ const FormTextarea: FC<Props> = ({
       />
       {!isInvalid ? (
         <FormHelperText fontWeight={400} color="#5b5b5b" marginTop={4}>
-          {formHelperText}
+          {t(formHelperText)}
         </FormHelperText>
       ) : (
         <FormErrorMessage color="#DF1414" fontWeight={400} marginTop={4}>
-          {formErrorMessage}
+          {t(formErrorMessage)}
         </FormErrorMessage>
       )}
     </FormControl>

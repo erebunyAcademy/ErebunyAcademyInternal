@@ -30,13 +30,13 @@ const ExcelUpload: FC<Props> = ({ setExcelData, setValues }) => {
     e => {
       e.preventDefault();
       if (!e.target.files?.length) {
-        toast({ title: 'Please select your file', status: 'warning' });
+        toast({ title: t('selectYourFile'), status: 'warning' });
         return;
       }
       const selectedFile = e.target.files[0];
 
       if (!fileTypes.includes(selectedFile.type)) {
-        toast({ title: 'Please select only excel file types', status: 'error' });
+        toast({ title: t('selectExcelTYpe'), status: 'error' });
 
         return;
       }
@@ -57,23 +57,23 @@ const ExcelUpload: FC<Props> = ({ setExcelData, setValues }) => {
           );
 
           if (!data.length) {
-            return toast({ title: 'You have imported an empty file', status: 'error' });
+            return toast({ title: t('emptyFileIsImported'), status: 'error' });
           }
           setExcelData(data as ExcelDataType);
           setValues(uniqueKeys);
         } else {
-          toast({ title: 'Something went wrong', status: 'error' });
+          toast({ title: t('somethingWentWrong'), status: 'error' });
         }
       };
     },
-    [setExcelData, setValues, toast],
+    [setExcelData, setValues, t, toast],
   );
 
   return (
     <>
       <Button
-        p="12px"
-        fontSize={{ base: '14px', lg: '18px' }}
+        p="8px 12px"
+        fontSize={{ base: '14px', lg: '16px' }}
         onClick={uploadFileClick}
         overflowWrap="break-word"
         whiteSpace="normal">

@@ -53,7 +53,7 @@
   "otpVerification": "OTP verification",
   "resetPasswordMail": "An email with password reset instructions has been sent to your email address",
   "searchInput": "Type here to search",
-  "noDataFound": " No Data Found",
+  "noData": " No Data",
 
   "facultyList": "Faculty List",
   "studentsList": "Students List",
@@ -150,6 +150,10 @@
   "courseGroupTitleMessage": "Course group title is required.",
   "subjectTitleMessage": "Subject title is required.",
   "subjectMessage": "Subject is required.",
+  "studentsRequiredMessage": "Students are required",
+  "examDurationLabelName": "Exam Duration (minutes):",
+  "examDurationMessage": "Exam duration is required.",
+  "languageSelectionForTest": "Select language for your test",
 
   "somethingWentWrong": "Something went wrong.",
   "verifyYourEmail": "Please verify your email",
@@ -159,5 +163,14 @@
   "invalidNumber": "Invalid number",
   "passwordDontMatch": "Password don't match",
   "invalidPassword": "Invalid password",
-  "contactCollegeRepresentative": "Please contact college representative to allow confirm your account."
+  "contactCollegeRepresentative": "Please contact college representative to allow confirm your account.",
+  "successfullySignedUp": "You have successfully signed up.",
+  "selectYourFile": "Please select your file",
+  "selectExcelTYpe": "Please select only excel file types ",
+  "emptyFileIsImported": "You have imported an empty file",
+  "fieldIsRequired": "This field is required",
+  "invalidData": "Invalid data",
+  "invalidFileIsImported": "You have imported an invalid file",
+  "success": "Success",
+  "passwordIsChanged": "Password has been successfully changed!"
 }

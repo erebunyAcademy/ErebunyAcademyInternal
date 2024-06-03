@@ -4,9 +4,14 @@ import { useTranslations } from 'use-intl';
 const NoDataFound = () => {
   const t = useTranslations();
   return (
-    <Box display="flex" my="30px" flexDir="column" width="100%">
-      <Text fontSize="24px" m="0" fontWeight="400" as="span">
-        {t('noDataFound')}
+    <Box
+      display="flex"
+      height="100%"
+      width="100%"
+      justifyContent={{ base: 'flex-start', sm: 'center' }}
+      alignItems="center">
+      <Text fontSize={{ base: '24px', sm: '28px' }} m="0" fontWeight="400" as="span">
+        {t('noData')}
       </Text>
     </Box>
   );

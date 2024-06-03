@@ -51,16 +51,15 @@ const Step3 = ({ lang }: { lang: Locale }) => {
       <Controller
         name="newPassword"
         control={control}
-        rules={{ required: 'This field is required' }}
         render={({ field: { onChange, value } }) => (
           <FormInput
             isRequired
-            isInvalid={!!errors.newPassword?.message}
             name="newPassword"
             type="password"
             formLabelName={t('newPassword')}
             value={value}
             handleInputChange={onChange}
+            isInvalid={!!errors.newPassword?.message}
             formErrorMessage={t(errors.newPassword?.message)}
           />
         )}
@@ -68,16 +67,15 @@ const Step3 = ({ lang }: { lang: Locale }) => {
       <Controller
         name="confirmPassword"
         control={control}
-        rules={{ required: 'This field is required' }}
         render={({ field: { onChange, value } }) => (
           <FormInput
             isRequired
-            isInvalid={!!errors.confirmPassword?.message}
             name="confirmPassword"
             type="password"
             formLabelName={t('confirmPassword')}
             value={value}
             handleInputChange={onChange}
+            isInvalid={!!errors.confirmPassword?.message}
             formErrorMessage={t(errors.confirmPassword?.message)}
           />
         )}
