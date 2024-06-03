@@ -195,8 +195,8 @@ function SearchTable<T>({
                 );
               })
             ) : (
-              <Tr>
-                <Td border="none">
+              <Tr height="150px">
+                <Td colSpan={columns.length} border="none" height="100%">
                   <NoDataFound />
                 </Td>
               </Tr>

@@ -10,27 +10,28 @@ import { Controller, useForm } from 'react-hook-form';
 import { v4 as uuidv4 } from 'uuid';
 import { ExamService } from '@/api/services/exam.service';
 import { TestQuestionService } from '@/api/services/test-question.service';
-import { FormInput, SelectLabel } from '@/components/atoms';
+import { FormInput } from '@/components/atoms';
 import TableCheckbox from '@/components/organisms/TableCheckbox';
 import { TestQuestionListModel } from '@/utils/models/test-question.model';
 import { ExamValidation } from '@/utils/validation/exam';
 
 const resolver = classValidatorResolver(ExamValidation);
 
-const languageTypes = [
-  {
-    id: LanguageTypeEnum.AM,
-    type: 'Armenian',
-  },
-  {
-    id: LanguageTypeEnum.RU,
-    type: 'Russian',
-  },
-  {
-    id: LanguageTypeEnum.EN,
-    type: 'English',
-  },
-];
+
+// const languageTypes = [
+//   {
+//     id: LanguageTypeEnum.AM,
+//     type: 'Armenian',
+//   },
+//   {
+//     id: LanguageTypeEnum.RU,
+//     type: 'Russian',
+//   },
+//   {
+//     id: LanguageTypeEnum.EN,
+//     type: 'English',
+//   },
+// ];
 
 type CreateEditExamProps = {
   examTranslation?: ExamTranslation;
@@ -93,11 +94,11 @@ const CreateEditExam: FC<CreateEditExamProps> = ({ subjectId, examId }) => {
         gap={{ base: '16px', sm: '8px' }}
         borderWidth="1px"
         borderRadius="lg"
-        height="1000px"
+        height="700px"
         px="24px"
         py="32px">
-        <Flex gap="30px">
-          <Flex width="33.3%">
+        <Flex gap="30px" flexDirection={{ base: 'column', sm: 'row' }}>
+          <Flex width={{ base: '100%', sm: '50%' }}>
             <Controller
               name="title"
               control={control}
@@ -115,7 +116,7 @@ const CreateEditExam: FC<CreateEditExamProps> = ({ subjectId, examId }) => {
             />
           </Flex>
 
-          <Flex width="33.3%">
+          <Flex width={{ base: '100%', sm: '50%' }}>
             <Controller
               name="description"
               control={control}
@@ -127,25 +128,6 @@ const CreateEditExam: FC<CreateEditExamProps> = ({ subjectId, examId }) => {
                   formLabelName={t('description')}
                   value={value}
                   handleInputChange={onChange}
-                />
-              )}
-            />
-          </Flex>
-
-          <Flex width="33.3%">
-            <Controller
-              name="language"
-              control={control}
-              render={({ field: { onChange, value, name } }) => (
-                <SelectLabel
-                  isRequired
-                  name={name}
-                  options={languageTypes}
-                  labelName={t('selectExamLanguage')}
-                  valueLabel="id"
-                  nameLabel="type"
-                  onChange={onChange}
-                  value={value}
                 />
               )}
             />

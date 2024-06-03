@@ -10,7 +10,7 @@ import {
 
 export class SignInFormValidation {
   @IsEmail({}, { message: 'notValidEmailMessage' })
-  @IsNotEmpty({ message: 'requiredEmailMessage' })
+  @IsNotEmpty({ message: 'emailMessage' })
   email: string;
 
   @IsString()
@@ -99,7 +99,7 @@ export class StudentSignUpValidation extends UserSignupValidation {
 
 export class ForgotPasswordStep1Validation {
   @IsEmail({}, { message: 'notValidEmailMessage' })
-  @IsNotEmpty({ message: 'requiredEmailMessage' })
+  @IsNotEmpty({ message: 'emailMessage' })
   email: string;
 }
 

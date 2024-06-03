@@ -5,6 +5,7 @@ import {
   chakra,
   Checkbox,
   Flex,
+  FormErrorMessage,
   Table,
   Tbody,
   Td,
@@ -24,6 +25,9 @@ import { useTranslations } from 'use-intl';
 import NoDataFound from '@/components/molecules/NoDataFound';
 
 export type DataTableProps<T> = {
+  isRequired?: boolean;
+  isInvalid?: boolean;
+  formErrorMessage?: string;
   title?: string;
   rowCondition?: string;
   data: T[];
@@ -33,6 +37,9 @@ export type DataTableProps<T> = {
 };
 
 function TableCheckbox<T extends { id: string }>({
+  isRequired,
+  isInvalid,
+  formErrorMessage,
   title,
   rowCondition,
   data,
@@ -78,11 +85,21 @@ function TableCheckbox<T extends { id: string }>({
   const isAllSelected = getRowModel().rows.every(row => selectedRows[row.id]);
 
   return (
-    <Box width="100%" my={{ base: '25px', md: '50px' }}>
+    <Box width="100%" mt={{ base: '25px', md: '50px' }} mb={{ base: '25px', md: '20px' }}>
       <Flex justifyContent="space-between" p="20px 0 20px 0" width="100%">
         <Text as="h2" fontSize={24} textAlign="center">
           {t(title)}
+          {isRequired && (
+            <Text as="span" color="#222">
+              *
+            </Text>
+          )}
         </Text>
+        {isInvalid && (
+          <FormErrorMessage color="#DF1414" fontWeight={400} marginTop={4}>
+            {t(formErrorMessage)}
+          </FormErrorMessage>
+        )}
       </Flex>
 
       <Box maxWidth={{ base: '340px', sm: '670px', lg: '700px', xl: '100%' }}>
@@ -157,8 +174,8 @@ function TableCheckbox<T extends { id: string }>({
                 );
               })
             ) : (
-              <Tr>
-                <Td border="none">
+              <Tr height="150px" width="100%">
+                <Td colSpan={columns.length + 1} border="none" height="100%" width="100%">
                   <NoDataFound />
                 </Td>
               </Tr>

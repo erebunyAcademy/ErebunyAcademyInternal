@@ -221,7 +221,7 @@ const Subject = () => {
         title={'subject'}
         primaryAction={handleSubmit(onSubmitHandler)}
         isDisabled={!isValid}
-        actionText={selectedSubject ? 'update' : 'create'}>
+        actionText={selectedSubject ? 'edit' : 'create'}>
         <Controller
           name="title"
           control={control}

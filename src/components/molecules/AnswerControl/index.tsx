@@ -4,7 +4,7 @@ import { Box, Button, Checkbox, Flex, Heading, IconButton, Radio, Stack } from '
 import { TestQuestionTypeEnum } from '@prisma/client';
 import { useTranslations } from 'next-intl';
 import { Control, Controller, useFieldArray } from 'react-hook-form';
-import FormTextarea from '@/components/atoms/FormTextarea';
+import { FormInput } from '@/components/atoms';
 import { TestQuestionValidation } from '@/utils/validation/exam';
 
 interface AnswersControlProps {
@@ -89,10 +89,11 @@ const AnswersControl: FC<AnswersControlProps> = ({ control, questionIndex, quest
               name={`questions.${questionIndex}.options.${answerIndex}.title`}
               control={control}
               render={({ field: { onChange, value, name } }) => (
-                <FormTextarea
+                <FormInput
                   isRequired
                   placeholder={t('answer')}
                   name={name}
+                  type="text"
                   formLabelName={`${t('answer')} ${answerIndex + 1}`}
                   value={value}
                   handleInputChange={onChange}
@@ -104,7 +105,7 @@ const AnswersControl: FC<AnswersControlProps> = ({ control, questionIndex, quest
           <Flex mt={{ base: '0', sm: '16px' }}>
             <Box display={{ base: 'none', sm: 'block' }}>
               <IconButton
-                size={{ base: 'sm', lg: 'lg' }}
+                size={{ base: 'sm', lg: 'md' }}
                 colorScheme="red"
                 aria-label={t('deleteAnswer')}
                 icon={<DeleteIcon />}

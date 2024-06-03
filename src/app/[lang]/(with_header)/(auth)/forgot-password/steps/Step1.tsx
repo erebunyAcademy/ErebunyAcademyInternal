@@ -43,17 +43,16 @@ const Step1 = () => {
       <Controller
         name="email"
         control={control}
-        rules={{ required: 'This field is required' }}
         render={({ field: { onChange, value } }) => (
           <FormInput
             isRequired
-            isInvalid={!!errors.email?.message}
             name="email"
             type="email"
             formLabelName={t('email')}
             value={value}
             placeholder="you@example.com"
             handleInputChange={onChange}
+            isInvalid={!!errors.email?.message}
             formErrorMessage={t(errors.email?.message)}
           />
         )}

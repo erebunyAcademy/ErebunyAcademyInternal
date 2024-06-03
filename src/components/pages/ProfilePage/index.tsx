@@ -93,7 +93,7 @@ const Profile = ({ sessionUser }: { sessionUser: User }) => {
           await axios.put(url, localImage.file);
         }
         await updateUserProfileMutation(reqData, {
-          onSuccess: () => toast({ title: 'Success', status: 'success' }),
+          onSuccess: () => toast({ title: t('success'), status: 'success' }),
         });
       } catch (error) {
         console.log(error);
@@ -102,7 +102,7 @@ const Profile = ({ sessionUser }: { sessionUser: User }) => {
         setIsLoading(false);
       }
     },
-    [data?.user?.id, localImage, router, toast, updateUserProfileMutation],
+    [data?.user?.id, localImage, router, t, toast, updateUserProfileMutation],
   );
 
   const onFileSelect = useCallback(async (e: ChangeEvent<HTMLInputElement>) => {
@@ -116,12 +116,12 @@ const Profile = ({ sessionUser }: { sessionUser: User }) => {
     data => {
       changePasswordMutation(data, {
         onSuccess: () => {
-          toast({ title: 'Password has been successfully changed!', status: 'success' });
+          toast({ title: t('passwordIsChanged'), status: 'success' });
           reset();
         },
       });
     },
-    [changePasswordMutation, reset, toast],
+    [changePasswordMutation, reset, t, toast],
   );
 
   const loading = isSubmitting || passwordSubmitting || isLoading;
