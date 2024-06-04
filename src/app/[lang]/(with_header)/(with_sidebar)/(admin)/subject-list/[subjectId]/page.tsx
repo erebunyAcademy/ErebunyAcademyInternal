@@ -90,7 +90,7 @@ const CreateTestQuestions = ({
   });
 
   const { mutate, isPending } = useMutation<boolean, { message: string }, TestQuestionValidation>({
-    mutationFn: data => TestQuestionService.createTestQuestions(data, subjectId, language),
+    mutationFn: data => TestQuestionService.createTestQuestions(data, subjectId),
   });
 
   const onSubmit: SubmitHandler<TestQuestionValidation> = data => {
