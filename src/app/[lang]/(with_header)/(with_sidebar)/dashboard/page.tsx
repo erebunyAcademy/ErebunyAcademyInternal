@@ -64,9 +64,9 @@ const Dashboard = async () => {
         </Text>
         <Flex>
           <UnorderedList>
-            {userData.map(field => (
+            {userData.map((field, index) => (
               <ListItem
-                key={field.id}
+                key={index}
                 display="flex"
                 color="#1f2733"
                 fontSize={{ base: '16px', sm: '20px' }}>
