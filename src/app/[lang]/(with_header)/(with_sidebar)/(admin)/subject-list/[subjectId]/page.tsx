@@ -69,6 +69,8 @@ const initValue = {
 
 const resolver = classValidatorResolver(TestQuestionValidation);
 
+const languages = [LanguageTypeEnum.EN, LanguageTypeEnum.RU, LanguageTypeEnum.AM];
+
 const CreateTestQuestions = ({
   params: { lang, subjectId },
   searchParams: { language },
@@ -144,7 +146,7 @@ const CreateTestQuestions = ({
 
   return (
     <>
-      <Tabs variant="unstyled" mt="30px">
+      <Tabs variant="unstyled" mt="30px" index={languages.findIndex(l => l === language) || 0}>
         <TabList gap="20px">
           <Tab
             fontSize="22px"

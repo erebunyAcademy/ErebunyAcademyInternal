@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import { Avatar, Button, Flex } from '@chakra-ui/react';
 import { classValidatorResolver } from '@hookform/resolvers/class-validator';
-import { Attachment, AttachmentTypeEnum } from '@prisma/client';
+import { Attachment, AttachmentTypeEnum, LanguageTypeEnum } from '@prisma/client';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { createColumnHelper } from '@tanstack/react-table';
 import { useRouter } from 'next/navigation';
@@ -80,7 +80,9 @@ const CreateExamModal: FC<CreateExamModalProps> = ({ isOpen, onClose }) => {
   const { mutate: createExamMutation, isPending } = useMutation({
     mutationFn: ExamService.createExam,
     onSuccess(res, variables) {
-      router.push(`${ROUTE_EXAMS}/create-edit/${res.id}/${variables.subjectId}`);
+      router.push(
+        `${ROUTE_EXAMS}/create-edit/${res.id}/${variables.subjectId}?language=${LanguageTypeEnum.EN}`,
+      );
     },
   });
 

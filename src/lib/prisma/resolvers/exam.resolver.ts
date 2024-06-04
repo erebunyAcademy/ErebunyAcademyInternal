@@ -1,4 +1,4 @@
-import { Exam } from '@prisma/client';
+import { Exam, LanguageTypeEnum } from '@prisma/client';
 import { ConflictException, NotFoundException } from 'next-api-decorators';
 import { SortingType } from '@/api/types/common';
 import { CreateExamValidation, ExamValidation } from '@/utils/validation/exam';
@@ -107,6 +107,30 @@ export class ExamsResolver {
     });
 
     return true;
+  }
+
+  static async getExamTranslationByExamIdAndLanguage(examId: string, language: LanguageTypeEnum) {
+    return prisma.examTranslation.findFirst({
+      where: {
+        examId,
+        language,
+      },
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        testQuestions: {
+          select: {
+            id: true,
+            title: true,
+            description: true,
+            type: true,
+            options: true,
+            skillLevel: true,
+          },
+        },
+      },
+    });
   }
 
   static async getExamById(id: string) {

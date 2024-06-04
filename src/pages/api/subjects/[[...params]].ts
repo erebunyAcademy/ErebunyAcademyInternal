@@ -13,10 +13,12 @@ import {
 } from 'next-api-decorators';
 import { SortingType } from '@/api/types/common';
 import { exceptionHandler } from '@/lib/prisma/error';
+import { AdminGuard } from '@/lib/prisma/guards/admin';
 import { SubjectResolver } from '@/lib/prisma/resolvers/subject.resolver';
 
 @Catch(exceptionHandler)
 class SubjectHandler {
+  @AdminGuard()
   @Get('/list')
   _list(
     @Query('offset') skip: string,
@@ -32,21 +34,25 @@ class SubjectHandler {
     return SubjectResolver.getSubjects();
   }
 
+  @AdminGuard()
   @Get('/:id')
   getSubjectById(@Param('id') id: string) {
     return SubjectResolver.getSubjectById(id);
   }
 
+  @AdminGuard()
   @Delete('/:id')
   deleteSubject(@Param('id') id: string) {
     return SubjectResolver.deleteSubjectById(id);
   }
 
+  @AdminGuard()
   @Post()
   createSubject(@Body(ValidationPipe) input: Pick<Subject, 'title' | 'description'>) {
     return SubjectResolver.createSubject(input);
   }
 
+  @AdminGuard()
   @Patch('/:subjectId')
   updateSubject(
     @Param('subjectId') subjectId: string,

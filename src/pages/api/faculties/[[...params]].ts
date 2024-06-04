@@ -13,10 +13,12 @@ import {
 } from 'next-api-decorators';
 import { SortingType } from '@/api/types/common';
 import { exceptionHandler } from '@/lib/prisma/error';
+import { AdminGuard } from '@/lib/prisma/guards/admin';
 import { FacultyResolver } from '@/lib/prisma/resolvers/faculty.resolver';
 
 @Catch(exceptionHandler)
 class FacultyHandler {
+  @AdminGuard()
   @Get('/list')
   _list(
     @Query('offset') skip: string,
@@ -32,21 +34,25 @@ class FacultyHandler {
     return FacultyResolver.getFacultyList();
   }
 
+  @AdminGuard()
   @Get('/:id')
   _getFacultyById(@Param('id') id: string) {
     return FacultyResolver.getFacultyById(id);
   }
 
+  @AdminGuard()
   @Delete('/:id')
   _deleteFaculty(@Param('id') id: string) {
     return FacultyResolver.deleteFacultyById(id);
   }
 
+  @AdminGuard()
   @Post()
   _createFaculty(@Body(ValidationPipe) input: Pick<Faculty, 'title' | 'description'>) {
     return FacultyResolver.createFaculty(input);
   }
 
+  @AdminGuard()
   @Patch('/:facultyId')
   _updateFaculty(
     @Param('facultyId') facultyId: string,

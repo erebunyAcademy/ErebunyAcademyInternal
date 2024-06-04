@@ -8,6 +8,8 @@ import { TestQuestionService } from '@/api/services/test-question.service';
 import CreateEditExam from '@/components/pages/CreateEditExam';
 import { TestQuestionListModel } from '@/utils/models/test-question.model';
 
+const languages = [LanguageTypeEnum.EN, LanguageTypeEnum.RU, LanguageTypeEnum.AM];
+
 const CreateEdit = ({
   params,
   searchParams,
@@ -30,7 +32,10 @@ const CreateEdit = ({
 
   return (
     <>
-      <Tabs variant="unstyled" mt="30px">
+      <Tabs
+        variant="unstyled"
+        mt="30px"
+        index={languages.findIndex(l => l === searchParams.language) || 0}>
         <TabList gap="20px">
           <Tab
             fontSize="22px"

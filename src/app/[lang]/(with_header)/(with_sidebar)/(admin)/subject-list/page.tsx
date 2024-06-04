@@ -2,10 +2,10 @@
 import { useCallback, useMemo, useState } from 'react';
 import { Button, MenuItem, useDisclosure } from '@chakra-ui/react';
 import { classValidatorResolver } from '@hookform/resolvers/class-validator';
+import { LanguageTypeEnum } from '@prisma/client';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { createColumnHelper, SortingState } from '@tanstack/react-table';
 import Link from 'next/link';
-import { useParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { Controller, useForm } from 'react-hook-form';
 import { v4 as uuidv4 } from 'uuid';
@@ -15,6 +15,7 @@ import ActionButtons from '@/components/molecules/ActionButtons';
 import Modal from '@/components/molecules/Modal';
 import SearchTable from '@/components/organisms/SearchTable';
 import useDebounce from '@/hooks/useDebounce';
+import { Locale } from '@/i18n';
 import { ITEMS_PER_PAGE } from '@/utils/constants/common';
 import { ROUTE_SUBJECTS } from '@/utils/constants/routes';
 import { languagePathHelper } from '@/utils/helpers/language';
@@ -25,9 +26,8 @@ import { CreateEditSubjectValidation } from '@/utils/validation/subject';
 
 const resolver = classValidatorResolver(CreateEditSubjectValidation);
 
-const Subject = () => {
+const Subject = ({ params }: { params: { lang: Locale } }) => {
   const [sorting, setSorting] = useState<SortingState>([]);
-  const params = useParams();
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const debouncedSearch = useDebounce(search);
@@ -139,7 +139,7 @@ const Subject = () => {
       cell: ({ row }) => (
         <Button
           as={Link}
-          href={`${languagePathHelper(params?.lang as any, ROUTE_SUBJECTS)}/${row.original.id}`}
+          href={`${languagePathHelper(params.lang || 'en', ROUTE_SUBJECTS)}/${row.original.id}?language=${LanguageTypeEnum.EN}`}
           variant="link">
           {t('createTestQuestions')}
         </Button>

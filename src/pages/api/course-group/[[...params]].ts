@@ -13,10 +13,12 @@ import {
 } from 'next-api-decorators';
 import { SortingType } from '@/api/types/common';
 import { exceptionHandler } from '@/lib/prisma/error';
+import { AdminGuard } from '@/lib/prisma/guards/admin';
 import { CourseGroupResolver } from '@/lib/prisma/resolvers/course-group.resolver';
 
 @Catch(exceptionHandler)
 class CourseGroupHandler {
+  @AdminGuard()
   @Get('/list')
   getCourseGroupList(
     @Query('offset') skip: string,
@@ -32,6 +34,7 @@ class CourseGroupHandler {
     return CourseGroupResolver.getCourseGroupList();
   }
 
+  @AdminGuard()
   @Get('/courses/:courseId')
   getCourseGroupsByCourseId(@Param('courseId') courseId: string) {
     return CourseGroupResolver.getCourseGroupListByCourseId(courseId);
@@ -42,16 +45,19 @@ class CourseGroupHandler {
     return CourseGroupResolver.getCourseGroupById(id);
   }
 
+  @AdminGuard()
   @Delete('/:id')
   deleteCourseGroup(@Param('id') id: string) {
     return CourseGroupResolver.deleteCourseGroupById(id);
   }
 
+  @AdminGuard()
   @Post()
   createCourseGroup(@Body(ValidationPipe) input: Pick<CourseGroup, 'title' | 'description'>) {
     return CourseGroupResolver.createCourseGroup(input);
   }
 
+  @AdminGuard()
   @Patch('/:courseGroupId')
   updateCourseGroup(
     @Param('courseGroupId') courseGroupId: string,
