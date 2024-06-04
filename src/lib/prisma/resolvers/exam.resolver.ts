@@ -1,7 +1,11 @@
 import { Exam, LanguageTypeEnum } from '@prisma/client';
 import { ConflictException, NotFoundException } from 'next-api-decorators';
 import { SortingType } from '@/api/types/common';
-import { CreateExamValidation, ExamValidation } from '@/utils/validation/exam';
+import {
+  CreateExamValidation,
+  ExamValidation,
+  OptionalExamValidation,
+} from '@/utils/validation/exam';
 import { orderBy } from './utils/common';
 import prisma from '..';
 
@@ -34,6 +38,7 @@ export class ExamsResolver {
           },
           subject: {
             select: {
+              id: true,
               title: true,
             },
           },
@@ -110,25 +115,54 @@ export class ExamsResolver {
   }
 
   static async getExamTranslationByExamIdAndLanguage(examId: string, language: LanguageTypeEnum) {
-    return prisma.examTranslation.findFirst({
+    console.log({ examId, language });
+    const examTranslation = await prisma.examTranslation.findUnique({
       where: {
-        examId,
-        language,
+        examLanguage: {
+          examId,
+          language,
+        },
       },
       select: {
         id: true,
+        language: true,
         title: true,
         description: true,
         testQuestions: {
           select: {
             id: true,
-            title: true,
-            description: true,
-            type: true,
-            options: true,
-            skillLevel: true,
           },
         },
+      },
+    });
+
+    return examTranslation;
+  }
+
+  static async updateExamTranslation(
+    examId: string,
+    language: LanguageTypeEnum,
+    input: OptionalExamValidation,
+  ) {
+    const { title, description, testQuestionIds } = input;
+
+    const exam = this.getExamById(examId);
+
+    if (!exam) {
+      throw new NotFoundException('Exam was not found');
+    }
+
+    return prisma.examTranslation.update({
+      where: {
+        examLanguage: {
+          examId,
+          language,
+        },
+      },
+      data: {
+        title,
+        description,
+        testQuestions:
       },
     });
   }

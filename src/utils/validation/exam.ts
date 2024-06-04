@@ -107,3 +107,21 @@ export class ExamValidation {
   @IsNotEmpty({ message: 'Tests are required' })
   testQuestionIds: string[];
 }
+
+export class OptionalExamValidation {
+  @IsString()
+  @IsOptional({ message: 'Exam title is required' })
+  title: string;
+
+  @IsString()
+  @IsOptional()
+  description: string;
+
+  @IsEnum(LanguageTypeEnum)
+  @IsOptional({ message: 'Language is required' })
+  language: LanguageTypeEnum;
+
+  @IsArray()
+  @IsOptional({ message: 'Tests are required' })
+  testQuestionIds: string[];
+}

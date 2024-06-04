@@ -145,6 +145,7 @@ function TableCheckbox<T extends { id: string }>({
           <Tbody>
             {getRowModel().rows.length > 0 ? (
               getRowModel().rows.map(row => {
+                console.log({ row });
                 return (
                   <Tr
                     key={row.id}

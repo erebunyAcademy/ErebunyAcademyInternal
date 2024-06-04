@@ -2,7 +2,7 @@
 import React, { FC } from 'react';
 import { Box, Button, Flex, Heading, Stack } from '@chakra-ui/react';
 import { classValidatorResolver } from '@hookform/resolvers/class-validator';
-import { ExamTranslation, LanguageTypeEnum } from '@prisma/client';
+import { LanguageTypeEnum } from '@prisma/client';
 import { useMutation } from '@tanstack/react-query';
 import { createColumnHelper } from '@tanstack/react-table';
 import { useTranslations } from 'next-intl';
@@ -11,8 +11,9 @@ import { v4 as uuidv4 } from 'uuid';
 import { ExamService } from '@/api/services/exam.service';
 import { FormInput } from '@/components/atoms';
 import TableCheckbox from '@/components/organisms/TableCheckbox';
+import { ExamTranslation } from '@/utils/models/exam';
 import { TestQuestionListModel } from '@/utils/models/test-question.model';
-import { ExamValidation } from '@/utils/validation/exam';
+import { ExamValidation, OptionalExamValidation } from '@/utils/validation/exam';
 
 const resolver = classValidatorResolver(ExamValidation);
 
@@ -21,23 +22,36 @@ type CreateEditExamProps = {
   subjectId: string;
   examId: string;
   testQuestionQueryData: TestQuestionListModel;
+  language: LanguageTypeEnum;
 };
 
-const CreateEditExam: FC<CreateEditExamProps> = ({ examId, testQuestionQueryData }) => {
+const CreateEditExam: FC<CreateEditExamProps> = ({
+  examId,
+  testQuestionQueryData,
+  examTranslation,
+  language,
+}) => {
   const t = useTranslations();
+
+  console.log({ language });
 
   const { control, handleSubmit } = useForm<ExamValidation>({
     resolver,
     defaultValues: {
-      title: '',
-      description: '',
-      testQuestionIds: [],
-      language: LanguageTypeEnum.AM,
+      title: examTranslation?.title || '',
+      description: examTranslation?.description || '',
+      testQuestionIds: (examTranslation?.testQuestions || []).map(({ id }) => id) || [],
+      language,
     },
   });
 
   const { mutate } = useMutation({
     mutationFn: (data: ExamValidation) => ExamService.createExamTranslation(data, examId),
+  });
+
+  const { mutate: update } = useMutation({
+    mutationFn: (data: OptionalExamValidation) =>
+      ExamService.updateExamTranslation(examId, language, data),
   });
 
   const testQuestionCcolumnHelper = createColumnHelper<TestQuestionListModel>();
@@ -64,8 +78,12 @@ const CreateEditExam: FC<CreateEditExamProps> = ({ examId, testQuestionQueryData
     mutate(data);
   };
 
+  const submitExamUpdate = (data: OptionalExamValidation) => {
+    update(data);
+  };
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit(examTranslation ? submitExamUpdate : onSubmit)}>
       <Heading textAlign="center">{t('exam')}</Heading>
       <Stack
         direction={{ base: 'column', md: 'column' }}

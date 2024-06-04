@@ -4,15 +4,13 @@ import { LanguageTypeEnum } from '@prisma/client';
 import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
 import { useTranslations } from 'use-intl';
-import { ExamService } from '@/api/services/exam.service';
 import { TestQuestionService } from '@/api/services/test-question.service';
 import CreateEditExam from '@/components/pages/CreateEditExam';
-import { ExamTranslation } from '@/utils/models/exam';
 import { TestQuestionListModel } from '@/utils/models/test-question.model';
 
 const languages = [LanguageTypeEnum.EN, LanguageTypeEnum.RU, LanguageTypeEnum.AM];
 
-const CreateEdit = ({
+const Exam = ({
   params,
   searchParams,
 }: {
@@ -31,13 +29,6 @@ const CreateEdit = ({
     ),
     enabled: !!subjectId,
   });
-
-  const { data } = useQuery<ExamTranslation>({
-    queryFn: ExamService.getExamTranslation.bind(null, examId, searchParams.language),
-    queryKey: [searchParams.language],
-  });
-
-  console.log({ data });
 
   return (
     <>
@@ -76,8 +67,6 @@ const CreateEdit = ({
                 examId={examId}
                 subjectId={subjectId}
                 testQuestionQueryData={testQuestionQueryData}
-                examTranslation={data}
-                language={searchParams.language}
               />
             )}
           </TabPanel>
@@ -87,8 +76,6 @@ const CreateEdit = ({
                 examId={examId}
                 subjectId={subjectId}
                 testQuestionQueryData={testQuestionQueryData}
-                examTranslation={data}
-                language={searchParams.language}
               />
             )}
           </TabPanel>
@@ -98,8 +85,6 @@ const CreateEdit = ({
                 examId={examId}
                 subjectId={subjectId}
                 testQuestionQueryData={testQuestionQueryData}
-                examTranslation={data}
-                language={searchParams.language}
               />
             )}
           </TabPanel>
@@ -109,4 +94,4 @@ const CreateEdit = ({
   );
 };
 
-export default CreateEdit;
+export default Exam;

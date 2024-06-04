@@ -1,9 +1,11 @@
+import { LanguageTypeEnum } from '@prisma/client';
 import {
   Body,
   Catch,
   createHandler,
   Get,
   Param,
+  Patch,
   Post,
   Query,
   ValidationPipe,
@@ -12,7 +14,11 @@ import { SortingType } from '@/api/types/common';
 import { exceptionHandler } from '@/lib/prisma/error';
 import { AdminGuard } from '@/lib/prisma/guards/admin';
 import { ExamsResolver } from '@/lib/prisma/resolvers/exam.resolver';
-import { CreateExamValidation, ExamValidation } from '@/utils/validation/exam';
+import {
+  CreateExamValidation,
+  ExamValidation,
+  OptionalExamValidation,
+} from '@/utils/validation/exam';
 
 @AdminGuard()
 @Catch(exceptionHandler)
@@ -32,6 +38,26 @@ class ExamsHandler {
   _getExamById(@Param('id') id: string) {
     return ExamsResolver.getExamDataById(id);
   }
+
+  @AdminGuard()
+  @Get('/translation/:examId/:language')
+  _getExamTranslationByExamId(
+    @Param('examId') examId: string,
+    @Param('language') language: LanguageTypeEnum,
+  ) {
+    return ExamsResolver.getExamTranslationByExamIdAndLanguage(examId, language);
+  }
+
+  @AdminGuard()
+  @Patch('/translation/:examId/:language')
+  _updateExamTranslationByExamId(
+    @Param('examId') examId: string,
+    @Param('language') language: LanguageTypeEnum,
+    @Body(ValidationPipe) input: OptionalExamValidation,
+  ) {
+    return ExamsResolver.updateExamTranslation(examId, language, input);
+  }
+
   @Post('/:examId')
   _createExamTranslation(
     @Body(ValidationPipe) input: ExamValidation,
