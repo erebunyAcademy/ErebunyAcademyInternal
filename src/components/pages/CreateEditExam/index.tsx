@@ -1,5 +1,5 @@
 'use client';
-import React, { FC } from 'react';
+import React, { FC, useEffect } from 'react';
 import { Box, Button, Flex, Heading, Stack } from '@chakra-ui/react';
 import { classValidatorResolver } from '@hookform/resolvers/class-validator';
 import { LanguageTypeEnum } from '@prisma/client';
@@ -33,9 +33,7 @@ const CreateEditExam: FC<CreateEditExamProps> = ({
 }) => {
   const t = useTranslations();
 
-  console.log({ language });
-
-  const { control, handleSubmit } = useForm<ExamValidation>({
+  const { control, handleSubmit, reset } = useForm<ExamValidation>({
     resolver,
     defaultValues: {
       title: examTranslation?.title || '',
@@ -44,6 +42,17 @@ const CreateEditExam: FC<CreateEditExamProps> = ({
       language,
     },
   });
+
+  useEffect(() => {
+    if (examTranslation) {
+      reset({
+        title: examTranslation.title,
+        description: examTranslation.description || '',
+        testQuestionIds: examTranslation.testQuestions.map(({ id }) => id) || [],
+        language,
+      });
+    }
+  }, [examTranslation, language, reset]);
 
   const { mutate } = useMutation({
     mutationFn: (data: ExamValidation) => ExamService.createExamTranslation(data, examId),
@@ -133,16 +142,19 @@ const CreateEditExam: FC<CreateEditExamProps> = ({
           <Controller
             name="testQuestionIds"
             control={control}
-            render={({ field: { onChange, value } }) => (
-              <TableCheckbox
-                title="selectTests"
-                data={testQuestionQueryData || []}
-                selectedValues={value}
-                onChange={onChange}
-                // @ts-ignore
-                columns={testQuestionColumns || []}
-              />
-            )}
+            render={({ field: { onChange, value } }) => {
+              console.log({ value });
+              return (
+                <TableCheckbox
+                  title="selectTests"
+                  data={testQuestionQueryData || []}
+                  selectedValues={value}
+                  onChange={onChange}
+                  // @ts-ignore
+                  columns={testQuestionColumns || []}
+                />
+              );
+            }}
           />
         </Flex>
       </Stack>

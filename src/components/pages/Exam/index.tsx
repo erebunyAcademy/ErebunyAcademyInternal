@@ -67,6 +67,7 @@ const Exam = ({
                 examId={examId}
                 subjectId={subjectId}
                 testQuestionQueryData={testQuestionQueryData}
+                language={searchParams.language}
               />
             )}
           </TabPanel>
@@ -76,6 +77,7 @@ const Exam = ({
                 examId={examId}
                 subjectId={subjectId}
                 testQuestionQueryData={testQuestionQueryData}
+                language={searchParams.language}
               />
             )}
           </TabPanel>
@@ -85,6 +87,7 @@ const Exam = ({
                 examId={examId}
                 subjectId={subjectId}
                 testQuestionQueryData={testQuestionQueryData}
+                language={searchParams.language}
               />
             )}
           </TabPanel>

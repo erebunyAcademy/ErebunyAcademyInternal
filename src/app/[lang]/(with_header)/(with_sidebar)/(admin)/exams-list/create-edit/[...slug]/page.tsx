@@ -37,7 +37,7 @@ const CreateEdit = ({
     queryKey: [searchParams.language],
   });
 
-  console.log({ data });
+  console.log(data);
 
   return (
     <>
@@ -76,7 +76,7 @@ const CreateEdit = ({
                 examId={examId}
                 subjectId={subjectId}
                 testQuestionQueryData={testQuestionQueryData}
-                examTranslation={data}
+                examTranslation={data || null}
                 language={searchParams.language}
               />
             )}
@@ -87,7 +87,7 @@ const CreateEdit = ({
                 examId={examId}
                 subjectId={subjectId}
                 testQuestionQueryData={testQuestionQueryData}
-                examTranslation={data}
+                examTranslation={data || null}
                 language={searchParams.language}
               />
             )}
@@ -98,7 +98,7 @@ const CreateEdit = ({
                 examId={examId}
                 subjectId={subjectId}
                 testQuestionQueryData={testQuestionQueryData}
-                examTranslation={data}
+                examTranslation={data || null}
                 language={searchParams.language}
               />
             )}

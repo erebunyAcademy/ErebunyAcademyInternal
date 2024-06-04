@@ -115,7 +115,6 @@ export class ExamsResolver {
   }
 
   static async getExamTranslationByExamIdAndLanguage(examId: string, language: LanguageTypeEnum) {
-    console.log({ examId, language });
     const examTranslation = await prisma.examTranslation.findUnique({
       where: {
         examLanguage: {
@@ -146,7 +145,9 @@ export class ExamsResolver {
   ) {
     const { title, description, testQuestionIds } = input;
 
-    const exam = this.getExamById(examId);
+    const exam = await prisma.exam.findUnique({
+      where: { id: examId },
+    });
 
     if (!exam) {
       throw new NotFoundException('Exam was not found');
@@ -162,7 +163,9 @@ export class ExamsResolver {
       data: {
         title,
         description,
-        testQuestions:
+        testQuestions: {
+          set: testQuestionIds.map(id => ({ id })),
+        },
       },
     });
   }
