@@ -13,6 +13,7 @@ const migration = async () => {
       email: 'abcd@mailinator.com',
       isVerified: true,
       password: hashedPassword,
+      uniqueUserId: 77239701,
       isAdminVerified: true,
       role: PClient.UserRoleEnum.ADMIN,
     },

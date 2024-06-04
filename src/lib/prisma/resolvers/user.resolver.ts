@@ -24,6 +24,7 @@ export class UserResolver {
           },
         },
         id: true,
+        uniqueUserId: true,
         email: true,
         firstName: true,
         password: true,
