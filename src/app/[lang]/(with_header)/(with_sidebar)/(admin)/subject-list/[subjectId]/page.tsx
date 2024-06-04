@@ -45,15 +45,15 @@ const questionTypes = [
 
 const skillLevels = [
   {
-    id: TestQuestionLevelEnum.BEGINNER,
+    id: TestQuestionLevelEnum.EASY,
     skillLevel: 'Beginner',
   },
   {
-    id: TestQuestionLevelEnum.INTERMEDIATE,
+    id: TestQuestionLevelEnum.MEDIUM,
     skillLevel: 'Intermediate',
   },
   {
-    id: TestQuestionLevelEnum.ADVANCED,
+    id: TestQuestionLevelEnum.HARD,
     skillLevel: 'Advanced',
   },
 ];
@@ -62,7 +62,7 @@ const initValue = {
   title: '',
   type: TestQuestionTypeEnum.CHECKBOX,
   subjectId: '',
-  skillLevel: TestQuestionLevelEnum.BEGINNER,
+  skillLevel: TestQuestionLevelEnum.EASY,
   options: [{ title: '', isRightAnswer: false }],
 };
 
