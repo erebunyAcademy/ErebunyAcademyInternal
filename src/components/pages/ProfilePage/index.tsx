@@ -194,7 +194,7 @@ const Profile = ({ sessionUser }: { sessionUser: User }) => {
               <Controller
                 name="avatar"
                 control={control}
-                rules={{ required: 'This field is required' }}
+                rules={{ required: t('fieldIsRequired') }}
                 render={({ field: { onChange, name } }) => (
                   <Input
                     as="input"
@@ -234,9 +234,6 @@ const Profile = ({ sessionUser }: { sessionUser: User }) => {
           <Controller
             name="firstName"
             control={control}
-            rules={{
-              required: 'This field is required',
-            }}
             render={({ field: { onChange, value, name } }) => (
               <FormInput
                 isRequired
@@ -254,9 +251,6 @@ const Profile = ({ sessionUser }: { sessionUser: User }) => {
           <Controller
             name="lastName"
             control={control}
-            rules={{
-              required: 'This field is required',
-            }}
             render={({ field: { onChange, value, name } }) => (
               <FormInput
                 isRequired
@@ -276,9 +270,6 @@ const Profile = ({ sessionUser }: { sessionUser: User }) => {
           <Controller
             name="email"
             control={control}
-            rules={{
-              required: 'This field is required',
-            }}
             render={({ field: { onChange, value, name } }) => (
               <FormInput
                 isRequired

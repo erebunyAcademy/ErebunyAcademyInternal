@@ -62,6 +62,7 @@ const AnswersControl: FC<AnswersControlProps> = ({ control, questionIndex, quest
                   control={control}
                   render={({ field: { name, value, onChange } }) => (
                     <Checkbox
+                      mt="22px"
                       name={name}
                       isChecked={value}
                       onChange={e => onChange(e.target.checked)}
