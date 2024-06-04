@@ -35,6 +35,10 @@
   "ru": "ru",
   "am": "arm",
   "next": "Next",
+  "english": "English",
+  "armenian": "Armenian",
+  "russian": "Russian",
+
   "userId": "User Id",
   "saveChanges": "Save Changes",
   "editProfile": "Edit Profile",
