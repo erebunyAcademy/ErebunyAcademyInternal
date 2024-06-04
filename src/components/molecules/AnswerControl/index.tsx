@@ -119,7 +119,6 @@ const AnswersControl: FC<AnswersControlProps> = ({ control, questionIndex, quest
       ))}
       <Button
         onClick={() => append({ title: '', isRightAnswer: false })}
-        width="50%"
         fontSize={{ base: '16px', lg: '20px' }}>
         {t('addAnswer')}
       </Button>

@@ -34,6 +34,10 @@ class Question {
   @IsNotEmpty({ message: 'Question text is required' })
   title: string;
 
+  @IsEnum(LanguageTypeEnum)
+  @IsNotEmpty({ message: 'Language is required' })
+  lang: LanguageTypeEnum;
+
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => Answer)

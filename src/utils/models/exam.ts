@@ -9,18 +9,19 @@ export type ExamModel = ExamDataListModel extends (infer SingleType)[] ? SingleT
 
 export interface FacultyModel extends Exam {}
 
-export type ExamColumnNamesType =
-  | 'questionColumnName'
-  | 'optionsColumnName'
-  | 'answerColumnName'
-  | 'levelColumnName';
+export const initialState = {
+  questionColumnName: '',
+  optionsColumnName: '',
+  answerColumnName: '',
+  levelColumnName: '',
+  categoryColumnName: '',
+  topicColumnName: '',
+  subtopicColumnName: '',
+};
 
-export interface State {
-  questionColumnName: string;
-  optionsColumnName: string;
-  answerColumnName: string;
-  levelColumnName: string;
-}
+export type State = typeof initialState;
+
+export type ExamColumnNamesType = keyof State;
 
 export type ExcelReducerActions = { type: ExamColumnNamesType; payload: string };
 
@@ -29,4 +30,7 @@ export enum EXAM_FIELD_KEY {
   options = 'options',
   answers = 'answers',
   level = 'level',
+  category = 'category',
+  topic = 'topic',
+  subtopic = 'subtopic',
 }

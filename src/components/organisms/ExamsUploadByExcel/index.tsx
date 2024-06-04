@@ -9,6 +9,7 @@ import {
   EXAM_FIELD_KEY,
   ExamColumnNamesType,
   ExcelReducerActions,
+  initialState,
   State,
 } from '@/utils/models/exam';
 
@@ -23,15 +24,11 @@ const SUGGESTED_LEVEL_NAMES = [
   'մակարդակ',
   'մակարդակ*',
 ];
+const SUGGESTED_CATEGORY_NAMES = ['category', 'category*'];
+const SUGGESTED_TOPIC_NAMES = ['topic', 'topic*'];
+const SUGGESTED_SUBTOPIC_NAMES = ['subtopic', 'subtopic*'];
 
 const toStringOrNull = (value: Maybe<string>) => (value ? String(value).trim() : null);
-
-const initialState = {
-  questionColumnName: '',
-  optionsColumnName: '',
-  answerColumnName: '',
-  levelColumnName: '',
-};
 
 const reducer = (state: State, action: ExcelReducerActions) => {
   return {
@@ -70,6 +67,15 @@ const ExamsUploadByExcel: FC<Props> = ({ setUploadedResults }) => {
       if (SUGGESTED_LEVEL_NAMES.includes(formattedColumn)) {
         dispatch({ type: 'levelColumnName', payload: columnName });
       }
+      if (SUGGESTED_CATEGORY_NAMES.includes(formattedColumn)) {
+        dispatch({ type: 'categoryColumnName', payload: columnName });
+      }
+      if (SUGGESTED_TOPIC_NAMES.includes(formattedColumn)) {
+        dispatch({ type: 'topicColumnName', payload: columnName });
+      }
+      if (SUGGESTED_SUBTOPIC_NAMES.includes(formattedColumn)) {
+        dispatch({ type: 'subtopicColumnName', payload: columnName });
+      }
     });
   }, []);
 
@@ -105,7 +111,15 @@ const ExamsUploadByExcel: FC<Props> = ({ setUploadedResults }) => {
           toast({ title: t('invalidFileIsImported'), status: 'warning' });
         }
       } else {
-        const { questionColumnName, optionsColumnName, answerColumnName, levelColumnName } = state;
+        const {
+          questionColumnName,
+          optionsColumnName,
+          answerColumnName,
+          levelColumnName,
+          categoryColumnName,
+          topicColumnName,
+          subtopicColumnName,
+        } = state;
 
         setUploadedResults(
           excelData
@@ -114,6 +128,9 @@ const ExamsUploadByExcel: FC<Props> = ({ setUploadedResults }) => {
               [EXAM_FIELD_KEY.options]: prepareExcelOptionsForExam(el, optionsColumnName),
               [EXAM_FIELD_KEY.answers]: prepareExcelAnswersForExam(el, answerColumnName),
               [EXAM_FIELD_KEY.level]: toStringOrNull(el[levelColumnName]),
+              [EXAM_FIELD_KEY.category]: toStringOrNull(el[categoryColumnName]),
+              [EXAM_FIELD_KEY.topic]: toStringOrNull(el[topicColumnName]),
+              [EXAM_FIELD_KEY.subtopic]: toStringOrNull(el[subtopicColumnName]),
             }))
             .filter(el => Object.values(el).some(val => !!val)),
         );
