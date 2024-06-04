@@ -33,7 +33,10 @@ export class TestQuestionResolver {
           subjectId,
           title: item.title,
           type: item.type,
-          skillLevel: 'EASY',
+          skillLevel: item.skillLevel,
+          category: item.category,
+          topic: item.topic,
+          subTopic: item.subTopic,
           language: item.lang,
           options: {
             createMany: {

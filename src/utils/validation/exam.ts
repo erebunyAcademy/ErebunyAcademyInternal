@@ -43,6 +43,18 @@ class Question {
   @Type(() => Answer)
   @AtLeastOneCorrectAnswer({ message: 'At least one answer must be marked as correct' })
   options: Answer[];
+
+  @IsString()
+  @IsOptional()
+  category?: string;
+
+  @IsString()
+  @IsOptional()
+  topic?: string;
+
+  @IsString()
+  @IsOptional()
+  subTopic?: string;
 }
 
 export class TestQuestionValidation {

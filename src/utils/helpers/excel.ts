@@ -21,11 +21,7 @@ export const prepareExcelOptionsForExam = (data: Record<string, Maybe<string>>, 
     .map(option => {
       if (/^[a-z]\.\s/.test(option)) {
         const key = option[0];
-        const lastWord = option[option.length - 1];
-        const value = option
-          .slice(3)
-          .trim()
-          .slice(0, lastWord === ';' ? -1 : undefined);
+        const value = option.slice(3).trim().slice(0, undefined);
 
         return { [key]: value };
       } else {

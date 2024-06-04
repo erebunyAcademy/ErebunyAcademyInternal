@@ -22,6 +22,7 @@ type SelectLabelProps = {
   formHelperText?: string;
   formErrorMessage?: string;
   isInvalid?: boolean;
+  isDisabled?: boolean;
 };
 
 const SelectLabel: FC<SelectLabelProps> = ({
@@ -37,6 +38,7 @@ const SelectLabel: FC<SelectLabelProps> = ({
   formHelperText,
   formErrorMessage,
   isInvalid,
+  isDisabled,
 }) => {
   const t = useTranslations();
 
@@ -51,7 +53,12 @@ const SelectLabel: FC<SelectLabelProps> = ({
           </Text>
         )}
       </FormLabel>
-      <Select onChange={onChange} value={value} name={name} placeholder={placeholder}>
+      <Select
+        onChange={onChange}
+        value={value}
+        name={name}
+        placeholder={placeholder}
+        isDisabled={isDisabled}>
         <option value="" disabled>
           {t('selectOption')}
         </option>

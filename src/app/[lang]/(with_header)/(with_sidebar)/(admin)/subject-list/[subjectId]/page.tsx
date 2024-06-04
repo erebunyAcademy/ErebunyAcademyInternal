@@ -1,21 +1,18 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 import { DeleteIcon } from '@chakra-ui/icons';
-import { Box, Button, Flex, Heading, HStack, IconButton, Stack } from '@chakra-ui/react';
+import { Box, Button, Flex, Heading, HStack, IconButton, Stack, useToast } from '@chakra-ui/react';
 import { classValidatorResolver } from '@hookform/resolvers/class-validator';
 import { LanguageTypeEnum, TestQuestionLevelEnum, TestQuestionTypeEnum } from '@prisma/client';
 import { useMutation } from '@tanstack/react-query';
-import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { Controller, SubmitHandler, useFieldArray, useForm } from 'react-hook-form';
 import { TestQuestionService } from '@/api/services/test-question.service';
-import { SelectLabel } from '@/components/atoms';
+import { FormInput, SelectLabel } from '@/components/atoms';
 import FormTextarea from '@/components/atoms/FormTextarea';
 import AnswersControl from '@/components/molecules/AnswerControl';
 import ExamsUploadByExcel, { UploadedExcelData } from '@/components/organisms/ExamsUploadByExcel';
 import { Locale } from '@/i18n';
-import { ROUTE_SUBJECTS } from '@/utils/constants/routes';
-import { languagePathHelper } from '@/utils/helpers/language';
 import { Maybe } from '@/utils/models/common';
 import { TestQuestionValidation } from '@/utils/validation/exam';
 
@@ -57,14 +54,14 @@ const initValue = {
 const resolver = classValidatorResolver(TestQuestionValidation);
 
 const CreateTestQuestions = ({
-  params: { lang, subjectId },
+  params: { subjectId },
   searchParams: { language },
 }: {
   params: { lang: Locale; subjectId: string };
   searchParams: { language: LanguageTypeEnum };
 }) => {
-  const router = useRouter();
   const t = useTranslations();
+  const toast = useToast();
   const [excelData, setExcelData] = useState<UploadedExcelData>(null);
 
   const {
@@ -96,7 +93,8 @@ const CreateTestQuestions = ({
   const onSubmit: SubmitHandler<TestQuestionValidation> = data => {
     mutate(data, {
       onSuccess: () => {
-        router.push(languagePathHelper(lang || 'am', ROUTE_SUBJECTS));
+        toast({ title: 'Success', status: 'success' });
+        reset({ questions: [initValue] });
       },
     });
   };
@@ -106,11 +104,14 @@ const CreateTestQuestions = ({
       reset({
         questions: excelData.map(item => ({
           title: item.question as string,
+          category: item.category as string | undefined,
+          topic: item.topic as string | undefined,
+          subTopic: item.subtopic as string | undefined,
           type:
-            item.answers?.length || 0 > 1
+            (item.answers?.length || 0) > 1
               ? TestQuestionTypeEnum.CHECKBOX
               : TestQuestionTypeEnum.RADIO,
-          skillLevel: item.level as TestQuestionLevelEnum,
+          skillLevel: (item.level as string)?.toUpperCase()?.trim() as TestQuestionLevelEnum,
           lang: language,
           options: Array.isArray(item.options)
             ? item.options.map(opt => {
@@ -173,9 +174,9 @@ const CreateTestQuestions = ({
                   render={({ field: { onChange, value, name } }) => (
                     <FormTextarea
                       isRequired
-                      placeholder={t('question')}
+                      placeholder={'question'}
                       name={name}
-                      formLabelName={t('question')}
+                      formLabelName={'question'}
                       value={value}
                       handleInputChange={onChange}
                     />
@@ -194,6 +195,11 @@ const CreateTestQuestions = ({
                       nameLabel="type"
                       onChange={onChange}
                       value={value}
+                      isDisabled={
+                        watch(`questions.${questionIndex}.options`).filter(
+                          item => item.isRightAnswer,
+                        ).length > 1
+                      }
                     />
                   )}
                 />
@@ -214,6 +220,48 @@ const CreateTestQuestions = ({
                   )}
                 />
               </Flex>
+              <Controller
+                name={`questions.${questionIndex}.category`}
+                control={control}
+                render={({ field: { onChange, value, name } }) => (
+                  <FormInput
+                    placeholder={'category'}
+                    name={name}
+                    type="text"
+                    value={value}
+                    handleInputChange={onChange}
+                    formLabelName={'category'}
+                  />
+                )}
+              />
+              <Controller
+                name={`questions.${questionIndex}.topic`}
+                control={control}
+                render={({ field: { onChange, value, name } }) => (
+                  <FormInput
+                    placeholder={'topic'}
+                    name={name}
+                    type="text"
+                    value={value}
+                    handleInputChange={onChange}
+                    formLabelName={'topic'}
+                  />
+                )}
+              />
+              <Controller
+                name={`questions.${questionIndex}.subTopic`}
+                control={control}
+                render={({ field: { onChange, value, name } }) => (
+                  <FormInput
+                    placeholder={'subTopic'}
+                    name={name}
+                    type="text"
+                    value={value}
+                    handleInputChange={onChange}
+                    formLabelName={'subTopic'}
+                  />
+                )}
+              />
               <AnswersControl
                 control={control}
                 questionIndex={questionIndex}
