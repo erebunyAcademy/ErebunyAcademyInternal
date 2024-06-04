@@ -16,8 +16,9 @@ import {
   Tabs,
 } from '@chakra-ui/react';
 import { classValidatorResolver } from '@hookform/resolvers/class-validator';
-import { TestQuestionLevelEnum, TestQuestionTypeEnum } from '@prisma/client';
+import { LanguageTypeEnum, TestQuestionLevelEnum, TestQuestionTypeEnum } from '@prisma/client';
 import { useMutation } from '@tanstack/react-query';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { Controller, SubmitHandler, useFieldArray, useForm } from 'react-hook-form';
@@ -70,8 +71,10 @@ const resolver = classValidatorResolver(TestQuestionValidation);
 
 const CreateTestQuestions = ({
   params: { lang, subjectId },
+  searchParams: { language },
 }: {
   params: { lang: Locale; subjectId: string };
+  searchParams: { language: LanguageTypeEnum };
 }) => {
   const router = useRouter();
   const t = useTranslations();
@@ -100,7 +103,7 @@ const CreateTestQuestions = ({
   });
 
   const { mutate, isPending } = useMutation<boolean, { message: string }, TestQuestionValidation>({
-    mutationFn: data => TestQuestionService.createTestQuestions(data, subjectId, lang),
+    mutationFn: data => TestQuestionService.createTestQuestions(data, subjectId, language),
   });
 
   const onSubmit: SubmitHandler<TestQuestionValidation> = data => {
@@ -143,13 +146,25 @@ const CreateTestQuestions = ({
     <>
       <Tabs variant="unstyled" mt="30px">
         <TabList gap="20px">
-          <Tab fontSize="22px" _selected={{ color: '#319795', borderBottom: '3px solid #319795' }}>
+          <Tab
+            fontSize="22px"
+            _selected={{ color: '#319795', borderBottom: '3px solid #319795' }}
+            as={Link}
+            href={`?language=${LanguageTypeEnum.EN}`}>
             {t('english')}
           </Tab>
-          <Tab fontSize="22px" _selected={{ color: '#319795', borderBottom: '3px solid #319795' }}>
+          <Tab
+            fontSize="22px"
+            _selected={{ color: '#319795', borderBottom: '3px solid #319795' }}
+            as={Link}
+            href={`?language=${LanguageTypeEnum.RU}`}>
             {t('russian')}
           </Tab>
-          <Tab fontSize="22px" _selected={{ color: '#319795', borderBottom: '3px solid #319795' }}>
+          <Tab
+            fontSize="22px"
+            _selected={{ color: '#319795', borderBottom: '3px solid #319795' }}
+            as={Link}
+            href={`?language=${LanguageTypeEnum.AM}`}>
             {t('armenian')}
           </Tab>
         </TabList>

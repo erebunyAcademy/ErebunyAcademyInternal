@@ -3,13 +3,12 @@ import React, { FC } from 'react';
 import { Box, Button, Flex, Heading, Stack } from '@chakra-ui/react';
 import { classValidatorResolver } from '@hookform/resolvers/class-validator';
 import { ExamTranslation, LanguageTypeEnum } from '@prisma/client';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import { createColumnHelper } from '@tanstack/react-table';
 import { useTranslations } from 'next-intl';
 import { Controller, useForm } from 'react-hook-form';
 import { v4 as uuidv4 } from 'uuid';
 import { ExamService } from '@/api/services/exam.service';
-import { TestQuestionService } from '@/api/services/test-question.service';
 import { FormInput } from '@/components/atoms';
 import TableCheckbox from '@/components/organisms/TableCheckbox';
 import { TestQuestionListModel } from '@/utils/models/test-question.model';
@@ -17,29 +16,14 @@ import { ExamValidation } from '@/utils/validation/exam';
 
 const resolver = classValidatorResolver(ExamValidation);
 
-
-// const languageTypes = [
-//   {
-//     id: LanguageTypeEnum.AM,
-//     type: 'Armenian',
-//   },
-//   {
-//     id: LanguageTypeEnum.RU,
-//     type: 'Russian',
-//   },
-//   {
-//     id: LanguageTypeEnum.EN,
-//     type: 'English',
-//   },
-// ];
-
 type CreateEditExamProps = {
   examTranslation?: ExamTranslation;
   subjectId: string;
   examId: string;
+  testQuestionQueryData: TestQuestionListModel;
 };
 
-const CreateEditExam: FC<CreateEditExamProps> = ({ subjectId, examId }) => {
+const CreateEditExam: FC<CreateEditExamProps> = ({ examId, testQuestionQueryData }) => {
   const t = useTranslations();
 
   const { control, handleSubmit } = useForm<ExamValidation>({
@@ -50,12 +34,6 @@ const CreateEditExam: FC<CreateEditExamProps> = ({ subjectId, examId }) => {
       testQuestionIds: [],
       language: LanguageTypeEnum.AM,
     },
-  });
-
-  const { data: testQuestionQueryData } = useQuery<TestQuestionListModel>({
-    queryKey: ['testQuestion', subjectId],
-    queryFn: () => TestQuestionService.getTestQuestionsBySubjectId(subjectId),
-    enabled: !!subjectId,
   });
 
   const { mutate } = useMutation({
