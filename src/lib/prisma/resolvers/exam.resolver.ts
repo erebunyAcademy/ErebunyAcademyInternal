@@ -98,8 +98,12 @@ export class ExamsResolver {
       });
   }
 
-  static async createExamTranslation(input: ExamValidation, examId?: string) {
-    const { title, description, testQuestionIds, language } = input;
+  static async createExamTranslation(
+    examId: string,
+    language: LanguageTypeEnum,
+    input: ExamValidation,
+  ) {
+    const { title, description, testQuestionIds } = input;
 
     if (!examId) {
       throw new ConflictException('No exam id provided');

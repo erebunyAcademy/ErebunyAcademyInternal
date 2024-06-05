@@ -39,7 +39,6 @@ const CreateEditExam: FC<CreateEditExamProps> = ({
       title: examTranslation?.title || '',
       description: examTranslation?.description || '',
       testQuestionIds: (examTranslation?.testQuestions || []).map(({ id }) => id) || [],
-      language,
     },
   });
 
@@ -50,13 +49,12 @@ const CreateEditExam: FC<CreateEditExamProps> = ({
         title: examTranslation.title,
         description: examTranslation.description || '',
         testQuestionIds: examTranslation.testQuestions.map(({ id }) => id) || [],
-        language,
       });
     }
   }, [examTranslation, language, reset]);
 
   const { mutate } = useMutation({
-    mutationFn: (data: ExamValidation) => ExamService.createExamTranslation(data, examId),
+    mutationFn: (data: ExamValidation) => ExamService.createExamTranslation(examId, language, data),
   });
 
   const { mutate: update } = useMutation({

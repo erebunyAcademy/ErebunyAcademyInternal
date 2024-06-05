@@ -37,8 +37,6 @@ const CreateEdit = ({
     queryKey: [searchParams.language],
   });
 
-  console.log(data);
-
   return (
     <>
       <Tabs
@@ -71,37 +69,31 @@ const CreateEdit = ({
 
         <TabPanels>
           <TabPanel>
-            {testQuestionQueryData && (
-              <CreateEditExam
-                examId={examId}
-                subjectId={subjectId}
-                testQuestionQueryData={testQuestionQueryData}
-                examTranslation={data || null}
-                language={searchParams.language}
-              />
-            )}
+            <CreateEditExam
+              examId={examId}
+              subjectId={subjectId}
+              testQuestionQueryData={testQuestionQueryData || []}
+              examTranslation={data || null}
+              language={searchParams.language}
+            />
           </TabPanel>
           <TabPanel>
-            {testQuestionQueryData && (
-              <CreateEditExam
-                examId={examId}
-                subjectId={subjectId}
-                testQuestionQueryData={testQuestionQueryData}
-                examTranslation={data || null}
-                language={searchParams.language}
-              />
-            )}
+            <CreateEditExam
+              examId={examId}
+              subjectId={subjectId}
+              testQuestionQueryData={testQuestionQueryData || []}
+              examTranslation={data || null}
+              language={searchParams.language}
+            />
           </TabPanel>
           <TabPanel>
-            {testQuestionQueryData && (
-              <CreateEditExam
-                examId={examId}
-                subjectId={subjectId}
-                testQuestionQueryData={testQuestionQueryData}
-                examTranslation={data || null}
-                language={searchParams.language}
-              />
-            )}
+            <CreateEditExam
+              examId={examId}
+              subjectId={subjectId}
+              testQuestionQueryData={testQuestionQueryData || []}
+              examTranslation={data || null}
+              language={searchParams.language}
+            />
           </TabPanel>
         </TabPanels>
       </Tabs>
