@@ -37,7 +37,7 @@ const CreateExamModal: FC<CreateExamModalProps> = ({ isOpen, onClose }) => {
     watch,
     handleSubmit,
     setValue,
-    formState: { errors },
+    formState: { errors, isValid },
   } = useForm<CreateExamValidation>({
     resolver,
     defaultValues: {
@@ -276,7 +276,7 @@ const CreateExamModal: FC<CreateExamModalProps> = ({ isOpen, onClose }) => {
           )}
         />
       </Flex>
-      <Button isLoading={isPending} onClick={handleSubmit(onSubmit)}>
+      <Button isLoading={isPending} onClick={handleSubmit(onSubmit)} isDisabled={!isValid}>
         {t('create')}
       </Button>
     </Modal>

@@ -1,6 +1,7 @@
 import { LanguageTypeEnum, TestQuestionLevelEnum, TestQuestionTypeEnum } from '@prisma/client';
 import { Type } from 'class-transformer';
 import {
+  ArrayNotEmpty,
   IsArray,
   IsBoolean,
   IsEnum,
@@ -86,7 +87,8 @@ export class CreateExamValidation {
   courseGroupId: string;
 
   @IsArray()
-  @IsNotEmpty({ message: 'studentsRequiredMessage' })
+  @ArrayNotEmpty({ message: 'studentsRequiredMessage' })
+  @IsString({ each: true })
   studentIds: string[];
 }
 
