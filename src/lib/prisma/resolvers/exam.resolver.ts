@@ -231,7 +231,17 @@ export class ExamsResolver {
       select: {
         id: true,
         examLanguages: {
-          select: { id: true, title: true, description: true, language: true },
+          select: {
+            id: true,
+            title: true,
+            description: true,
+            language: true,
+            testQuestions: {
+              select: {
+                _count: true,
+              },
+            },
+          },
         },
       },
     });

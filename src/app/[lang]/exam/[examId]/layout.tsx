@@ -25,8 +25,12 @@ export default async function RootLayout({
     ({ language }) => language === params.lang.toUpperCase(),
   );
 
-  if (!examByTranslation) {
-    return redirect(`/${exam.examLanguages[0].language}/exam/${exam.id}`);
+  if (!examByTranslation || !examByTranslation?.testQuestions?.length) {
+    const examTranslation = exam.examLanguages.find(el => !!el.testQuestions.length);
+    if (!examTranslation) {
+      return redirect('/exams-list');
+    }
+    return redirect(`/${examTranslation.language.toLowerCase()}/exam/${exam.id}`);
   }
 
   return (
