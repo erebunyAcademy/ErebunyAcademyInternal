@@ -17,7 +17,6 @@ import { AdminGuard } from '@/lib/prisma/guards/admin';
 import { ExamsResolver } from '@/lib/prisma/resolvers/exam.resolver';
 import { CreateExamValidation, OptionalExamValidation } from '@/utils/validation/exam';
 
-@AdminGuard()
 @Catch(exceptionHandler)
 class ExamsHandler {
   @Get('/list')
@@ -30,9 +29,9 @@ class ExamsHandler {
     return ExamsResolver.list(+skip, +take, search, sorting);
   }
 
-  @AdminGuard()
+  //@AdminGuard()
   @Get('/:id')
-  _getExamById(@Param('id') id: string) {
+  _getExamById(@Param('id') id?: string) {
     return ExamsResolver.getExamDataById(id);
   }
 

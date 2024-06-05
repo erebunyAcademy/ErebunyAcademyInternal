@@ -7,6 +7,8 @@ export type ExamDataListModel = Awaited<ReturnType<typeof ExamsResolver.list>>['
 
 export type ExamModel = ExamDataListModel extends (infer SingleType)[] ? SingleType : never;
 
+export type ExamDataModel = Prisma.PromiseReturnType<typeof ExamsResolver.getExamDataById>;
+
 export type ExamTranslation = Prisma.PromiseReturnType<
   typeof ExamsResolver.getExamTranslationByExamIdAndLanguage
 >;
