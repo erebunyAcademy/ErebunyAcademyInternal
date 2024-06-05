@@ -170,11 +170,13 @@ model Attachment {
 }
 
 model StudentExam {
-  id        String  @id @default(uuid())
-  exam      Exam    @relation(fields: [examId], references: [id])
-  student   Student @relation(fields: [studentId], references: [id])
-  examId    String
-  studentId String
+  id          String  @id @default(uuid())
+  exam        Exam    @relation(fields: [examId], references: [id])
+  student     Student @relation(fields: [studentId], references: [id])
+  hasOpened   Boolean @default(false)
+  examId      String
+  studentId   String
+  studentUuid String?
 
   updatedAt DateTime @updatedAt @db.Timestamp(0)
   createdAt DateTime @default(now()) @db.Timestamp(0)
@@ -195,7 +197,7 @@ model Exam {
   courseGroup   CourseGroup?      @relation(fields: [courseGroupId], references: [id])
   courseGroupId String?
   duration      Float?
-  enabled       Boolean           @default(false)
+  status        ExamStatusEnum    @default(NOT_STARTED)
 
   updatedAt DateTime @updatedAt @db.Timestamp(0)
   createdAt DateTime @default(now()) @db.Timestamp(0)
@@ -257,6 +259,12 @@ enum LanguageTypeEnum {
   AM
   RU
   EN
+}
+
+enum ExamStatusEnum {
+  NOT_STARTED
+  IN_PROGRESS
+  COMPLETED
 }
 
 enum TestQuestionLevelEnum {
