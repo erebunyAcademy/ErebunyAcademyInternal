@@ -240,11 +240,11 @@ const Profile = ({ sessionUser }: { sessionUser: User }) => {
                 name="firstName"
                 type="text"
                 formLabelName={t('firstName')}
-                placeholder={t('firstName')}
+                placeholder="firstName"
                 value={value}
                 handleInputChange={onChange}
                 isInvalid={!!errors[name]?.message}
-                formErrorMessage={t(errors[name]?.message)}
+                formErrorMessage={errors[name]?.message}
               />
             )}
           />
@@ -258,10 +258,10 @@ const Profile = ({ sessionUser }: { sessionUser: User }) => {
                 type="text"
                 formLabelName={t('lastName')}
                 value={value}
-                placeholder={t('lastName')}
+                placeholder="lastName"
                 handleInputChange={onChange}
                 isInvalid={!!errors[name]?.message}
-                formErrorMessage={t(errors[name]?.message)}
+                formErrorMessage={errors[name]?.message}
               />
             )}
           />
@@ -276,11 +276,11 @@ const Profile = ({ sessionUser }: { sessionUser: User }) => {
                 name="email"
                 type="email"
                 formLabelName={t('email')}
-                placeholder="you@gmail.com"
+                placeholder="mailPlaceholder"
                 value={value}
                 handleInputChange={onChange}
                 isInvalid={!!errors[name]?.message}
-                formErrorMessage={t(errors[name]?.message)}
+                formErrorMessage={errors[name]?.message}
               />
             )}
           />
@@ -292,7 +292,7 @@ const Profile = ({ sessionUser }: { sessionUser: User }) => {
                 name="address"
                 type="text"
                 formLabelName={t('address')}
-                placeholder="33062 komitas, 5st."
+                placeholder="addressPlaceholder"
                 value={value}
                 handleInputChange={onChange}
                 isInvalid={!!errors[name]?.message}
@@ -309,7 +309,7 @@ const Profile = ({ sessionUser }: { sessionUser: User }) => {
             render={({ field: { onChange, value } }) => (
               <SelectLabel
                 options={Country.getAllCountries() as any[]}
-                labelName={t('country')}
+                labelName="country"
                 valueLabel="name"
                 nameLabel="name"
                 onChange={onChange}
@@ -325,7 +325,7 @@ const Profile = ({ sessionUser }: { sessionUser: User }) => {
                 name="state"
                 type="text"
                 formLabelName={t('state')}
-                placeholder={t('enterYourState')}
+                placeholder="enterYourState"
                 value={value}
                 handleInputChange={onChange}
                 isInvalid={!!errors[name]?.message}
@@ -341,7 +341,7 @@ const Profile = ({ sessionUser }: { sessionUser: User }) => {
                 name="city"
                 type="text"
                 formLabelName={t('city')}
-                placeholder={t('enterYourCity')}
+                placeholder="enterYourCity"
                 value={value}
                 handleInputChange={onChange}
                 isInvalid={!!errors[name]?.message}
@@ -357,6 +357,8 @@ const Profile = ({ sessionUser }: { sessionUser: User }) => {
             fontSize="16px"
             isDisabled={!isDirty}
             isLoading={loading}
+            overflow="break-word"
+            whiteSpace="normal"
             onClick={handleSubmit(onSubmit)}>
             {t('saveChanges')}
           </Button>
@@ -378,11 +380,11 @@ const Profile = ({ sessionUser }: { sessionUser: User }) => {
                 name={name}
                 type="password"
                 formLabelName={t('currentPassword')}
-                placeholder={t('currentPassword')}
+                placeholder="currentPassword"
                 value={value}
                 handleInputChange={onChange}
-                formHelperText={t('passwordValidation')}
-                formErrorMessage={t(changePasswordErrors.currentPassword?.message)}
+                formHelperText="passwordValidation"
+                formErrorMessage={changePasswordErrors.currentPassword?.message}
               />
             )}
           />
@@ -396,11 +398,11 @@ const Profile = ({ sessionUser }: { sessionUser: User }) => {
                 name={name}
                 type="password"
                 formLabelName={t('newPassword')}
-                placeholder={t('newPassword')}
+                placeholder="newPassword"
                 value={value}
                 handleInputChange={onChange}
-                formHelperText={t('passwordValidation')}
-                formErrorMessage={t(changePasswordErrors.newPassword?.message)}
+                formHelperText="passwordValidation"
+                formErrorMessage={changePasswordErrors.newPassword?.message}
               />
             )}
           />
@@ -414,11 +416,11 @@ const Profile = ({ sessionUser }: { sessionUser: User }) => {
                 name={name}
                 type="password"
                 formLabelName={t('confirmPassword')}
-                placeholder={t('confirmPassword')}
+                placeholder="confirmPassword"
                 value={value}
                 handleInputChange={onChange}
-                formHelperText={t('passwordValidation')}
-                formErrorMessage={t(changePasswordErrors.confirmPassword?.message)}
+                formHelperText="passwordValidation"
+                formErrorMessage={changePasswordErrors.confirmPassword?.message}
               />
             )}
           />

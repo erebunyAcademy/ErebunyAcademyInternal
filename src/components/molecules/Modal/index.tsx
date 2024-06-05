@@ -39,7 +39,7 @@ const Modal: FC<PropsWithChildren<ModalProps>> = ({
       <ModalOverlay />
       <ModalContent py="20px">
         <ModalHeader>
-          {t(actionText)} {t(title)}
+          {actionText ? t(actionText) : ''} {title ? t(title) : ''}
         </ModalHeader>
         <ModalCloseButton />
         <ModalBody display="flex" gap="20px" flexDirection="column">

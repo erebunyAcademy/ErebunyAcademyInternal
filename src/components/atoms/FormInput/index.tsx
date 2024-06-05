@@ -50,7 +50,7 @@ const FormInput: FC<FormInputProps> = ({
   return (
     <FormControl isInvalid={isInvalid} id={name}>
       <FormLabel fontWeight={600} marginBottom={4} lineHeight="20px" fontSize={14} color="#222">
-        {t(formLabelName)}
+        {formLabelName}
         {isRequired && (
           <Text as="span" color="#222">
             *
@@ -62,7 +62,7 @@ const FormInput: FC<FormInputProps> = ({
           type={isPasswordType ? type : 'text'}
           value={value}
           onChange={handleInputChange}
-          placeholder={placeholder}
+          placeholder={placeholder ? t(placeholder) : ''}
           isReadOnly={isReadOnly}
           isRequired={isRequired}
           borderRadius={6}
@@ -119,11 +119,11 @@ const FormInput: FC<FormInputProps> = ({
       </InputGroup>
       {!isInvalid ? (
         <FormHelperText fontWeight={400} color="#5b5b5b" marginTop={4}>
-          {t(formHelperText)}
+          {formHelperText ? t(formHelperText) : ''}
         </FormHelperText>
       ) : (
         <FormErrorMessage color="#DF1414" fontWeight={400} marginTop={4}>
-          {t(formErrorMessage)}
+          {formErrorMessage ? t(formErrorMessage) : ''}
         </FormErrorMessage>
       )}
     </FormControl>

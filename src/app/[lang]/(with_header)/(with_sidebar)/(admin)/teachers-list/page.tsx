@@ -87,7 +87,7 @@ export default function Users() {
   return (
     <>
       <SearchTable
-        title={'teachersList'}
+        title="teachersList"
         isLoading={isLoading}
         data={data?.users || []}
         count={data?.count || 0}

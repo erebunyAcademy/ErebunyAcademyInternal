@@ -1,6 +1,6 @@
 'use client';
 import React, { useCallback, useMemo, useState } from 'react';
-import { MenuItem, useDisclosure } from '@chakra-ui/react';
+import { Button, MenuItem, useDisclosure } from '@chakra-ui/react';
 import { LanguageTypeEnum } from '@prisma/client';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { createColumnHelper, SortingState } from '@tanstack/react-table';
@@ -89,13 +89,15 @@ export default function ExamsList({ params }: { params: { lang: Locale } }) {
     columnHelper.accessor('id', {
       id: uuidv4(),
       cell: info => (
-        <Link
+        <Button
+          as={Link}
+          variant="link"
           href={languagePathHelper(
             params.lang,
             `${ROUTE_EXAMS}/create-edit/${info.getValue()}/${info.row.original.subject?.id}?language=${LanguageTypeEnum.EN}`,
           )}>
-          Edit Exam
-        </Link>
+          {t('editExam')}
+        </Button>
       ),
       header: t('edit'),
     }),
@@ -138,7 +140,7 @@ export default function ExamsList({ params }: { params: { lang: Locale } }) {
   return (
     <>
       <SearchTable
-        title={t('examList')}
+        title="examList"
         isLoading={isLoading}
         data={data?.exams || []}
         count={data?.count || 0}
@@ -165,13 +167,13 @@ export default function ExamsList({ params }: { params: { lang: Locale } }) {
         isOpen={isDeleteModalOpen}
         onClose={closeDeleteModal}
         isDeleteVariant
-        title={'faculty'}
+        title="exam"
         primaryAction={() => {
           if (selectedExam) {
             mutate(selectedExam.id);
           }
         }}
-        actionText={'delete'}>
+        actionText="delete">
         {t('deleteExamQuestion')}
       </Modal>
     </>

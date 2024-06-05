@@ -8,6 +8,10 @@ export const ERROR_MESSAGES = {
   passwordDontMatch: 'passwordDontMatch',
   invalidPassword: 'invalidPassword',
   contactCollegeRepresentative: 'contactCollegeRepresentative',
+  currentlyUsingThisPassword: 'currentlyUsingThisPassword',
+  invalidCurrentPassword: 'invalidCurrentPassword',
+  invalidConfirmationCode: 'invalidConfirmationCode',
+  invalidUserId: 'invalidUserId',
 };
 
 export const ITEMS_PER_PAGE = 20;

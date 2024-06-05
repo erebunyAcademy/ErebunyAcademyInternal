@@ -130,6 +130,8 @@
   "reject": "Reject",
   "rejectionMessage": "Rejection message",
   "createTestQuestions": "Create Test Questions",
+  "editExam": "Edit Exam",
+  "deleteExamQuestion": "Are you sure you want to delete this exam?",
 
   "firstNameMessage": "First name is required.",
   "lastNameMessage": "Last name is required.",
@@ -179,5 +181,12 @@
   "invalidData": "Invalid data",
   "invalidFileIsImported": "You have imported an invalid file",
   "success": "Success",
-  "passwordIsChanged": "Password has been successfully changed!"
+  "passwordIsChanged": "Password has been successfully changed!",
+  "currentlyUsingThisPassword": "You are currently using this password",
+  "invalidCurrentPassword": "Current password is not valid",
+  "invalidConfirmationCode": "Confirmation code is not valid",
+  "invalidUserId": "User with provided id was not found",
+
+  "mailPlaceholder": "you@example.com",
+  "addressPlaceholder": "33062 komitas, 5st."
 }

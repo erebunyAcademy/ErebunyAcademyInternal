@@ -174,9 +174,9 @@ const CreateTestQuestions = ({
                   render={({ field: { onChange, value, name } }) => (
                     <FormTextarea
                       isRequired
-                      placeholder={'question'}
+                      placeholder="question"
                       name={name}
-                      formLabelName={'question'}
+                      formLabelName="question"
                       value={value}
                       handleInputChange={onChange}
                     />
@@ -190,7 +190,7 @@ const CreateTestQuestions = ({
                       isRequired
                       name={name}
                       options={questionTypes}
-                      labelName={t('questionType')}
+                      labelName="questionType"
                       valueLabel="id"
                       nameLabel="type"
                       onChange={onChange}
@@ -211,7 +211,7 @@ const CreateTestQuestions = ({
                       isRequired
                       name={name}
                       options={skillLevels}
-                      labelName={t('skillLevel')}
+                      labelName="skillLevel"
                       valueLabel="id"
                       nameLabel="skillLevel"
                       onChange={onChange}
@@ -225,12 +225,12 @@ const CreateTestQuestions = ({
                 control={control}
                 render={({ field: { onChange, value, name } }) => (
                   <FormInput
-                    placeholder={'category'}
+                    placeholder="category"
                     name={name}
                     type="text"
                     value={value}
                     handleInputChange={onChange}
-                    formLabelName={'category'}
+                    formLabelName={t('category')}
                   />
                 )}
               />
@@ -239,12 +239,12 @@ const CreateTestQuestions = ({
                 control={control}
                 render={({ field: { onChange, value, name } }) => (
                   <FormInput
-                    placeholder={'topic'}
+                    placeholder="topic"
                     name={name}
                     type="text"
                     value={value}
                     handleInputChange={onChange}
-                    formLabelName={'topic'}
+                    formLabelName={t('topic')}
                   />
                 )}
               />
@@ -253,12 +253,12 @@ const CreateTestQuestions = ({
                 control={control}
                 render={({ field: { onChange, value, name } }) => (
                   <FormInput
-                    placeholder={'subTopic'}
+                    placeholder="subTopic"
                     name={name}
                     type="text"
                     value={value}
                     handleInputChange={onChange}
-                    formLabelName={'subTopic'}
+                    formLabelName={t('subTopic')}
                   />
                 )}
               />
