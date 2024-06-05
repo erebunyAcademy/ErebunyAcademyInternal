@@ -32,4 +32,8 @@ export class ExamService {
   static createExam(input: CreateExamValidation) {
     return $apiClient.post('/exams', input);
   }
+
+  static deleteExamById(id: string) {
+    return $apiClient.delete(`/exams/${id}`);
+  }
 }

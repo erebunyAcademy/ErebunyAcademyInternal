@@ -104,7 +104,7 @@ model Course {
   description    String?         @db.VarChar(60)
   groups         CourseGroup[]
   courseSubjects CourseSubject[]
-  faculty        Faculty?        @relation(fields: [facultyId], references: [id])
+  faculty        Faculty?        @relation(fields: [facultyId], references: [id], onDelete: Cascade)
   facultyId      String?
   students       Student[]
   exams          Exam[]
@@ -118,7 +118,7 @@ model CourseGroup {
   title       String    @db.VarChar(60)
   description String?   @db.VarChar(60)
   courseId    String?
-  course      Course?   @relation(fields: [courseId], references: [id])
+  course      Course?   @relation(fields: [courseId], references: [id], onDelete: Cascade)
   students    Student[]
   exams       Exam[]
 
@@ -205,9 +205,9 @@ model ExamTranslation {
   id            String           @id @default(uuid())
   title         String           @db.VarChar(60)
   description   String?          @db.Text
-  examId        String?
+  examId        String
   testQuestions TestQuestion[]
-  exam          Exam?            @relation(fields: [examId], references: [id], onDelete: Cascade)
+  exam          Exam             @relation(fields: [examId], references: [id], onDelete: Cascade)
   language      LanguageTypeEnum
 
   updatedAt DateTime @updatedAt @db.Timestamp(0)
@@ -240,7 +240,7 @@ model Option {
   id             String       @id @default(uuid())
   title          String       @db.Text
   isRightAnswer  Boolean      @default(false)
-  testquestion   TestQuestion @relation(fields: [testQuestionId], references: [id])
+  testquestion   TestQuestion @relation(fields: [testQuestionId], references: [id], onDelete: Cascade)
   testQuestionId String
 
   createdAt DateTime @default(now()) @db.Timestamp(0)

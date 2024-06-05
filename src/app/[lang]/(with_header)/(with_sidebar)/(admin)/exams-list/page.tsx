@@ -1,15 +1,17 @@
 'use client';
 import React, { useCallback, useMemo, useState } from 'react';
-import { useDisclosure } from '@chakra-ui/react';
+import { MenuItem, useDisclosure } from '@chakra-ui/react';
 import { LanguageTypeEnum } from '@prisma/client';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { createColumnHelper, SortingState } from '@tanstack/react-table';
 import dayjs from 'dayjs';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { v4 as uuidv4 } from 'uuid';
 import { ExamService } from '@/api/services/exam.service';
+import ActionButtons from '@/components/molecules/ActionButtons';
 import CreateExamModal from '@/components/molecules/CreateExamModal';
+import Modal from '@/components/molecules/Modal';
 import SearchTable from '@/components/organisms/SearchTable';
 import useDebounce from '@/hooks/useDebounce';
 import { Locale } from '@/i18n';
@@ -17,6 +19,7 @@ import { ITEMS_PER_PAGE } from '@/utils/constants/common';
 import { ROUTE_EXAMS } from '@/utils/constants/routes';
 import { languagePathHelper } from '@/utils/helpers/language';
 import { QUERY_KEY } from '@/utils/helpers/queryClient';
+import { Maybe } from '@/utils/models/common';
 import { ExamModel } from '@/utils/models/exam';
 
 export default function ExamsList({ params }: { params: { lang: Locale } }) {
@@ -24,7 +27,16 @@ export default function ExamsList({ params }: { params: { lang: Locale } }) {
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const debouncedSearch = useDebounce(search);
+  const [selectedExam, setSelectedExam] = useState<Maybe<ExamModel>>(null);
   const t = useTranslations();
+
+  const {
+    isOpen: isDeleteModalOpen,
+    onOpen: openDeleteModal,
+    onClose: closeDeleteModal,
+  } = useDisclosure({
+    onClose() {},
+  });
 
   const {
     isOpen: isCreateExamModalIsOpen,
@@ -32,7 +44,7 @@ export default function ExamsList({ params }: { params: { lang: Locale } }) {
     onClose: closeCreateExamModal,
   } = useDisclosure();
 
-  const { data, isLoading, isPlaceholderData } = useQuery({
+  const { data, isLoading, isPlaceholderData, refetch } = useQuery({
     queryKey: QUERY_KEY.allExams(debouncedSearch, page),
     queryFn: () =>
       ExamService.list({
@@ -59,7 +71,13 @@ export default function ExamsList({ params }: { params: { lang: Locale } }) {
     [page],
   );
 
-  // `${ROUTE_EXAMS}/create-edit/${res.id}/${variables.subjectId}?language=${LanguageTypeEnum.EN}`
+  const { mutate } = useMutation({
+    mutationFn: ExamService.deleteExamById,
+    onSuccess() {
+      closeDeleteModal();
+      refetch();
+    },
+  });
 
   const columnHelper = createColumnHelper<ExamModel>();
   const columns = [
@@ -99,6 +117,22 @@ export default function ExamsList({ params }: { params: { lang: Locale } }) {
       },
       header: t('createdAt'),
     }),
+    columnHelper.accessor('id', {
+      id: uuidv4(),
+      cell: ({ row }) => (
+        <ActionButtons>
+          <MenuItem
+            color="red"
+            onClick={() => {
+              setSelectedExam(row.original);
+              openDeleteModal();
+            }}>
+            {t('delete')}
+          </MenuItem>
+        </ActionButtons>
+      ),
+      header: t('actions'),
+    }),
   ];
 
   return (
@@ -127,6 +161,19 @@ export default function ExamsList({ params }: { params: { lang: Locale } }) {
         addNew={openCreateExamModal}
       />
       <CreateExamModal isOpen={isCreateExamModalIsOpen} onClose={closeCreateExamModal} />
+      <Modal
+        isOpen={isDeleteModalOpen}
+        onClose={closeDeleteModal}
+        isDeleteVariant
+        title={'faculty'}
+        primaryAction={() => {
+          if (selectedExam) {
+            mutate(selectedExam.id);
+          }
+        }}
+        actionText={'delete'}>
+        {t('deleteExamQuestion')}
+      </Modal>
     </>
   );
 }

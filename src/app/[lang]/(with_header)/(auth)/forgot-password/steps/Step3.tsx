@@ -56,11 +56,11 @@ const Step3 = ({ lang }: { lang: Locale }) => {
             isRequired
             name="newPassword"
             type="password"
-            formLabelName={t('newPassword')}
+            formLabelName={'newPassword'}
             value={value}
             handleInputChange={onChange}
             isInvalid={!!errors.newPassword?.message}
-            formErrorMessage={t(errors.newPassword?.message)}
+            formErrorMessage={errors.newPassword?.message}
           />
         )}
       />
@@ -72,11 +72,11 @@ const Step3 = ({ lang }: { lang: Locale }) => {
             isRequired
             name="confirmPassword"
             type="password"
-            formLabelName={t('confirmPassword')}
+            formLabelName={'confirmPassword'}
             value={value}
             handleInputChange={onChange}
             isInvalid={!!errors.confirmPassword?.message}
-            formErrorMessage={t(errors.confirmPassword?.message)}
+            formErrorMessage={errors.confirmPassword?.message}
           />
         )}
       />

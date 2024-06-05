@@ -78,6 +78,26 @@ export class ExamsResolver {
     return createdExam;
   }
 
+  static async deleteExamById(id: string) {
+    return prisma.exam
+      .findUnique({
+        where: {
+          id,
+        },
+      })
+      .then(exam => {
+        if (!exam) {
+          throw new NotFoundException('Exam with this id does not exist');
+        }
+
+        return prisma.exam.delete({
+          where: {
+            id,
+          },
+        });
+      });
+  }
+
   static async createExamTranslation(input: ExamValidation, examId?: string) {
     const { title, description, testQuestionIds, language } = input;
 
@@ -128,6 +148,9 @@ export class ExamsResolver {
         title: true,
         description: true,
         testQuestions: {
+          where: {
+            language,
+          },
           select: {
             id: true,
           },

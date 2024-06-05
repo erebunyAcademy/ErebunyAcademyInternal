@@ -45,33 +45,52 @@ function TableCheckbox<T extends { id: string }>({
   data,
   columns,
   onChange,
+  selectedValues,
 }: DataTableProps<T>) {
   const [selectedRows, setSelectedRows] = useState<Record<string, boolean>>({});
   const t = useTranslations();
 
-  const { getHeaderGroups, getRowModel } = useReactTable({
+  const table = useReactTable({
     columns,
     data,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
   });
 
+  const { getHeaderGroups, getRowModel } = table;
+
   useEffect(() => {
+    const selectedVals = selectedValues.reduce(
+      (acc, rowId) => {
+        acc[rowId] = true;
+        return acc;
+      },
+      {} as Record<string, boolean>,
+    );
+
+    setSelectedRows(selectedVals);
+  }, [selectedValues]);
+
+  const updateSelectedRowIds = (newSelectedRows: Record<string, boolean>) => {
     const selectedRowIds = getRowModel()
-      .rows.filter(row => selectedRows[row.id])
+      .rows.filter(row => newSelectedRows[row.original.id])
       .map(row => row.original.id);
     onChange(selectedRowIds);
-  }, [selectedRows, getRowModel, onChange]);
+  };
 
   const toggleRowSelected = (rowId: string) => {
-    setSelectedRows(prev => ({
-      ...prev,
-      [rowId]: !prev[rowId],
-    }));
+    setSelectedRows(prev => {
+      const newSelectedRows = {
+        ...prev,
+        [rowId]: !prev[rowId],
+      };
+      updateSelectedRowIds(newSelectedRows);
+      return newSelectedRows;
+    });
   };
 
   const toggleSelectAll = (isChecked: boolean) => {
-    const allRowIds = getRowModel().rows.map(row => row.id);
+    const allRowIds = getRowModel().rows.map(row => row.original.id);
     const newSelectedRows = allRowIds.reduce(
       (acc, rowId) => {
         acc[rowId] = isChecked;
@@ -80,13 +99,14 @@ function TableCheckbox<T extends { id: string }>({
       {} as Record<string, boolean>,
     );
     setSelectedRows(newSelectedRows);
+    updateSelectedRowIds(newSelectedRows);
   };
 
-  const isAllSelected = getRowModel().rows.every(row => selectedRows[row.id]);
+  const isAllSelected = getRowModel().rows.every(row => selectedRows[row.original.id]);
 
   return (
     <Box width="100%" mt={{ base: '25px', md: '50px' }} mb={{ base: '25px', md: '20px' }}>
-      <Flex justifyContent="space-between" p="20px 0 20px 0" width="100%">
+      <Flex justifyContent="space-between" p="20px 0" width="100%">
         <Text as="h2" fontSize={24} textAlign="center">
           {t(title)}
           {isRequired && (
@@ -96,7 +116,7 @@ function TableCheckbox<T extends { id: string }>({
           )}
         </Text>
         {isInvalid && (
-          <FormErrorMessage color="#DF1414" fontWeight={400} marginTop={4}>
+          <FormErrorMessage color="#DF1414" fontWeight={400} mt={4}>
             {t(formErrorMessage)}
           </FormErrorMessage>
         )}
@@ -107,9 +127,7 @@ function TableCheckbox<T extends { id: string }>({
           borderTop="1px solid rgb(226, 232, 240)"
           maxHeight="800px"
           overflow="auto"
-          height="100%"
-          minWidth="100%"
-          width="max-content">
+          width="100%">
           <Thead>
             {getHeaderGroups().map(headerGroup => (
               <Tr key={headerGroup.id}>
@@ -144,36 +162,33 @@ function TableCheckbox<T extends { id: string }>({
           </Thead>
           <Tbody>
             {getRowModel().rows.length > 0 ? (
-              getRowModel().rows.map(row => {
-                console.log({ row });
-                return (
-                  <Tr
-                    key={row.id}
-                    maxHeight="200px"
-                    {...(rowCondition
-                      ? {
-                          backgroundColor: (row.original as any)[rowCondition]
-                            ? 'red.100'
-                            : 'green.100',
-                        }
-                      : {})}>
-                    <Td>
-                      <Checkbox
-                        isChecked={selectedRows[row.id] || false}
-                        onChange={() => toggleRowSelected(row.id)}
-                      />
-                    </Td>
-                    {row.getVisibleCells().map(cell => {
-                      const meta: any = cell.column.columnDef.meta;
-                      return (
-                        <Td key={cell.id} isNumeric={meta?.isNumeric}>
-                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                        </Td>
-                      );
-                    })}
-                  </Tr>
-                );
-              })
+              getRowModel().rows.map(row => (
+                <Tr
+                  key={row.original.id}
+                  maxHeight="200px"
+                  {...(rowCondition
+                    ? {
+                        backgroundColor: (row.original as any)[rowCondition]
+                          ? 'red.100'
+                          : 'green.100',
+                      }
+                    : {})}>
+                  <Td>
+                    <Checkbox
+                      isChecked={selectedRows[row.original.id] || false}
+                      onChange={() => toggleRowSelected(row.original.id)}
+                    />
+                  </Td>
+                  {row.getVisibleCells().map(cell => {
+                    const meta: any = cell.column.columnDef.meta;
+                    return (
+                      <Td key={cell.id} isNumeric={meta?.isNumeric}>
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      </Td>
+                    );
+                  })}
+                </Tr>
+              ))
             ) : (
               <Tr height="150px" width="100%">
                 <Td colSpan={columns.length + 1} border="none" height="100%" width="100%">

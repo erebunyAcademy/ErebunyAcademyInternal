@@ -78,11 +78,11 @@ const SignIn = ({ params }: { params: { lang: Locale } }) => {
               isRequired
               name={name}
               type="email"
-              formLabelName={t('email')}
+              formLabelName={'email'}
               value={value}
               handleInputChange={onChange}
               isInvalid={!!errors.email?.message}
-              formErrorMessage={t(errors.email?.message)}
+              formErrorMessage={errors.email?.message}
             />
           )}
         />
@@ -95,13 +95,13 @@ const SignIn = ({ params }: { params: { lang: Locale } }) => {
               <FormInput
                 isRequired
                 name={name}
-                formLabelName={t('password')}
+                formLabelName={'password'}
                 value={value}
                 handleInputChange={onChange}
                 type="password"
-                formHelperText={t('passwordValidation')}
+                formHelperText={'passwordValidation'}
                 isInvalid={!!errors.password?.message}
-                formErrorMessage={t(errors.password?.message)}
+                formErrorMessage={errors.password?.message}
               />
             );
           }}

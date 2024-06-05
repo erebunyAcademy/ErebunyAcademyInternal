@@ -3,6 +3,7 @@ import {
   Body,
   Catch,
   createHandler,
+  Delete,
   Get,
   Param,
   Patch,
@@ -46,6 +47,12 @@ class ExamsHandler {
     @Param('language') language: LanguageTypeEnum,
   ) {
     return ExamsResolver.getExamTranslationByExamIdAndLanguage(examId, language);
+  }
+
+  @AdminGuard()
+  @Delete('/:examId')
+  _deleteExamById(@Param('examId') examId: string) {
+    return ExamsResolver.deleteExamById(examId);
   }
 
   @AdminGuard()
