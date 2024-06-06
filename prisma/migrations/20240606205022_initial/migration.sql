@@ -5,6 +5,9 @@ CREATE TYPE "UserRoleEnum" AS ENUM ('STUDENT', 'TEACHER', 'ADMIN');
 CREATE TYPE "LanguageTypeEnum" AS ENUM ('AM', 'RU', 'EN');
 
 -- CreateEnum
+CREATE TYPE "ExamStatusEnum" AS ENUM ('NOT_STARTED', 'IN_PROGRESS', 'COMPLETED');
+
+-- CreateEnum
 CREATE TYPE "TestQuestionLevelEnum" AS ENUM ('EASY', 'MEDIUM', 'HARD');
 
 -- CreateEnum
@@ -168,12 +171,23 @@ CREATE TABLE "Attachment" (
 -- CreateTable
 CREATE TABLE "StudentExam" (
     "id" TEXT NOT NULL,
+    "hasOpened" BOOLEAN NOT NULL DEFAULT false,
     "examId" TEXT NOT NULL,
     "studentId" TEXT NOT NULL,
+    "studentUuid" TEXT,
     "updatedAt" TIMESTAMP(0) NOT NULL,
     "createdAt" TIMESTAMP(0) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "StudentExam_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "StudentAnswerOption" (
+    "id" TEXT NOT NULL,
+    "studentExamId" TEXT NOT NULL,
+    "optionId" TEXT,
+
+    CONSTRAINT "StudentAnswerOption_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -184,7 +198,7 @@ CREATE TABLE "Exam" (
     "courseId" TEXT,
     "courseGroupId" TEXT,
     "duration" DOUBLE PRECISION,
-    "enabled" BOOLEAN NOT NULL DEFAULT false,
+    "status" "ExamStatusEnum" NOT NULL DEFAULT 'NOT_STARTED',
     "updatedAt" TIMESTAMP(0) NOT NULL,
     "createdAt" TIMESTAMP(0) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
@@ -217,6 +231,7 @@ CREATE TABLE "TestQuestion" (
     "category" TEXT,
     "topic" TEXT,
     "subTopic" TEXT,
+    "order" SERIAL NOT NULL,
     "createdAt" TIMESTAMP(0) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(0) NOT NULL,
 
@@ -264,6 +279,9 @@ CREATE UNIQUE INDEX "SubjectTeacher_teacherId_subjectId_key" ON "SubjectTeacher"
 
 -- CreateIndex
 CREATE UNIQUE INDEX "StudentExam_examId_studentId_key" ON "StudentExam"("examId", "studentId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "StudentAnswerOption_optionId_studentExamId_key" ON "StudentAnswerOption"("optionId", "studentExamId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "ExamTranslation_examId_language_key" ON "ExamTranslation"("examId", "language");
@@ -315,6 +333,12 @@ ALTER TABLE "StudentExam" ADD CONSTRAINT "StudentExam_examId_fkey" FOREIGN KEY (
 
 -- AddForeignKey
 ALTER TABLE "StudentExam" ADD CONSTRAINT "StudentExam_studentId_fkey" FOREIGN KEY ("studentId") REFERENCES "Student"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "StudentAnswerOption" ADD CONSTRAINT "StudentAnswerOption_studentExamId_fkey" FOREIGN KEY ("studentExamId") REFERENCES "StudentExam"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "StudentAnswerOption" ADD CONSTRAINT "StudentAnswerOption_optionId_fkey" FOREIGN KEY ("optionId") REFERENCES "Option"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Exam" ADD CONSTRAINT "Exam_subjectId_fkey" FOREIGN KEY ("subjectId") REFERENCES "Subject"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

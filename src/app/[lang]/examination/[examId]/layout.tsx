@@ -4,7 +4,7 @@ import { redirect } from 'next/navigation';
 import { Locale } from '@/i18n';
 import { ExamsResolver } from '@/lib/prisma/resolvers/exam.resolver';
 import { serverSession } from '@/pages/api/auth/[...nextauth]';
-import { ROUTE_DASHBOARD, ROUTE_EXAMINATION, ROUTE_SIGN_IN } from '@/utils/constants/routes';
+import { ROUTE_DASHBOARD, ROUTE_SIGN_IN, ROUTE_STUDENT_EXAM_LIST } from '@/utils/constants/routes';
 import { languagePathHelper } from '@/utils/helpers/language';
 
 export default async function ExamLyout({
@@ -30,10 +30,8 @@ export default async function ExamLyout({
   );
 
   if (!exam) {
-    redirect(languagePathHelper(params.lang, ROUTE_EXAMINATION));
+    redirect(languagePathHelper(params.lang, ROUTE_STUDENT_EXAM_LIST));
   }
-
-  console.log({ exam });
 
   return children;
 }

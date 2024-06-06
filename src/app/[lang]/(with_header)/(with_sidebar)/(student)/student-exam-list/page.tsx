@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { StudentService } from '@/api/services/student.service';
 
 const StudentExamList = () => {
-  // const data = await StudentService.getStudentExams();
   const { data } = useQuery({ queryFn: StudentService.getStudentExams, queryKey: ['exams'] });
 
   return (data || []).map(({ exam }) => (

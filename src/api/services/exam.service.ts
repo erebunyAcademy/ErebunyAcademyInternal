@@ -24,6 +24,11 @@ export class ExamService {
     return $apiClient.post(`/exams/translation/${examId}/${language}`, input);
   }
 
+  // /translation/:translationId/test/:testQuestionId
+  static getExamTestQuestion(examTranslationId: string, testQuestionId: string) {
+    return $apiClient.get(`/exams/translation/${examTranslationId}`, { params: testQuestionId });
+  }
+
   static async updateExamTranslation(
     examId: string,
     language: LanguageTypeEnum,

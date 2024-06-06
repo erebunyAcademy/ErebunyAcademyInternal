@@ -1,6 +1,7 @@
-import { Exam, ExamStatusEnum, LanguageTypeEnum } from '@prisma/client';
+import { Exam, ExamStatusEnum, LanguageTypeEnum, TestQuestion } from '@prisma/client';
 import { ConflictException, NotFoundException } from 'next-api-decorators';
 import { SortingType } from '@/api/types/common';
+import { Maybe } from '@/utils/models/common';
 import {
   CreateExamValidation,
   ExamValidation,
@@ -280,5 +281,74 @@ export class ExamsResolver {
     });
 
     return exam;
+  }
+
+  static async getTestQuestion(examTranslationId: string, testQuestionId?: string) {
+    try {
+      let testQuestion: Maybe<TestQuestion>;
+      let previousQuestionId: string | null = null;
+      let nextQuestionId: string | null = null;
+
+      if (!testQuestionId) {
+        testQuestion = await prisma.testQuestion.findFirst({
+          where: {
+            examTranslationId,
+          },
+        });
+      } else {
+        testQuestion = await prisma.testQuestion.findUnique({
+          where: {
+            id: testQuestionId,
+          },
+        });
+      }
+
+      console.log({ testQuestion });
+      if (testQuestion) {
+        const { order } = testQuestion;
+
+        // Get previous question ID
+        const previousQuestion = await prisma.testQuestion.findFirst({
+          where: {
+            examTranslationId,
+            order: { lt: order },
+          },
+          orderBy: {
+            order: 'desc',
+          },
+          select: {
+            id: true,
+          },
+        });
+
+        if (previousQuestion) {
+          previousQuestionId = previousQuestion.id;
+        }
+
+        console.log({ previousQuestion });
+
+        // Get next question ID
+        const nextQuestion = await prisma.testQuestion.findFirst({
+          where: {
+            examTranslationId,
+            order: { gt: order },
+          },
+          orderBy: {
+            order: 'asc',
+          },
+          select: {
+            id: true,
+          },
+        });
+
+        if (nextQuestion) {
+          nextQuestionId = nextQuestion.id;
+        }
+      }
+
+      return { testQuestion, previousQuestionId, nextQuestionId };
+    } catch (error) {
+      console.log(error);
+    }
   }
 }

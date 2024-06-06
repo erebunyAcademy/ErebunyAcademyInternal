@@ -14,6 +14,7 @@ import {
 import { SortingType } from '@/api/types/common';
 import { exceptionHandler } from '@/lib/prisma/error';
 import { AdminGuard } from '@/lib/prisma/guards/admin';
+import { StudentGuard } from '@/lib/prisma/guards/student';
 import { ExamsResolver } from '@/lib/prisma/resolvers/exam.resolver';
 import { CreateExamValidation, OptionalExamValidation } from '@/utils/validation/exam';
 
@@ -68,6 +69,15 @@ class ExamsHandler {
     @Body(ValidationPipe) input: OptionalExamValidation,
   ) {
     return ExamsResolver.createExamTranslation(examId, language, input);
+  }
+
+  @StudentGuard()
+  @Get('/translation/:translationId')
+  getTestQuestion(
+    @Param('translationId') translationId: string,
+    @Query('testQuestionId') testQuestionId?: string,
+  ) {
+    return ExamsResolver.getTestQuestion(translationId, testQuestionId);
   }
 
   @Post()

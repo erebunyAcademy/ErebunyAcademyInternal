@@ -170,18 +170,29 @@ model Attachment {
 }
 
 model StudentExam {
-  id          String  @id @default(uuid())
-  exam        Exam    @relation(fields: [examId], references: [id])
-  student     Student @relation(fields: [studentId], references: [id])
-  hasOpened   Boolean @default(false)
-  examId      String
-  studentId   String
-  studentUuid String?
+  id             String                @id @default(uuid())
+  exam           Exam                  @relation(fields: [examId], references: [id])
+  student        Student               @relation(fields: [studentId], references: [id])
+  hasOpened      Boolean               @default(false)
+  examId         String
+  studentId      String
+  studentUuid    String?
+  studentOptions StudentAnswerOption[]
 
   updatedAt DateTime @updatedAt @db.Timestamp(0)
   createdAt DateTime @default(now()) @db.Timestamp(0)
 
   @@unique([examId, studentId], name: "studentExamId")
+}
+
+model StudentAnswerOption {
+  id            String      @id @default(uuid())
+  studentExam   StudentExam @relation(fields: [studentExamId], references: [id])
+  studentExamId String
+  options       Option?     @relation(fields: [optionId], references: [id])
+  optionId      String?
+
+  @@unique([optionId, studentExamId], name: "studentExamOptionId")
 }
 
 model Exam {
@@ -233,17 +244,19 @@ model TestQuestion {
   category          String?
   topic             String?
   subTopic          String?
+  orderNumber       Int                   @unique @default(autoincrement())
 
   createdAt DateTime @default(now()) @db.Timestamp(0)
   updatedAt DateTime @updatedAt @db.Timestamp(0)
 }
 
 model Option {
-  id             String       @id @default(uuid())
-  title          String       @db.Text
-  isRightAnswer  Boolean      @default(false)
-  testquestion   TestQuestion @relation(fields: [testQuestionId], references: [id], onDelete: Cascade)
+  id             String                @id @default(uuid())
+  title          String                @db.Text
+  isRightAnswer  Boolean               @default(false)
+  studentOption  StudentAnswerOption[]
   testQuestionId String
+  testquestion   TestQuestion          @relation(fields: [testQuestionId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now()) @db.Timestamp(0)
   updatedAt DateTime @updatedAt @db.Timestamp(0)
