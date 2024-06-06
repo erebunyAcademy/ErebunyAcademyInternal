@@ -9,8 +9,6 @@ import { languagePathHelper } from '@/utils/helpers/language';
 const Examination = async ({ params }: { params: { examId: string; lang: Locale } }) => {
   const examTranslation = await ExamsResolver.getExamTranslationByExamId(params.examId);
 
-  console.log(examTranslation?.examLanguages);
-
   if (!examTranslation?.examLanguages) {
     redirect(languagePathHelper(params.lang, ROUTE_STUDENT_EXAM_LIST));
   }

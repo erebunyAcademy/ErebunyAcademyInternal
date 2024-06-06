@@ -1,7 +1,6 @@
-import { Exam, ExamStatusEnum, LanguageTypeEnum, TestQuestion } from '@prisma/client';
+import { Exam, ExamStatusEnum, LanguageTypeEnum } from '@prisma/client';
 import { ConflictException, NotFoundException } from 'next-api-decorators';
 import { SortingType } from '@/api/types/common';
-import { Maybe } from '@/utils/models/common';
 import {
   CreateExamValidation,
   ExamValidation,
@@ -284,71 +283,90 @@ export class ExamsResolver {
   }
 
   static async getTestQuestion(examTranslationId: string, testQuestionId?: string) {
-    try {
-      let testQuestion: Maybe<TestQuestion>;
-      let previousQuestionId: string | null = null;
-      let nextQuestionId: string | null = null;
+    let testQuestion;
+    let previousQuestionId: string | null = null;
+    let nextQuestionId: string | null = null;
 
-      if (!testQuestionId) {
-        testQuestion = await prisma.testQuestion.findFirst({
-          where: {
-            examTranslationId,
+    if (!testQuestionId) {
+      testQuestion = await prisma.testQuestion.findFirst({
+        where: {
+          examTranslationId,
+        },
+        select: {
+          id: true,
+          title: true,
+          description: true,
+          type: true,
+          orderNumber: true,
+          options: {
+            select: {
+              id: true,
+              title: true,
+            },
           },
-        });
-      } else {
-        testQuestion = await prisma.testQuestion.findUnique({
-          where: {
-            id: testQuestionId,
+        },
+      });
+    } else {
+      testQuestion = await prisma.testQuestion.findUnique({
+        where: {
+          id: testQuestionId,
+        },
+        select: {
+          id: true,
+          title: true,
+          description: true,
+          type: true,
+          orderNumber: true,
+          options: {
+            select: {
+              id: true,
+              title: true,
+            },
           },
-        });
-      }
-
-      console.log({ testQuestion });
-      if (testQuestion) {
-        const { order } = testQuestion;
-
-        // Get previous question ID
-        const previousQuestion = await prisma.testQuestion.findFirst({
-          where: {
-            examTranslationId,
-            order: { lt: order },
-          },
-          orderBy: {
-            order: 'desc',
-          },
-          select: {
-            id: true,
-          },
-        });
-
-        if (previousQuestion) {
-          previousQuestionId = previousQuestion.id;
-        }
-
-        console.log({ previousQuestion });
-
-        // Get next question ID
-        const nextQuestion = await prisma.testQuestion.findFirst({
-          where: {
-            examTranslationId,
-            order: { gt: order },
-          },
-          orderBy: {
-            order: 'asc',
-          },
-          select: {
-            id: true,
-          },
-        });
-
-        if (nextQuestion) {
-          nextQuestionId = nextQuestion.id;
-        }
-      }
-
-      return { testQuestion, previousQuestionId, nextQuestionId };
-    } catch (error) {
-      console.log(error);
+        },
+      });
     }
+
+    if (testQuestion) {
+      const { orderNumber } = testQuestion;
+
+      // Get previous question ID
+      const previousQuestion = await prisma.testQuestion.findFirst({
+        where: {
+          examTranslationId,
+          orderNumber: { lt: orderNumber },
+        },
+        orderBy: {
+          orderNumber: 'desc',
+        },
+        select: {
+          id: true,
+        },
+      });
+
+      if (previousQuestion) {
+        previousQuestionId = previousQuestion.id;
+      }
+
+      // Get next question ID
+      const nextQuestion = await prisma.testQuestion.findFirst({
+        where: {
+          examTranslationId,
+          orderNumber: { gt: orderNumber },
+        },
+        orderBy: {
+          orderNumber: 'asc',
+        },
+        select: {
+          id: true,
+        },
+      });
+
+      if (nextQuestion) {
+        nextQuestionId = nextQuestion.id;
+      }
+    }
+
+    return { testQuestion, previousQuestionId, nextQuestionId };
   }
 }

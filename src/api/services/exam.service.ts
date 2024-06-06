@@ -1,5 +1,5 @@
 import { LanguageTypeEnum } from '@prisma/client';
-import { ExamDataModel, ExamListModel, ExamTranslation } from '@/utils/models/exam';
+import { ExamDataModel, ExamListModel, ExamTranslation, TestQuestion } from '@/utils/models/exam';
 import { CreateExamValidation, OptionalExamValidation } from '@/utils/validation/exam';
 import $apiClient from '../axiosClient';
 import { QueryParams } from '../types/common';
@@ -26,7 +26,9 @@ export class ExamService {
 
   // /translation/:translationId/test/:testQuestionId
   static getExamTestQuestion(examTranslationId: string, testQuestionId: string) {
-    return $apiClient.get(`/exams/translation/${examTranslationId}`, { params: testQuestionId });
+    return $apiClient.get<TestQuestion>(`/exams/translation/${examTranslationId}`, {
+      params: testQuestionId,
+    });
   }
 
   static async updateExamTranslation(

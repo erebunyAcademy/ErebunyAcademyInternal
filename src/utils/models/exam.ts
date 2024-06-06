@@ -40,3 +40,5 @@ export enum EXAM_FIELD_KEY {
   topic = 'topic',
   subtopic = 'subtopic',
 }
+
+export type TestQuestion = Prisma.PromiseReturnType<typeof ExamsResolver.getTestQuestion>;
