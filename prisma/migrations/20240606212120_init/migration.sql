@@ -231,7 +231,7 @@ CREATE TABLE "TestQuestion" (
     "category" TEXT,
     "topic" TEXT,
     "subTopic" TEXT,
-    "order" SERIAL NOT NULL,
+    "orderNumber" SERIAL NOT NULL,
     "createdAt" TIMESTAMP(0) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(0) NOT NULL,
 
@@ -285,6 +285,9 @@ CREATE UNIQUE INDEX "StudentAnswerOption_optionId_studentExamId_key" ON "Student
 
 -- CreateIndex
 CREATE UNIQUE INDEX "ExamTranslation_examId_language_key" ON "ExamTranslation"("examId", "language");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "TestQuestion_orderNumber_key" ON "TestQuestion"("orderNumber");
 
 -- AddForeignKey
 ALTER TABLE "Teacher" ADD CONSTRAINT "Teacher_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
