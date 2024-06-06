@@ -258,7 +258,27 @@ export class ExamsResolver {
     });
   }
 
-  static async getExamDataById(examId: string) {
-    console.log({ examId });
+  static async getExamDataById(examId?: string) {
+    const exam = await prisma.exam.findUnique({
+      where: { id: examId },
+      select: {
+        id: true,
+        examLanguages: {
+          select: {
+            id: true,
+            title: true,
+            description: true,
+            language: true,
+            testQuestions: {
+              select: {
+                _count: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    return exam;
   }
 }
