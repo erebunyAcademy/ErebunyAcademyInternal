@@ -49,6 +49,7 @@ export class UserResolver {
         },
         student: {
           select: {
+            id: true,
             course: {
               select: {
                 title: true,

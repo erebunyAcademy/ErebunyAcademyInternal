@@ -10,3 +10,7 @@ export type StudentModel = StudentListModel extends (infer SingleType)[] ? Singl
 export type UserStudentModel = Prisma.PromiseReturnType<
   typeof StudentResolver.getStudentsByCourseGroupId
 >;
+
+export type StudentExams = Prisma.PromiseReturnType<typeof StudentResolver.getStudentExams>;
+
+export type StudentExam = StudentExams extends (infer SingleType)[] ? SingleType : never;

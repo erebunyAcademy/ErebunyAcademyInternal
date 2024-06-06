@@ -175,5 +175,6 @@
   "invalidData": "Անվավեր տվյալներ",
   "invalidFileIsImported": "Դուք ներմուծել եք անվավեր ֆայլ",
   "success": "Հաջողություն",
-  "passwordIsChanged": "Գաղտնաբառը հաջողությամբ փոխվել է!"
+  "passwordIsChanged": "Գաղտնաբառը հաջողությամբ փոխվել է!",
+  "examination": "Examination"
 }

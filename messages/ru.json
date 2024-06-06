@@ -175,5 +175,6 @@
   "invalidData": "Недействительные данные",
   "invalidFileIsImported": "Вы загрузили недействительный файл",
   "success": "Успех",
-  "passwordIsChanged": "Пароль успешно изменен!"
+  "passwordIsChanged": "Пароль успешно изменен!",
+  "examination": "Examination"
 }

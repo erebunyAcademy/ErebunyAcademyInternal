@@ -1,4 +1,4 @@
-import { Exam, LanguageTypeEnum } from '@prisma/client';
+import { Exam, ExamStatusEnum, LanguageTypeEnum } from '@prisma/client';
 import { ConflictException, NotFoundException } from 'next-api-decorators';
 import { SortingType } from '@/api/types/common';
 import {
@@ -208,6 +208,39 @@ export class ExamsResolver {
         }
         return res;
       });
+  }
+
+  static async getExamTranslationByExamId(id: string) {
+    return prisma.exam.findUnique({
+      where: {
+        id,
+      },
+      select: {
+        examLanguages: {
+          select: {
+            id: true,
+            language: true,
+          },
+        },
+      },
+    });
+  }
+
+  static async checkUserPermissionToStartExam(studentId: string, examId: string) {
+    return prisma.studentExam.findUnique({
+      where: {
+        studentExamId: {
+          studentId,
+          examId,
+        },
+        exam: {
+          status: ExamStatusEnum.IN_PROGRESS,
+        },
+      },
+      select: {
+        id: true,
+      },
+    });
   }
 
   static async getExamList() {

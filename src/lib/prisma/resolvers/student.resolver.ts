@@ -1,5 +1,6 @@
 import { AttachmentTypeEnum, UserRoleEnum } from '@prisma/client';
 import { NotFoundException } from 'next-api-decorators';
+import { User } from 'next-auth';
 import { SortingType } from '@/api/types/common';
 import { orderBy } from './utils/common';
 import prisma from '..';
@@ -81,6 +82,27 @@ export class StudentResolver {
         }
         return res;
       });
+  }
+
+  static getStudentExams(user: User) {
+    return prisma.studentExam.findMany({
+      where: {
+        studentId: user?.student?.id,
+      },
+      select: {
+        exam: {
+          select: {
+            duration: true,
+            id: true,
+            examLanguages: {
+              select: {
+                title: true,
+              },
+            },
+          },
+        },
+      },
+    });
   }
 
   static getStudentsByCourseGroupId(courseGroupId: string) {

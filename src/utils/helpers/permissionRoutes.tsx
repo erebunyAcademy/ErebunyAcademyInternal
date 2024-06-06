@@ -21,6 +21,7 @@ import {
   ROUTE_STUDENTS,
   ROUTE_SUBJECTS,
   ROUTE_TEACHERS,
+  STUDENT_EXAM_LIST,
 } from '../constants/routes';
 import { Maybe } from '../models/common';
 
@@ -60,8 +61,14 @@ export const linkItems: LinkItemsFunction = (user: Maybe<User>) => {
         { id: 8, name: 'subjects', icon: <SubjectsIcon />, href: ROUTE_SUBJECTS },
         commonLinks[2],
       ];
-    case UserRoleEnum.TEACHER:
     case UserRoleEnum.STUDENT:
+      return [
+        ...commonLinks.slice(0, 2),
+        { id: 6, name: 'examination', icon: <ExamsIcon />, href: STUDENT_EXAM_LIST },
+        commonLinks[2],
+      ];
+
+    case UserRoleEnum.TEACHER:
     default:
       return commonLinks;
   }

@@ -13,7 +13,9 @@ const handleError = (error: Error | AxiosError) => {
 
   if (axios.isAxiosError(error) && !!error.response?.data?.message) {
     if (error.response.status === 401) {
-      // signOut({ callbackUrl:  });
+      const pathname = window.location.pathname;
+      console.log({ pathname });
+      // signOut({ callbackUrl: languagePathHelper() });
     }
     return Promise.reject(error.response.data);
   } else {

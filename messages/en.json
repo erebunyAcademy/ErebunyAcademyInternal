@@ -179,5 +179,6 @@
   "invalidData": "Invalid data",
   "invalidFileIsImported": "You have imported an invalid file",
   "success": "Success",
-  "passwordIsChanged": "Password has been successfully changed!"
+  "passwordIsChanged": "Password has been successfully changed!",
+  "examination": "Examination"
 }
