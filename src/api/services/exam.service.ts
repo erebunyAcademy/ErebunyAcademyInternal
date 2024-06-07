@@ -25,7 +25,7 @@ export class ExamService {
   }
 
   // /translation/:translationId/test/:testQuestionId
-  static getExamTestQuestion(examTranslationId: string, testQuestionId: string) {
+  static getExamTestQuestion(examTranslationId: string, testQuestionId?: string) {
     return $apiClient.get<TestQuestion>(`/exams/translation/${examTranslationId}`, {
       params: testQuestionId,
     });

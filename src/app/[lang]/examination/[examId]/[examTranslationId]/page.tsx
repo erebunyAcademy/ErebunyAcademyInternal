@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+import React, { useCallback } from 'react';
 import {
   Box,
   Button,
@@ -13,25 +13,43 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
 import { ExamService } from '@/api/services/exam.service';
+import { ROUTE_EXAMINATION } from '@/utils/constants/routes';
 
 const ExamTranslation = ({
-  params: { examTranslationId },
+  params: { examTranslationId, examId },
   searchParams,
 }: {
-  params: { examTranslationId: string };
+  params: { examId: string; examTranslationId: string };
   searchParams: { questionId: string };
 }) => {
+  const router = useRouter();
+
   const { data, isSuccess } = useQuery({
     queryKey: ['question', examTranslationId, searchParams.questionId],
     queryFn: ExamService.getExamTestQuestion.bind(null, examTranslationId, searchParams.questionId),
   });
 
+  const { testQuestion, previousQuestionId, nextQuestionId } = data || {};
+
+  const onPrev = useCallback(
+    () =>
+      router.push(
+        `${ROUTE_EXAMINATION}/${examId}/${examTranslationId}?questionId=${previousQuestionId}`,
+      ),
+    [examId, examTranslationId, previousQuestionId, router],
+  );
+
+  const onNext = useCallback(() => {
+    return router.push(
+      `${ROUTE_EXAMINATION}/${examId}/${examTranslationId}?questionId=${nextQuestionId}`,
+    );
+  }, [examId, examTranslationId, nextQuestionId, router]);
+
   if (!data || !isSuccess) {
     return null;
   }
-
-  const { testQuestion, previousQuestionId, nextQuestionId } = data;
 
   return (
     <Box p={5} shadow="md" borderWidth="1px" h="100vh">
@@ -63,12 +81,10 @@ const ExamTranslation = ({
           </CheckboxGroup>
         )}
         <Stack direction="row" spacing={300} mt={20}>
-          <Button
-            colorScheme="teal"
-            onClick={() => console.log('Previous Question:', previousQuestionId)}>
+          <Button colorScheme="teal" isDisabled={!previousQuestionId} onClick={onPrev}>
             Previous
           </Button>
-          <Button colorScheme="teal" onClick={() => console.log('Next Question:', nextQuestionId)}>
+          <Button colorScheme="teal" onClick={onNext}>
             Next
           </Button>
         </Stack>

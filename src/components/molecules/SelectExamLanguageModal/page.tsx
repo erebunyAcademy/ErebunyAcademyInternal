@@ -4,6 +4,7 @@ import { Button, Flex, Stack } from '@chakra-ui/react';
 import { LanguageTypeEnum } from '@prisma/client';
 import { useRouter } from 'next/navigation';
 import { SelectLabel } from '@/components/atoms';
+import { ROUTE_EXAMINATION } from '@/utils/constants/routes';
 import Modal from '../Modal';
 
 type SelectExamLanguageModalProps = {
@@ -15,7 +16,7 @@ const SelectExamLanguageModal: FC<SelectExamLanguageModalProps> = ({ examTransla
   const [examTr, setExamTr] = useState('');
   const router = useRouter();
   const formSubmitHandler = () => {
-    router.push(`/examination/${examId}/${examTr}`);
+    router.push(`${ROUTE_EXAMINATION}/${examId}/${examTr}`);
   };
   return (
     <Modal isOpen onClose={() => {}} title={'In which language you would prefer to start exam?'}>

@@ -288,7 +288,7 @@ export class ExamsResolver {
     let nextQuestionId: string | null = null;
 
     if (!testQuestionId) {
-      testQuestion = await prisma.testQuestion.findFirst({
+      testQuestion = await prisma.testQuestion.findFirstOrThrow({
         where: {
           examTranslationId,
         },
@@ -298,31 +298,19 @@ export class ExamsResolver {
           description: true,
           type: true,
           orderNumber: true,
-          options: {
-            select: {
-              id: true,
-              title: true,
-            },
-          },
+          options: { select: { id: true, title: true } },
         },
       });
     } else {
-      testQuestion = await prisma.testQuestion.findUnique({
-        where: {
-          id: testQuestionId,
-        },
+      testQuestion = await prisma.testQuestion.findUniqueOrThrow({
+        where: { id: testQuestionId },
         select: {
           id: true,
           title: true,
           description: true,
           type: true,
           orderNumber: true,
-          options: {
-            select: {
-              id: true,
-              title: true,
-            },
-          },
+          options: { select: { id: true, title: true } },
         },
       });
     }
@@ -330,26 +318,27 @@ export class ExamsResolver {
     if (testQuestion) {
       const { orderNumber } = testQuestion;
 
-      // Get previous question ID
-      const previousQuestion = await prisma.testQuestion.findFirst({
-        where: {
-          examTranslationId,
-          orderNumber: { lt: orderNumber },
-        },
-        orderBy: {
-          orderNumber: 'desc',
-        },
-        select: {
-          id: true,
-        },
-      });
+      let previousQuestion;
+      if (testQuestionId) {
+        previousQuestion = await prisma.testQuestion.findFirstOrThrow({
+          where: {
+            examTranslationId,
+            orderNumber: { lt: orderNumber },
+          },
+          orderBy: {
+            orderNumber: 'desc',
+          },
+          select: {
+            id: true,
+          },
+        });
 
-      if (previousQuestion) {
-        previousQuestionId = previousQuestion.id;
+        if (previousQuestion) {
+          previousQuestionId = previousQuestion.id;
+        }
       }
 
-      // Get next question ID
-      const nextQuestion = await prisma.testQuestion.findFirst({
+      const nextQuestion = await prisma.testQuestion.findFirstOrThrow({
         where: {
           examTranslationId,
           orderNumber: { gt: orderNumber },
