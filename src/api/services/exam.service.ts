@@ -1,5 +1,11 @@
 import { LanguageTypeEnum } from '@prisma/client';
-import { ExamDataModel, ExamListModel, ExamTranslation, TestQuestion } from '@/utils/models/exam';
+import {
+  ExamDataModel,
+  ExamListModel,
+  ExamTranslation,
+  FirstTestQuestionModel,
+  TestQuestion,
+} from '@/utils/models/exam';
 import { CreateExamValidation, OptionalExamValidation } from '@/utils/validation/exam';
 import $apiClient from '../axiosClient';
 import { QueryParams } from '../types/common';
@@ -24,11 +30,8 @@ export class ExamService {
     return $apiClient.post(`/exams/translation/${examId}/${language}`, input);
   }
 
-  // /translation/:translationId/test/:testQuestionId
-  static getExamTestQuestion(examTranslationId: string, testQuestionId?: string) {
-    return $apiClient.get<TestQuestion>(`/exams/translation/${examTranslationId}`, {
-      params: testQuestionId,
-    });
+  static getExamTestQuestion(testQuestionId: string) {
+    return $apiClient.get<TestQuestion>(`/exams/test-question/${testQuestionId}`);
   }
 
   static async updateExamTranslation(
@@ -45,5 +48,13 @@ export class ExamService {
 
   static deleteExamById(id: string) {
     return $apiClient.delete(`/exams/${id}`);
+  }
+
+  static getFirstTestQuestionByExamTrId(examTrId: string) {
+    return $apiClient.get<FirstTestQuestionModel>(`exams/exam-translation/${examTrId}`);
+  }
+
+  static createStudentAnswer(examId: string, input: string[]) {
+    return $apiClient.post(`/exams/${examId}/exam-student-answer`, input);
   }
 }

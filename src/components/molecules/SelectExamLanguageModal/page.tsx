@@ -2,7 +2,9 @@
 import React, { FC, useState } from 'react';
 import { Button, Flex, Stack } from '@chakra-ui/react';
 import { LanguageTypeEnum } from '@prisma/client';
+import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
+import { ExamService } from '@/api/services/exam.service';
 import { SelectLabel } from '@/components/atoms';
 import { ROUTE_EXAMINATION } from '@/utils/constants/routes';
 import Modal from '../Modal';
@@ -15,9 +17,19 @@ type SelectExamLanguageModalProps = {
 const SelectExamLanguageModal: FC<SelectExamLanguageModalProps> = ({ examTranslation, examId }) => {
   const [examTr, setExamTr] = useState('');
   const router = useRouter();
+
+  const { mutate } = useMutation({
+    mutationFn: ExamService.getFirstTestQuestionByExamTrId.bind(null, examTr),
+  });
+
   const formSubmitHandler = () => {
-    router.push(`${ROUTE_EXAMINATION}/${examId}/${examTr}`);
+    mutate(undefined, {
+      onSuccess(res) {
+        router.push(`${ROUTE_EXAMINATION}/${examId}/${examTr}/${res?.id}`);
+      },
+    });
   };
+
   return (
     <Modal isOpen onClose={() => {}} title={'In which language you would prefer to start exam?'}>
       <Stack>

@@ -11,7 +11,9 @@ import {
   Query,
   ValidationPipe,
 } from 'next-api-decorators';
+import { User } from 'next-auth';
 import { SortingType } from '@/api/types/common';
+import { CurrentUser } from '@/lib/prisma/decorators/current-user.decorator';
 import { exceptionHandler } from '@/lib/prisma/error';
 import { AdminGuard } from '@/lib/prisma/guards/admin';
 import { StudentGuard } from '@/lib/prisma/guards/student';
@@ -71,18 +73,33 @@ class ExamsHandler {
     return ExamsResolver.createExamTranslation(examId, language, input);
   }
 
+  // /exams/test-question/${testQuestionId}
   @StudentGuard()
-  @Get('/translation/:translationId')
-  getTestQuestion(
-    @Param('translationId') translationId: string,
-    @Query('testQuestionId') testQuestionId?: string,
-  ) {
-    return ExamsResolver.getTestQuestion(translationId, testQuestionId);
+  @Get('/test-question/:testQuestionId')
+  getTestQuestion(@Param('testQuestionId') testQuestionId: string) {
+    console.log({ testQuestionId });
+    return ExamsResolver.getTestQuestion(testQuestionId);
   }
 
   @Post()
   _createExam(@Body(ValidationPipe) input: CreateExamValidation) {
     return ExamsResolver.createExam(input);
+  }
+
+  @StudentGuard()
+  @Get('/exam-translation/:examTrId')
+  getFirstTestQuestion(@Param('examTrId') examTrId: string) {
+    return ExamsResolver.getFirstTestQuestion(examTrId);
+  }
+
+  @StudentGuard()
+  @Post('/:examId/exam-student-answer')
+  createStudentAnswer(
+    @Param('examId') examId: string,
+    @Body(ValidationPipe) input: string[],
+    @CurrentUser() user: User,
+  ) {
+    return ExamsResolver.createStudentAnswer(input, user?.student?.id as string, examId);
   }
 }
 

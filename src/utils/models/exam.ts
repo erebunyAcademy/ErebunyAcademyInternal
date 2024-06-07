@@ -42,3 +42,11 @@ export enum EXAM_FIELD_KEY {
 }
 
 export type TestQuestion = Prisma.PromiseReturnType<typeof ExamsResolver.getTestQuestion>;
+
+export type GetExamTranslationModel = Prisma.PromiseReturnType<
+  typeof ExamsResolver.getExamTranslationByExamId
+>;
+
+export type FirstTestQuestionModel = Prisma.PromiseReturnType<
+  typeof ExamsResolver.getFirstTestQuestion
+>;

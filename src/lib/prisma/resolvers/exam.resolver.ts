@@ -1,6 +1,7 @@
 import { Exam, ExamStatusEnum, LanguageTypeEnum } from '@prisma/client';
 import { ConflictException, NotFoundException } from 'next-api-decorators';
 import { SortingType } from '@/api/types/common';
+import { Maybe } from '@/utils/models/common';
 import {
   CreateExamValidation,
   ExamValidation,
@@ -220,8 +221,31 @@ export class ExamsResolver {
           select: {
             id: true,
             language: true,
+            testQuestions: {
+              take: 1,
+              orderBy: {
+                orderNumber: 'asc',
+              },
+              select: {
+                id: true,
+              },
+            },
           },
         },
+      },
+    });
+  }
+
+  static getFirstTestQuestion(examTranslationId: string) {
+    return prisma.testQuestion.findFirst({
+      where: {
+        examTranslationId,
+      },
+      orderBy: {
+        orderNumber: 'asc',
+      },
+      select: {
+        id: true,
       },
     });
   }
@@ -282,27 +306,12 @@ export class ExamsResolver {
     return exam;
   }
 
-  static async getTestQuestion(examTranslationId: string, testQuestionId?: string) {
-    let testQuestion;
-    let previousQuestionId: string | null = null;
-    let nextQuestionId: string | null = null;
+  static async getTestQuestion(testQuestionId: string) {
+    try {
+      let previousQuestionId: Maybe<string> = null;
+      let nextQuestionId: string | null = null;
 
-    if (!testQuestionId) {
-      testQuestion = await prisma.testQuestion.findFirstOrThrow({
-        where: {
-          examTranslationId,
-        },
-        select: {
-          id: true,
-          title: true,
-          description: true,
-          type: true,
-          orderNumber: true,
-          options: { select: { id: true, title: true } },
-        },
-      });
-    } else {
-      testQuestion = await prisma.testQuestion.findUniqueOrThrow({
+      const testQuestion = await prisma.testQuestion.findUniqueOrThrow({
         where: { id: testQuestionId },
         select: {
           id: true,
@@ -310,37 +319,33 @@ export class ExamsResolver {
           description: true,
           type: true,
           orderNumber: true,
+          examTranslationId: true,
           options: { select: { id: true, title: true } },
         },
       });
-    }
 
-    if (testQuestion) {
       const { orderNumber } = testQuestion;
 
-      let previousQuestion;
-      if (testQuestionId) {
-        previousQuestion = await prisma.testQuestion.findFirstOrThrow({
-          where: {
-            examTranslationId,
-            orderNumber: { lt: orderNumber },
-          },
-          orderBy: {
-            orderNumber: 'desc',
-          },
-          select: {
-            id: true,
-          },
-        });
+      const previousQuestion = await prisma.testQuestion.findFirst({
+        where: {
+          examTranslationId: testQuestion.examTranslationId,
+          orderNumber: { lt: orderNumber },
+        },
+        orderBy: {
+          orderNumber: 'desc',
+        },
+        select: {
+          id: true,
+        },
+      });
 
-        if (previousQuestion) {
-          previousQuestionId = previousQuestion.id;
-        }
+      if (previousQuestion) {
+        previousQuestionId = previousQuestion.id;
       }
 
-      const nextQuestion = await prisma.testQuestion.findFirstOrThrow({
+      const nextQuestion = await prisma.testQuestion.findFirst({
         where: {
-          examTranslationId,
+          examTranslationId: testQuestion.examTranslationId,
           orderNumber: { gt: orderNumber },
         },
         orderBy: {
@@ -354,8 +359,32 @@ export class ExamsResolver {
       if (nextQuestion) {
         nextQuestionId = nextQuestion.id;
       }
+
+      return { testQuestion, previousQuestionId, nextQuestionId };
+    } catch (error) {
+      console.log({ error });
+    }
+  }
+
+  static async createStudentAnswer(optionsIds: string[], studentId: string, examId: string) {
+    const studentExam = await prisma.studentExam.findUnique({
+      where: {
+        studentExamId: {
+          examId,
+          studentId,
+        },
+      },
+    });
+
+    if (!studentExam) {
+      throw new NotFoundException();
     }
 
-    return { testQuestion, previousQuestionId, nextQuestionId };
+    return prisma.studentAnswerOption.createMany({
+      data: optionsIds.map(optionId => ({
+        optionId,
+        studentExamId: studentExam.id,
+      })),
+    });
   }
 }

@@ -12,23 +12,23 @@ import {
   Stack,
   Text,
 } from '@chakra-ui/react';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { ExamService } from '@/api/services/exam.service';
+import { Locale } from '@/i18n';
 import { ROUTE_EXAMINATION } from '@/utils/constants/routes';
+import { languagePathHelper } from '@/utils/helpers/language';
 
 const ExamTranslation = ({
-  params: { examTranslationId, examId },
-  searchParams,
+  params: { examTranslationId, examId, lang, testQuestionId },
 }: {
-  params: { examId: string; examTranslationId: string };
-  searchParams: { questionId: string };
+  params: { examId: string; examTranslationId: string; lang: Locale; testQuestionId: string };
 }) => {
   const router = useRouter();
 
-  const { data, isSuccess } = useQuery({
-    queryKey: ['question', examTranslationId, searchParams.questionId],
-    queryFn: ExamService.getExamTestQuestion.bind(null, examTranslationId, searchParams.questionId),
+  const { data } = useQuery({
+    queryKey: ['question', testQuestionId],
+    queryFn: ExamService.getExamTestQuestion.bind(null, testQuestionId),
   });
 
   const { testQuestion, previousQuestionId, nextQuestionId } = data || {};
@@ -36,20 +36,23 @@ const ExamTranslation = ({
   const onPrev = useCallback(
     () =>
       router.push(
-        `${ROUTE_EXAMINATION}/${examId}/${examTranslationId}?questionId=${previousQuestionId}`,
+        `${languagePathHelper(lang, ROUTE_EXAMINATION)}/${examId}/${examTranslationId}/${previousQuestionId}`,
       ),
-    [examId, examTranslationId, previousQuestionId, router],
+    [examId, examTranslationId, lang, previousQuestionId, router],
   );
 
-  const onNext = useCallback(() => {
-    return router.push(
-      `${ROUTE_EXAMINATION}/${examId}/${examTranslationId}?questionId=${nextQuestionId}`,
-    );
-  }, [examId, examTranslationId, nextQuestionId, router]);
+  const { mutate } = useMutation({
+    mutationFn: ExamService.createStudentAnswer.bind(null, examId, []),
+    onSuccess() {
+      router.push(
+        `${languagePathHelper(lang, ROUTE_EXAMINATION)}/${examId}/${examTranslationId}/${nextQuestionId}`,
+      );
+    },
+  });
 
-  if (!data || !isSuccess) {
-    return null;
-  }
+  const onNext = useCallback(() => {
+    mutate();
+  }, [mutate]);
 
   return (
     <Box p={5} shadow="md" borderWidth="1px" h="100vh">
@@ -84,7 +87,7 @@ const ExamTranslation = ({
           <Button colorScheme="teal" isDisabled={!previousQuestionId} onClick={onPrev}>
             Previous
           </Button>
-          <Button colorScheme="teal" onClick={onNext}>
+          <Button colorScheme="teal" onClick={onNext} isDisabled={!nextQuestionId}>
             Next
           </Button>
         </Stack>
