@@ -54,7 +54,7 @@ export class ExamService {
     return $apiClient.get<FirstTestQuestionModel>(`exams/exam-translation/${examTrId}`);
   }
 
-  static createStudentAnswer(examId: string, input: string[]) {
-    return $apiClient.post(`/exams/${examId}/exam-student-answer`, input);
+  static createStudentAnswer(examId: string, testId: string, input: string[]) {
+    return $apiClient.post(`/exams/${examId}/exam-student-answer/${testId}`, input);
   }
 }
