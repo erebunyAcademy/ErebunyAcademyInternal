@@ -383,7 +383,7 @@ export class ExamsResolver {
       await prisma.studentAnswerOption.deleteMany({ where: { testQuestionId: testId } });
     }
 
-    const createdOptions = await prisma.studentAnswerOption.createManyAndReturn({
+    await prisma.studentAnswerOption.createManyAndReturn({
       data: optionsIds.map(optionId => ({
         optionId,
         studentExamId: studentExam.id,
@@ -391,6 +391,6 @@ export class ExamsResolver {
       })),
     });
 
-    return createdOptions;
+    return true;
   }
 }

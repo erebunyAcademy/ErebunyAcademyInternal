@@ -49,7 +49,7 @@ const ExamTranslation: FC<Props> = ({
     defaultValues: { checkboxOptions: [], radioOption: '' },
   });
 
-  const { data, isSuccess } = useQuery({
+  const { data, isSuccess, isLoading } = useQuery({
     queryKey: ['question', testQuestionId],
     queryFn: ExamService.getExamTestQuestion.bind(null, testQuestionId),
   });
@@ -58,8 +58,8 @@ const ExamTranslation: FC<Props> = ({
 
   const { mutate } = useMutation<StudentAnswerMutationModel, { message: string }, string[]>({
     mutationFn: data => ExamService.createStudentAnswer(examId, testQuestionId, data),
-    onSuccess(data) {
-      if (nextQuestionId && !!data.length) navigate(nextQuestionId);
+    onSuccess(hasCreated) {
+      if (nextQuestionId && hasCreated) navigate(nextQuestionId);
     },
   });
 
@@ -140,7 +140,7 @@ const ExamTranslation: FC<Props> = ({
     }
   }, [answers, isSuccess, reset, testQuestion?.type]);
 
-  if (!data || !isSuccess) {
+  if (!data || !isSuccess || isLoading) {
     return null;
   }
 
