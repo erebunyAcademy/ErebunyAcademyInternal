@@ -84,11 +84,9 @@ class ExamsHandler {
     return ExamsResolver.createExamTranslation(examId, language, input);
   }
 
-  // /exams/test-question/${testQuestionId}
   @StudentGuard()
   @Get('/test-question/:testQuestionId')
   getTestQuestion(@Param('testQuestionId') testQuestionId: string) {
-    console.log({ testQuestionId });
     return ExamsResolver.getTestQuestion(testQuestionId);
   }
 
@@ -104,13 +102,14 @@ class ExamsHandler {
   }
 
   @StudentGuard()
-  @Post('/:examId/exam-student-answer')
+  @Post('/:examId/exam-student-answer/:testId')
   createStudentAnswer(
-    @Param('examId') examId: string,
     @Body(ValidationPipe) input: string[],
     @CurrentUser() user: User,
+    @Param('examId') examId?: string,
+    @Param('testId') testId?: string,
   ) {
-    return ExamsResolver.createStudentAnswer(input, user?.student?.id as string, examId);
+    return ExamsResolver.createStudentAnswer(input, user?.student?.id, examId, testId);
   }
 }
 

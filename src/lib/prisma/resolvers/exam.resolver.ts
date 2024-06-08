@@ -1,7 +1,6 @@
 import { Exam, ExamStatusEnum, LanguageTypeEnum } from '@prisma/client';
 import { ConflictException, NotFoundException } from 'next-api-decorators';
 import { SortingType } from '@/api/types/common';
-import { Maybe } from '@/utils/models/common';
 import {
   CreateExamValidation,
   ExamValidation,
@@ -309,10 +308,11 @@ export class ExamsResolver {
   }
 
   static async getTestQuestion(testQuestionId: string) {
-    try {
-      let previousQuestionId: Maybe<string> = null;
-      let nextQuestionId: string | null = null;
+    if (!testQuestionId) {
+      throw new NotFoundException('Invalid Data');
+    }
 
+    try {
       const testQuestion = await prisma.testQuestion.findUniqueOrThrow({
         where: { id: testQuestionId },
         select: {
@@ -328,66 +328,72 @@ export class ExamsResolver {
 
       const { orderNumber } = testQuestion;
 
-      const previousQuestion = await prisma.testQuestion.findFirst({
-        where: {
-          examTranslationId: testQuestion.examTranslationId,
-          orderNumber: { lt: orderNumber },
-        },
-        orderBy: {
-          orderNumber: 'desc',
-        },
-        select: {
-          id: true,
-        },
-      });
+      const [previousQuestion, nextQuestion, answers] = await Promise.all([
+        prisma.testQuestion.findFirst({
+          where: {
+            examTranslationId: testQuestion.examTranslationId,
+            orderNumber: { lt: orderNumber },
+          },
+          orderBy: { orderNumber: 'desc' },
+          select: { id: true },
+        }),
+        prisma.testQuestion.findFirst({
+          where: {
+            examTranslationId: testQuestion.examTranslationId,
+            orderNumber: { gt: orderNumber },
+          },
+          orderBy: { orderNumber: 'asc' },
+          select: { id: true },
+        }),
+        prisma.studentAnswerOption.findMany({ where: { testQuestionId } }),
+      ]);
 
-      if (previousQuestion) {
-        previousQuestionId = previousQuestion.id;
-      }
-
-      const nextQuestion = await prisma.testQuestion.findFirst({
-        where: {
-          examTranslationId: testQuestion.examTranslationId,
-          orderNumber: { gt: orderNumber },
-        },
-        orderBy: {
-          orderNumber: 'asc',
-        },
-        select: {
-          id: true,
-        },
-      });
-
-      if (nextQuestion) {
-        nextQuestionId = nextQuestion.id;
-      }
-
-      return { testQuestion, previousQuestionId, nextQuestionId };
+      return {
+        testQuestion,
+        answers,
+        previousQuestionId: previousQuestion?.id || null,
+        nextQuestionId: nextQuestion?.id || null,
+      };
     } catch (error) {
       console.log({ error });
     }
   }
 
-  static async createStudentAnswer(optionsIds: string[], studentId: string, examId: string) {
+  static async createStudentAnswer(
+    optionsIds: string[],
+    studentId?: string,
+    examId?: string,
+    testId?: string,
+  ) {
+    if (!studentId || !examId || !testId) {
+      throw new NotFoundException('Invalid Data');
+    }
+
     const studentExam = await prisma.studentExam.findUnique({
-      where: {
-        studentExamId: {
-          examId,
-          studentId,
-        },
-      },
+      where: { studentExamId: { examId, studentId } },
     });
 
     if (!studentExam) {
       throw new NotFoundException();
     }
 
-    return prisma.studentAnswerOption.createMany({
+    const existOptions = await prisma.studentAnswerOption.findMany({
+      where: { testQuestionId: testId },
+    });
+
+    if (!!existOptions.length) {
+      await prisma.studentAnswerOption.deleteMany({ where: { testQuestionId: testId } });
+    }
+
+    await prisma.studentAnswerOption.createManyAndReturn({
       data: optionsIds.map(optionId => ({
         optionId,
         studentExamId: studentExam.id,
+        testQuestionId: testId,
       })),
     });
+
+    return true;
   }
 
   static async updateExamStatus(id: string, input: UpdateExamStatusValidation) {

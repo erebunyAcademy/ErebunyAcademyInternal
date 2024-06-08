@@ -186,13 +186,15 @@ model StudentExam {
 }
 
 model StudentAnswerOption {
-  id            String      @id @default(uuid())
-  studentExam   StudentExam @relation(fields: [studentExamId], references: [id])
-  studentExamId String
-  options       Option?     @relation(fields: [optionId], references: [id])
-  optionId      String?
+  id             String       @id @default(uuid())
+  studentExam    StudentExam  @relation(fields: [studentExamId], references: [id])
+  studentExamId  String
+  options        Option?      @relation(fields: [optionId], references: [id])
+  optionId       String?
+  testQuestion   TestQuestion @relation(fields: [testQuestionId], references: [id])
+  testQuestionId String
 
-  @@unique([optionId, studentExamId], name: "studentExamOptionId")
+  @@unique([optionId, studentExamId, testQuestionId], name: "studentExamOptionId")
 }
 
 model Exam {
@@ -246,8 +248,9 @@ model TestQuestion {
   subTopic          String?
   orderNumber       Int                   @unique @default(autoincrement())
 
-  createdAt DateTime @default(now()) @db.Timestamp(0)
-  updatedAt DateTime @updatedAt @db.Timestamp(0)
+  createdAt           DateTime              @default(now()) @db.Timestamp(0)
+  updatedAt           DateTime              @updatedAt @db.Timestamp(0)
+  StudentAnswerOption StudentAnswerOption[]
 }
 
 model Option {
