@@ -70,6 +70,21 @@ const CreateEditExam: FC<CreateEditExamProps> = ({
       cell: info => info.getValue(),
       header: t('question'),
     }),
+    testQuestionCcolumnHelper.accessor('category', {
+      id: uuidv4(),
+      cell: info => info.getValue(),
+      header: t('category'),
+    }),
+    testQuestionCcolumnHelper.accessor('topic', {
+      id: uuidv4(),
+      cell: info => info.getValue(),
+      header: t('topic'),
+    }),
+    testQuestionCcolumnHelper.accessor('subTopic', {
+      id: uuidv4(),
+      cell: info => info.getValue(),
+      header: t('subTopic'),
+    }),
     testQuestionCcolumnHelper.accessor('options', {
       id: uuidv4(),
       cell: info =>
@@ -92,7 +107,9 @@ const CreateEditExam: FC<CreateEditExamProps> = ({
 
   return (
     <form onSubmit={handleSubmit(examTranslation ? submitExamUpdate : onSubmit)}>
-      <Heading textAlign="center">{t('exam')}</Heading>
+      <Heading textAlign="center" mb="10px">
+        {t('exam')}
+      </Heading>
       <Stack
         direction={{ base: 'column', md: 'column' }}
         gap={{ base: '16px', sm: '8px' }}
@@ -109,7 +126,7 @@ const CreateEditExam: FC<CreateEditExamProps> = ({
               render={({ field: { onChange, value, name } }) => (
                 <FormInput
                   isRequired
-                  placeholder={t('title')}
+                  placeholder="title"
                   name={name}
                   type="text"
                   formLabelName={t('title')}
@@ -128,7 +145,7 @@ const CreateEditExam: FC<CreateEditExamProps> = ({
                 <FormInput
                   name={name}
                   type="text"
-                  placeholder={t('description')}
+                  placeholder="description"
                   formLabelName={t('description')}
                   value={value}
                   handleInputChange={onChange}

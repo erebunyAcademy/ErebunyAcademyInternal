@@ -190,7 +190,7 @@ const Courses = () => {
   return (
     <>
       <SearchTable
-        title={'courseList'}
+        title="courseList"
         isLoading={isLoading}
         data={data?.courses || []}
         count={data?.count || 0}
@@ -216,7 +216,7 @@ const Courses = () => {
       <Modal
         isOpen={isCreateEditModalOpen}
         onClose={closeCreateEditModal}
-        title={'course'}
+        title="course"
         primaryAction={handleSubmit(onSubmitHandler)}
         isDisabled={!isValid}
         actionText={selectedCourse ? 'edit' : 'create'}>
@@ -228,9 +228,9 @@ const Courses = () => {
               isRequired
               name={name}
               type="text"
-              formLabelName={'courseTitle'}
+              formLabelName={t('courseTitle')}
               value={value}
-              placeholder={'enterTitle'}
+              placeholder="enterTitle"
               handleInputChange={onChange}
               isInvalid={!!errors.title?.message}
               formErrorMessage={errors.title?.message}
@@ -244,9 +244,9 @@ const Courses = () => {
             <FormInput
               name={name}
               type="text"
-              formLabelName={'courseDescription'}
+              formLabelName={t('courseDescription')}
               value={value}
-              placeholder={'enterDescription'}
+              placeholder="enterDescription"
               handleInputChange={onChange}
               isInvalid={!!errors.description?.message}
               formErrorMessage={errors.description?.message}
@@ -261,7 +261,7 @@ const Courses = () => {
               name={name}
               isRequired
               options={facultyQueryData || []}
-              labelName={'faculty'}
+              labelName="faculty"
               valueLabel="id"
               nameLabel="title"
               onChange={onChange}
@@ -276,13 +276,13 @@ const Courses = () => {
         isOpen={isDeleteModalOpen}
         isDeleteVariant
         onClose={closeDeleteModal}
-        title={'course'}
+        title="course"
         primaryAction={() => {
           if (selectedCourse) {
             mutate(selectedCourse?.id);
           }
         }}
-        actionText={'delete'}>
+        actionText="delete">
         {t('deleteCourseQuestion')}
       </Modal>
     </>

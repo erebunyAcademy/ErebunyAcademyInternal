@@ -175,7 +175,7 @@ const Faculty = () => {
   return (
     <>
       <SearchTable
-        title={'facultyList'}
+        title="facultyList"
         isLoading={isLoading}
         data={data?.faculties || []}
         count={data?.count || 0}
@@ -201,7 +201,7 @@ const Faculty = () => {
       <Modal
         isOpen={isCreateEditModalOpen}
         onClose={closeCreateEditModal}
-        title={'faculty'}
+        title="faculty"
         primaryAction={handleSubmit(onSubmitHandler)}
         isDisabled={!isValid}
         actionText={selectedFaculty ? 'edit' : 'create'}>
@@ -213,9 +213,9 @@ const Faculty = () => {
               isRequired
               name={name}
               type="text"
-              formLabelName={'facultyName'}
+              formLabelName={t('facultyName')}
               value={value}
-              placeholder={'enterTitle'}
+              placeholder="enterTitle"
               handleInputChange={onChange}
               isInvalid={!!errors.title?.message}
               formErrorMessage={errors.title?.message}
@@ -229,9 +229,9 @@ const Faculty = () => {
             <FormInput
               name={name}
               type="text"
-              formLabelName={'facultyDescription'}
+              formLabelName={t('facultyDescription')}
               value={value}
-              placeholder={'enterDescription'}
+              placeholder="enterDescription"
               handleInputChange={onChange}
               isInvalid={!!errors.description?.message}
               formErrorMessage={errors.description?.message}
@@ -243,13 +243,13 @@ const Faculty = () => {
         isOpen={isDeleteModalOpen}
         onClose={closeDeleteModal}
         isDeleteVariant
-        title={'faculty'}
+        title="faculty"
         primaryAction={() => {
           if (selectedFaculty) {
             mutate(selectedFaculty?.id);
           }
         }}
-        actionText={'delete'}>
+        actionText="delete">
         {t('deleteFacultyQuestion')}
       </Modal>
     </>

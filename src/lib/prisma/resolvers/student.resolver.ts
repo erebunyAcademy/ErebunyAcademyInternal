@@ -2,6 +2,7 @@ import { AttachmentTypeEnum, UserRoleEnum } from '@prisma/client';
 import { NotFoundException } from 'next-api-decorators';
 import { User } from 'next-auth';
 import { SortingType } from '@/api/types/common';
+import { UpdateStudentValidation } from '@/utils/validation/student';
 import { orderBy } from './utils/common';
 import prisma from '..';
 
@@ -42,6 +43,7 @@ export class StudentResolver {
           },
           student: {
             select: {
+              id: true,
               faculty: {
                 select: {
                   title: true,
@@ -54,6 +56,7 @@ export class StudentResolver {
               },
               courseGroup: {
                 select: {
+                  id: true,
                   title: true,
                 },
               },
@@ -128,6 +131,25 @@ export class StudentResolver {
           },
         },
       },
+    });
+  }
+
+  static async updateStudentData(data: UpdateStudentValidation, studentId: string) {
+    const student = await prisma.student.findUnique({
+      where: {
+        id: studentId,
+      },
+    });
+
+    if (!student) {
+      throw new NotFoundException('User was not found');
+    }
+
+    return prisma.student.update({
+      where: {
+        id: studentId,
+      },
+      data,
     });
   }
 }

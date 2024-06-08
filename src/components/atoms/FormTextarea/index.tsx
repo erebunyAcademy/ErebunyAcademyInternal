@@ -42,7 +42,7 @@ const FormTextarea: FC<Props> = ({
   return (
     <FormControl isInvalid={isInvalid} id={name}>
       <FormLabel fontWeight={600} marginBottom={4} lineHeight="20px" fontSize={14} color="#222">
-        {t(formLabelName)}
+        {formLabelName ? t(formLabelName) : ''}
         {isRequired && (
           <Text as="span" color="#222">
             *
@@ -52,7 +52,7 @@ const FormTextarea: FC<Props> = ({
       <Textarea
         value={value}
         onChange={handleInputChange}
-        placeholder={t(placeholder)}
+        placeholder={placeholder ? t(placeholder) : ''}
         isReadOnly={isReadOnly}
         isRequired={isRequired}
         bg="#fff"
@@ -83,11 +83,11 @@ const FormTextarea: FC<Props> = ({
       />
       {!isInvalid ? (
         <FormHelperText fontWeight={400} color="#5b5b5b" marginTop={4}>
-          {t(formHelperText)}
+          {formHelperText ? t(formHelperText) : ''}
         </FormHelperText>
       ) : (
         <FormErrorMessage color="#DF1414" fontWeight={400} marginTop={4}>
-          {t(formErrorMessage)}
+          {formErrorMessage ? t(formErrorMessage) : ''}
         </FormErrorMessage>
       )}
     </FormControl>

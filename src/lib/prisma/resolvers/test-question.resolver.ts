@@ -18,6 +18,9 @@ export class TestQuestionResolver {
         },
         title: true,
         id: true,
+        topic: true,
+        subTopic: true,
+        category: true,
       },
     });
   }

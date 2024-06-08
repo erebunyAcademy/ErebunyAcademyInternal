@@ -143,10 +143,10 @@ const StudentSignUp = ({ lang }: { lang: Locale }) => {
             render={({ field: { onChange, value } }) => (
               <FormInput
                 isRequired
-                placeholder={'firstName'}
+                placeholder="firstName"
                 name="firstName"
                 type="text"
-                formLabelName={'firstName'}
+                formLabelName={t('firstName')}
                 value={value}
                 handleInputChange={onChange}
                 isInvalid={!!errors.firstName?.message}
@@ -162,8 +162,8 @@ const StudentSignUp = ({ lang }: { lang: Locale }) => {
                 isRequired
                 name="lastName"
                 type="text"
-                placeholder={'lastName'}
-                formLabelName={'lastName'}
+                placeholder="lastName"
+                formLabelName={t('lastName')}
                 value={value}
                 handleInputChange={onChange}
                 isInvalid={!!errors.lastName?.message}
@@ -181,8 +181,8 @@ const StudentSignUp = ({ lang }: { lang: Locale }) => {
                 isRequired
                 name="email"
                 type="email"
-                placeholder={'email'}
-                formLabelName={'email'}
+                placeholder="mailPlaceholder"
+                formLabelName={t('email')}
                 value={value}
                 handleInputChange={onChange}
                 isInvalid={!!errors.email?.message}
@@ -198,7 +198,7 @@ const StudentSignUp = ({ lang }: { lang: Locale }) => {
                 isRequired
                 name={name}
                 options={data?.facultyList || []}
-                labelName={'faculty'}
+                labelName="faculty"
                 valueLabel="id"
                 nameLabel="title"
                 onChange={onChange}
@@ -219,7 +219,7 @@ const StudentSignUp = ({ lang }: { lang: Locale }) => {
                 isRequired
                 name={name}
                 options={data?.courseList || []}
-                labelName={'course'}
+                labelName="course"
                 valueLabel="id"
                 nameLabel="title"
                 onChange={onChange}
@@ -236,7 +236,7 @@ const StudentSignUp = ({ lang }: { lang: Locale }) => {
               <SelectLabel
                 name={name}
                 options={data?.courseGroupList || []}
-                labelName={'courseGroup'}
+                labelName="courseGroup"
                 valueLabel="id"
                 nameLabel="title"
                 onChange={onChange}
@@ -257,8 +257,8 @@ const StudentSignUp = ({ lang }: { lang: Locale }) => {
               <FormInput
                 isRequired
                 name="password"
-                formLabelName={'password'}
-                placeholder={'password'}
+                formLabelName={t('password')}
+                placeholder="password"
                 value={value}
                 handleInputChange={onChange}
                 type="password"
@@ -275,13 +275,13 @@ const StudentSignUp = ({ lang }: { lang: Locale }) => {
               <FormInput
                 isRequired
                 name="password"
-                formLabelName={'confirmPassword'}
-                placeholder={'confirmPassword'}
+                formLabelName={t('confirmPassword')}
+                placeholder="confirmPassword"
                 value={value}
                 handleInputChange={onChange}
                 type="password"
-                isInvalid={!!errors.password?.message}
-                formErrorMessage={errors.password?.message}
+                isInvalid={!!errors.confirmPassword?.message}
+                formErrorMessage={errors.confirmPassword?.message}
               />
             )}
           />

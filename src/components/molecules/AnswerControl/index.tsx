@@ -92,7 +92,7 @@ const AnswersControl: FC<AnswersControlProps> = ({ control, questionIndex, quest
               render={({ field: { onChange, value, name } }) => (
                 <FormInput
                   isRequired
-                  placeholder={t('answer')}
+                  placeholder="answer"
                   name={name}
                   type="text"
                   formLabelName={`${t('answer')} ${answerIndex + 1}`}

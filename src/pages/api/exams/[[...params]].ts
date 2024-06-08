@@ -18,7 +18,11 @@ import { exceptionHandler } from '@/lib/prisma/error';
 import { AdminGuard } from '@/lib/prisma/guards/admin';
 import { StudentGuard } from '@/lib/prisma/guards/student';
 import { ExamsResolver } from '@/lib/prisma/resolvers/exam.resolver';
-import { CreateExamValidation, OptionalExamValidation } from '@/utils/validation/exam';
+import {
+  CreateExamValidation,
+  OptionalExamValidation,
+  UpdateExamStatusValidation,
+} from '@/utils/validation/exam';
 
 @Catch(exceptionHandler)
 class ExamsHandler {
@@ -32,10 +36,17 @@ class ExamsHandler {
     return ExamsResolver.list(+skip, +take, search, sorting);
   }
 
-  //@AdminGuard()
+  @StudentGuard()
   @Get('/:id')
   _getExamById(@Param('id') id?: string) {
     return ExamsResolver.getExamDataById(id);
+  }
+  @Patch('/:id')
+  _updateExamById(
+    @Param('id') id: string,
+    @Body(ValidationPipe) input: UpdateExamStatusValidation,
+  ) {
+    return ExamsResolver.updateExamStatus(id, input);
   }
 
   @AdminGuard()

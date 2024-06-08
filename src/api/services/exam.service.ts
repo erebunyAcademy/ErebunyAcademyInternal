@@ -6,7 +6,11 @@ import {
   FirstTestQuestionModel,
   TestQuestion,
 } from '@/utils/models/exam';
-import { CreateExamValidation, OptionalExamValidation } from '@/utils/validation/exam';
+import {
+  CreateExamValidation,
+  OptionalExamValidation,
+  UpdateExamStatusValidation,
+} from '@/utils/validation/exam';
 import $apiClient from '../axiosClient';
 import { QueryParams } from '../types/common';
 
@@ -56,5 +60,8 @@ export class ExamService {
 
   static createStudentAnswer(examId: string, input: string[]) {
     return $apiClient.post(`/exams/${examId}/exam-student-answer`, input);
+  }
+  static updateExamStatus(id: string, input: UpdateExamStatusValidation) {
+    return $apiClient.patch<boolean>(`exams/${id}`, input);
   }
 }

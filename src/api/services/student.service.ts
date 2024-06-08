@@ -1,4 +1,5 @@
 import { StudentExams, StudentsListModel, UserStudentModel } from '@/utils/models/student';
+import { UpdateStudentValidation } from '@/utils/validation/student';
 import $apiClient from '../axiosClient';
 import { QueryParams } from '../types/common';
 
@@ -12,5 +13,7 @@ export class StudentService {
   static getStudentExams() {
     return $apiClient.get<StudentExams>('/students/exams');
   }
+  static updateStudentData(input: UpdateStudentValidation, studentId: string) {
+    return $apiClient.patch(`/students/${studentId}`, input);
+  }
 }
-1;

@@ -109,6 +109,9 @@
   "question": "Հարց",
   "questionType": "Հարցի տեսակ",
   "skillLevel": "Հմտության մակարդակ",
+  "topic": "Թեմա",
+  "subTopic": "Ենթաթեմա",
+  "category": "Կատեգորիա",
   "answers": "Պատասխաններ",
   "answer": "Պատասխան",
   "correct": "Ճիշտ",
@@ -126,6 +129,8 @@
   "reject": "Մերժել",
   "rejectionMessage": "Մերժման հաղորդագրություն",
   "createTestQuestions": "Ստեղծել թեստի հարցեր",
+  "editExam": "Խմբագրել քննությունը",
+  "deleteExamQuestion": "Դուք համոզվա՞ծ եք, որ ցանկանում եք ջնջել այս քննությունը:",
 
   "firstNameMessage": "Անունը պարտադիր է:",
   "lastNameMessage": "Ազգանունը պարտադիր է:",
@@ -176,5 +181,11 @@
   "invalidFileIsImported": "Դուք ներմուծել եք անվավեր ֆայլ",
   "success": "Հաջողություն",
   "passwordIsChanged": "Գաղտնաբառը հաջողությամբ փոխվել է!",
-  "examination": "Examination"
+  "currentlyUsingThisPassword": "Դուք ներկայումս օգտագործում եք այս գաղտնաբառը",
+  "invalidCurrentPassword": "Ընթացիկ գաղտնաբառը վավեր չէ",
+  "invalidConfirmationCode": "Հաստատման կոդը անվավեր է:",
+  "InvalidUserId": "Նշված ID-ով օգտատերը չի գտնվել",
+
+  "mailPlaceholder": "you@example.com",
+  "addressPlaceholder": "33062 komitas, 5st."
 }

@@ -1,6 +1,6 @@
 'use client';
 import React, { useCallback, useMemo, useState } from 'react';
-import { MenuItem, useDisclosure } from '@chakra-ui/react';
+import { Button, MenuItem, useDisclosure } from '@chakra-ui/react';
 import { LanguageTypeEnum } from '@prisma/client';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { createColumnHelper, SortingState } from '@tanstack/react-table';
@@ -21,6 +21,7 @@ import { languagePathHelper } from '@/utils/helpers/language';
 import { QUERY_KEY } from '@/utils/helpers/queryClient';
 import { Maybe } from '@/utils/models/common';
 import { ExamModel } from '@/utils/models/exam';
+import { UpdateExamStatusValidation } from '@/utils/validation/exam';
 
 export default function ExamsList({ params }: { params: { lang: Locale } }) {
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -79,6 +80,14 @@ export default function ExamsList({ params }: { params: { lang: Locale } }) {
     },
   });
 
+  const { mutate: updateExamStatus } = useMutation({
+    mutationFn: ({ data, examId }: { data: UpdateExamStatusValidation; examId: string }) =>
+      ExamService.updateExamStatus(examId, data),
+    onSuccess() {
+      refetch();
+    },
+  });
+
   const columnHelper = createColumnHelper<ExamModel>();
   const columns = [
     columnHelper.accessor('course.title', {
@@ -86,16 +95,23 @@ export default function ExamsList({ params }: { params: { lang: Locale } }) {
       cell: info => info.getValue(),
       header: t('course'),
     }),
+    columnHelper.accessor('status', {
+      id: uuidv4(),
+      cell: info => info.getValue().split('_').join(' '),
+      header: t('status'),
+    }),
     columnHelper.accessor('id', {
       id: uuidv4(),
       cell: info => (
-        <Link
+        <Button
+          as={Link}
+          variant="link"
           href={languagePathHelper(
             params.lang,
             `${ROUTE_EXAMS}/create-edit/${info.getValue()}/${info.row.original.subject?.id}?language=${LanguageTypeEnum.EN}`,
           )}>
-          Edit Exam
-        </Link>
+          {t('editExam')}
+        </Button>
       ),
       header: t('edit'),
     }),
@@ -121,14 +137,34 @@ export default function ExamsList({ params }: { params: { lang: Locale } }) {
       id: uuidv4(),
       cell: ({ row }) => (
         <ActionButtons>
+          {row.original.status !== 'IN_PROGRESS' && (
+            <MenuItem
+              color="green"
+              onClick={() => {
+                updateExamStatus({ data: { status: 'IN_PROGRESS' }, examId: row.original.id });
+              }}>
+              Start exam
+            </MenuItem>
+          )}
+
           <MenuItem
             color="red"
             onClick={() => {
-              setSelectedExam(row.original);
-              openDeleteModal();
+              updateExamStatus({ data: { status: 'COMPLETED' }, examId: row.original.id });
             }}>
-            {t('delete')}
+            Finish exam
           </MenuItem>
+
+          {row.original.status !== 'IN_PROGRESS' && (
+            <MenuItem
+              color="red"
+              onClick={() => {
+                setSelectedExam(row.original);
+                openDeleteModal();
+              }}>
+              Delete exam
+            </MenuItem>
+          )}
         </ActionButtons>
       ),
       header: t('actions'),
@@ -138,7 +174,7 @@ export default function ExamsList({ params }: { params: { lang: Locale } }) {
   return (
     <>
       <SearchTable
-        title={t('examList')}
+        title="examList"
         isLoading={isLoading}
         data={data?.exams || []}
         count={data?.count || 0}
@@ -165,13 +201,13 @@ export default function ExamsList({ params }: { params: { lang: Locale } }) {
         isOpen={isDeleteModalOpen}
         onClose={closeDeleteModal}
         isDeleteVariant
-        title={'faculty'}
+        title="exam"
         primaryAction={() => {
           if (selectedExam) {
             mutate(selectedExam.id);
           }
         }}
-        actionText={'delete'}>
+        actionText="delete">
         {t('deleteExamQuestion')}
       </Modal>
     </>

@@ -198,7 +198,7 @@ const CourseGroup = () => {
   return (
     <>
       <SearchTable
-        title={'courseGroupList'}
+        title="courseGroupList"
         isLoading={isLoading}
         data={data?.courseGroups || []}
         count={data?.count || 0}
@@ -223,7 +223,7 @@ const CourseGroup = () => {
       <Modal
         isOpen={isCreateEditModalOpen}
         onClose={closeCreateEditModal}
-        title={'courseGroup'}
+        title="courseGroup"
         primaryAction={handleSubmit(onSubmitHandler)}
         isDisabled={!isValid}
         actionText={selectedCourseGroup ? 'edit' : 'create'}>
@@ -235,9 +235,9 @@ const CourseGroup = () => {
               isRequired
               name={name}
               type="text"
-              formLabelName={'courseGroupName'}
+              formLabelName={t('courseGroupName')}
               value={value}
-              placeholder={t('enterTitle')}
+              placeholder="enterTitle"
               handleInputChange={onChange}
               isInvalid={!!errors.title?.message}
               formErrorMessage={errors.title?.message}
@@ -251,9 +251,9 @@ const CourseGroup = () => {
             <FormInput
               name={name}
               type="text"
-              formLabelName={'courseGroupDescription'}
+              formLabelName={t('courseGroupDescription')}
               value={value}
-              placeholder={t('enterDescription')}
+              placeholder="enterDescription"
               handleInputChange={onChange}
               isInvalid={!!errors.description?.message}
               formErrorMessage={errors.description?.message}
@@ -268,7 +268,7 @@ const CourseGroup = () => {
               name={name}
               isRequired
               options={courseQueryData || []}
-              labelName={'course'}
+              labelName="course"
               valueLabel="id"
               nameLabel="title"
               onChange={onChange}
@@ -284,13 +284,13 @@ const CourseGroup = () => {
         isOpen={isDeleteModalOpen}
         onClose={closeDeleteModal}
         isDeleteVariant
-        title={'courseGroup'}
+        title="courseGroup"
         primaryAction={() => {
           if (selectedCourseGroup) {
             mutate(selectedCourseGroup?.id);
           }
         }}
-        actionText={'delete'}>
+        actionText="delete">
         {t('deleteCourseGroupQuestion')}
       </Modal>
     </>

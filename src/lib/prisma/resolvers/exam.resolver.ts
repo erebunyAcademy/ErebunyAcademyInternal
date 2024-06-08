@@ -6,6 +6,7 @@ import {
   CreateExamValidation,
   ExamValidation,
   OptionalExamValidation,
+  UpdateExamStatusValidation,
 } from '@/utils/validation/exam';
 import { orderBy } from './utils/common';
 import prisma from '..';
@@ -17,6 +18,7 @@ export class ExamsResolver {
       prisma.exam.findMany({
         select: {
           id: true,
+          status: true,
           examLanguages: {
             select: {
               language: true,
@@ -385,6 +387,25 @@ export class ExamsResolver {
         optionId,
         studentExamId: studentExam.id,
       })),
+    });
+  }
+
+  static async updateExamStatus(id: string, input: UpdateExamStatusValidation) {
+    const exam = await prisma.exam.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    if (!exam) {
+      throw new NotFoundException('Exam was not found');
+    }
+
+    return prisma.exam.update({
+      where: {
+        id,
+      },
+      data: input,
     });
   }
 }

@@ -109,6 +109,9 @@
   "question": "Вопрос",
   "questionType": "Тип вопроса",
   "skillLevel": "Уровень навыков",
+  "topic": "Тема",
+  "subTopic": "Подтема",
+  "category": "Категория",
   "answers": "Ответы",
   "answer": "Ответ",
   "correct": "Правильный",
@@ -126,6 +129,8 @@
   "reject": "Отклонить",
   "rejectionMessage": "Сообщение об отклонении",
   "createTestQuestions": "Создать тестовые вопросы",
+  "editExam": "Редактировать экзамен",
+  "deleteExamQuestion": "Вы уверены, что хотите удалить этот экзамен?",
 
   "firstNameMessage": "Имя обязательно.",
   "lastNameMessage": "Фамилия обязательна.",
@@ -176,5 +181,11 @@
   "invalidFileIsImported": "Вы загрузили недействительный файл",
   "success": "Успех",
   "passwordIsChanged": "Пароль успешно изменен!",
-  "examination": "Examination"
+  "currentlyUsingThisPassword": "Вы в настоящее время используете этот пароль",
+  "invalidCurrentPassword": "Текущий пароль недействителен.",
+  "invalidConfirmationCode": "Код подтверждения недействителен.",
+  "InvalidUserId": "Пользователь с указанным идентификатором не найден",
+
+  "mailPlaceholder": "you@example.com",
+  "addressPlaceholder": "33062 komitas, 5st."
 }

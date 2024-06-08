@@ -1,4 +1,9 @@
-import { LanguageTypeEnum, TestQuestionLevelEnum, TestQuestionTypeEnum } from '@prisma/client';
+import {
+  ExamStatusEnum,
+  LanguageTypeEnum,
+  TestQuestionLevelEnum,
+  TestQuestionTypeEnum,
+} from '@prisma/client';
 import { Type } from 'class-transformer';
 import {
   ArrayNotEmpty,
@@ -118,4 +123,10 @@ export class OptionalExamValidation {
   @IsArray()
   @IsOptional({ message: 'Tests are required' })
   testQuestionIds: string[];
+}
+
+export class UpdateExamStatusValidation {
+  @IsString()
+  @IsEnum(ExamStatusEnum)
+  status: ExamStatusEnum;
 }

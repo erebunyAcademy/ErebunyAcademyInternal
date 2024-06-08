@@ -192,7 +192,7 @@ const Subject = ({ params }: { params: { lang: Locale } }) => {
   return (
     <>
       <SearchTable
-        title={'subjectList'}
+        title="subjectList"
         isLoading={isLoading}
         data={data?.subjects || []}
         count={data?.count || 0}
@@ -230,9 +230,9 @@ const Subject = ({ params }: { params: { lang: Locale } }) => {
               isRequired
               name={name}
               type="text"
-              formLabelName={'subjectName'}
+              formLabelName={t('subjectName')}
               value={value}
-              placeholder={'enterTitle'}
+              placeholder="enterTitle"
               handleInputChange={onChange}
               isInvalid={!!errors.title?.message}
               formErrorMessage={errors.title?.message}
@@ -246,9 +246,9 @@ const Subject = ({ params }: { params: { lang: Locale } }) => {
             <FormInput
               name={name}
               type="text"
-              formLabelName={'subjectDescription'}
+              formLabelName={t("subjectDescription")}
               value={value}
-              placeholder={'enterDescription'}
+              placeholder="enterDescription"
               handleInputChange={onChange}
               isInvalid={!!errors.description?.message}
               formErrorMessage={errors.description?.message}

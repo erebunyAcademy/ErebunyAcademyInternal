@@ -17,3 +17,9 @@ export class CreateEditCourseGroupValidation {
   @IsNotEmpty({ message: 'courseMessage' })
   courseId: string;
 }
+
+export class SelectStudentCourseGroupValidation {
+  @IsString()
+  @IsNotEmpty({ message: 'You need to select course group' })
+  courseGroupId: string;
+}

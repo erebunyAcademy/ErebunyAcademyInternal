@@ -48,9 +48,9 @@ const Step1 = () => {
             isRequired
             name="email"
             type="email"
-            formLabelName={'email'}
+            formLabelName={t('email')}
             value={value}
-            placeholder="you@example.com"
+            placeholder="mailPlaceholder"
             handleInputChange={onChange}
             isInvalid={!!errors.email?.message}
             formErrorMessage={errors.email?.message}

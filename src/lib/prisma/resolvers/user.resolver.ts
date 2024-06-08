@@ -2,6 +2,7 @@ import { AttachmentTypeEnum } from '@prisma/client';
 import bcrypt from 'bcrypt';
 import { ConflictException, NotFoundException } from 'next-api-decorators';
 import { User } from 'next-auth';
+import { ERROR_MESSAGES } from '@/utils/constants/common';
 import {
   ChangePasswordValidation,
   GetPresignedUrlInput,
@@ -94,7 +95,7 @@ export class UserResolver {
     });
 
     if (!user) {
-      throw new ConflictException('Confirmation code is not valid');
+      throw new ConflictException(ERROR_MESSAGES.invalidConfirmationCode);
     }
 
     await prisma.user.update({
@@ -119,7 +120,7 @@ export class UserResolver {
     });
 
     if (!user) {
-      throw new NotFoundException('User with provided id was not found');
+      throw new NotFoundException(ERROR_MESSAGES.invalidUserId);
     }
     await prisma.user.update({
       where: {
@@ -148,7 +149,7 @@ export class UserResolver {
     });
 
     if (!user) {
-      throw new NotFoundException('User with provided id was not found');
+      throw new NotFoundException(ERROR_MESSAGES.invalidUserId);
     }
 
     return prisma.user.delete({
@@ -195,7 +196,7 @@ export class UserResolver {
     });
 
     if (!user) {
-      throw new NotFoundException('User is not found');
+      throw new NotFoundException(ERROR_MESSAGES.userNotFound);
     }
 
     await Email.rejectUserAccountEmail(user.email, user.firstName, message);
@@ -207,17 +208,17 @@ export class UserResolver {
     const { currentPassword, newPassword, confirmPassword } = input;
 
     if (newPassword !== confirmPassword) {
-      throw new ConflictException("Password don't match");
+      throw new ConflictException(ERROR_MESSAGES.passwordDontMatch);
     }
 
     if (currentPassword === newPassword) {
-      throw new ConflictException('You are currently using this password');
+      throw new ConflictException(ERROR_MESSAGES.currentlyUsingThisPassword);
     }
 
     const isValid = await bcrypt.compare(currentPassword, user.password);
 
     if (!isValid) {
-      throw new ConflictException('Current password is not valid');
+      throw new ConflictException(ERROR_MESSAGES.invalidCurrentPassword);
     }
 
     const hashedPassword = await bcrypt.hash(confirmPassword, 10);
