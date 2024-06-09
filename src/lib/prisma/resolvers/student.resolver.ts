@@ -100,6 +100,12 @@ export class StudentResolver {
             examLanguages: {
               select: {
                 title: true,
+                language: true,
+              },
+            },
+            subject: {
+              select: {
+                title: true,
               },
             },
           },
