@@ -6,15 +6,22 @@ import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { ExamService } from '@/api/services/exam.service';
 import { SelectLabel } from '@/components/atoms';
-import { ROUTE_EXAMINATION } from '@/utils/constants/routes';
+import { Locale } from '@/i18n';
+import { ROUTE_EXAMINATION, ROUTE_STUDENT_EXAM_LIST } from '@/utils/constants/routes';
+import { languagePathHelper } from '@/utils/helpers/language';
 import Modal from '../Modal';
 
 type SelectExamLanguageModalProps = {
   examTranslation: { id: string; language: LanguageTypeEnum }[];
   examId: string;
+  lang: Locale;
 };
 
-const SelectExamLanguageModal: FC<SelectExamLanguageModalProps> = ({ examTranslation, examId }) => {
+const SelectExamLanguageModal: FC<SelectExamLanguageModalProps> = ({
+  examTranslation,
+  examId,
+  lang,
+}) => {
   const [examTr, setExamTr] = useState('');
   const router = useRouter();
 
@@ -31,7 +38,10 @@ const SelectExamLanguageModal: FC<SelectExamLanguageModalProps> = ({ examTransla
   };
 
   return (
-    <Modal isOpen onClose={() => {}} title={'In which language you would prefer to start exam?'}>
+    <Modal
+      isOpen
+      onClose={() => router.push(languagePathHelper(lang, ROUTE_STUDENT_EXAM_LIST))}
+      title={'In which language you would prefer to start exam?'}>
       <Stack>
         <Flex flexDirection="column" gap="20px">
           <SelectLabel

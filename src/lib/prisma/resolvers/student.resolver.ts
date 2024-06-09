@@ -95,6 +95,7 @@ export class StudentResolver {
       select: {
         exam: {
           select: {
+            status: true,
             duration: true,
             id: true,
             examLanguages: {

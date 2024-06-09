@@ -22,6 +22,7 @@ const Examination = async ({ params }: { params: { examId: string; lang: Locale 
     <SelectExamLanguageModal
       examTranslation={examTranslation?.examLanguages}
       examId={params.examId}
+      lang={params.lang}
     />
   );
 };
