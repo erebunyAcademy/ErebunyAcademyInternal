@@ -186,6 +186,7 @@ CREATE TABLE "StudentAnswerOption" (
     "id" TEXT NOT NULL,
     "studentExamId" TEXT NOT NULL,
     "optionId" TEXT,
+    "testQuestionId" TEXT NOT NULL,
 
     CONSTRAINT "StudentAnswerOption_pkey" PRIMARY KEY ("id")
 );
@@ -281,7 +282,7 @@ CREATE UNIQUE INDEX "SubjectTeacher_teacherId_subjectId_key" ON "SubjectTeacher"
 CREATE UNIQUE INDEX "StudentExam_examId_studentId_key" ON "StudentExam"("examId", "studentId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "StudentAnswerOption_optionId_studentExamId_key" ON "StudentAnswerOption"("optionId", "studentExamId");
+CREATE UNIQUE INDEX "StudentAnswerOption_optionId_studentExamId_testQuestionId_key" ON "StudentAnswerOption"("optionId", "studentExamId", "testQuestionId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "ExamTranslation_examId_language_key" ON "ExamTranslation"("examId", "language");
@@ -342,6 +343,9 @@ ALTER TABLE "StudentAnswerOption" ADD CONSTRAINT "StudentAnswerOption_studentExa
 
 -- AddForeignKey
 ALTER TABLE "StudentAnswerOption" ADD CONSTRAINT "StudentAnswerOption_optionId_fkey" FOREIGN KEY ("optionId") REFERENCES "Option"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "StudentAnswerOption" ADD CONSTRAINT "StudentAnswerOption_testQuestionId_fkey" FOREIGN KEY ("testQuestionId") REFERENCES "TestQuestion"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Exam" ADD CONSTRAINT "Exam_subjectId_fkey" FOREIGN KEY ("subjectId") REFERENCES "Subject"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
