@@ -12,6 +12,7 @@ export class StudentResolver {
       prisma.user.count({
         where: {
           role: UserRoleEnum.STUDENT,
+          isVerified: true,
           OR: [
             { firstName: { contains: search, mode: 'insensitive' } },
             { lastName: { contains: search, mode: 'insensitive' } },
@@ -21,6 +22,7 @@ export class StudentResolver {
       }),
       prisma.user.findMany({
         where: {
+          isVerified: true,
           role: UserRoleEnum.STUDENT,
           OR: [
             { firstName: { contains: search, mode: 'insensitive' } },
