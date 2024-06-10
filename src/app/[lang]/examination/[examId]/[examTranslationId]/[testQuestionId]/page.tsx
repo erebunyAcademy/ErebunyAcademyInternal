@@ -16,6 +16,7 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { ExamService } from '@/api/services/exam.service';
+import ExamTimer from '@/components/molecules/ExamTimer';
 import { Locale } from '@/i18n';
 import { ROUTE_EXAMINATION } from '@/utils/constants/routes';
 import { languagePathHelper } from '@/utils/helpers/language';
@@ -53,6 +54,8 @@ const ExamTranslation: FC<Props> = ({
     queryKey: ['question', testQuestionId],
     queryFn: ExamService.getExamTestQuestion.bind(null, testQuestionId),
   });
+
+  console.log(data?.startTime, data?.duration);
 
   const { testQuestion, answers, previousQuestionId, nextQuestionId } = data || {};
 
@@ -146,6 +149,9 @@ const ExamTranslation: FC<Props> = ({
 
   return (
     <Box p={5} shadow="md" borderWidth="1px" h="100vh">
+      {data && data.duration && data.startTime && (
+        <ExamTimer durationInMinutes={data.duration} startTime={data.startTime} />
+      )}
       <Center flexDir="column" h="100%">
         <Heading fontSize="xl" mb={10}>
           {testQuestion?.title}

@@ -1,5 +1,6 @@
 import { Exam, ExamStatusEnum, LanguageTypeEnum } from '@prisma/client';
-import { ConflictException, NotFoundException } from 'next-api-decorators';
+import { ConflictException, ForbiddenException, NotFoundException } from 'next-api-decorators';
+import { v4 as uuid } from 'uuid';
 import { SortingType } from '@/api/types/common';
 import {
   CreateExamValidation,
@@ -323,6 +324,16 @@ export class ExamsResolver {
           orderNumber: true,
           examTranslationId: true,
           options: { select: { id: true, title: true } },
+          examTranslation: {
+            select: {
+              exam: {
+                select: {
+                  duration: true,
+                  examStartTime: true,
+                },
+              },
+            },
+          },
         },
       });
 
@@ -353,6 +364,8 @@ export class ExamsResolver {
         answers,
         previousQuestionId: previousQuestion?.id || null,
         nextQuestionId: nextQuestion?.id || null,
+        duration: testQuestion.examTranslation?.exam.duration,
+        startTime: testQuestion.examTranslation?.exam.examStartTime,
       };
     } catch (error) {
       console.log({ error });
@@ -411,7 +424,58 @@ export class ExamsResolver {
       where: {
         id,
       },
-      data: input,
+      data: { ...input, examStartTime: new Date() },
     });
+  }
+
+  static async createStudentUuid(examId: string, studentId: string, req: any) {
+    const studentUuidCookie: string = req.cookies['student-exam-uuid'];
+
+    const studentExam = await prisma.studentExam.findUnique({
+      where: {
+        studentExamId: {
+          examId,
+          studentId,
+        },
+      },
+    });
+
+    if (!studentExam) {
+      throw new NotFoundException('Student exam is not found');
+    }
+
+    if (studentUuidCookie) {
+      const isUserAllowed = await prisma.studentExam.findUnique({
+        where: {
+          studentExamId: {
+            examId,
+            studentId,
+          },
+          studentUuid: studentUuidCookie,
+        },
+      });
+
+      console.log({ isUserAllowed });
+
+      if (!isUserAllowed) {
+        throw new ForbiddenException('Another user is already taking the exam');
+      }
+    }
+
+    const uniqueId = uuid();
+
+    await prisma.studentExam.update({
+      where: {
+        studentExamId: {
+          examId,
+          studentId,
+        },
+      },
+      data: {
+        studentUuid: uniqueId,
+      },
+    });
+
+    return { uniqueId };
   }
 }

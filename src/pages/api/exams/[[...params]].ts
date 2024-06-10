@@ -1,3 +1,4 @@
+import { NextApiRequest } from 'next';
 import { LanguageTypeEnum } from '@prisma/client';
 import {
   Body,
@@ -9,6 +10,7 @@ import {
   Patch,
   Post,
   Query,
+  Req,
   ValidationPipe,
 } from 'next-api-decorators';
 import { User } from 'next-auth';
@@ -110,6 +112,17 @@ class ExamsHandler {
     @Param('testId') testId?: string,
   ) {
     return ExamsResolver.createStudentAnswer(input, user?.student?.id, examId, testId);
+  }
+
+  @StudentGuard()
+  @Post('/:examId')
+  createStudentExamId(
+    @Param('examId') examId: string,
+    @CurrentUser() user: User,
+    @Req() req: NextApiRequest,
+  ) {
+    const studentId = user?.student?.id as string;
+    return ExamsResolver.createStudentUuid(examId, studentId, req);
   }
 }
 
