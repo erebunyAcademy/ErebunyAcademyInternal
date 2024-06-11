@@ -15,8 +15,15 @@ import { uniqBy } from '../utils/common';
 export class ExamsResolver {
   static async list(skip: number, take: number, search: string, sorting: SortingType[]) {
     return Promise.all([
-      prisma.exam.count(),
+      prisma.exam.count({
+        where: {
+          status: 'IN_PROGRESS',
+        },
+      }),
       prisma.exam.findMany({
+        where: {
+          status: 'IN_PROGRESS',
+        },
         select: {
           id: true,
           status: true,
