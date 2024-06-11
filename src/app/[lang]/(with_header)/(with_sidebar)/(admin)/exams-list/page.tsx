@@ -147,13 +147,13 @@ export default function ExamsList({ params }: { params: { lang: Locale } }) {
             </MenuItem>
           )}
 
-          <MenuItem
+          {/* <MenuItem
             color="red"
             onClick={() => {
               updateExamStatus({ data: { status: 'COMPLETED' }, examId: row.original.id });
             }}>
             Finish exam
-          </MenuItem>
+          </MenuItem> */}
 
           {row.original.status !== 'IN_PROGRESS' && (
             <MenuItem

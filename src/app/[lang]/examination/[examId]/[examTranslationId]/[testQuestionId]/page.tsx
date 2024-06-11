@@ -18,7 +18,6 @@ import { useRouter } from 'next/navigation';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { ExamService } from '@/api/services/exam.service';
 import ExamResultsModal from '@/components/molecules/ExamResultsModal';
-import ExamTimer from '@/components/molecules/ExamTimer';
 import { Locale } from '@/i18n';
 import { ROUTE_EXAMINATION, ROUTE_EXAMS } from '@/utils/constants/routes';
 import { languagePathHelper } from '@/utils/helpers/language';
@@ -65,11 +64,6 @@ const TestQuestions: FC<Props> = ({
 
   const { mutate: finish } = useMutation<boolean, { message: string }, string>({
     mutationFn: ExamService.finishExam,
-  });
-
-  const { data: examDurationInfo } = useQuery({
-    queryFn: ExamService.getExamDurationInfo.bind(null, examId),
-    queryKey: ['exam-duration-info'],
   });
 
   const onFinish = useCallback(() => {
@@ -179,12 +173,6 @@ const TestQuestions: FC<Props> = ({
 
   return (
     <Box p={5} shadow="md" borderWidth="1px" h="100vh">
-      {examDurationInfo?.duration && examDurationInfo.examStartTime && (
-        <ExamTimer
-          durationInMinutes={examDurationInfo.duration}
-          startTime={examDurationInfo.examStartTime}
-        />
-      )}
       <Center flexDir="column" h="100%">
         <Heading fontSize="xl" mb={10}>
           {testQuestion?.title}
