@@ -3,21 +3,24 @@ import React, { FC, useCallback, useEffect, useState } from 'react';
 import { Box, Text } from '@chakra-ui/react';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
+import useFinishExam from '@/hooks/useFinishExam';
 
 dayjs.extend(duration);
 
 type ExamTimeProps = {
   startTime: Date;
   durationInMinutes: number;
+  examId: string;
 };
 
-const ExamTimer: FC<ExamTimeProps> = ({ startTime, durationInMinutes }) => {
+const ExamTimer: FC<ExamTimeProps> = ({ startTime, durationInMinutes, examId }) => {
   const calculateTimeLeft = useCallback(() => {
     const now = dayjs();
     const endTime = dayjs(startTime).add(durationInMinutes, 'minute');
     const timeRemaining = endTime.diff(now);
     return dayjs.duration(timeRemaining > 0 ? timeRemaining : 0);
   }, [durationInMinutes, startTime]);
+  const { mutate: finish } = useFinishExam();
 
   const [timeLeft, setTimeLeft] = useState(calculateTimeLeft());
 

@@ -2,6 +2,7 @@ import { Box } from '@chakra-ui/react';
 import { redirect } from 'next/navigation';
 import ExamTimer from '@/components/molecules/ExamTimer';
 import { ExamsResolver } from '@/lib/prisma/resolvers/exam.resolver';
+import { serverSession } from '@/pages/api/auth/[...nextauth]';
 import { ROUTE_STUDENT_EXAM_LIST } from '@/utils/constants/routes';
 
 export default async function RootLayout({
@@ -11,9 +12,14 @@ export default async function RootLayout({
   children: React.ReactNode;
   params: { examId: string };
 }>) {
-  const examDurationInfo = await ExamsResolver.getExamDurationInfo(params.examId);
+  const session = await serverSession();
 
-  if (!examDurationInfo) {
+  const [examDurationInfo, isFinished] = await Promise.all([
+    ExamsResolver.getExamDurationInfo(params.examId),
+    ExamsResolver.getIsFinished(session?.user?.student?.id, params.examId),
+  ]);
+
+  if (!examDurationInfo || isFinished) {
     redirect(ROUTE_STUDENT_EXAM_LIST);
   }
 
@@ -22,6 +28,7 @@ export default async function RootLayout({
       <ExamTimer
         startTime={examDurationInfo.examStartTime!}
         durationInMinutes={examDurationInfo.duration}
+        examId={params.examId}
       />
       {children}
     </Box>

@@ -18,6 +18,7 @@ import { useRouter } from 'next/navigation';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { ExamService } from '@/api/services/exam.service';
 import ExamResultsModal from '@/components/molecules/ExamResultsModal';
+import useFinishExam from '@/hooks/useFinishExam';
 import { Locale } from '@/i18n';
 import { ROUTE_EXAMINATION, ROUTE_EXAMS } from '@/utils/constants/routes';
 import { languagePathHelper } from '@/utils/helpers/language';
@@ -53,6 +54,7 @@ const TestQuestions: FC<Props> = ({
   const { control, handleSubmit, reset } = useForm<FormData>({
     defaultValues: { checkboxOptions: [], radioOption: '' },
   });
+  const { mutate: finish } = useFinishExam();
 
   const { data, isSuccess, isLoading } = useQuery({
     queryKey: ['question', testQuestionId],
@@ -61,10 +63,6 @@ const TestQuestions: FC<Props> = ({
   });
 
   const { testQuestion, answers, previousQuestionId, nextQuestionId } = data || {};
-
-  const { mutate: finish } = useMutation<boolean, { message: string }, string>({
-    mutationFn: ExamService.finishExam,
-  });
 
   const onFinish = useCallback(() => {
     const isReady = confirm('Are you sure you want to finish this examination?');

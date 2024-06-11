@@ -541,4 +541,16 @@ export class ExamsResolver {
 
     return { rightAnswers, total: uniqueAnswers };
   }
+
+  static async getIsFinished(studentId?: string, examId?: string) {
+    if (!studentId || !examId) {
+      throw new NotFoundException('Invalid data');
+    }
+
+    const exam = await prisma.studentExam.findUnique({
+      where: { studentExamId: { studentId, examId } },
+    });
+
+    return !!exam?.hasFinished;
+  }
 }
