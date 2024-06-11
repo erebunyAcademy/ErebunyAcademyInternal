@@ -50,3 +50,5 @@ export type GetExamTranslationModel = Prisma.PromiseReturnType<
 export type FirstTestQuestionModel = Prisma.PromiseReturnType<
   typeof ExamsResolver.getFirstTestQuestion
 >;
+
+export type GetExamResultsModel = Prisma.PromiseReturnType<typeof ExamsResolver.getResults>;

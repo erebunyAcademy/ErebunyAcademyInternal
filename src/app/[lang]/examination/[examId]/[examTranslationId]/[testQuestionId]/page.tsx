@@ -11,14 +11,16 @@ import {
   RadioGroup,
   Stack,
   Text,
+  useDisclosure,
 } from '@chakra-ui/react';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { ExamService } from '@/api/services/exam.service';
+import ExamResultsModal from '@/components/molecules/ExamResultsModal';
 import ExamTimer from '@/components/molecules/ExamTimer';
 import { Locale } from '@/i18n';
-import { ROUTE_EXAMINATION } from '@/utils/constants/routes';
+import { ROUTE_EXAMINATION, ROUTE_EXAMS } from '@/utils/constants/routes';
 import { languagePathHelper } from '@/utils/helpers/language';
 import { StudentAnswerMutationModel } from '@/utils/models/test-question.model';
 
@@ -42,9 +44,12 @@ interface Props {
   params: { examId: string; examTranslationId: string; lang: Locale; testQuestionId: string };
 }
 
-const ExamTranslation: FC<Props> = ({
+const TestQuestions: FC<Props> = ({
   params: { examTranslationId, examId, lang, testQuestionId },
 }) => {
+  const router = useRouter();
+  const handleClose = useCallback(() => router.push(ROUTE_EXAMS), [router]);
+  const { isOpen, onClose, onOpen } = useDisclosure({ onClose: handleClose });
   const navigate = usePushToQuestion(lang, examId, examTranslationId);
   const { control, handleSubmit, reset } = useForm<FormData>({
     defaultValues: { checkboxOptions: [], radioOption: '' },
@@ -53,16 +58,38 @@ const ExamTranslation: FC<Props> = ({
   const { data, isSuccess, isLoading } = useQuery({
     queryKey: ['question', testQuestionId],
     queryFn: ExamService.getExamTestQuestion.bind(null, testQuestionId),
+    enabled: !!testQuestionId,
   });
 
   console.log(data?.startTime, data?.duration);
 
   const { testQuestion, answers, previousQuestionId, nextQuestionId } = data || {};
 
+  const { mutate: finish } = useMutation<boolean, { message: string }, string>({
+    mutationFn: ExamService.finishExam,
+  });
+
+  const onFinish = useCallback(() => {
+    const isReady = confirm('Are you sure you want to finish this examination?');
+    if (isReady) {
+      finish(examId, {
+        onSuccess(hasFinished) {
+          if (hasFinished) {
+            onOpen();
+          }
+        },
+      });
+    }
+  }, [examId, finish, onOpen]);
+
   const { mutate } = useMutation<StudentAnswerMutationModel, { message: string }, string[]>({
     mutationFn: data => ExamService.createStudentAnswer(examId, testQuestionId, data),
     onSuccess(hasCreated) {
-      if (nextQuestionId && hasCreated) navigate(nextQuestionId);
+      if (nextQuestionId && hasCreated) {
+        navigate(nextQuestionId);
+      } else if (!nextQuestionId && hasCreated) {
+        onFinish();
+      }
     },
   });
 
@@ -162,13 +189,14 @@ const ExamTranslation: FC<Props> = ({
           <Button colorScheme="teal" isDisabled={!previousQuestionId} onClick={onPrev}>
             Previous
           </Button>
-          <Button colorScheme="teal" isDisabled={!nextQuestionId} onClick={handleSubmit(onNext)}>
-            Next
+          <Button colorScheme="teal" onClick={handleSubmit(onNext)}>
+            {nextQuestionId ? 'Next' : 'Finish'}
           </Button>
         </Stack>
       </Center>
+      <ExamResultsModal isOpen={isOpen} onClose={onClose} examId={examId} onFinish={handleClose} />
     </Box>
   );
 };
 
-export default ExamTranslation;
+export default TestQuestions;

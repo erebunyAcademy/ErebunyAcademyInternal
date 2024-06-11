@@ -10,6 +10,7 @@ import {
 } from '@/utils/validation/exam';
 import { orderBy } from './utils/common';
 import prisma from '..';
+import { uniqBy } from '../utils/common';
 
 export class ExamsResolver {
   static async list(skip: number, take: number, search: string, sorting: SortingType[]) {
@@ -477,5 +478,40 @@ export class ExamsResolver {
     });
 
     return { uniqueId };
+  }
+
+  static async finishExam(studentId?: string, examId?: string) {
+    if (!studentId || !examId) {
+      throw new NotFoundException('Invalid data');
+    }
+
+    const finished = prisma.studentExam.update({
+      where: { studentExamId: { studentId, examId } },
+      data: { hasFinished: true },
+    });
+
+    return !!finished;
+  }
+
+  static async getResults(studentId?: string, examId?: string) {
+    if (!studentId || !examId) {
+      throw new NotFoundException('Invalid data');
+    }
+
+    const studentExam = await prisma.studentExam.findUniqueOrThrow({
+      where: { studentExamId: { studentId, examId } },
+    });
+
+    const result = await prisma.studentAnswerOption.findMany({
+      where: { studentExamId: studentExam.id },
+      select: { options: true },
+    });
+
+    const answers = result.flatMap(({ options }) => options);
+    const uniqueAnswers = uniqBy(answers, item => item?.testQuestionId);
+
+    const rightAnswers = uniqueAnswers.filter(item => item?.isRightAnswer);
+
+    return { rightAnswers, total: uniqueAnswers };
   }
 }

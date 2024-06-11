@@ -5,12 +5,14 @@ import { classValidatorResolver } from '@hookform/resolvers/class-validator';
 import { LanguageTypeEnum } from '@prisma/client';
 import { useMutation } from '@tanstack/react-query';
 import { createColumnHelper } from '@tanstack/react-table';
+import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { Controller, useForm } from 'react-hook-form';
 import { v4 as uuidv4 } from 'uuid';
 import { ExamService } from '@/api/services/exam.service';
 import { FormInput } from '@/components/atoms';
 import TableCheckbox from '@/components/organisms/TableCheckbox';
+import { ROUTE_EXAMS } from '@/utils/constants/routes';
 import { ExamTranslation } from '@/utils/models/exam';
 import { TestQuestionListModel } from '@/utils/models/test-question.model';
 import { ExamValidation, OptionalExamValidation } from '@/utils/validation/exam';
@@ -32,6 +34,7 @@ const CreateEditExam: FC<CreateEditExamProps> = ({
   language,
 }) => {
   const t = useTranslations();
+  const router = useRouter();
 
   const { control, handleSubmit, reset } = useForm<ExamValidation>({
     resolver,
@@ -98,7 +101,7 @@ const CreateEditExam: FC<CreateEditExamProps> = ({
   ];
 
   const onSubmit = (data: ExamValidation) => {
-    mutate(data);
+    mutate(data, { onSuccess: () => router.push(ROUTE_EXAMS) });
   };
 
   const submitExamUpdate = (data: OptionalExamValidation) => {

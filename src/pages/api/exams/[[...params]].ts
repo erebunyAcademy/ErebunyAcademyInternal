@@ -124,6 +124,16 @@ class ExamsHandler {
     const studentId = user?.student?.id as string;
     return ExamsResolver.createStudentUuid(examId, studentId, req);
   }
+  @Post('/finish/:examId')
+  finishExam(@CurrentUser() user: User, @Param('examId') examId?: string) {
+    return ExamsResolver.finishExam(user?.student?.id, examId);
+  }
+
+  @StudentGuard()
+  @Get('/results/:examId')
+  getExamResults(@CurrentUser() user: User, @Param('examId') examId?: string) {
+    return ExamsResolver.getResults(user?.student?.id, examId);
+  }
 }
 
 export default createHandler(ExamsHandler);
