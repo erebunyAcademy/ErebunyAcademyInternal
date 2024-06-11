@@ -4,6 +4,7 @@ import {
   ExamListModel,
   ExamTranslation,
   FirstTestQuestionModel,
+  GetExamResultsModel,
   TestQuestion,
 } from '@/utils/models/exam';
 import {
@@ -63,5 +64,11 @@ export class ExamService {
   }
   static updateExamStatus(id: string, input: UpdateExamStatusValidation) {
     return $apiClient.patch<boolean>(`exams/${id}`, input);
+  }
+  static finishExam(examId: string) {
+    return $apiClient.post(`/exams/finish/${examId}`);
+  }
+  static getResults(examId: string) {
+    return $apiClient.get<GetExamResultsModel>(`/exams/results/${examId}`);
   }
 }
