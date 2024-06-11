@@ -61,12 +61,15 @@ const TestQuestions: FC<Props> = ({
     enabled: !!testQuestionId,
   });
 
-  console.log(data?.startTime, data?.duration);
-
   const { testQuestion, answers, previousQuestionId, nextQuestionId } = data || {};
 
   const { mutate: finish } = useMutation<boolean, { message: string }, string>({
     mutationFn: ExamService.finishExam,
+  });
+
+  const { data: examDurationInfo } = useQuery({
+    queryFn: ExamService.getExamDurationInfo.bind(null, examId),
+    queryKey: ['exam-duration-info'],
   });
 
   const onFinish = useCallback(() => {
@@ -176,8 +179,11 @@ const TestQuestions: FC<Props> = ({
 
   return (
     <Box p={5} shadow="md" borderWidth="1px" h="100vh">
-      {data && data.duration && data.startTime && (
-        <ExamTimer durationInMinutes={data.duration} startTime={data.startTime} />
+      {examDurationInfo?.duration && examDurationInfo.examStartTime && (
+        <ExamTimer
+          durationInMinutes={examDurationInfo.duration}
+          startTime={examDurationInfo.examStartTime}
+        />
       )}
       <Center flexDir="column" h="100%">
         <Heading fontSize="xl" mb={10}>

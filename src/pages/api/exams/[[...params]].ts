@@ -104,6 +104,12 @@ class ExamsHandler {
   }
 
   @StudentGuard()
+  @Get('/:examId/duration')
+  getExamDurationInfo(@Param('examId') examId: string) {
+    return ExamsResolver.getExamDurationInfo(examId);
+  }
+
+  @StudentGuard()
   @Post('/:examId/exam-student-answer/:testId')
   createStudentAnswer(
     @Body(ValidationPipe) input: string[],

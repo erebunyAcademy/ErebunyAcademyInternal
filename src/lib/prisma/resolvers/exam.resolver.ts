@@ -365,12 +365,28 @@ export class ExamsResolver {
         answers,
         previousQuestionId: previousQuestion?.id || null,
         nextQuestionId: nextQuestion?.id || null,
-        duration: testQuestion.examTranslation?.exam.duration,
-        startTime: testQuestion.examTranslation?.exam.examStartTime,
       };
     } catch (error) {
       console.log({ error });
     }
+  }
+
+  static async getExamDurationInfo(id: string) {
+    const exam = await prisma.exam.findUnique({
+      where: {
+        id,
+      },
+      select: {
+        duration: true,
+        examStartTime: true,
+      },
+    });
+
+    if (!exam) {
+      throw new NotFoundException('Exam was not found');
+    }
+
+    return exam;
   }
 
   static async createStudentAnswer(
@@ -461,23 +477,27 @@ export class ExamsResolver {
       if (!isUserAllowed) {
         throw new ForbiddenException('Another user is already taking the exam');
       }
-    }
+    } else {
+      if (studentExam.studentUuid) {
+        throw new ForbiddenException('You have already started the exam');
+      }
 
-    const uniqueId = uuid();
+      const uniqueId = uuid();
 
-    await prisma.studentExam.update({
-      where: {
-        studentExamId: {
-          examId,
-          studentId,
+      await prisma.studentExam.update({
+        where: {
+          studentExamId: {
+            examId,
+            studentId,
+          },
         },
-      },
-      data: {
-        studentUuid: uniqueId,
-      },
-    });
+        data: {
+          studentUuid: uniqueId,
+        },
+      });
 
-    return { uniqueId };
+      return { uniqueId };
+    }
   }
 
   static async finishExam(studentId?: string, examId?: string) {

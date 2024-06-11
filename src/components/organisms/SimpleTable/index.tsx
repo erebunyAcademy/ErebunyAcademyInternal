@@ -1,6 +1,5 @@
 import React from 'react';
-import { TriangleDownIcon, TriangleUpIcon } from '@chakra-ui/icons';
-import { Box, chakra, Table, Tbody, Td, Text, Th, Thead, Tr } from '@chakra-ui/react';
+import { Box, Table, Tbody, Td, Text, Th, Thead, Tr } from '@chakra-ui/react';
 import {
   ColumnDef,
   flexRender,
@@ -27,8 +26,8 @@ const SimpleTable = <T,>({ columns, data, title }: SimpleTableProps<T>): JSX.Ele
   });
 
   return (
-    <Box minHeight="700px" width="100%">
-      <Text as="h2" fontSize={24} textAlign="center">
+    <Box maxHeight="700px" width="100%" pt="100px">
+      <Text as="h2" fontSize={24} textAlign="center" fontWeight={700}>
         {t(title)}
       </Text>
 
@@ -48,15 +47,6 @@ const SimpleTable = <T,>({ columns, data, title }: SimpleTableProps<T>): JSX.Ele
                     onClick={header.column.getToggleSortingHandler()}
                     isNumeric={meta?.isNumeric}>
                     {flexRender(header.column.columnDef.header, header.getContext())}
-                    <chakra.span pl="4">
-                      {header.column.getIsSorted() ? (
-                        header.column.getIsSorted() === 'desc' ? (
-                          <TriangleDownIcon aria-label="sorted descending" />
-                        ) : (
-                          <TriangleUpIcon aria-label="sorted ascending" />
-                        )
-                      ) : null}
-                    </chakra.span>
                   </Th>
                 );
               })}
@@ -68,11 +58,11 @@ const SimpleTable = <T,>({ columns, data, title }: SimpleTableProps<T>): JSX.Ele
           {getRowModel().rows.length > 0 ? (
             getRowModel().rows.map(row => {
               return (
-                <Tr key={row.id} height="20px">
+                <Tr key={row.id}>
                   {row.getVisibleCells().map(cell => {
                     const meta: any = cell.column.columnDef.meta;
                     return (
-                      <Td key={cell.id} isNumeric={meta?.isNumeric} height="20px">
+                      <Td key={cell.id} isNumeric={meta?.isNumeric}>
                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
                       </Td>
                     );

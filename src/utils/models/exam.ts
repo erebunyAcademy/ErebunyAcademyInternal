@@ -52,3 +52,7 @@ export type FirstTestQuestionModel = Prisma.PromiseReturnType<
 >;
 
 export type GetExamResultsModel = Prisma.PromiseReturnType<typeof ExamsResolver.getResults>;
+
+export type GetExamDurationInfoModel = Prisma.PromiseReturnType<
+  typeof ExamsResolver.getExamDurationInfo
+>;
