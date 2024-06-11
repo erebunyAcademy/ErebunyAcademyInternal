@@ -18,6 +18,7 @@ import { useRouter } from 'next/navigation';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { ExamService } from '@/api/services/exam.service';
 import ExamResultsModal from '@/components/molecules/ExamResultsModal';
+import ExamTimer from '@/components/molecules/ExamTimer';
 import { Locale } from '@/i18n';
 import { ROUTE_EXAMINATION, ROUTE_EXAMS } from '@/utils/constants/routes';
 import { languagePathHelper } from '@/utils/helpers/language';
@@ -59,6 +60,8 @@ const TestQuestions: FC<Props> = ({
     queryFn: ExamService.getExamTestQuestion.bind(null, testQuestionId),
     enabled: !!testQuestionId,
   });
+
+  console.log(data?.startTime, data?.duration);
 
   const { testQuestion, answers, previousQuestionId, nextQuestionId } = data || {};
 
@@ -173,6 +176,9 @@ const TestQuestions: FC<Props> = ({
 
   return (
     <Box p={5} shadow="md" borderWidth="1px" h="100vh">
+      {data && data.duration && data.startTime && (
+        <ExamTimer durationInMinutes={data.duration} startTime={data.startTime} />
+      )}
       <Center flexDir="column" h="100%">
         <Heading fontSize="xl" mb={10}>
           {testQuestion?.title}

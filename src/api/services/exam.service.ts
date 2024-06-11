@@ -65,6 +65,10 @@ export class ExamService {
   static updateExamStatus(id: string, input: UpdateExamStatusValidation) {
     return $apiClient.patch<boolean>(`exams/${id}`, input);
   }
+
+  static createStudentUuid(examId: string) {
+    return $apiClient.post<{ uniqueId: string }>(`exams/${examId}`);
+  }
   static finishExam(examId: string) {
     return $apiClient.post(`/exams/finish/${examId}`);
   }

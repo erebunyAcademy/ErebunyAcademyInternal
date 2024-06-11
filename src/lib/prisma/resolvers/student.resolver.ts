@@ -121,6 +121,10 @@ export class StudentResolver {
     return prisma.student.findMany({
       where: {
         courseGroupId,
+        user: {
+          isVerified: true,
+          isAdminVerified: true,
+        },
       },
       select: {
         id: true,
