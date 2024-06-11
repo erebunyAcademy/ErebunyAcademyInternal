@@ -20,7 +20,7 @@ import { ExamService } from '@/api/services/exam.service';
 import ExamResultsModal from '@/components/molecules/ExamResultsModal';
 import useFinishExam from '@/hooks/useFinishExam';
 import { Locale } from '@/i18n';
-import { ROUTE_EXAMINATION, ROUTE_EXAMS } from '@/utils/constants/routes';
+import { ROUTE_EXAMINATION, ROUTE_STUDENT_EXAM_LIST } from '@/utils/constants/routes';
 import { languagePathHelper } from '@/utils/helpers/language';
 import { StudentAnswerMutationModel } from '@/utils/models/test-question.model';
 
@@ -48,7 +48,9 @@ const TestQuestions: FC<Props> = ({
   params: { examTranslationId, examId, lang, testQuestionId },
 }) => {
   const router = useRouter();
-  const handleClose = useCallback(() => router.push(ROUTE_EXAMS), [router]);
+
+  const handleClose = useCallback(() => router.push(ROUTE_STUDENT_EXAM_LIST), [router]);
+
   const { isOpen, onClose, onOpen } = useDisclosure({ onClose: handleClose });
   const navigate = usePushToQuestion(lang, examId, examTranslationId);
   const { control, handleSubmit, reset } = useForm<FormData>({
@@ -77,7 +79,11 @@ const TestQuestions: FC<Props> = ({
     }
   }, [examId, finish, onOpen]);
 
-  const { mutate } = useMutation<StudentAnswerMutationModel, { message: string }, string[]>({
+  const { mutate, isPending } = useMutation<
+    StudentAnswerMutationModel,
+    { message: string },
+    string[]
+  >({
     mutationFn: data => ExamService.createStudentAnswer(examId, testQuestionId, data),
     onSuccess(hasCreated) {
       if (nextQuestionId && hasCreated) {
@@ -178,10 +184,15 @@ const TestQuestions: FC<Props> = ({
         {testQuestion?.description && <Text mt={2}>{testQuestion.description}</Text>}
         {renderFormDataByType()}
         <Stack direction="row" spacing={300} mt={20}>
-          <Button colorScheme="teal" isDisabled={!previousQuestionId} onClick={onPrev}>
+          <Button
+            colorScheme="teal"
+            isDisabled={!previousQuestionId}
+            onClick={onPrev}
+            isLoading={isPending}>
             Previous
           </Button>
-          <Button colorScheme="teal" onClick={handleSubmit(onNext)}>
+          isLoading={isPending}
+          <Button colorScheme="teal" onClick={handleSubmit(onNext)} isLoading={isPending}>
             {nextQuestionId ? 'Next' : 'Finish'}
           </Button>
         </Stack>

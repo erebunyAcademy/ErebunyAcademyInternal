@@ -4,6 +4,7 @@ import {
   ExamListModel,
   ExamTranslation,
   FirstTestQuestionModel,
+  GetAllStudentExamResult,
   GetExamDurationInfoModel,
   GetExamResultsModel,
   TestQuestion,
@@ -79,5 +80,8 @@ export class ExamService {
 
   static getExamDurationInfo(examId: string) {
     return $apiClient.get<GetExamDurationInfoModel>(`/exams/${examId}/duration`);
+  }
+  static getAllStudentsExamResult(examId: string) {
+    return $apiClient.get<GetAllStudentExamResult>(`/exams/${examId}/results`);
   }
 }

@@ -190,5 +190,10 @@
   "mailPlaceholder": "you@example.com",
   "addressPlaceholder": "33062 komitas, 5st.",
   "editStudent": "Edit student data",
-  "studentCourseGroup": "Please select student course group"
+  "studentCourseGroup": "Please select student course group",
+  "duration": "Duration",
+  "examination": "Examination",
+  "examLanguageTitles": "Exam titles",
+  "minutes": "Minutes",
+  "startExam": "Start exam"
 }

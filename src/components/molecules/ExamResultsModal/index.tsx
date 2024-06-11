@@ -18,7 +18,7 @@ const ExamResultsModal: FC<Props> = ({ isOpen, onClose, examId, onFinish }) => {
     enabled: !!(isOpen && examId),
   });
 
-  const result = `${data?.rightAnswers.length || 0} / ${data?.total.length || 0}`;
+  const result = `${data?.rightAnswers || 0} / ${data?.total || 0}`;
 
   if (!isSuccess) {
     return null;

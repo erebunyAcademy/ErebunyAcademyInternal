@@ -14,23 +14,36 @@ type ExamTimeProps = {
 };
 
 const ExamTimer: FC<ExamTimeProps> = ({ startTime, durationInMinutes, examId }) => {
+  const { mutate: finish } = useFinishExam();
+  const [timeLeft, setTimeLeft] = useState(dayjs.duration(0));
+  const [isFinished, setIsFinished] = useState(false);
+
   const calculateTimeLeft = useCallback(() => {
     const now = dayjs();
     const endTime = dayjs(startTime).add(durationInMinutes, 'minute');
     const timeRemaining = endTime.diff(now);
-    return dayjs.duration(timeRemaining > 0 ? timeRemaining : 0);
-  }, [durationInMinutes, startTime]);
-  const { mutate: finish } = useFinishExam();
 
-  const [timeLeft, setTimeLeft] = useState(calculateTimeLeft());
+    if (timeRemaining > 0) {
+      return dayjs.duration(timeRemaining);
+    } else {
+      return dayjs.duration(0);
+    }
+  }, [durationInMinutes, startTime]);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setTimeLeft(calculateTimeLeft());
+      const timeRemaining = calculateTimeLeft();
+      setTimeLeft(timeRemaining);
+
+      if (timeRemaining.asSeconds() <= 0 && !isFinished) {
+        setIsFinished(true);
+        finish(examId);
+        clearInterval(interval);
+      }
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [startTime, durationInMinutes, calculateTimeLeft]);
+  }, [startTime, durationInMinutes, calculateTimeLeft, isFinished, finish, examId]);
 
   const formatTime = (timeDuration: duration.Duration) => {
     const minutes = timeDuration.minutes();

@@ -1,5 +1,4 @@
 'use client';
-import { useState } from 'react';
 import {
   Button,
   Divider,
@@ -9,13 +8,11 @@ import {
   UnorderedList,
   useDisclosure,
 } from '@chakra-ui/react';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { createColumnHelper } from '@tanstack/react-table';
-import { setCookie } from 'cookies-next';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { v4 as uuidv4 } from 'uuid';
-import { ExamService } from '@/api/services/exam.service';
 import { StudentService } from '@/api/services/student.service';
 import Modal from '@/components/molecules/Modal';
 import SimpleTable from '@/components/organisms/SimpleTable';
@@ -25,7 +22,6 @@ import { StudentExam, StudentExams } from '@/utils/models/student';
 const StudentExamList = () => {
   const t = useTranslations();
   const router = useRouter();
-  const [info, setInfo] = useState('The exam has not yet started.');
   const { data } = useQuery<StudentExams>({
     queryFn: StudentService.getStudentExams,
     queryKey: ['exams'],
@@ -37,31 +33,19 @@ const StudentExamList = () => {
     onClose: closeStudentInfoModal,
   } = useDisclosure();
 
-  const { mutate: checkStudentPermission } = useMutation({
-    mutationFn: ExamService.createStudentUuid,
-  });
-
   const columnHelper = createColumnHelper<StudentExam>();
 
   const checkStartExam = (studentExam: StudentExam) => {
     if (studentExam.exam.status !== 'IN_PROGRESS') {
       return openStudentInfoModal();
     }
-    checkStudentPermission(studentExam.exam.id, {
-      onSuccess(res) {
-        setCookie('student-exam-uuid', res.uniqueId);
-        router.push(`${ROUTE_EXAMINATION}/${studentExam.exam.id}`);
-      },
-      onError(err) {
-        setInfo(err.message);
-      },
-    });
+    router.push(`${ROUTE_EXAMINATION}/${studentExam.exam.id}`);
   };
 
   const columns = [
     columnHelper.accessor('exam.duration', {
       id: uuidv4(),
-      cell: info => `${info.getValue()} minutes`,
+      cell: info => `${info.getValue()} ${t('minutes')}`,
       header: t('duration'),
     }),
     columnHelper.accessor('exam.id', {
@@ -104,7 +88,7 @@ const StudentExamList = () => {
           justifyContent="center"
           alignItems="center"
           gap="50px">
-          <Text>{info}</Text>
+          <Text>Exam has not yet been started</Text>
         </Flex>
       </Modal>
     </Flex>

@@ -56,3 +56,11 @@ export type GetExamResultsModel = Prisma.PromiseReturnType<typeof ExamsResolver.
 export type GetExamDurationInfoModel = Prisma.PromiseReturnType<
   typeof ExamsResolver.getExamDurationInfo
 >;
+
+export type GetAllStudentExamResult = Prisma.PromiseReturnType<
+  typeof ExamsResolver.getStudentsExamResults
+>;
+
+export type GetStudentExamResult = GetAllStudentExamResult extends (infer SingleType)[]
+  ? SingleType
+  : never;

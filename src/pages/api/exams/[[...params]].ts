@@ -1,4 +1,3 @@
-import { NextApiRequest } from 'next';
 import { LanguageTypeEnum } from '@prisma/client';
 import {
   Body,
@@ -10,7 +9,6 @@ import {
   Patch,
   Post,
   Query,
-  Req,
   ValidationPipe,
 } from 'next-api-decorators';
 import { User } from 'next-auth';
@@ -28,6 +26,7 @@ import {
 
 @Catch(exceptionHandler)
 class ExamsHandler {
+  @AdminGuard()
   @Get('/list')
   _list(
     @Query('offset') skip: string,
@@ -88,8 +87,8 @@ class ExamsHandler {
 
   @StudentGuard()
   @Get('/test-question/:testQuestionId')
-  getTestQuestion(@Param('testQuestionId') testQuestionId: string) {
-    return ExamsResolver.getTestQuestion(testQuestionId);
+  getTestQuestion(@Param('testQuestionId') testQuestionId: string, @CurrentUser() user: User) {
+    return ExamsResolver.getTestQuestion(testQuestionId, user);
   }
 
   @Post()
@@ -120,16 +119,6 @@ class ExamsHandler {
     return ExamsResolver.createStudentAnswer(input, user?.student?.id, examId, testId);
   }
 
-  @StudentGuard()
-  @Post('/:examId')
-  createStudentExamId(
-    @Param('examId') examId: string,
-    @CurrentUser() user: User,
-    @Req() req: NextApiRequest,
-  ) {
-    const studentId = user?.student?.id as string;
-    return ExamsResolver.createStudentUuid(examId, studentId, req);
-  }
   @Post('/finish/:examId')
   finishExam(@CurrentUser() user: User, @Param('examId') examId?: string) {
     return ExamsResolver.finishExam(user?.student?.id, examId);
@@ -139,6 +128,12 @@ class ExamsHandler {
   @Get('/results/:examId')
   getExamResults(@CurrentUser() user: User, @Param('examId') examId?: string) {
     return ExamsResolver.getResults(user?.student?.id, examId);
+  }
+
+  @AdminGuard()
+  @Get('/:examId/results')
+  getAllStudentExamResults(@Param('examId') examId: string) {
+    return ExamsResolver.getStudentsExamResults(examId);
   }
 }
 

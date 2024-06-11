@@ -6,6 +6,7 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { createColumnHelper, SortingState } from '@tanstack/react-table';
 import dayjs from 'dayjs';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { v4 as uuidv4 } from 'uuid';
 import { ExamService } from '@/api/services/exam.service';
@@ -26,6 +27,7 @@ import { UpdateExamStatusValidation } from '@/utils/validation/exam';
 export default function ExamsList({ params }: { params: { lang: Locale } }) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [search, setSearch] = useState('');
+  const router = useRouter();
   const [page, setPage] = useState(1);
   const debouncedSearch = useDebounce(search);
   const [selectedExam, setSelectedExam] = useState<Maybe<ExamModel>>(null);
@@ -120,6 +122,19 @@ export default function ExamsList({ params }: { params: { lang: Locale } }) {
       cell: info => info.getValue(),
       header: t('courseGroup'),
     }),
+    columnHelper.accessor('id', {
+      id: uuidv4(),
+      cell: info => (
+        <Button
+          variant="link"
+          onClick={() => {
+            router.push(`${ROUTE_EXAMS}/result/${info.getValue()}`);
+          }}>
+          See exam results
+        </Button>
+      ),
+      header: 'Exam results',
+    }),
     columnHelper.accessor('subject.title', {
       id: uuidv4(),
       cell: info => info.getValue(),
@@ -147,13 +162,13 @@ export default function ExamsList({ params }: { params: { lang: Locale } }) {
             </MenuItem>
           )}
 
-          {/* <MenuItem
+          <MenuItem
             color="red"
             onClick={() => {
               updateExamStatus({ data: { status: 'COMPLETED' }, examId: row.original.id });
             }}>
             Finish exam
-          </MenuItem> */}
+          </MenuItem>
 
           {row.original.status !== 'IN_PROGRESS' && (
             <MenuItem

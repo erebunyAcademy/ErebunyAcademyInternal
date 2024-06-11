@@ -1,6 +1,6 @@
 import { Exam, ExamStatusEnum, LanguageTypeEnum } from '@prisma/client';
-import { ConflictException, ForbiddenException, NotFoundException } from 'next-api-decorators';
-import { v4 as uuid } from 'uuid';
+import { ConflictException, NotFoundException } from 'next-api-decorators';
+import { User } from 'next-auth';
 import { SortingType } from '@/api/types/common';
 import {
   CreateExamValidation,
@@ -10,20 +10,30 @@ import {
 } from '@/utils/validation/exam';
 import { orderBy } from './utils/common';
 import prisma from '..';
-import { uniqBy } from '../utils/common';
+
+function checkStudentAnswers(testQuestions: any, studentAnswerGroupedByTestQuestion: any): any {
+  const results: any = [];
+
+  testQuestions.forEach(({ id, options }: any) => {
+    const studentAnswers = studentAnswerGroupedByTestQuestion.get(id) || [];
+
+    const correctOptions = options
+      .filter((option: any) => option.isRightAnswer)
+      .map((option: any) => option.id);
+
+    const isCorrect = studentAnswers.every((answer: any) => correctOptions.includes(answer));
+
+    results.push({ testQuestionId: id, isCorrect });
+  });
+
+  return results;
+}
 
 export class ExamsResolver {
   static async list(skip: number, take: number, search: string, sorting: SortingType[]) {
     return Promise.all([
-      prisma.exam.count({
-        where: {
-          status: 'IN_PROGRESS',
-        },
-      }),
+      prisma.exam.count(),
       prisma.exam.findMany({
-        where: {
-          status: 'IN_PROGRESS',
-        },
         select: {
           id: true,
           status: true,
@@ -277,10 +287,6 @@ export class ExamsResolver {
     });
   }
 
-  static async getExamList() {
-    return prisma.exam.findMany();
-  }
-
   static async updateExamById(examId: string, data: Partial<Exam>) {
     const { id } = await this.getExamById(examId);
 
@@ -316,7 +322,7 @@ export class ExamsResolver {
     return exam;
   }
 
-  static async getTestQuestion(testQuestionId: string) {
+  static async getTestQuestion(testQuestionId: string, user: User) {
     if (!testQuestionId) {
       throw new NotFoundException('Invalid Data');
     }
@@ -336,6 +342,7 @@ export class ExamsResolver {
             select: {
               exam: {
                 select: {
+                  id: true,
                   duration: true,
                   examStartTime: true,
                 },
@@ -364,7 +371,15 @@ export class ExamsResolver {
           orderBy: { orderNumber: 'asc' },
           select: { id: true },
         }),
-        prisma.studentAnswerOption.findMany({ where: { testQuestionId } }),
+        prisma.studentAnswerOption.findMany({
+          where: {
+            testQuestionId,
+            studentExam: {
+              examId: testQuestion.examTranslation?.exam.id,
+              studentId: user?.student?.id,
+            },
+          },
+        }),
       ]);
 
       return {
@@ -452,67 +467,12 @@ export class ExamsResolver {
     });
   }
 
-  static async createStudentUuid(examId: string, studentId: string, req: any) {
-    const studentUuidCookie: string = req.cookies['student-exam-uuid'];
-
-    const studentExam = await prisma.studentExam.findUnique({
-      where: {
-        studentExamId: {
-          examId,
-          studentId,
-        },
-      },
-    });
-
-    if (!studentExam) {
-      throw new NotFoundException('Student exam is not found');
-    }
-
-    if (studentUuidCookie) {
-      const isUserAllowed = await prisma.studentExam.findUnique({
-        where: {
-          studentExamId: {
-            examId,
-            studentId,
-          },
-          studentUuid: studentUuidCookie,
-        },
-      });
-
-      console.log({ isUserAllowed });
-
-      if (!isUserAllowed) {
-        throw new ForbiddenException('Another user is already taking the exam');
-      }
-    } else {
-      if (studentExam.studentUuid) {
-        throw new ForbiddenException('You have already started the exam');
-      }
-
-      const uniqueId = uuid();
-
-      await prisma.studentExam.update({
-        where: {
-          studentExamId: {
-            examId,
-            studentId,
-          },
-        },
-        data: {
-          studentUuid: uniqueId,
-        },
-      });
-
-      return { uniqueId };
-    }
-  }
-
   static async finishExam(studentId?: string, examId?: string) {
     if (!studentId || !examId) {
       throw new NotFoundException('Invalid data');
     }
 
-    const finished = prisma.studentExam.update({
+    const finished = await prisma.studentExam.update({
       where: { studentExamId: { studentId, examId } },
       data: { hasFinished: true },
     });
@@ -531,15 +491,108 @@ export class ExamsResolver {
 
     const result = await prisma.studentAnswerOption.findMany({
       where: { studentExamId: studentExam.id },
-      select: { options: true },
+      select: { options: true, testQuestionId: true },
     });
 
-    const answers = result.flatMap(({ options }) => options);
-    const uniqueAnswers = uniqBy(answers, item => item?.testQuestionId);
+    const studentAnswerGroupedByTestQuestion = new Map();
 
-    const rightAnswers = uniqueAnswers.filter(item => item?.isRightAnswer);
+    result.forEach(({ testQuestionId, options }) => {
+      const existingAnswers = studentAnswerGroupedByTestQuestion.get(testQuestionId) || [];
+      studentAnswerGroupedByTestQuestion.set(testQuestionId, [...existingAnswers, options?.id]);
+    });
 
-    return { rightAnswers, total: uniqueAnswers };
+    const testQuestions = await prisma.testQuestion.findMany({
+      where: {
+        examTranslation: {
+          examId,
+        },
+      },
+      select: {
+        id: true,
+        options: {
+          select: {
+            isRightAnswer: true,
+            id: true,
+          },
+        },
+      },
+    });
+
+    const studentResult = checkStudentAnswers(testQuestions, studentAnswerGroupedByTestQuestion);
+    console.log(studentResult);
+
+    return {
+      rightAnswers: studentResult.filter(({ isCorrect }: any) => isCorrect).length,
+      total: studentResult.length,
+    };
+  }
+
+  static async getStudentsExamResults(examId: string) {
+    const studentExams = await prisma.studentExam.findMany({
+      where: {
+        examId,
+      },
+      select: {
+        student: {
+          select: {
+            id: true,
+            user: {
+              select: {
+                firstName: true,
+                lastName: true,
+                email: true,
+              },
+            },
+          },
+        },
+        id: true,
+      },
+    });
+
+    const testQuestions = await prisma.testQuestion.findMany({
+      where: {
+        examTranslation: {
+          examId,
+        },
+      },
+      select: {
+        id: true,
+        options: {
+          select: {
+            isRightAnswer: true,
+            id: true,
+          },
+        },
+      },
+    });
+
+    const results = [];
+
+    for (const { student, id: studentExamId } of studentExams) {
+      const result = await prisma.studentAnswerOption.findMany({
+        where: { studentExamId },
+        select: { options: true, testQuestionId: true },
+      });
+
+      const studentAnswerGroupedByTestQuestion = new Map();
+
+      result.forEach(({ testQuestionId, options }) => {
+        const existingAnswers = studentAnswerGroupedByTestQuestion.get(testQuestionId) || [];
+        studentAnswerGroupedByTestQuestion.set(testQuestionId, [...existingAnswers, options?.id]);
+      });
+
+      const studentResult = checkStudentAnswers(testQuestions, studentAnswerGroupedByTestQuestion);
+
+      results.push({
+        student,
+        rightAnswers: studentResult.filter(({ isCorrect }: any) => isCorrect).length,
+        total: studentResult.length,
+      });
+    }
+
+    console.log({ results });
+
+    return results;
   }
 
   static async getIsFinished(studentId?: string, examId?: string) {
@@ -550,6 +603,8 @@ export class ExamsResolver {
     const exam = await prisma.studentExam.findUnique({
       where: { studentExamId: { studentId, examId } },
     });
+
+    console.log(exam);
 
     return !!exam?.hasFinished;
   }

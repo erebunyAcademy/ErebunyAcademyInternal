@@ -18,8 +18,9 @@ export default async function RootLayout({
     ExamsResolver.getExamDurationInfo(params.examId),
     ExamsResolver.getIsFinished(session?.user?.student?.id, params.examId),
   ]);
-
+  console.log({ isFinished });
   if (!examDurationInfo || isFinished) {
+    console.log('*******');
     redirect(ROUTE_STUDENT_EXAM_LIST);
   }
 
