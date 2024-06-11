@@ -172,6 +172,7 @@ CREATE TABLE "Attachment" (
 CREATE TABLE "StudentExam" (
     "id" TEXT NOT NULL,
     "hasOpened" BOOLEAN NOT NULL DEFAULT false,
+    "hasFinished" BOOLEAN NOT NULL DEFAULT false,
     "examId" TEXT NOT NULL,
     "studentId" TEXT NOT NULL,
     "studentUuid" TEXT,
@@ -198,8 +199,9 @@ CREATE TABLE "Exam" (
     "facultyId" TEXT,
     "courseId" TEXT,
     "courseGroupId" TEXT,
-    "duration" DOUBLE PRECISION,
+    "duration" DOUBLE PRECISION NOT NULL,
     "status" "ExamStatusEnum" NOT NULL DEFAULT 'NOT_STARTED',
+    "examStartTime" TIMESTAMP(0),
     "updatedAt" TIMESTAMP(0) NOT NULL,
     "createdAt" TIMESTAMP(0) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
@@ -339,7 +341,7 @@ ALTER TABLE "StudentExam" ADD CONSTRAINT "StudentExam_examId_fkey" FOREIGN KEY (
 ALTER TABLE "StudentExam" ADD CONSTRAINT "StudentExam_studentId_fkey" FOREIGN KEY ("studentId") REFERENCES "Student"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "StudentAnswerOption" ADD CONSTRAINT "StudentAnswerOption_studentExamId_fkey" FOREIGN KEY ("studentExamId") REFERENCES "StudentExam"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "StudentAnswerOption" ADD CONSTRAINT "StudentAnswerOption_studentExamId_fkey" FOREIGN KEY ("studentExamId") REFERENCES "StudentExam"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "StudentAnswerOption" ADD CONSTRAINT "StudentAnswerOption_optionId_fkey" FOREIGN KEY ("optionId") REFERENCES "Option"("id") ON DELETE SET NULL ON UPDATE CASCADE;
