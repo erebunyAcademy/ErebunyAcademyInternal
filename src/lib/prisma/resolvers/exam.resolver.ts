@@ -531,6 +531,7 @@ export class ExamsResolver {
     const studentExams = await prisma.studentExam.findMany({
       where: {
         examId,
+        hasFinished: true,
       },
       select: {
         student: {
