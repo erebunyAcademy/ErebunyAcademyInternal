@@ -3,7 +3,9 @@ import React, { FC, useCallback, useEffect, useState } from 'react';
 import { Box, Text } from '@chakra-ui/react';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
+import { useRouter } from 'next/navigation';
 import useFinishExam from '@/hooks/useFinishExam';
+import { ROUTE_STUDENT_EXAM_LIST } from '@/utils/constants/routes';
 
 dayjs.extend(duration);
 
@@ -17,6 +19,7 @@ const ExamTimer: FC<ExamTimeProps> = ({ startTime, durationInMinutes, examId }) 
   const { mutate: finish } = useFinishExam();
   const [timeLeft, setTimeLeft] = useState(dayjs.duration(0));
   const [isFinished, setIsFinished] = useState(false);
+  const router = useRouter();
 
   const calculateTimeLeft = useCallback(() => {
     const now = dayjs();
@@ -37,13 +40,13 @@ const ExamTimer: FC<ExamTimeProps> = ({ startTime, durationInMinutes, examId }) 
 
       if (timeRemaining.asSeconds() <= 0 && !isFinished) {
         setIsFinished(true);
-        finish(examId);
+        finish(examId, { onSuccess: () => router.push(ROUTE_STUDENT_EXAM_LIST) });
         clearInterval(interval);
       }
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [startTime, durationInMinutes, calculateTimeLeft, isFinished, finish, examId]);
+  }, [calculateTimeLeft, examId, finish, isFinished, router]);
 
   const formatTime = (timeDuration: duration.Duration) => {
     const minutes = timeDuration.minutes();
