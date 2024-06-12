@@ -130,3 +130,13 @@ export class UpdateExamStatusValidation {
   @IsEnum(ExamStatusEnum)
   status: ExamStatusEnum;
 }
+
+export class FinishExamValidation {
+  @IsBoolean()
+  @IsOptional()
+  hasExpired?: boolean;
+
+  @IsString()
+  @IsNotEmpty()
+  examId: string;
+}

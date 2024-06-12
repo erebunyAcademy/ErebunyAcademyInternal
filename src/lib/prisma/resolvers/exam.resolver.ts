@@ -467,9 +467,20 @@ export class ExamsResolver {
     });
   }
 
-  static async finishExam(studentId?: string, examId?: string) {
+  static async finishExam(studentId?: string, examId?: string, hasExpired?: boolean) {
     if (!studentId || !examId) {
       throw new NotFoundException('Invalid data');
+    }
+
+    if (hasExpired) {
+      await prisma.exam.update({
+        where: {
+          id: examId,
+        },
+        data: {
+          status: 'COMPLETED',
+        },
+      });
     }
 
     const finished = await prisma.studentExam.update({

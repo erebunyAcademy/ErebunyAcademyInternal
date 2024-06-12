@@ -120,8 +120,12 @@ class ExamsHandler {
   }
 
   @Post('/finish/:examId')
-  finishExam(@CurrentUser() user: User, @Param('examId') examId?: string) {
-    return ExamsResolver.finishExam(user?.student?.id, examId);
+  finishExam(
+    @CurrentUser() user: User,
+    @Body(ValidationPipe) input: { hasExpired: boolean },
+    @Param('examId') examId?: string,
+  ) {
+    return ExamsResolver.finishExam(user?.student?.id, examId, input.hasExpired);
   }
 
   @StudentGuard()

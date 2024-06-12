@@ -11,6 +11,7 @@ import {
 } from '@/utils/models/exam';
 import {
   CreateExamValidation,
+  FinishExamValidation,
   OptionalExamValidation,
   UpdateExamStatusValidation,
 } from '@/utils/validation/exam';
@@ -71,8 +72,8 @@ export class ExamService {
   static createStudentUuid(examId: string) {
     return $apiClient.post<{ uniqueId: string }>(`exams/${examId}`);
   }
-  static finishExam(examId: string) {
-    return $apiClient.post(`/exams/finish/${examId}`);
+  static finishExam(input: FinishExamValidation) {
+    return $apiClient.post(`/exams/finish/${input.examId}`, { hasExpired: input.hasExpired });
   }
   static getResults(examId: string) {
     return $apiClient.get<GetExamResultsModel>(`/exams/results/${examId}`);

@@ -69,13 +69,16 @@ const TestQuestions: FC<Props> = ({
   const onFinish = useCallback(() => {
     const isReady = confirm('Are you sure you want to finish this examination?');
     if (isReady) {
-      finish(examId, {
-        onSuccess(hasFinished) {
-          if (hasFinished) {
-            onOpen();
-          }
+      finish(
+        { examId },
+        {
+          onSuccess(hasFinished) {
+            if (hasFinished) {
+              onOpen();
+            }
+          },
         },
-      });
+      );
     }
   }, [examId, finish, onOpen]);
 

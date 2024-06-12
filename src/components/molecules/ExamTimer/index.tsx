@@ -40,7 +40,10 @@ const ExamTimer: FC<ExamTimeProps> = ({ startTime, durationInMinutes, examId }) 
 
       if (timeRemaining.asSeconds() <= 0 && !isFinished) {
         setIsFinished(true);
-        finish(examId, { onSuccess: () => router.push(ROUTE_STUDENT_EXAM_LIST) });
+        finish(
+          { examId, hasExpired: true },
+          { onSuccess: () => router.push(ROUTE_STUDENT_EXAM_LIST) },
+        );
         clearInterval(interval);
       }
     }, 1000);
