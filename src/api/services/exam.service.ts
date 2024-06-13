@@ -38,8 +38,8 @@ export class ExamService {
     return $apiClient.post(`/exams/translation/${examId}/${language}`, input);
   }
 
-  static getExamTestQuestion(testQuestionId: string) {
-    return $apiClient.get<TestQuestion>(`/exams/test-question/${testQuestionId}`);
+  static getExamTestQuestion(examId: string, testQuestionId: string) {
+    return $apiClient.get<TestQuestion>(`/exams/${examId}/test-question/${testQuestionId}`);
   }
 
   static async updateExamTranslation(
@@ -62,7 +62,7 @@ export class ExamService {
     return $apiClient.get<FirstTestQuestionModel>(`exams/exam-translation/${examTrId}`);
   }
 
-  static createStudentAnswer(examId: string, testId: string, input: string[]) {
+  static createStudentAnswer(examId: string, testId: string, input: Array<string | undefined>) {
     return $apiClient.post(`/exams/${examId}/exam-student-answer/${testId}`, input);
   }
   static updateExamStatus(id: string, input: UpdateExamStatusValidation) {
@@ -73,7 +73,7 @@ export class ExamService {
     return $apiClient.post<{ uniqueId: string }>(`exams/${examId}`);
   }
   static finishExam(input: FinishExamValidation) {
-    return $apiClient.post(`/exams/finish/${input.examId}`, { hasExpired: input.hasExpired });
+    return $apiClient.post(`/exams/finish/${input.examId}`);
   }
   static getResults(examId: string) {
     return $apiClient.get<GetExamResultsModel>(`/exams/results/${examId}`);

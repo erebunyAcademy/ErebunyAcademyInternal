@@ -132,10 +132,6 @@ export class UpdateExamStatusValidation {
 }
 
 export class FinishExamValidation {
-  @IsBoolean()
-  @IsOptional()
-  hasExpired?: boolean;
-
   @IsString()
   @IsNotEmpty()
   examId: string;

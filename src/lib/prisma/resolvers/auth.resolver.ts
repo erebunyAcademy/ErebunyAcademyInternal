@@ -98,7 +98,7 @@ export class AuthResolver {
         userId: user.id,
         facultyId,
         courseId,
-        courseGroupId,
+        courseGroupId: courseGroupId || undefined,
       },
     });
 

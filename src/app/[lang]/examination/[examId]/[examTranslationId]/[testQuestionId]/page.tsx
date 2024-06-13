@@ -18,6 +18,7 @@ import { useRouter } from 'next/navigation';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { ExamService } from '@/api/services/exam.service';
 import ExamResultsModal from '@/components/molecules/ExamResultsModal';
+import Modal from '@/components/molecules/Modal';
 import useFinishExam from '@/hooks/useFinishExam';
 import { Locale } from '@/i18n';
 import { ROUTE_EXAMINATION, ROUTE_STUDENT_EXAM_LIST } from '@/utils/constants/routes';
@@ -52,6 +53,12 @@ const TestQuestions: FC<Props> = ({
   const handleClose = useCallback(() => router.push(ROUTE_STUDENT_EXAM_LIST), [router]);
 
   const { isOpen, onClose, onOpen } = useDisclosure({ onClose: handleClose });
+  const {
+    isOpen: isConfirmExamModalOpen,
+    onClose: onCloseConfirmModal,
+    onOpen: onOpenConfirmModal,
+  } = useDisclosure();
+
   const navigate = usePushToQuestion(lang, examId, examTranslationId);
   const { control, handleSubmit, reset } = useForm<FormData>({
     defaultValues: { checkboxOptions: [], radioOption: '' },
@@ -60,39 +67,37 @@ const TestQuestions: FC<Props> = ({
 
   const { data, isSuccess, isLoading } = useQuery({
     queryKey: ['question', testQuestionId],
-    queryFn: ExamService.getExamTestQuestion.bind(null, testQuestionId),
+    queryFn: ExamService.getExamTestQuestion.bind(null, examId, testQuestionId),
     enabled: !!testQuestionId,
   });
 
   const { testQuestion, answers, previousQuestionId, nextQuestionId } = data || {};
 
   const onFinish = useCallback(() => {
-    const isReady = confirm('Are you sure you want to finish this examination?');
-    if (isReady) {
-      finish(
-        { examId },
-        {
-          onSuccess(hasFinished) {
-            if (hasFinished) {
-              onOpen();
-            }
-          },
+    finish(
+      { examId },
+      {
+        onSuccess(hasFinished) {
+          if (hasFinished) {
+            onCloseConfirmModal();
+            onOpen();
+          }
         },
-      );
-    }
-  }, [examId, finish, onOpen]);
+      },
+    );
+  }, [examId, finish, onCloseConfirmModal, onOpen]);
 
   const { mutate, isPending } = useMutation<
     StudentAnswerMutationModel,
     { message: string },
-    string[]
+    Array<string | undefined>
   >({
     mutationFn: data => ExamService.createStudentAnswer(examId, testQuestionId, data),
     onSuccess(hasCreated) {
       if (nextQuestionId && hasCreated) {
         navigate(nextQuestionId);
       } else if (!nextQuestionId && hasCreated) {
-        onFinish();
+        onOpenConfirmModal();
       }
     },
   });
@@ -111,7 +116,7 @@ const TestQuestions: FC<Props> = ({
           mutate(values.checkboxOptions);
           break;
         case 'RADIO':
-          mutate([values.radioOption]);
+          mutate([values.radioOption || undefined]);
           break;
       }
     },
@@ -179,29 +184,43 @@ const TestQuestions: FC<Props> = ({
   }
 
   return (
-    <Box p={5} shadow="md" borderWidth="1px" h="100vh">
-      <Center flexDir="column" h="100%">
-        <Heading fontSize="xl" mb={10}>
-          {testQuestion?.title}
-        </Heading>
-        {testQuestion?.description && <Text mt={2}>{testQuestion.description}</Text>}
-        {renderFormDataByType()}
-        <Stack direction="row" spacing={300} mt={20}>
-          <Button
-            colorScheme="teal"
-            isDisabled={!previousQuestionId}
-            onClick={onPrev}
-            isLoading={isPending}>
-            Previous
-          </Button>
-          isLoading={isPending}
-          <Button colorScheme="teal" onClick={handleSubmit(onNext)} isLoading={isPending}>
-            {nextQuestionId ? 'Next' : 'Finish'}
-          </Button>
-        </Stack>
-      </Center>
-      <ExamResultsModal isOpen={isOpen} onClose={onClose} examId={examId} onFinish={handleClose} />
-    </Box>
+    <>
+      <Box p={5} shadow="md" borderWidth="1px" h="100vh">
+        <Center flexDir="column" h="100%">
+          <Heading fontSize="xl" mb={10}>
+            {testQuestion?.title}
+          </Heading>
+          {testQuestion?.description && <Text mt={2}>{testQuestion.description}</Text>}
+          {renderFormDataByType()}
+          <Stack direction="row" spacing={300} mt={20}>
+            <Button
+              colorScheme="teal"
+              isDisabled={!previousQuestionId}
+              onClick={onPrev}
+              isLoading={isPending}>
+              Previous
+            </Button>
+            <Button colorScheme="teal" onClick={handleSubmit(onNext)} isLoading={isPending}>
+              {nextQuestionId ? 'Next' : 'Finish'}
+            </Button>
+          </Stack>
+        </Center>
+        <ExamResultsModal
+          isOpen={isOpen}
+          onClose={onClose}
+          examId={examId}
+          onFinish={handleClose}
+        />
+      </Box>
+      <Modal
+        isOpen={isConfirmExamModalOpen}
+        onClose={onCloseConfirmModal}
+        primaryAction={onFinish}
+        actionText="Submit"
+        title="Submit your exam results">
+        <Text>Are you sure you want to finish this examination?</Text>
+      </Modal>
+    </>
   );
 };
 

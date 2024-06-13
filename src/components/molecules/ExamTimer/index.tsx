@@ -1,11 +1,12 @@
 'use client';
-import React, { FC, useCallback, useEffect, useState } from 'react';
-import { Box, Text } from '@chakra-ui/react';
+import React, { FC, memo, useCallback, useEffect, useState } from 'react';
+import { Box, Text, useDisclosure } from '@chakra-ui/react';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import { useRouter } from 'next/navigation';
 import useFinishExam from '@/hooks/useFinishExam';
 import { ROUTE_STUDENT_EXAM_LIST } from '@/utils/constants/routes';
+import ExamResultsModal from '../ExamResultsModal';
 
 dayjs.extend(duration);
 
@@ -20,6 +21,10 @@ const ExamTimer: FC<ExamTimeProps> = ({ startTime, durationInMinutes, examId }) 
   const [timeLeft, setTimeLeft] = useState(dayjs.duration(0));
   const [isFinished, setIsFinished] = useState(false);
   const router = useRouter();
+
+  const handleClose = useCallback(() => router.push(ROUTE_STUDENT_EXAM_LIST), [router]);
+
+  const { isOpen, onClose, onOpen } = useDisclosure({ onClose: handleClose });
 
   const calculateTimeLeft = useCallback(() => {
     const now = dayjs();
@@ -40,16 +45,13 @@ const ExamTimer: FC<ExamTimeProps> = ({ startTime, durationInMinutes, examId }) 
 
       if (timeRemaining.asSeconds() <= 0 && !isFinished) {
         setIsFinished(true);
-        finish(
-          { examId, hasExpired: true },
-          { onSuccess: () => router.push(ROUTE_STUDENT_EXAM_LIST) },
-        );
+        finish({ examId }, { onSuccess: onOpen });
         clearInterval(interval);
       }
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [calculateTimeLeft, examId, finish, isFinished, router]);
+  }, [calculateTimeLeft, examId, finish, isFinished, onOpen, router]);
 
   const formatTime = (timeDuration: duration.Duration) => {
     const minutes = timeDuration.minutes();
@@ -62,8 +64,10 @@ const ExamTimer: FC<ExamTimeProps> = ({ startTime, durationInMinutes, examId }) 
       <Text as="h2" fontSize={24} textAlign="center">
         Time Left: {formatTime(timeLeft)}
       </Text>
+
+      <ExamResultsModal isOpen={isOpen} onClose={onClose} examId={examId} onFinish={handleClose} />
     </Box>
   );
 };
 
-export default ExamTimer;
+export default memo(ExamTimer);

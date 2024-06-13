@@ -51,11 +51,19 @@ const StudentExamList = () => {
     columnHelper.accessor('exam.id', {
       id: uuidv4(),
       cell: info => (
-        <Button variant="link" onClick={checkStartExam.bind(null, info.row.original)}>
+        <Button
+          variant="link"
+          onClick={checkStartExam.bind(null, info.row.original)}
+          isDisabled={info.row.original.exam.status !== 'IN_PROGRESS'}>
           Start Exam
         </Button>
       ),
       header: t('startExam'),
+    }),
+    columnHelper.accessor('exam.status', {
+      id: uuidv4(),
+      cell: info => info.getValue().split('_').join(' '),
+      header: t('status'),
     }),
     columnHelper.accessor('exam.examLanguages', {
       id: uuidv4(),
@@ -74,7 +82,7 @@ const StudentExamList = () => {
     columnHelper.accessor('exam.subject.title', {
       id: uuidv4(),
       cell: info => info.getValue(),
-      header: t('subjectTitle'),
+      header: t('subject'),
     }),
   ];
 

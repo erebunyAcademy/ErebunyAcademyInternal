@@ -10,7 +10,7 @@ const migration = async () => {
     data: {
       firstName: 'abcd',
       lastName: 'efgh',
-      email: 'abcd@mailinator.com',
+      email: process.env.ADMIN_EMAIL,
       isVerified: true,
       password: hashedPassword,
       uniqueUserId: 77239701,

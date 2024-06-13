@@ -18,19 +18,19 @@ export default async function RootLayout({
     ExamsResolver.getExamDurationInfo(params.examId),
     ExamsResolver.getIsFinished(session?.user?.student?.id, params.examId),
   ]);
-  console.log({ isFinished });
   if (!examDurationInfo || isFinished) {
-    console.log('*******');
     redirect(ROUTE_STUDENT_EXAM_LIST);
   }
 
   return (
     <Box>
-      <ExamTimer
-        startTime={examDurationInfo.examStartTime!}
-        durationInMinutes={examDurationInfo.duration}
-        examId={params.examId}
-      />
+      {examDurationInfo && (
+        <ExamTimer
+          startTime={examDurationInfo.examStartTime!}
+          durationInMinutes={examDurationInfo.duration}
+          examId={params.examId}
+        />
+      )}
       {children}
     </Box>
   );

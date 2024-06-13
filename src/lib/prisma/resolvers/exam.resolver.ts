@@ -21,7 +21,9 @@ function checkStudentAnswers(testQuestions: any, studentAnswerGroupedByTestQuest
       .filter((option: any) => option.isRightAnswer)
       .map((option: any) => option.id);
 
-    const isCorrect = studentAnswers.every((answer: any) => correctOptions.includes(answer));
+    const isCorrect = studentAnswers.length
+      ? studentAnswers.every((answer: any) => correctOptions.includes(answer))
+      : false;
 
     results.push({ testQuestionId: id, isCorrect });
   });
@@ -322,9 +324,19 @@ export class ExamsResolver {
     return exam;
   }
 
-  static async getTestQuestion(testQuestionId: string, user: User) {
+  static async getTestQuestion(examId: string, testQuestionId: string, user: User) {
     if (!testQuestionId) {
       throw new NotFoundException('Invalid Data');
+    }
+
+    const exam = await prisma.exam.findUnique({
+      where: {
+        id: examId,
+      },
+    });
+
+    if (exam?.status === 'COMPLETED') {
+      throw new ConflictException('Exam time has expired');
     }
 
     try {
@@ -412,7 +424,7 @@ export class ExamsResolver {
   }
 
   static async createStudentAnswer(
-    optionsIds: string[],
+    optionsIds: Array<string | undefined>,
     studentId?: string,
     examId?: string,
     testId?: string,
@@ -437,13 +449,17 @@ export class ExamsResolver {
       await prisma.studentAnswerOption.deleteMany({ where: { testQuestionId: testId } });
     }
 
-    await prisma.studentAnswerOption.createManyAndReturn({
-      data: optionsIds.map(optionId => ({
-        optionId,
-        studentExamId: studentExam.id,
-        testQuestionId: testId,
-      })),
-    });
+    const filteredAnswers = optionsIds.filter(Boolean);
+
+    if (filteredAnswers.length) {
+      await prisma.studentAnswerOption.createManyAndReturn({
+        data: filteredAnswers.map(optionId => ({
+          optionId,
+          studentExamId: studentExam.id,
+          testQuestionId: testId,
+        })),
+      });
+    }
 
     return true;
   }
@@ -467,20 +483,9 @@ export class ExamsResolver {
     });
   }
 
-  static async finishExam(studentId?: string, examId?: string, hasExpired?: boolean) {
+  static async finishExam(studentId?: string, examId?: string) {
     if (!studentId || !examId) {
       throw new NotFoundException('Invalid data');
-    }
-
-    if (hasExpired) {
-      await prisma.exam.update({
-        where: {
-          id: examId,
-        },
-        data: {
-          status: 'COMPLETED',
-        },
-      });
     }
 
     const finished = await prisma.studentExam.update({
@@ -504,6 +509,8 @@ export class ExamsResolver {
       where: { studentExamId: studentExam.id },
       select: { options: true, testQuestionId: true },
     });
+
+    console.log({ result });
 
     const studentAnswerGroupedByTestQuestion = new Map();
 

@@ -16,8 +16,6 @@ const Examination = async ({ params }: { params: { examId: string; lang: Locale 
     redirect(languagePathHelper(params.lang, ROUTE_STUDENT_EXAM_LIST));
   }
 
-  console.log({ examTranslation });
-
   return (
     <SelectExamLanguageModal
       examTranslation={examTranslation?.examLanguages}

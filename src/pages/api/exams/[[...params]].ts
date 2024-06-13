@@ -86,9 +86,13 @@ class ExamsHandler {
   }
 
   @StudentGuard()
-  @Get('/test-question/:testQuestionId')
-  getTestQuestion(@Param('testQuestionId') testQuestionId: string, @CurrentUser() user: User) {
-    return ExamsResolver.getTestQuestion(testQuestionId, user);
+  @Get('/:examId/test-question/:testQuestionId')
+  getTestQuestion(
+    @Param('examId') examId: string,
+    @Param('testQuestionId') testQuestionId: string,
+    @CurrentUser() user: User,
+  ) {
+    return ExamsResolver.getTestQuestion(examId, testQuestionId, user);
   }
 
   @Post()
@@ -111,7 +115,7 @@ class ExamsHandler {
   @StudentGuard()
   @Post('/:examId/exam-student-answer/:testId')
   createStudentAnswer(
-    @Body(ValidationPipe) input: string[],
+    @Body(ValidationPipe) input: Array<string | undefined>,
     @CurrentUser() user: User,
     @Param('examId') examId?: string,
     @Param('testId') testId?: string,
@@ -120,12 +124,8 @@ class ExamsHandler {
   }
 
   @Post('/finish/:examId')
-  finishExam(
-    @CurrentUser() user: User,
-    @Body(ValidationPipe) input: { hasExpired: boolean },
-    @Param('examId') examId?: string,
-  ) {
-    return ExamsResolver.finishExam(user?.student?.id, examId, input.hasExpired);
+  finishExam(@CurrentUser() user: User, @Param('examId') examId?: string) {
+    return ExamsResolver.finishExam(user?.student?.id, examId);
   }
 
   @StudentGuard()

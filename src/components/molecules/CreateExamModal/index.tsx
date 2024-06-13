@@ -65,14 +65,14 @@ const CreateExamModal: FC<CreateExamModalProps> = ({ isOpen, onClose }) => {
     enabled: !!faculty,
   });
 
-  const { data: studentGradeGroupQueryData } = useQuery({
-    queryKey: ['course-group', courseGroup, faculty],
+  const { data: courseGroupQueryData } = useQuery({
+    queryKey: ['course-group', courseQueryData],
     queryFn: () => CourseGroupService.getCourseGroupByCourseId(course),
     enabled: !!course,
   });
 
   const { data: studentsData } = useQuery({
-    queryKey: ['students', courseGroup, course],
+    queryKey: ['students', courseGroup],
     queryFn: () => StudentService.getStudentsByCourseGroupId(courseGroup),
     enabled: !!courseGroup,
   });
@@ -201,7 +201,7 @@ const CreateExamModal: FC<CreateExamModalProps> = ({ isOpen, onClose }) => {
                 <SelectLabel
                   isRequired
                   name={name}
-                  options={studentGradeGroupQueryData || []}
+                  options={courseGroupQueryData || []}
                   labelName="selectCourseGroup"
                   valueLabel="id"
                   nameLabel="title"

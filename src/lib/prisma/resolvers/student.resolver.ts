@@ -93,7 +93,6 @@ export class StudentResolver {
     return prisma.studentExam.findMany({
       where: {
         studentId: user?.student?.id,
-        hasFinished: false,
       },
       select: {
         exam: {
