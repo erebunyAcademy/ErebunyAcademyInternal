@@ -39,6 +39,15 @@ export class CronResolver {
             .then(() => {
               console.log('EXAM STATUS HAS BEEN SUCCESSFULLY UPDATED');
             });
+
+          await prisma.studentExam.updateMany({
+            where: {
+              examId: exam.id,
+            },
+            data: {
+              hasFinished: true,
+            },
+          });
         }
       }
     }

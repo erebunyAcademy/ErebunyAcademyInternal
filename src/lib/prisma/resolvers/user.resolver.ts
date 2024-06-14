@@ -50,6 +50,12 @@ export class UserResolver {
         },
         student: {
           select: {
+            studentExams: {
+              select: {
+                examId: true,
+                hasFinished: true,
+              },
+            },
             id: true,
             course: {
               select: {
