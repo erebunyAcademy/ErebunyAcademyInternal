@@ -5,6 +5,7 @@ import {
   TestQuestionTypeEnum,
 } from '@prisma/client';
 import { Type } from 'class-transformer';
+import 'reflect-metadata';
 import {
   ArrayNotEmpty,
   IsArray,
