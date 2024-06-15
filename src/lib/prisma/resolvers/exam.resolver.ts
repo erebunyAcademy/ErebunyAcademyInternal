@@ -540,7 +540,8 @@ export class ExamsResolver {
     };
   }
 
-  static async getStudentsExamResults(examId: string) {
+  // TODO
+  static async getStudentsExamResults(examId: string, examTranslationId?: string) {
     const studentExams = await prisma.studentExam.findMany({
       where: {
         examId,
@@ -567,6 +568,7 @@ export class ExamsResolver {
       where: {
         examTranslation: {
           examId,
+          id: examTranslationId,
         },
       },
       select: {
