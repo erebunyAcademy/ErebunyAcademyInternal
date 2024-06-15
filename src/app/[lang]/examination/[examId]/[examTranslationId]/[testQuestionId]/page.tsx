@@ -68,7 +68,7 @@ const TestQuestions: FC<Props> = ({
 
   const { data, isSuccess, isLoading, error } = useQuery({
     queryKey: ['question', testQuestionId],
-    queryFn: ExamService.getExamTestQuestion.bind(null, examId, testQuestionId),
+    queryFn: ExamService.getExamTestQuestion.bind(null, examId, testQuestionId, examTranslationId),
     enabled: !!testQuestionId,
   });
 

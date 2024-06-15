@@ -86,13 +86,14 @@ class ExamsHandler {
   }
 
   @StudentGuard()
-  @Get('/:examId/test-question/:testQuestionId')
+  @Get('/:examId/test-question/:testQuestionId/:examTranslationId')
   getTestQuestion(
     @Param('examId') examId: string,
     @Param('testQuestionId') testQuestionId: string,
+    @Param('examTranslationId') examTranslationId: string,
     @CurrentUser() user: User,
   ) {
-    return ExamsResolver.getTestQuestion(examId, testQuestionId, user);
+    return ExamsResolver.getTestQuestion(examId, testQuestionId, examTranslationId, user);
   }
 
   @Post()

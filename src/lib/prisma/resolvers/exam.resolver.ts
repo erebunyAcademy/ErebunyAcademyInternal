@@ -141,8 +141,6 @@ export class ExamsResolver {
         },
       });
 
-      console.log(prisma.examTranslationTests, 'prisma.examTranslationTests');
-
       await prisma.examTranslationTests.createMany({
         data: testQuestionIds.map((testQuestionId: string) => ({
           testQuestionId,
@@ -259,6 +257,7 @@ export class ExamsResolver {
         examTranslationId,
       },
       select: {
+        id: true,
         testQuestion: {
           select: {
             id: true,
@@ -267,8 +266,6 @@ export class ExamsResolver {
         },
       },
     });
-
-    console.log({ examTranslationTests });
 
     return examTranslationTests;
   }
@@ -325,15 +322,18 @@ export class ExamsResolver {
     return exam;
   }
 
-  static async getTestQuestion(examId: string, testQuestionId: string, user: User) {
+  static async getTestQuestion(
+    examId: string,
+    testQuestionId: string,
+    examTranslationId: string,
+    user: User,
+  ) {
     if (!testQuestionId) {
       throw new NotFoundException('Invalid Data');
     }
 
     const exam = await prisma.exam.findUnique({
-      where: {
-        id: examId,
-      },
+      where: { id: examId },
     });
 
     if (exam?.status === 'COMPLETED') {
@@ -341,23 +341,26 @@ export class ExamsResolver {
     }
 
     try {
-      const testQuestion = await prisma.testQuestion.findUniqueOrThrow({
+      const examTestQuestion = await prisma.examTranslationTests.findUniqueOrThrow({
         where: { id: testQuestionId },
         select: {
-          id: true,
-          title: true,
-          description: true,
-          type: true,
-          orderNumber: true,
-          examTranslationId: true,
-          options: { select: { id: true, title: true } },
-          examTranslation: {
+          testQuestion: {
             select: {
-              exam: {
+              id: true,
+              title: true,
+              description: true,
+              type: true,
+              orderNumber: true,
+              options: { select: { id: true, title: true } },
+              examTranslation: {
                 select: {
-                  id: true,
-                  duration: true,
-                  examStartTime: true,
+                  exam: {
+                    select: {
+                      id: true,
+                      duration: true,
+                      examStartTime: true,
+                    },
+                  },
                 },
               },
             },
@@ -365,30 +368,37 @@ export class ExamsResolver {
         },
       });
 
+      const { testQuestion } = examTestQuestion;
       const { orderNumber } = testQuestion;
 
       const [previousQuestion, nextQuestion, answers] = await Promise.all([
-        prisma.testQuestion.findFirst({
+        prisma.examTranslationTests.findFirst({
           where: {
-            examTranslationId: testQuestion.examTranslationId,
-            orderNumber: { lt: orderNumber },
+            examTranslationId,
+            testQuestionId,
+            testQuestion: {
+              orderNumber: { lt: orderNumber },
+            },
           },
-          orderBy: { orderNumber: 'desc' },
-          select: { id: true },
+          orderBy: { testQuestion: { orderNumber: 'desc' } },
+          select: { id: true, testQuestionId: true },
         }),
-        prisma.testQuestion.findFirst({
+        prisma.examTranslationTests.findFirst({
           where: {
-            examTranslationId: testQuestion.examTranslationId,
-            orderNumber: { gt: orderNumber },
+            examTranslationId,
+            testQuestionId,
+            testQuestion: {
+              orderNumber: { gt: orderNumber },
+            },
           },
-          orderBy: { orderNumber: 'asc' },
-          select: { id: true },
+          orderBy: { testQuestion: { orderNumber: 'asc' } },
+          select: { id: true, testQuestionId: true },
         }),
         prisma.studentAnswerOption.findMany({
           where: {
             testQuestionId,
             studentExam: {
-              examId: testQuestion.examTranslation?.exam.id,
+              examId,
               studentId: user?.student?.id,
             },
           },
@@ -396,7 +406,7 @@ export class ExamsResolver {
       ]);
 
       return {
-        testQuestion,
+        testQuestion: examTestQuestion.testQuestion,
         answers,
         previousQuestionId: previousQuestion?.id || null,
         nextQuestionId: nextQuestion?.id || null,
@@ -511,8 +521,6 @@ export class ExamsResolver {
       select: { options: true, testQuestionId: true },
     });
 
-    console.log({ result });
-
     const studentAnswerGroupedByTestQuestion = new Map();
 
     result.forEach(({ testQuestionId, options }) => {
@@ -616,8 +624,6 @@ export class ExamsResolver {
       });
     }
 
-    console.log({ results });
-
     return results;
   }
 
@@ -629,8 +635,6 @@ export class ExamsResolver {
     const exam = await prisma.studentExam.findUnique({
       where: { studentExamId: { studentId, examId } },
     });
-
-    console.log(exam);
 
     return !!exam?.hasFinished;
   }

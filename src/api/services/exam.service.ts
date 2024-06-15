@@ -38,8 +38,10 @@ export class ExamService {
     return $apiClient.post(`/exams/translation/${examId}/${language}`, input);
   }
 
-  static getExamTestQuestion(examId: string, testQuestionId: string) {
-    return $apiClient.get<TestQuestion>(`/exams/${examId}/test-question/${testQuestionId}`);
+  static getExamTestQuestion(examId: string, testQuestionId: string, examTranslationId: string) {
+    return $apiClient.get<TestQuestion>(
+      `/exams/${examId}/test-question/${testQuestionId}/${examTranslationId}`,
+    );
   }
 
   static async updateExamTranslation(
