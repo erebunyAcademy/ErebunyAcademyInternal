@@ -10,10 +10,12 @@ import { useTranslations } from 'next-intl';
 import { v4 as uuidv4 } from 'uuid';
 import { StudentService } from '@/api/services/student.service';
 import SimpleTable from '@/components/organisms/SimpleTable';
-import { ROUTE_EXAMINATION } from '@/utils/constants/routes';
+import { Locale } from '@/i18n';
+import { ROUTE_DASHBOARD, ROUTE_EXAMINATION } from '@/utils/constants/routes';
+import { languagePathHelper } from '@/utils/helpers/language';
 import { StudentExam, StudentExams } from '@/utils/models/student';
 
-const StudentExamList = ({ user }: { user: User }) => {
+const StudentExamList = ({ user, lang }: { user: User; lang: Locale }) => {
   const t = useTranslations();
   const router = useRouter();
   const { data } = useQuery<StudentExams>({
@@ -55,6 +57,10 @@ const StudentExamList = ({ user }: { user: User }) => {
             isDisabled={disabled}
             variant="link"
             as={!disabled ? Link : undefined}
+            target={!disabled ? '_blank' : '_self'}
+            onClick={() => {
+              router.push(languagePathHelper(lang, ROUTE_DASHBOARD));
+            }}
             href={!disabled ? `${ROUTE_EXAMINATION}/${info.row.original.exam.id}` : undefined}>
             {t('startExam')}
           </Button>

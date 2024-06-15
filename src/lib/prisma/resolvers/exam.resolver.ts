@@ -375,7 +375,6 @@ export class ExamsResolver {
         prisma.examTranslationTests.findFirst({
           where: {
             examTranslationId,
-            testQuestionId,
             testQuestion: {
               orderNumber: { lt: orderNumber },
             },
@@ -386,7 +385,6 @@ export class ExamsResolver {
         prisma.examTranslationTests.findFirst({
           where: {
             examTranslationId,
-            testQuestionId,
             testQuestion: {
               orderNumber: { gt: orderNumber },
             },
@@ -396,7 +394,7 @@ export class ExamsResolver {
         }),
         prisma.studentAnswerOption.findMany({
           where: {
-            testQuestionId,
+            testQuestionId: examTestQuestion.testQuestion.id,
             studentExam: {
               examId,
               studentId: user?.student?.id,
@@ -452,12 +450,23 @@ export class ExamsResolver {
       throw new NotFoundException();
     }
 
+    const examTranslationTest = await prisma.examTranslationTests.findUniqueOrThrow({
+      where: {
+        id: testId,
+      },
+      select: {
+        testQuestionId: true,
+      },
+    });
+
     const existOptions = await prisma.studentAnswerOption.findMany({
-      where: { testQuestionId: testId },
+      where: { testQuestionId: examTranslationTest.testQuestionId },
     });
 
     if (!!existOptions.length) {
-      await prisma.studentAnswerOption.deleteMany({ where: { testQuestionId: testId } });
+      await prisma.studentAnswerOption.deleteMany({
+        where: { testQuestionId: examTranslationTest.testQuestionId },
+      });
     }
 
     const filteredAnswers = optionsIds.filter(Boolean);
@@ -467,7 +476,7 @@ export class ExamsResolver {
         data: filteredAnswers.map(optionId => ({
           optionId,
           studentExamId: studentExam.id,
-          testQuestionId: testId,
+          testQuestionId: examTranslationTest.testQuestionId,
         })),
       });
     }
@@ -528,27 +537,30 @@ export class ExamsResolver {
       studentAnswerGroupedByTestQuestion.set(testQuestionId, [...existingAnswers, options?.id]);
     });
 
-    const testQuestions = await prisma.testQuestion.findMany({
+    const examTranslationTests = await prisma.examTranslationTests.findMany({
       where: {
-        examTranslation: {
-          examId,
-          id: examTranslationId,
-        },
+        examTranslationId,
       },
       select: {
-        id: true,
-        options: {
-          where: {
-            isRightAnswer: true,
-          },
+        testQuestion: {
           select: {
             id: true,
+            options: {
+              where: {
+                isRightAnswer: true,
+              },
+              select: {
+                id: true,
+              },
+            },
           },
         },
       },
     });
 
-    const studentResult = checkStudentAnswers(testQuestions, studentAnswerGroupedByTestQuestion);
+    const data = examTranslationTests.map(exTest => exTest.testQuestion);
+
+    const studentResult = checkStudentAnswers(data, studentAnswerGroupedByTestQuestion);
 
     return {
       rightAnswers: studentResult.filter(({ isCorrect }: any) => isCorrect).length,
