@@ -19,6 +19,7 @@ const CreateEdit = ({
   params: { slug: string[] };
   searchParams: { language: LanguageTypeEnum };
 }) => {
+  console.log({ params });
   const [examId, subjectId] = params.slug;
   const t = useTranslations();
 

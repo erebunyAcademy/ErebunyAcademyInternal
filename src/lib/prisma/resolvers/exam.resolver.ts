@@ -119,39 +119,41 @@ export class ExamsResolver {
     language: LanguageTypeEnum,
     input: ExamValidation,
   ) {
-    const { title, description, testQuestionIds } = input;
+    try {
+      const { title, description, testQuestionIds } = input;
 
-    if (!examId) {
-      throw new ConflictException('No exam id provided');
-    }
+      if (!examId) {
+        throw new ConflictException('No exam id provided');
+      }
 
-    const exam = await this.getExamById(examId);
+      const exam = await this.getExamById(examId);
 
-    if (!exam) {
-      throw new ConflictException('Exam with provided id is not found');
-    }
+      if (!exam) {
+        throw new ConflictException('Exam with provided id is not found');
+      }
 
-    const createdTranslation = await prisma.examTranslation.create({
-      data: {
-        examId: exam.id,
-        title,
-        description,
-        language,
-      },
-    });
-
-    await prisma.testQuestion.updateMany({
-      where: {
-        id: {
-          in: testQuestionIds,
+      const createdTranslation = await prisma.examTranslation.create({
+        data: {
+          examId: exam.id,
+          title,
+          description,
+          language,
         },
-      },
-      data: {
-        examTranslationId: createdTranslation.id,
-      },
-    });
+      });
 
-    return true;
+      console.log(prisma.examTranslationTests, 'prisma.examTranslationTests');
+
+      await prisma.examTranslationTests.createMany({
+        data: testQuestionIds.map((testQuestionId: string) => ({
+          testQuestionId,
+          examTranslationId: createdTranslation.id,
+        })),
+      });
+
+      return true;
+    } catch (error) {
+      console.log({ error });
+    }
   }
 
   static async getExamTranslationByExamIdAndLanguage(examId: string, language: LanguageTypeEnum) {
@@ -251,18 +253,24 @@ export class ExamsResolver {
     });
   }
 
-  static getFirstTestQuestion(examTranslationId: string) {
-    return prisma.testQuestion.findFirst({
+  static async getFirstTestQuestion(examTranslationId: string) {
+    const examTranslationTests = await prisma.examTranslationTests.findFirst({
       where: {
         examTranslationId,
       },
-      orderBy: {
-        orderNumber: 'asc',
-      },
       select: {
-        id: true,
+        testQuestion: {
+          select: {
+            id: true,
+            orderNumber: true,
+          },
+        },
       },
     });
+
+    console.log({ examTranslationTests });
+
+    return examTranslationTests;
   }
 
   static async checkUserPermissionToStartExam(studentId: string, examId: string) {
