@@ -11,24 +11,17 @@ import {
 import { orderBy } from './utils/common';
 import prisma from '..';
 
-function checkStudentAnswers(testQuestions: any, studentAnswerGroupedByTestQuestion: any): any {
-  const results: any = [];
-
-  testQuestions.forEach(({ id, options }: any) => {
+function checkStudentAnswers(testQuestions: any, studentAnswerGroupedByTestQuestion: any) {
+  return testQuestions.map(({ id, options }: any) => {
     const studentAnswers = studentAnswerGroupedByTestQuestion.get(id) || [];
+    const correctOptions = options.map((option: { id: string }) => option.id);
 
-    const correctOptions = options
-      .filter((option: any) => option.isRightAnswer)
-      .map((option: any) => option.id);
+    const isCorrect = correctOptions.every((correctOption: any) =>
+      studentAnswers.includes(correctOption),
+    );
 
-    const isCorrect = studentAnswers.length
-      ? studentAnswers.every((answer: any) => correctOptions.includes(answer))
-      : false;
-
-    results.push({ testQuestionId: id, isCorrect });
+    return { testQuestionId: id, isCorrect };
   });
-
-  return results;
 }
 
 export class ExamsResolver {
@@ -528,8 +521,10 @@ export class ExamsResolver {
       select: {
         id: true,
         options: {
-          select: {
+          where: {
             isRightAnswer: true,
+          },
+          select: {
             id: true,
           },
         },
@@ -537,7 +532,6 @@ export class ExamsResolver {
     });
 
     const studentResult = checkStudentAnswers(testQuestions, studentAnswerGroupedByTestQuestion);
-    console.log(studentResult);
 
     return {
       rightAnswers: studentResult.filter(({ isCorrect }: any) => isCorrect).length,
@@ -577,8 +571,10 @@ export class ExamsResolver {
       select: {
         id: true,
         options: {
-          select: {
+          where: {
             isRightAnswer: true,
+          },
+          select: {
             id: true,
           },
         },
