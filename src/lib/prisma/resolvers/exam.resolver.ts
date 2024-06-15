@@ -568,14 +568,35 @@ export class ExamsResolver {
     };
   }
 
-  // TODO
-  static async getStudentsExamResults(examId: string, examTranslationId?: string) {
+  static async getStudentsExamResults(examId: string) {
+    const examTr = await prisma.examTranslation.findFirstOrThrow({
+      where: {
+        examId,
+      },
+    });
+
     const studentExams = await prisma.studentExam.findMany({
       where: {
         examId,
         hasFinished: true,
+        exam: {
+          examLanguages: {
+            some: {
+              id: examTr.id,
+            },
+          },
+        },
       },
       select: {
+        exam: {
+          select: {
+            examLanguages: {
+              select: {
+                id: true,
+              },
+            },
+          },
+        },
         student: {
           select: {
             id: true,
@@ -592,21 +613,22 @@ export class ExamsResolver {
       },
     });
 
-    const testQuestions = await prisma.testQuestion.findMany({
+    const examTranslationTests = await prisma.examTranslationTests.findMany({
       where: {
-        examTranslation: {
-          examId,
-          id: examTranslationId,
-        },
+        examTranslationId: examTr.id,
       },
       select: {
-        id: true,
-        options: {
-          where: {
-            isRightAnswer: true,
-          },
+        testQuestion: {
           select: {
             id: true,
+            options: {
+              where: {
+                isRightAnswer: true,
+              },
+              select: {
+                id: true,
+              },
+            },
           },
         },
       },
@@ -626,6 +648,7 @@ export class ExamsResolver {
         const existingAnswers = studentAnswerGroupedByTestQuestion.get(testQuestionId) || [];
         studentAnswerGroupedByTestQuestion.set(testQuestionId, [...existingAnswers, options?.id]);
       });
+      const testQuestions = examTranslationTests.map(exTest => exTest.testQuestion);
 
       const studentResult = checkStudentAnswers(testQuestions, studentAnswerGroupedByTestQuestion);
 
