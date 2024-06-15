@@ -30,15 +30,15 @@ const questionTypes = [
 const skillLevels = [
   {
     id: TestQuestionLevelEnum.EASY,
-    skillLevel: 'Beginner',
+    skillLevel: 'Easy',
   },
   {
     id: TestQuestionLevelEnum.MEDIUM,
-    skillLevel: 'Intermediate',
+    skillLevel: 'Medium',
   },
   {
     id: TestQuestionLevelEnum.HARD,
-    skillLevel: 'Advanced',
+    skillLevel: 'Hard',
   },
 ];
 
@@ -69,7 +69,7 @@ const CreateTestQuestions = ({
     watch,
     handleSubmit,
     reset,
-    formState: { isValid },
+    formState: { isValid, errors },
   } = useForm<TestQuestionValidation>({
     resolver,
     defaultValues: {
@@ -99,6 +99,8 @@ const CreateTestQuestions = ({
     });
   };
 
+  console.log({ errors });
+
   useEffect(() => {
     if (excelData) {
       reset({
@@ -111,7 +113,9 @@ const CreateTestQuestions = ({
             (item.answers?.length || 0) > 1
               ? TestQuestionTypeEnum.CHECKBOX
               : TestQuestionTypeEnum.RADIO,
-          skillLevel: (item.level as string)?.toUpperCase()?.trim() as TestQuestionLevelEnum,
+          skillLevel:
+            ((item.level as string)?.toUpperCase()?.trim() as TestQuestionLevelEnum) ||
+            TestQuestionLevelEnum.EASY,
           lang: language,
           options: Array.isArray(item.options)
             ? item.options.map(opt => {
