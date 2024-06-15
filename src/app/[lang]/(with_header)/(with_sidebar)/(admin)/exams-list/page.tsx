@@ -152,7 +152,7 @@ export default function ExamsList({ params }: { params: { lang: Locale } }) {
       id: uuidv4(),
       cell: ({ row }) => (
         <ActionButtons>
-          {row.original.status !== 'IN_PROGRESS' && (
+          {row.original.status === 'NOT_STARTED' && (
             <MenuItem
               color="green"
               onClick={() => {
@@ -161,15 +161,15 @@ export default function ExamsList({ params }: { params: { lang: Locale } }) {
               Start exam
             </MenuItem>
           )}
-
-          <MenuItem
-            color="red"
-            onClick={() => {
-              updateExamStatus({ data: { status: 'COMPLETED' }, examId: row.original.id });
-            }}>
-            Finish exam
-          </MenuItem>
-
+          {row.original.status === 'IN_PROGRESS' && (
+            <MenuItem
+              color="red"
+              onClick={() => {
+                updateExamStatus({ data: { status: 'COMPLETED' }, examId: row.original.id });
+              }}>
+              Finish exam
+            </MenuItem>
+          )}
           {row.original.status !== 'IN_PROGRESS' && (
             <MenuItem
               color="red"

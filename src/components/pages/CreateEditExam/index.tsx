@@ -1,6 +1,6 @@
 'use client';
 import React, { FC, useEffect } from 'react';
-import { Box, Button, Flex, Heading, Stack } from '@chakra-ui/react';
+import { Box, Button, Flex, Heading, Stack, useToast } from '@chakra-ui/react';
 import { classValidatorResolver } from '@hookform/resolvers/class-validator';
 import { LanguageTypeEnum } from '@prisma/client';
 import { useMutation } from '@tanstack/react-query';
@@ -32,6 +32,7 @@ const CreateEditExam: FC<CreateEditExamProps> = ({
   language,
 }) => {
   const t = useTranslations();
+  const toast = useToast();
 
   const { control, handleSubmit, reset } = useForm<ExamValidation>({
     resolver,
@@ -98,11 +99,11 @@ const CreateEditExam: FC<CreateEditExamProps> = ({
   ];
 
   const onSubmit = (data: ExamValidation) => {
-    mutate(data);
+    mutate(data, { onSuccess: () => toast({ title: 'Success', status: 'success' }) });
   };
 
   const submitExamUpdate = (data: OptionalExamValidation) => {
-    update(data);
+    update(data, { onSuccess: () => toast({ title: 'Success', status: 'success' }) });
   };
 
   return (
