@@ -9,12 +9,13 @@ interface Props {
   onClose: () => void;
   examId: string;
   onFinish: () => void;
+  examTranslationId: string;
 }
 
-const ExamResultsModal: FC<Props> = ({ isOpen, onClose, examId, onFinish }) => {
+const ExamResultsModal: FC<Props> = ({ isOpen, onClose, examId, onFinish, examTranslationId }) => {
   const { data, isSuccess } = useQuery({
     queryKey: ['exam-results', examId],
-    queryFn: () => ExamService.getResults(examId),
+    queryFn: () => ExamService.getResults(examId, examTranslationId),
     enabled: !!(isOpen && examId),
   });
 
@@ -25,7 +26,7 @@ const ExamResultsModal: FC<Props> = ({ isOpen, onClose, examId, onFinish }) => {
   }
 
   return (
-    <Modal isOpen={isOpen && isSuccess} onClose={onClose} primaryAction={onFinish} title="Results">
+    <Modal isOpen={isOpen && isSuccess} onClose={onClose} primaryAction={onFinish} title="results">
       <Text fontSize={20}>{result}</Text>
     </Modal>
   );

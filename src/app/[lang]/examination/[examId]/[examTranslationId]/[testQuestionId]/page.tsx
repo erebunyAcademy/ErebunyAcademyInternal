@@ -213,6 +213,7 @@ const TestQuestions: FC<Props> = ({
           </Stack>
         </Center>
         <ExamResultsModal
+          examTranslationId={examTranslationId}
           isOpen={isOpen}
           onClose={onClose}
           examId={examId}

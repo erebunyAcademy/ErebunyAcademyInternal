@@ -10,7 +10,7 @@ export default async function RootLayout({
   params,
 }: Readonly<{
   children: React.ReactNode;
-  params: { examId: string };
+  params: { examId: string; examTranslationId: string };
 }>) {
   const session = await serverSession();
 
@@ -29,6 +29,7 @@ export default async function RootLayout({
           startTime={examDurationInfo.examStartTime!}
           durationInMinutes={examDurationInfo.duration}
           examId={params.examId}
+          examTranslationId={params.examTranslationId}
         />
       )}
       {children}

@@ -14,9 +14,15 @@ type ExamTimeProps = {
   startTime: Date;
   durationInMinutes: number;
   examId: string;
+  examTranslationId: string;
 };
 
-const ExamTimer: FC<ExamTimeProps> = ({ startTime, durationInMinutes, examId }) => {
+const ExamTimer: FC<ExamTimeProps> = ({
+  startTime,
+  durationInMinutes,
+  examId,
+  examTranslationId,
+}) => {
   const { mutate: finish } = useFinishExam();
   const [timeLeft, setTimeLeft] = useState(dayjs.duration(0));
   const [isFinished, setIsFinished] = useState(false);
@@ -65,7 +71,13 @@ const ExamTimer: FC<ExamTimeProps> = ({ startTime, durationInMinutes, examId }) 
         Time Left: {formatTime(timeLeft)}
       </Text>
 
-      <ExamResultsModal isOpen={isOpen} onClose={onClose} examId={examId} onFinish={handleClose} />
+      <ExamResultsModal
+        isOpen={isOpen}
+        onClose={onClose}
+        examId={examId}
+        onFinish={handleClose}
+        examTranslationId={examTranslationId}
+      />
     </Box>
   );
 };

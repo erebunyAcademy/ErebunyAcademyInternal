@@ -75,8 +75,8 @@ export class ExamService {
   static finishExam(input: FinishExamValidation) {
     return $apiClient.post(`/exams/finish/${input.examId}`);
   }
-  static getResults(examId: string) {
-    return $apiClient.get<GetExamResultsModel>(`/exams/results/${examId}`);
+  static getResults(examId: string, examTranslationId: string) {
+    return $apiClient.get<GetExamResultsModel>(`/exams/results/${examId}/${examTranslationId}`);
   }
 
   static getExamDurationInfo(examId: string) {

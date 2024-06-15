@@ -129,9 +129,13 @@ class ExamsHandler {
   }
 
   @StudentGuard()
-  @Get('/results/:examId')
-  getExamResults(@CurrentUser() user: User, @Param('examId') examId?: string) {
-    return ExamsResolver.getResults(user?.student?.id, examId);
+  @Get('/results/:examId/:examTranslationId')
+  getExamResults(
+    @CurrentUser() user: User,
+    @Param('examId') examId: string,
+    @Param('examTranslationId') examTranslationId: string,
+  ) {
+    return ExamsResolver.getResults(user?.student?.id!, examId, examTranslationId);
   }
 
   @AdminGuard()

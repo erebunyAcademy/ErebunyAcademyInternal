@@ -489,7 +489,7 @@ export class ExamsResolver {
     return !!finished;
   }
 
-  static async getResults(studentId?: string, examId?: string) {
+  static async getResults(studentId: string, examId: string, examTranslationId: string) {
     if (!studentId || !examId) {
       throw new NotFoundException('Invalid data');
     }
@@ -516,6 +516,7 @@ export class ExamsResolver {
       where: {
         examTranslation: {
           examId,
+          id: examTranslationId,
         },
       },
       select: {
