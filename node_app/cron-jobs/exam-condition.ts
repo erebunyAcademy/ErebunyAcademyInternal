@@ -8,13 +8,7 @@ const task = async () => {
   CronResolver.checkExamStatus().catch(err => Logger.err(err));
 };
 
-cron.schedule(
-  CronExpression.EVERY_30_SECONDS,
-  () => {
-    setTimeout(task, 2000);
-  },
-  {
-    scheduled: true,
-    timezone: 'Asia/Yerevan',
-  },
-);
+cron.schedule(CronExpression.EVERY_MINUTE, task, {
+  scheduled: true,
+  timezone: 'Asia/Yerevan',
+});

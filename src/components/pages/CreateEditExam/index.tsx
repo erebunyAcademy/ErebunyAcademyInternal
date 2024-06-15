@@ -68,11 +68,6 @@ const CreateEditExam: FC<CreateEditExamProps> = ({
   const testQuestionCcolumnHelper = createColumnHelper<TestQuestionListModel>();
 
   const testQuestionColumns = [
-    testQuestionCcolumnHelper.accessor('title', {
-      id: uuidv4(),
-      cell: info => info.getValue(),
-      header: t('question'),
-    }),
     testQuestionCcolumnHelper.accessor('category', {
       id: uuidv4(),
       cell: info => info.getValue(),
@@ -87,6 +82,11 @@ const CreateEditExam: FC<CreateEditExamProps> = ({
       id: uuidv4(),
       cell: info => info.getValue(),
       header: t('subTopic'),
+    }),
+    testQuestionCcolumnHelper.accessor('title', {
+      id: uuidv4(),
+      cell: info => info.getValue(),
+      header: t('question'),
     }),
     testQuestionCcolumnHelper.accessor('options', {
       id: uuidv4(),

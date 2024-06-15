@@ -43,6 +43,7 @@ export class CronResolver {
           await prisma.studentExam.updateMany({
             where: {
               examId: exam.id,
+              hasFinished: false,
             },
             data: {
               hasFinished: true,

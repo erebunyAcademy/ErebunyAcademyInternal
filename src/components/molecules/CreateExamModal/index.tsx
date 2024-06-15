@@ -66,13 +66,13 @@ const CreateExamModal: FC<CreateExamModalProps> = ({ isOpen, onClose }) => {
   });
 
   const { data: courseGroupQueryData } = useQuery({
-    queryKey: ['course-group', courseQueryData],
+    queryKey: ['course-group', courseQueryData, faculty],
     queryFn: () => CourseGroupService.getCourseGroupByCourseId(course),
     enabled: !!course,
   });
 
   const { data: studentsData } = useQuery({
-    queryKey: ['students', courseGroup],
+    queryKey: ['students', courseGroup, course, faculty],
     queryFn: () => StudentService.getStudentsByCourseGroupId(courseGroup),
     enabled: !!courseGroup,
   });
@@ -156,6 +156,8 @@ const CreateExamModal: FC<CreateExamModalProps> = ({ isOpen, onClose }) => {
                   onChange={e => {
                     onChange(e.target.value);
                     setValue('courseId', '');
+                    setValue('courseGroupId', '');
+                    setValue('studentIds', []);
                   }}
                   value={value}
                   isInvalid={!!errors.facultyId?.message}
@@ -179,6 +181,7 @@ const CreateExamModal: FC<CreateExamModalProps> = ({ isOpen, onClose }) => {
                   onChange={e => {
                     onChange(e.target.value);
                     setValue('courseGroupId', '');
+                    setValue('studentIds', []);
                   }}
                   value={value}
                   isInvalid={!!errors.courseId?.message}

@@ -195,5 +195,6 @@
   "examination": "Экзамен",
   "examLanguageTitles": "Названия экзаменов",
   "minutes": "Минуты",
-  "startExam": "Начать экзамен"
+  "startExam": "Начать экзамен",
+  "status": "Статус"
 }
