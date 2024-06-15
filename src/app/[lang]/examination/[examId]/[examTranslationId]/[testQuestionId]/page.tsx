@@ -15,6 +15,7 @@ import {
 } from '@chakra-ui/react';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { ExamService } from '@/api/services/exam.service';
 import ExamResultsModal from '@/components/molecules/ExamResultsModal';
@@ -49,7 +50,7 @@ const TestQuestions: FC<Props> = ({
   params: { examTranslationId, examId, lang, testQuestionId },
 }) => {
   const router = useRouter();
-
+  const t = useTranslations();
   const handleClose = useCallback(() => router.push(ROUTE_STUDENT_EXAM_LIST), [router]);
 
   const { isOpen, onClose, onOpen } = useDisclosure({ onClose: handleClose });
@@ -65,7 +66,7 @@ const TestQuestions: FC<Props> = ({
   });
   const { mutate: finish } = useFinishExam();
 
-  const { data, isSuccess, isLoading } = useQuery({
+  const { data, isSuccess, isLoading, error } = useQuery({
     queryKey: ['question', testQuestionId],
     queryFn: ExamService.getExamTestQuestion.bind(null, examId, testQuestionId),
     enabled: !!testQuestionId,
@@ -86,6 +87,12 @@ const TestQuestions: FC<Props> = ({
       },
     );
   }, [examId, finish, onCloseConfirmModal, onOpen]);
+
+  useEffect(() => {
+    if (error) {
+      router.push(languagePathHelper(lang, ROUTE_STUDENT_EXAM_LIST));
+    }
+  }, [error, lang, router]);
 
   const { mutate, isPending } = useMutation<
     StudentAnswerMutationModel,
@@ -216,9 +223,9 @@ const TestQuestions: FC<Props> = ({
         isOpen={isConfirmExamModalOpen}
         onClose={onCloseConfirmModal}
         primaryAction={onFinish}
-        actionText="Submit"
-        title="Submit your exam results">
-        <Text>Are you sure you want to finish this examination?</Text>
+        actionText="submit"
+        title="submitExamResults">
+        <Text>{t('finishExamMessage')}</Text>
       </Modal>
     </>
   );

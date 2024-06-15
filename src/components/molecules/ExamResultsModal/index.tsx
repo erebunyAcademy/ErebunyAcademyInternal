@@ -1,6 +1,7 @@
 import { FC, memo } from 'react';
 import { Text } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
 import { ExamService } from '@/api/services/exam.service';
 import Modal from '../Modal';
 
@@ -12,6 +13,7 @@ interface Props {
 }
 
 const ExamResultsModal: FC<Props> = ({ isOpen, onClose, examId, onFinish }) => {
+  const router = useRouter();
   const { data, isSuccess } = useQuery({
     queryKey: ['exam-results', examId],
     queryFn: () => ExamService.getResults(examId),

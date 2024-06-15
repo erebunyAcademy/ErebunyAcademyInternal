@@ -196,5 +196,11 @@
   "examLanguageTitles": "Exam titles",
   "minutes": "Minutes",
   "startExam": "Start exam",
-  "status": "Status"
+  "status": "Status",
+  "submitExamResults": "Submit your exam results",
+  "yourExams": "Your Exams",
+  "chooseExamLanguage": "In which language you would prefer to start exam?",
+  "results": "Results",
+  "submit": "Submit",
+  "finishExamMessage": "Are you sure you want to finish this examination?"
 }

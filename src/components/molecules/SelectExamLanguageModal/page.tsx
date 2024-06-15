@@ -41,7 +41,7 @@ const SelectExamLanguageModal: FC<SelectExamLanguageModalProps> = ({
     <Modal
       isOpen
       onClose={() => router.push(languagePathHelper(lang, ROUTE_STUDENT_EXAM_LIST))}
-      title={'In which language you would prefer to start exam?'}>
+      title="chooseExamLanguage">
       <Stack>
         <Flex flexDirection="column" gap="20px">
           <SelectLabel

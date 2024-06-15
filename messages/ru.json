@@ -196,5 +196,10 @@
   "examLanguageTitles": "Названия экзаменов",
   "minutes": "Минуты",
   "startExam": "Начать экзамен",
-  "status": "Статус"
+  "status": "Статус",
+  "submitExamResults": "Отправьте свои результаты экзамена",
+  "yourExams": "Ваши Экзамены",
+  "chooseExamLanguage": "На каком языке вы предпочли бы начать экзамен?",
+  "results": "Результаты",
+  "finishExamMessage": "Вы уверены, что хотите завершить этот экзамен?"
 }

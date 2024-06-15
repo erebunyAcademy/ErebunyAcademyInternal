@@ -80,7 +80,6 @@ const ExcelUpload: FC<Props> = ({ setExcelData, setValues }) => {
         {t('uploadExcelFile')}
       </Button>
       <Input
-        required
         ref={fileInputRef}
         multiple={false}
         type="file"
