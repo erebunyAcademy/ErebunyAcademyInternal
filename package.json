@@ -6,7 +6,7 @@
     "start:node": "npx ts-node -r tsconfig-paths/register node_app/app.ts",
     "dev": "concurrently \"next dev\" \"yarn start:node\"",
     "build": "next build",
-    "start": "next start",
+    "start": "concurrently \"next start\" \"yarn start:node\"",
     "lint": "next lint",
     "migrate": "prisma migrate dev"
   },
