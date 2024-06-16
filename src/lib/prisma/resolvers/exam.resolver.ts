@@ -340,6 +340,18 @@ export class ExamsResolver {
       throw new ConflictException('Exam time has expired');
     }
 
+    const studentExam = await prisma.studentExam.findUniqueOrThrow({
+      where: {
+        studentExamId: {
+          examId,
+          studentId: user?.student?.id!,
+        },
+      },
+      select: {
+        id: true,
+      },
+    });
+
     try {
       const examTestQuestion = await prisma.examTranslationTests.findUniqueOrThrow({
         where: { id: testQuestionId },
@@ -395,10 +407,7 @@ export class ExamsResolver {
         prisma.studentAnswerOption.findMany({
           where: {
             testQuestionId: examTestQuestion.testQuestion.id,
-            studentExam: {
-              examId,
-              studentId: user?.student?.id,
-            },
+            studentExamId: studentExam.id,
           },
         }),
       ]);
@@ -460,12 +469,15 @@ export class ExamsResolver {
     });
 
     const existOptions = await prisma.studentAnswerOption.findMany({
-      where: { testQuestionId: examTranslationTest.testQuestionId },
+      where: { testQuestionId: examTranslationTest.testQuestionId, studentExamId: studentExam.id },
     });
 
     if (!!existOptions.length) {
       await prisma.studentAnswerOption.deleteMany({
-        where: { testQuestionId: examTranslationTest.testQuestionId },
+        where: {
+          testQuestionId: examTranslationTest.testQuestionId,
+          studentExamId: studentExam.id,
+        },
       });
     }
 
@@ -493,6 +505,17 @@ export class ExamsResolver {
 
     if (!exam) {
       throw new NotFoundException('Exam was not found');
+    }
+
+    if (input.status === 'COMPLETED') {
+      await prisma.studentExam.updateMany({
+        where: {
+          examId: id,
+        },
+        data: {
+          hasFinished: true,
+        },
+      });
     }
 
     return prisma.exam.update({
@@ -569,66 +592,20 @@ export class ExamsResolver {
   }
 
   static async getStudentsExamResults(examId: string) {
-    const examTr = await prisma.examTranslation.findFirstOrThrow({
-      where: {
-        examId,
-      },
-    });
-
     const studentExams = await prisma.studentExam.findMany({
       where: {
         examId,
         hasFinished: true,
-        exam: {
-          examLanguages: {
-            some: {
-              id: examTr.id,
-            },
-          },
-        },
       },
-      select: {
+      include: {
         exam: {
-          select: {
-            examLanguages: {
-              select: {
-                id: true,
-              },
-            },
+          include: {
+            examLanguages: true,
           },
         },
         student: {
-          select: {
-            id: true,
-            user: {
-              select: {
-                firstName: true,
-                lastName: true,
-                email: true,
-              },
-            },
-          },
-        },
-        id: true,
-      },
-    });
-
-    const examTranslationTests = await prisma.examTranslationTests.findMany({
-      where: {
-        examTranslationId: examTr.id,
-      },
-      select: {
-        testQuestion: {
-          select: {
-            id: true,
-            options: {
-              where: {
-                isRightAnswer: true,
-              },
-              select: {
-                id: true,
-              },
-            },
+          include: {
+            user: true,
           },
         },
       },
@@ -636,11 +613,39 @@ export class ExamsResolver {
 
     const results = [];
 
-    for (const { student, id: studentExamId } of studentExams) {
+    for await (const stExam of studentExams) {
+      const [examTranslation] = stExam.exam.examLanguages;
+      console.log({ examTranslation });
+
+      const examTranslationTests = await prisma.examTranslationTests.findMany({
+        where: {
+          examTranslationId: examTranslation.id,
+        },
+        select: {
+          testQuestion: {
+            select: {
+              id: true,
+              options: {
+                where: {
+                  isRightAnswer: true,
+                },
+                select: {
+                  id: true,
+                },
+              },
+            },
+          },
+        },
+      });
+
+      const data = examTranslationTests.map(exTrTest => exTrTest.testQuestion);
+
       const result = await prisma.studentAnswerOption.findMany({
-        where: { studentExamId },
+        where: { studentExamId: stExam.id },
         select: { options: true, testQuestionId: true },
       });
+
+      console.log(result);
 
       const studentAnswerGroupedByTestQuestion = new Map();
 
@@ -648,12 +653,13 @@ export class ExamsResolver {
         const existingAnswers = studentAnswerGroupedByTestQuestion.get(testQuestionId) || [];
         studentAnswerGroupedByTestQuestion.set(testQuestionId, [...existingAnswers, options?.id]);
       });
-      const testQuestions = examTranslationTests.map(exTest => exTest.testQuestion);
 
-      const studentResult = checkStudentAnswers(testQuestions, studentAnswerGroupedByTestQuestion);
+      const studentResult = checkStudentAnswers(data, studentAnswerGroupedByTestQuestion);
+
+      console.log({ studentResult });
 
       results.push({
-        student,
+        student: stExam.student,
         rightAnswers: studentResult.filter(({ isCorrect }: any) => isCorrect).length,
         total: studentResult.length,
       });
