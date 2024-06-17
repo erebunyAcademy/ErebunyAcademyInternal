@@ -8,6 +8,7 @@ import {
   Param,
   Patch,
   Post,
+  Put,
   Query,
   ValidationPipe,
 } from 'next-api-decorators';
@@ -96,9 +97,16 @@ class ExamsHandler {
     return ExamsResolver.getTestQuestion(examId, testQuestionId, examTranslationId, user);
   }
 
+  @AdminGuard()
   @Post()
   _createExam(@Body(ValidationPipe) input: CreateExamValidation) {
     return ExamsResolver.createExam(input);
+  }
+
+  @AdminGuard()
+  @Put('/:examId')
+  _updateExam(@Param('examId') examId: string, @Body(ValidationPipe) input: CreateExamValidation) {
+    return ExamsResolver.updateExam(input, examId);
   }
 
   @StudentGuard()

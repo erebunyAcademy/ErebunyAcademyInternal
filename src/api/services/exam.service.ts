@@ -55,6 +55,9 @@ export class ExamService {
   static createExam(input: CreateExamValidation) {
     return $apiClient.post('/exams', input);
   }
+  static updateExam(input: CreateExamValidation, examId: string) {
+    return $apiClient.put(`/exams/${examId}`, input);
+  }
 
   static deleteExamById(id: string) {
     return $apiClient.delete(`/exams/${id}`);

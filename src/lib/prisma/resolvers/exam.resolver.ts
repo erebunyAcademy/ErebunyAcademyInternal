@@ -30,10 +30,17 @@ export class ExamsResolver {
       prisma.exam.count(),
       prisma.exam.findMany({
         select: {
+          duration: true,
           id: true,
           status: true,
+          studentExams: {
+            select: {
+              studentId: true,
+            },
+          },
           examLanguages: {
             select: {
+              title: true,
               language: true,
               testQuestions: {
                 select: {
@@ -44,11 +51,15 @@ export class ExamsResolver {
           },
           course: {
             select: {
+              id: true,
               title: true,
+              facultyId: true,
             },
           },
           courseGroup: {
             select: {
+              id: true,
+
               title: true,
             },
           },
@@ -92,6 +103,68 @@ export class ExamsResolver {
     });
 
     return createdExam;
+  }
+
+  static async updateExam(data: CreateExamValidation, examId: string) {
+    const { subjectId, courseId, courseGroupId, studentIds, duration } = data;
+
+    try {
+      await prisma.$transaction(async prisma => {
+        const existingExam = await prisma.exam.findUniqueOrThrow({
+          where: { id: examId },
+        });
+
+        await prisma.exam.update({
+          where: { id: existingExam.id },
+          data: {
+            courseId,
+            courseGroupId,
+            subjectId,
+            duration: +duration,
+          },
+          select: { id: true },
+        });
+
+        await prisma.studentExam.deleteMany({
+          where: {
+            examId: existingExam.id,
+            studentId: {
+              notIn: studentIds,
+            },
+          },
+        });
+
+        const existingStudentExams = await prisma.studentExam.findMany({
+          where: {
+            examId: existingExam.id,
+            studentId: {
+              in: studentIds,
+            },
+          },
+          select: { studentId: true },
+        });
+
+        const existingStudentIds = new Set(existingStudentExams.map(se => se.studentId));
+
+        const newStudentExams = studentIds
+          .filter(studentId => !existingStudentIds.has(studentId))
+          .map(studentId => ({
+            studentId,
+            examId: existingExam.id,
+          }));
+
+        if (newStudentExams.length > 0) {
+          await prisma.studentExam.createMany({
+            data: newStudentExams,
+          });
+        }
+      });
+
+      return true;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
   }
 
   static async deleteExamById(id: string) {

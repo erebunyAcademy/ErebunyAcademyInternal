@@ -201,5 +201,6 @@
   "yourExams": "Ձեր Քննությունները",
   "chooseExamLanguage": "Ո՞ր լեզվով եք ցանկանում սկսել քննությունը",
   "results": "Արդյունքներ",
-  "finishExamMessage": "Համոզվա՞ծ եք, որ ցանկանում եք ավարտել այս քննությունը:"
+  "finishExamMessage": "Համոզվա՞ծ եք, որ ցանկանում եք ավարտել այս քննությունը:",
+  "studentCount": "Student count"
 }

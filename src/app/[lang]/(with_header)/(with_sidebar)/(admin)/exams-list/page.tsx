@@ -1,6 +1,13 @@
 'use client';
-import React, { useCallback, useMemo, useState } from 'react';
-import { Button, MenuItem, useDisclosure } from '@chakra-ui/react';
+import React, { Fragment, useCallback, useMemo, useState } from 'react';
+import {
+  Button,
+  Divider,
+  ListItem,
+  MenuItem,
+  UnorderedList,
+  useDisclosure,
+} from '@chakra-ui/react';
 import { LanguageTypeEnum } from '@prisma/client';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { createColumnHelper, SortingState } from '@tanstack/react-table';
@@ -42,10 +49,15 @@ export default function ExamsList({ params }: { params: { lang: Locale } }) {
   });
 
   const {
-    isOpen: isCreateExamModalIsOpen,
-    onOpen: openCreateExamModal,
-    onClose: closeCreateExamModal,
-  } = useDisclosure();
+    isOpen: isCreateEditExamModalIsOpen,
+    onOpen: openCreateEditModal,
+    onClose: closeCreateEditExamModal,
+  } = useDisclosure({
+    onClose() {
+      setSelectedExam(null);
+      refetch();
+    },
+  });
 
   const { data, isLoading, isPlaceholderData, refetch } = useQuery({
     queryKey: QUERY_KEY.allExams(debouncedSearch, page),
@@ -102,6 +114,20 @@ export default function ExamsList({ params }: { params: { lang: Locale } }) {
       cell: info => info.getValue().split('_').join(' '),
       header: t('status'),
     }),
+    columnHelper.accessor('examLanguages', {
+      id: uuidv4(),
+      cell: info => (
+        <UnorderedList>
+          {info.getValue().map((examLanguage, index) => (
+            <Fragment key={index}>
+              <ListItem key={index}>{examLanguage.title}</ListItem>
+              <Divider />
+            </Fragment>
+          ))}
+        </UnorderedList>
+      ),
+      header: t('title'),
+    }),
     columnHelper.accessor('id', {
       id: uuidv4(),
       cell: info => (
@@ -140,6 +166,16 @@ export default function ExamsList({ params }: { params: { lang: Locale } }) {
       cell: info => info.getValue(),
       header: t('subject'),
     }),
+    columnHelper.accessor('duration', {
+      id: uuidv4(),
+      cell: info => info.getValue(),
+      header: t('duration'),
+    }),
+    columnHelper.accessor('studentExams', {
+      id: uuidv4(),
+      cell: info => info.getValue().length,
+      header: t('studentCount'),
+    }),
     columnHelper.accessor('createdAt', {
       id: uuidv4(),
       cell: info => {
@@ -152,6 +188,16 @@ export default function ExamsList({ params }: { params: { lang: Locale } }) {
       id: uuidv4(),
       cell: ({ row }) => (
         <ActionButtons>
+          {row.original.status === 'NOT_STARTED' && (
+            <MenuItem
+              color="green"
+              onClick={() => {
+                setSelectedExam(row.original);
+                openCreateEditModal();
+              }}>
+              Edit exam
+            </MenuItem>
+          )}
           {row.original.status === 'NOT_STARTED' && (
             <MenuItem
               color="green"
@@ -209,9 +255,13 @@ export default function ExamsList({ params }: { params: { lang: Locale } }) {
         )}
         fetchNextPage={useCallback(() => setPage(prev => ++prev), [])}
         fetchPreviousPage={useCallback(() => setPage(prev => --prev), [])}
-        addNew={openCreateExamModal}
+        addNew={openCreateEditModal}
       />
-      <CreateExamModal isOpen={isCreateExamModalIsOpen} onClose={closeCreateExamModal} />
+      <CreateExamModal
+        isOpen={isCreateEditExamModalIsOpen}
+        onClose={closeCreateEditExamModal}
+        exam={selectedExam}
+      />
       <Modal
         isOpen={isDeleteModalOpen}
         onClose={closeDeleteModal}

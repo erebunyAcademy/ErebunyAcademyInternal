@@ -202,5 +202,6 @@
   "chooseExamLanguage": "In which language you would prefer to start exam?",
   "results": "Results",
   "submit": "Submit",
-  "finishExamMessage": "Are you sure you want to finish this examination?"
+  "finishExamMessage": "Are you sure you want to finish this examination?",
+  "studentCount": "Student count"
 }

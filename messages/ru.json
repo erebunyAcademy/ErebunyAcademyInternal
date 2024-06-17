@@ -201,5 +201,6 @@
   "yourExams": "Ваши Экзамены",
   "chooseExamLanguage": "На каком языке вы предпочли бы начать экзамен?",
   "results": "Результаты",
-  "finishExamMessage": "Вы уверены, что хотите завершить этот экзамен?"
+  "finishExamMessage": "Вы уверены, что хотите завершить этот экзамен?",
+  "studentCount": "Student count"
 }

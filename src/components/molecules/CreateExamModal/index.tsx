@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useEffect } from 'react';
 import { Avatar, Button, Flex } from '@chakra-ui/react';
 import { classValidatorResolver } from '@hookform/resolvers/class-validator';
 import { Attachment, AttachmentTypeEnum, LanguageTypeEnum } from '@prisma/client';
@@ -18,18 +18,21 @@ import { FormInput, SelectLabel } from '@/components/atoms';
 import TableCheckbox from '@/components/organisms/TableCheckbox';
 import { ROUTE_EXAMS } from '@/utils/constants/routes';
 import { generateAWSUrl } from '@/utils/helpers/aws';
+import { Maybe } from '@/utils/models/common';
+import { ExamModel } from '@/utils/models/exam';
 import { UserStudentModel } from '@/utils/models/student';
 import { CreateExamValidation } from '@/utils/validation/exam';
 import Modal from '../Modal';
 
 type CreateExamModalProps = {
   isOpen: boolean;
+  exam: Maybe<ExamModel>;
   onClose: () => void;
 };
 
 const resolver = classValidatorResolver(CreateExamValidation);
 
-const CreateExamModal: FC<CreateExamModalProps> = ({ isOpen, onClose }) => {
+const CreateExamModal: FC<CreateExamModalProps> = ({ isOpen, onClose, exam }) => {
   const t = useTranslations();
   const router = useRouter();
   const {
@@ -37,18 +40,44 @@ const CreateExamModal: FC<CreateExamModalProps> = ({ isOpen, onClose }) => {
     watch,
     handleSubmit,
     setValue,
+    reset,
     formState: { errors, isValid },
   } = useForm<CreateExamValidation>({
     resolver,
     defaultValues: {
+      facultyId: exam?.course?.facultyId || '',
+      subjectId: exam?.subject?.id || '',
+      courseId: exam?.course?.id || '',
+      courseGroupId: exam?.courseGroup?.id || '',
+      duration: exam?.duration.toString() || '',
+      studentIds: exam?.studentExams.map(studentExam => studentExam.studentId) || [],
+    },
+  });
+
+  const handleClose = () => {
+    reset({
       facultyId: '',
       subjectId: '',
       courseId: '',
       courseGroupId: '',
       duration: '',
       studentIds: [],
-    },
-  });
+    });
+    onClose();
+  };
+
+  useEffect(() => {
+    if (exam) {
+      reset({
+        facultyId: exam.course?.facultyId || '',
+        subjectId: exam?.subject?.id || '',
+        courseId: exam?.course?.id || '',
+        courseGroupId: exam?.courseGroup?.id || '',
+        duration: exam?.duration.toString() || '',
+        studentIds: exam?.studentExams.map(studentExam => studentExam.studentId) || [],
+      });
+    }
+  }, [exam, reset]);
 
   const faculty = watch('facultyId');
   const course = watch('courseId');
@@ -83,6 +112,13 @@ const CreateExamModal: FC<CreateExamModalProps> = ({ isOpen, onClose }) => {
       router.push(
         `${ROUTE_EXAMS}/create-edit/${res.id}/${variables.subjectId}?language=${LanguageTypeEnum.EN}`,
       );
+    },
+  });
+
+  const { mutate: updateExamMutation } = useMutation({
+    mutationFn: (data: CreateExamValidation) => ExamService.updateExam(data, exam?.id!),
+    onSuccess() {
+      onClose();
     },
   });
 
@@ -128,11 +164,15 @@ const CreateExamModal: FC<CreateExamModalProps> = ({ isOpen, onClose }) => {
   ];
 
   const onSubmit = (data: CreateExamValidation) => {
-    createExamMutation(data);
+    if (exam) {
+      updateExamMutation(data);
+    } else {
+      createExamMutation(data);
+    }
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="createExam" size="6xl">
+    <Modal isOpen={isOpen} onClose={handleClose} title="createExam" size="6xl">
       <Flex
         gap={{ base: '18px', sm: '30px' }}
         flexDirection={{ base: 'column', sm: 'row' }}
