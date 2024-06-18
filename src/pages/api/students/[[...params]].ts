@@ -50,6 +50,12 @@ class StudentsHandler {
   ) {
     return StudentResolver.updateStudentData(input, studentId);
   }
+
+  @AdminGuard()
+  @Get('exams/:examId')
+  getStudentsInfoByExamId(@Param('examId') examId: string) {
+    return StudentResolver.getStudentsInfoByExamId(examId);
+  }
 }
 
 export default createHandler(StudentsHandler);

@@ -71,6 +71,13 @@ export class TestQuestionValidation {
   questions: Question[];
 }
 
+export class TestQuestionIds {
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => String)
+  testQuestionIds: string[];
+}
+
 export class CreateExamValidation {
   @IsString()
   @IsNotEmpty({ message: 'examDurationMessage' })

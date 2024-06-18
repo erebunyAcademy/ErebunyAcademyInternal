@@ -209,5 +209,6 @@
   "deleteExam": "Удалить экзамен",
   "rightAnswers": "Правильные ответы",
   "totalQuestions": "Всего вопросов",
-  "studentsAnswers": "Ответы студентов "
+  "studentsAnswers": "Ответы студентов ",
+  "seeStudents": "View participants"
 }

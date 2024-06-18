@@ -210,5 +210,6 @@
   "deleteExam": "Delete exam",
   "rightAnswers": "Right answers",
   "totalQuestions": "Total questions",
-  "studentsAnswers": "Students answers"
+  "studentsAnswers": "Students answers",
+  "seeStudents": "View participants"
 }

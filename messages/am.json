@@ -209,5 +209,6 @@
   "deleteExam": "Ջնջել քննությունը",
   "rightAnswers": "Ճիշտ  պատասխաններ",
   "totalQuestions": "Ընդհանուր հարցեր",
-  "studentsAnswers": "Ուսանողների պատասխաններ"
+  "studentsAnswers": "Ուսանողների պատասխաններ",
+  "seeStudents": "View participants"
 }

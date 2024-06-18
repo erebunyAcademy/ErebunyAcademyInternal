@@ -4,17 +4,21 @@ import { DeleteIcon } from '@chakra-ui/icons';
 import { Box, Button, Flex, Heading, HStack, IconButton, Stack, useToast } from '@chakra-ui/react';
 import { classValidatorResolver } from '@hookform/resolvers/class-validator';
 import { LanguageTypeEnum, TestQuestionLevelEnum, TestQuestionTypeEnum } from '@prisma/client';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { createColumnHelper } from '@tanstack/react-table';
 import { useTranslations } from 'next-intl';
 import { Controller, SubmitHandler, useFieldArray, useForm } from 'react-hook-form';
+import { v4 as uuidv4 } from 'uuid';
 import { TestQuestionService } from '@/api/services/test-question.service';
 import { FormInput, SelectLabel } from '@/components/atoms';
 import FormTextarea from '@/components/atoms/FormTextarea';
 import AnswersControl from '@/components/molecules/AnswerControl';
 import ExamsUploadByExcel, { UploadedExcelData } from '@/components/organisms/ExamsUploadByExcel';
+import TableCheckbox from '@/components/organisms/TableCheckbox';
 import { Locale } from '@/i18n';
 import { Maybe } from '@/utils/models/common';
-import { TestQuestionValidation } from '@/utils/validation/exam';
+import { TestQuestionListModel } from '@/utils/models/test-question.model';
+import { TestQuestionIds, TestQuestionValidation } from '@/utils/validation/exam';
 
 const questionTypes = [
   {
@@ -52,6 +56,7 @@ const initValue = {
 };
 
 const resolver = classValidatorResolver(TestQuestionValidation);
+const testQuestionEditResolver = classValidatorResolver(TestQuestionIds);
 
 const CreateTestQuestions = ({
   params: { subjectId },
@@ -75,6 +80,22 @@ const CreateTestQuestions = ({
     defaultValues: {
       questions: [initValue],
     },
+  });
+
+  const { handleSubmit: submitEditTestQuestion, control: showTestQuestionControl } =
+    useForm<TestQuestionIds>({
+      resolver: testQuestionEditResolver,
+      defaultValues: {
+        testQuestionIds: [],
+      },
+    });
+
+  console.log(submitEditTestQuestion);
+
+  const { data: testQuestionQueryData } = useQuery<TestQuestionListModel>({
+    queryKey: ['testQuestion', subjectId, language],
+    queryFn: TestQuestionService.getTestQuestionsBySubjectId.bind(null, subjectId, language),
+    enabled: !!subjectId,
   });
 
   const {
@@ -135,6 +156,43 @@ const CreateTestQuestions = ({
     }
   }, [excelData, language, reset]);
 
+  const testQuestionCcolumnHelper = createColumnHelper<TestQuestionListModel>();
+
+  const testQuestionColumns = [
+    testQuestionCcolumnHelper.accessor('category', {
+      id: uuidv4(),
+      cell: info => info.getValue(),
+      header: t('category'),
+    }),
+    testQuestionCcolumnHelper.accessor('topic', {
+      id: uuidv4(),
+      cell: info => info.getValue(),
+      header: t('topic'),
+    }),
+    testQuestionCcolumnHelper.accessor('subTopic', {
+      id: uuidv4(),
+      cell: info => info.getValue(),
+      header: t('subTopic'),
+    }),
+    testQuestionCcolumnHelper.accessor('title', {
+      id: uuidv4(),
+      cell: info => info.getValue(),
+      header: t('question'),
+    }),
+    testQuestionCcolumnHelper.accessor('options', {
+      id: uuidv4(),
+      cell: info =>
+        (info.getValue() as any).map(({ title }: { title: string }) => (
+          <Box key={title} my={2}>
+            {title}
+          </Box>
+        )),
+      header: t('answers'),
+    }),
+  ];
+
+  const submitEditTestQuestionHandler = () => {};
+
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Box my={{ base: '25px', md: '50px' }}>
@@ -143,6 +201,25 @@ const CreateTestQuestions = ({
             {t('createExamQuestions')}
           </Heading>
           <ExamsUploadByExcel setUploadedResults={setExcelData} />
+        </HStack>
+        <HStack>
+          <Flex height={600} overflowY="auto" flexDirection="column" width="100%">
+            <Controller
+              name="testQuestionIds"
+              control={showTestQuestionControl}
+              render={({ field: { onChange, value } }) => (
+                <TableCheckbox
+                  title="selectTests"
+                  data={testQuestionQueryData || []}
+                  deleteHandler={submitEditTestQuestionHandler}
+                  selectedValues={value}
+                  onChange={onChange}
+                  // @ts-ignore
+                  columns={testQuestionColumns || []}
+                />
+              )}
+            />
+          </Flex>
         </HStack>
         {questionFields.map((question, questionIndex) => {
           const questionType = watch(`questions.${questionIndex}.type`);

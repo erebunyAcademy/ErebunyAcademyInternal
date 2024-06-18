@@ -165,4 +165,31 @@ export class StudentResolver {
       data,
     });
   }
+
+  static async getStudentsInfoByExamId(examId: string) {
+    await prisma.exam.findUniqueOrThrow({
+      where: {
+        id: examId,
+      },
+    });
+
+    return prisma.studentExam.findMany({
+      where: {
+        examId,
+      },
+      select: {
+        student: {
+          select: {
+            user: {
+              select: {
+                firstName: true,
+                lastName: true,
+                email: true,
+              },
+            },
+          },
+        },
+      },
+    });
+  }
 }

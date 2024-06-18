@@ -135,13 +135,16 @@ export default function ExamsList({ params }: { params: { lang: Locale } }) {
         const status = info.row.original.status;
         return (
           <Button
-            as={Link}
-            isDisabled={status === 'COMPLETED'}
-            variant="link"
-            href={languagePathHelper(
-              params.lang,
-              `${ROUTE_EXAMS}/create-edit/${info.getValue()}/${info.row.original.subject?.id}?language=${LanguageTypeEnum.EN}`,
-            )}>
+            {...(status === 'COMPLETED'
+              ? { isDisabled: true }
+              : {
+                  as: Link,
+                  href: languagePathHelper(
+                    params.lang,
+                    `${ROUTE_EXAMS}/create-edit/${info.getValue()}/${info.row.original.subject?.id}?language=${LanguageTypeEnum.EN}`,
+                  ),
+                })}
+            variant="link">
             {t('editExam')}
           </Button>
         );
@@ -180,8 +183,17 @@ export default function ExamsList({ params }: { params: { lang: Locale } }) {
     }),
     columnHelper.accessor('studentExams', {
       id: uuidv4(),
-      cell: info => info.getValue().length,
-      header: t('studentCount'),
+      cell: info => (
+        <Button
+          variant="link"
+          onClick={() => {
+            open;
+            setSelectedExam(info.row.original);
+          }}>
+          {t('seeStudents')}
+        </Button>
+      ),
+      header: t('students'),
     }),
     columnHelper.accessor('createdAt', {
       id: uuidv4(),

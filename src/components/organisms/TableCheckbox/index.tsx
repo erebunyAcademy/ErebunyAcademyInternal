@@ -1,11 +1,13 @@
 import React, { memo, useEffect, useState } from 'react';
 import { TriangleDownIcon, TriangleUpIcon } from '@chakra-ui/icons';
+import { DeleteIcon } from '@chakra-ui/icons';
 import {
   Box,
   chakra,
   Checkbox,
   Flex,
   FormErrorMessage,
+  IconButton,
   Table,
   Tbody,
   Td,
@@ -34,6 +36,7 @@ export type DataTableProps<T> = {
   columns: ColumnDef<T, any>[];
   selectedValues: string[];
   onChange: (selected: string[]) => void;
+  deleteHandler?: () => void;
 };
 
 function TableCheckbox<T extends { id: string }>({
@@ -45,6 +48,7 @@ function TableCheckbox<T extends { id: string }>({
   data,
   columns,
   onChange,
+  deleteHandler,
   selectedValues,
 }: DataTableProps<T>) {
   const [selectedRows, setSelectedRows] = useState<Record<string, boolean>>({});
@@ -119,6 +123,14 @@ function TableCheckbox<T extends { id: string }>({
           <FormErrorMessage color="#DF1414" fontWeight={400} mt={4}>
             {t(formErrorMessage)}
           </FormErrorMessage>
+        )}
+        {deleteHandler && (
+          <IconButton
+            aria-label="Delete"
+            icon={<DeleteIcon />}
+            colorScheme="red"
+            onClick={deleteHandler}
+          />
         )}
       </Flex>
 
