@@ -52,7 +52,7 @@ class StudentsHandler {
   }
 
   @AdminGuard()
-  @Get('exams/:examId')
+  @Get('/exams/:examId')
   getStudentsInfoByExamId(@Param('examId') examId: string) {
     return StudentResolver.getStudentsInfoByExamId(examId);
   }

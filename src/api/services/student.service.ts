@@ -16,4 +16,8 @@ export class StudentService {
   static updateStudentData(input: UpdateStudentValidation, studentId: string) {
     return $apiClient.patch(`/students/${studentId}`, input);
   }
+
+  static getStudentsByExamId(examId: string) {
+    return $apiClient.get(`/students/exams/${examId}`);
+  }
 }

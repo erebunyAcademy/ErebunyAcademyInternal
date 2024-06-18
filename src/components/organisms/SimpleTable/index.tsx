@@ -26,7 +26,7 @@ const SimpleTable = <T,>({ columns, data, title }: SimpleTableProps<T>): JSX.Ele
   });
 
   return (
-    <Box maxHeight="700px" width="100%" pt={{ base: '30px', md: '100px' }}>
+    <Box maxHeight="700px" width="100%">
       <Text
         as="h2"
         fontSize={{ base: '18px', sm: '24px' }}
