@@ -52,14 +52,15 @@ const Dashboard = async () => {
       <Box
         maxW="1116px"
         m="100px auto 0 auto"
-        p="20px"
+        p={{ base: '10px 10px 10px 0', sm: '20px' }}
         borderRadius="25px"
         border="2px solid #319795">
         <Text
+          textAlign={{ base: 'center', sm: 'left' }}
           fontSize={{ base: '18px', sm: '30px' }}
           fontWeight={700}
           color="#1f2733"
-          m="0 0 30px 10px">
+          m={{ base: '0 0 20px 0', sm: '0 0 30px 12px' }}>
           {t('profileInformation')}
         </Text>
         <Flex>
@@ -68,12 +69,21 @@ const Dashboard = async () => {
               <ListItem
                 key={index}
                 display="flex"
-                color="#1f2733"
-                fontSize={{ base: '16px', sm: '20px' }}>
-                <Text as="span" color="#1f2733" fontWeight={700} lineHeight="normal" mr="20px">
+                justifyContent="flex-start"
+                alignItems="center"
+                color="#1f2733">
+                <Text
+                  as="span"
+                  fontSize={{ base: '16px', sm: '20px' }}
+                  color="#1f2733"
+                  fontWeight={700}
+                  lineHeight="normal"
+                  mr={{ base: '10px', sm: '20px' }}>
                   {t(field.title)}:
                 </Text>
-                <Text color="#718096">{field.value}</Text>
+                <Text color="#718096" fontSize={{ base: '14px', lg: '20px' }}>
+                  {field.value}
+                </Text>
               </ListItem>
             ))}
           </UnorderedList>

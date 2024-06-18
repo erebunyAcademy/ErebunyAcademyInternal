@@ -16,8 +16,10 @@ import { StudentService } from '@/api/services/student.service';
 import { SubjectService } from '@/api/services/subject.service';
 import { FormInput, SelectLabel } from '@/components/atoms';
 import TableCheckbox from '@/components/organisms/TableCheckbox';
+import { Locale } from '@/i18n';
 import { ROUTE_EXAMS } from '@/utils/constants/routes';
 import { generateAWSUrl } from '@/utils/helpers/aws';
+import { languagePathHelper } from '@/utils/helpers/language';
 import { Maybe } from '@/utils/models/common';
 import { ExamModel } from '@/utils/models/exam';
 import { UserStudentModel } from '@/utils/models/student';
@@ -28,11 +30,14 @@ type CreateExamModalProps = {
   isOpen: boolean;
   exam: Maybe<ExamModel>;
   onClose: () => void;
+  params: {
+    lang: Locale;
+  };
 };
 
 const resolver = classValidatorResolver(CreateExamValidation);
 
-const CreateExamModal: FC<CreateExamModalProps> = ({ isOpen, onClose, exam }) => {
+const CreateExamModal: FC<CreateExamModalProps> = ({ isOpen, onClose, exam, params }) => {
   const t = useTranslations();
   const router = useRouter();
   const {
@@ -110,7 +115,10 @@ const CreateExamModal: FC<CreateExamModalProps> = ({ isOpen, onClose, exam }) =>
     mutationFn: ExamService.createExam,
     onSuccess(res, variables) {
       router.push(
-        `${ROUTE_EXAMS}/create-edit/${res.id}/${variables.subjectId}?language=${LanguageTypeEnum.EN}`,
+        languagePathHelper(
+          params.lang,
+          `${ROUTE_EXAMS}/create-edit/${res.id}/${variables.subjectId}?language=${LanguageTypeEnum.EN}`,
+        ),
       );
     },
   });

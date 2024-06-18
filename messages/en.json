@@ -203,5 +203,12 @@
   "results": "Results",
   "submit": "Submit",
   "finishExamMessage": "Are you sure you want to finish this examination?",
-  "studentCount": "Student count"
+  "studentCount": "Student count",
+  "seeExamResults": "See exam results",
+  "examResults": "Exam results",
+  "finishExam": "Finish exam",
+  "deleteExam": "Delete exam",
+  "rightAnswers": "Right answers",
+  "totalQuestions": "Total questions",
+  "studentsAnswers": "Students answers"
 }

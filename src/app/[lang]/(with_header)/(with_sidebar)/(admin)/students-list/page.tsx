@@ -343,7 +343,7 @@ export default function StudentList() {
             onClick={handleSubmit(updateStudentSubmitHandler)}
             isDisabled={!isValid}
             width="100%">
-            Update
+            {t('update')}
           </Button>
         </Flex>
       </Modal>

@@ -202,5 +202,12 @@
   "chooseExamLanguage": "На каком языке вы предпочли бы начать экзамен?",
   "results": "Результаты",
   "finishExamMessage": "Вы уверены, что хотите завершить этот экзамен?",
-  "studentCount": "Student count"
+  "studentCount": "Количество студентов",
+  "seeExamResults": "Посмотреть результаты экзамена",
+  "examResults": "Результаты экзаменов",
+  "finishExam": "Закончить экзамен",
+  "deleteExam": "Удалить экзамен",
+  "rightAnswers": "Правильные ответы",
+  "totalQuestions": "Всего вопросов",
+  "studentsAnswers": "Ответы студентов "
 }

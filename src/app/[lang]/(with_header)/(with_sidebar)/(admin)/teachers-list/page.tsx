@@ -29,6 +29,7 @@ export default function Users() {
         search: debouncedSearch,
       }),
   });
+  console.log(data, 'data');
 
   const pageCount = useMemo(() => {
     if (data?.count) {

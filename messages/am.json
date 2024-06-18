@@ -202,5 +202,12 @@
   "chooseExamLanguage": "Ո՞ր լեզվով եք ցանկանում սկսել քննությունը",
   "results": "Արդյունքներ",
   "finishExamMessage": "Համոզվա՞ծ եք, որ ցանկանում եք ավարտել այս քննությունը:",
-  "studentCount": "Student count"
+  "studentCount": "Ուսանողների քանակ",
+  "seeExamResults": "Տեսնել քննության արդյունքները",
+  "examResults": "Քննության արդյունքները",
+  "finishExam": "Ավարտել քննությունը",
+  "deleteExam": "Ջնջել քննությունը",
+  "rightAnswers": "Ճիշտ  պատասխաններ",
+  "totalQuestions": "Ընդհանուր հարցեր",
+  "studentsAnswers": "Ուսանողների պատասխաններ"
 }

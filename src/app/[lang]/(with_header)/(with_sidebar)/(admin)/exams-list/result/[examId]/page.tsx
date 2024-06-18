@@ -37,18 +37,18 @@ const ExamResult = ({ params }: { params: { examId: string } }) => {
     columnHelper.accessor('rightAnswers', {
       id: uuidv4(),
       cell: info => info.getValue(),
-      header: 'Right answers',
+      header: t('rightAnswers'),
     }),
     columnHelper.accessor('total', {
       id: uuidv4(),
       cell: info => info.getValue(),
-      header: 'Total questions',
+      header: t('totalQuestions'),
     }),
   ];
 
   return (
     <Box>
-      {data && <SimpleTable columns={columns as any} data={data} title="Students answers" />}
+      {data && <SimpleTable columns={columns as any} data={data} title={t('studentsAnswers')} />}
     </Box>
   );
 };

@@ -103,6 +103,7 @@ export default function ExamsList({ params }: { params: { lang: Locale } }) {
   });
 
   const columnHelper = createColumnHelper<ExamModel>();
+
   const columns = [
     columnHelper.accessor('course.title', {
       id: uuidv4(),
@@ -130,17 +131,21 @@ export default function ExamsList({ params }: { params: { lang: Locale } }) {
     }),
     columnHelper.accessor('id', {
       id: uuidv4(),
-      cell: info => (
-        <Button
-          as={Link}
-          variant="link"
-          href={languagePathHelper(
-            params.lang,
-            `${ROUTE_EXAMS}/create-edit/${info.getValue()}/${info.row.original.subject?.id}?language=${LanguageTypeEnum.EN}`,
-          )}>
-          {t('editExam')}
-        </Button>
-      ),
+      cell: info => {
+        const status = info.row.original.status;
+        return (
+          <Button
+            as={Link}
+            isDisabled={status === 'COMPLETED'}
+            variant="link"
+            href={languagePathHelper(
+              params.lang,
+              `${ROUTE_EXAMS}/create-edit/${info.getValue()}/${info.row.original.subject?.id}?language=${LanguageTypeEnum.EN}`,
+            )}>
+            {t('editExam')}
+          </Button>
+        );
+      },
       header: t('edit'),
     }),
     columnHelper.accessor('courseGroup.title', {
@@ -154,12 +159,14 @@ export default function ExamsList({ params }: { params: { lang: Locale } }) {
         <Button
           variant="link"
           onClick={() => {
-            router.push(`${ROUTE_EXAMS}/result/${info.getValue()}`);
+            router.push(
+              languagePathHelper(params.lang, `${ROUTE_EXAMS}/result/${info.getValue()}`),
+            );
           }}>
-          See exam results
+          {t('seeExamResults')}
         </Button>
       ),
-      header: 'Exam results',
+      header: t('examResults'),
     }),
     columnHelper.accessor('subject.title', {
       id: uuidv4(),
@@ -180,7 +187,7 @@ export default function ExamsList({ params }: { params: { lang: Locale } }) {
       id: uuidv4(),
       cell: info => {
         const currentDate = dayjs(info.getValue());
-        return currentDate.format('YYYY-MM-DD');
+        return currentDate.format('YYYY-MM-DD HH:mm');
       },
       header: t('createdAt'),
     }),
@@ -195,7 +202,7 @@ export default function ExamsList({ params }: { params: { lang: Locale } }) {
                 setSelectedExam(row.original);
                 openCreateEditModal();
               }}>
-              Edit exam
+              {t('editExam')}
             </MenuItem>
           )}
           {row.original.status === 'NOT_STARTED' && (
@@ -204,7 +211,7 @@ export default function ExamsList({ params }: { params: { lang: Locale } }) {
               onClick={() => {
                 updateExamStatus({ data: { status: 'IN_PROGRESS' }, examId: row.original.id });
               }}>
-              Start exam
+              {t('startExam')}
             </MenuItem>
           )}
           {row.original.status === 'IN_PROGRESS' && (
@@ -213,7 +220,7 @@ export default function ExamsList({ params }: { params: { lang: Locale } }) {
               onClick={() => {
                 updateExamStatus({ data: { status: 'COMPLETED' }, examId: row.original.id });
               }}>
-              Finish exam
+              {t('finishExam')}
             </MenuItem>
           )}
           {row.original.status !== 'IN_PROGRESS' && (
@@ -223,7 +230,7 @@ export default function ExamsList({ params }: { params: { lang: Locale } }) {
                 setSelectedExam(row.original);
                 openDeleteModal();
               }}>
-              Delete exam
+              {t('deleteExam')}
             </MenuItem>
           )}
         </ActionButtons>
@@ -261,6 +268,7 @@ export default function ExamsList({ params }: { params: { lang: Locale } }) {
         isOpen={isCreateEditExamModalIsOpen}
         onClose={closeCreateEditExamModal}
         exam={selectedExam}
+        params={params}
       />
       <Modal
         isOpen={isDeleteModalOpen}
