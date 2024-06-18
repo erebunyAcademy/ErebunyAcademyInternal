@@ -1,5 +1,5 @@
 import { Exam, ExamStatusEnum, LanguageTypeEnum } from '@prisma/client';
-import { ConflictException, NotFoundException } from 'next-api-decorators';
+import { ConflictException, ForbiddenException, NotFoundException } from 'next-api-decorators';
 import { User } from 'next-auth';
 import { SortingType } from '@/api/types/common';
 import {
@@ -27,8 +27,15 @@ function checkStudentAnswers(testQuestions: any, studentAnswerGroupedByTestQuest
 export class ExamsResolver {
   static async list(skip: number, take: number, search: string, sorting: SortingType[]) {
     return Promise.all([
-      prisma.exam.count(),
+      prisma.exam.count({
+        where: {
+          isArchived: false,
+        },
+      }),
       prisma.exam.findMany({
+        where: {
+          isArchived: false,
+        },
         select: {
           duration: true,
           id: true,
@@ -179,9 +186,16 @@ export class ExamsResolver {
           throw new NotFoundException('Exam with this id does not exist');
         }
 
-        return prisma.exam.delete({
+        if (exam.status === 'IN_PROGRESS') {
+          throw new ForbiddenException('Not allowed');
+        }
+
+        return prisma.exam.update({
           where: {
             id,
+          },
+          data: {
+            isArchived: true,
           },
         });
       });

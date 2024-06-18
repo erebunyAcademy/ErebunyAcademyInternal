@@ -211,5 +211,6 @@
   "rightAnswers": "Right answers",
   "totalQuestions": "Total questions",
   "studentsAnswers": "Students answers",
-  "seeStudents": "View participants"
+  "seeStudents": "View participants",
+  "testQuestions": "Test Questions"
 }

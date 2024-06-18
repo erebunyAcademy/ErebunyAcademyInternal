@@ -210,5 +210,6 @@
   "rightAnswers": "Правильные ответы",
   "totalQuestions": "Всего вопросов",
   "studentsAnswers": "Ответы студентов ",
-  "seeStudents": "View participants"
+  "seeStudents": "View participants",
+  "testQuestions": "Test Questions"
 }

@@ -211,6 +211,7 @@ model Exam {
   courseGroup   CourseGroup?      @relation(fields: [courseGroupId], references: [id])
   courseGroupId String?
   duration      Float
+  isArchived    Boolean           @default(false)
   status        ExamStatusEnum    @default(NOT_STARTED)
   examStartTime DateTime?         @db.Timestamp(0)
 

@@ -26,7 +26,7 @@ const SimpleTable = <T,>({ columns, data, title }: SimpleTableProps<T>): JSX.Ele
   });
 
   return (
-    <Box maxHeight="700px" width="100%" pt={{ base: '30px', md: '100px' }}>
+    <Box width="100%" pt={{ base: '30px', md: '100px' }}>
       <Text
         as="h2"
         fontSize={{ base: '18px', sm: '24px' }}
@@ -35,7 +35,7 @@ const SimpleTable = <T,>({ columns, data, title }: SimpleTableProps<T>): JSX.Ele
         mb="15px">
         {t(title)}
       </Text>
-      <Box overflow="auto" maxWidth={{ base: '340px', sm: '670px', lg: '700px', xl: '100%' }}>
+      <Box maxWidth={{ base: '340px', sm: '670px', lg: '700px', xl: '100%' }}>
         <Table
           borderTop="1px solid rgb(226, 232, 240)"
           height="100%"

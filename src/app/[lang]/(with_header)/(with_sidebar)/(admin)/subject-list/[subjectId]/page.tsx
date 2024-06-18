@@ -14,11 +14,11 @@ import { FormInput, SelectLabel } from '@/components/atoms';
 import FormTextarea from '@/components/atoms/FormTextarea';
 import AnswersControl from '@/components/molecules/AnswerControl';
 import ExamsUploadByExcel, { UploadedExcelData } from '@/components/organisms/ExamsUploadByExcel';
-import TableCheckbox from '@/components/organisms/TableCheckbox';
+import SimpleTable from '@/components/organisms/SimpleTable';
 import { Locale } from '@/i18n';
 import { Maybe } from '@/utils/models/common';
 import { TestQuestionListModel } from '@/utils/models/test-question.model';
-import { TestQuestionIds, TestQuestionValidation } from '@/utils/validation/exam';
+import { TestQuestionValidation } from '@/utils/validation/exam';
 
 const questionTypes = [
   {
@@ -56,7 +56,6 @@ const initValue = {
 };
 
 const resolver = classValidatorResolver(TestQuestionValidation);
-const testQuestionEditResolver = classValidatorResolver(TestQuestionIds);
 
 const CreateTestQuestions = ({
   params: { subjectId },
@@ -74,7 +73,7 @@ const CreateTestQuestions = ({
     watch,
     handleSubmit,
     reset,
-    formState: { isValid, errors },
+    formState: { isValid },
   } = useForm<TestQuestionValidation>({
     resolver,
     defaultValues: {
@@ -82,17 +81,7 @@ const CreateTestQuestions = ({
     },
   });
 
-  const { handleSubmit: submitEditTestQuestion, control: showTestQuestionControl } =
-    useForm<TestQuestionIds>({
-      resolver: testQuestionEditResolver,
-      defaultValues: {
-        testQuestionIds: [],
-      },
-    });
-
-  console.log(submitEditTestQuestion);
-
-  const { data: testQuestionQueryData } = useQuery<TestQuestionListModel>({
+  const { data: testQuestionQueryData, refetch } = useQuery<TestQuestionListModel>({
     queryKey: ['testQuestion', subjectId, language],
     queryFn: TestQuestionService.getTestQuestionsBySubjectId.bind(null, subjectId, language),
     enabled: !!subjectId,
@@ -116,11 +105,10 @@ const CreateTestQuestions = ({
       onSuccess: () => {
         toast({ title: 'Success', status: 'success' });
         reset({ questions: [initValue] });
+        refetch();
       },
     });
   };
-
-  console.log({ errors });
 
   useEffect(() => {
     if (excelData) {
@@ -191,35 +179,23 @@ const CreateTestQuestions = ({
     }),
   ];
 
-  const submitEditTestQuestionHandler = () => {};
-
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Box my={{ base: '25px', md: '50px' }}>
+        <HStack>
+          <Flex overflowY="auto" flexDirection="column" width="100%" mb={100} height={700}>
+            <SimpleTable
+              columns={testQuestionColumns as any}
+              data={testQuestionQueryData || []}
+              title={t('testQuestions')}
+            />
+          </Flex>
+        </HStack>
         <HStack spacing={10}>
           <Heading textAlign="center" fontSize={{ base: '22px', md: '28px' }}>
             {t('createExamQuestions')}
           </Heading>
           <ExamsUploadByExcel setUploadedResults={setExcelData} />
-        </HStack>
-        <HStack>
-          <Flex height={600} overflowY="auto" flexDirection="column" width="100%">
-            <Controller
-              name="testQuestionIds"
-              control={showTestQuestionControl}
-              render={({ field: { onChange, value } }) => (
-                <TableCheckbox
-                  title="selectTests"
-                  data={testQuestionQueryData || []}
-                  deleteHandler={submitEditTestQuestionHandler}
-                  selectedValues={value}
-                  onChange={onChange}
-                  // @ts-ignore
-                  columns={testQuestionColumns || []}
-                />
-              )}
-            />
-          </Flex>
         </HStack>
         {questionFields.map((question, questionIndex) => {
           const questionType = watch(`questions.${questionIndex}.type`);
