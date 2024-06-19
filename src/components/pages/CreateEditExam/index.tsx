@@ -45,11 +45,16 @@ const CreateEditExam: FC<CreateEditExamProps> = ({
 
   useEffect(() => {
     if (examTranslation) {
-      console.log(examTranslation.testQuestions, '"examTranslation.testQuestions');
       reset({
         title: examTranslation.title,
         description: examTranslation.description || '',
         testQuestionIds: examTranslation.testQuestions.map(({ id }) => id) || [],
+      });
+    } else {
+      reset({
+        title: '',
+        description: '',
+        testQuestionIds: [],
       });
     }
   }, [examTranslation, language, reset]);
