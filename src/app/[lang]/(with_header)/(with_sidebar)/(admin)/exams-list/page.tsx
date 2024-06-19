@@ -17,10 +17,12 @@ import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { v4 as uuidv4 } from 'uuid';
 import { ExamService } from '@/api/services/exam.service';
+import { StudentService } from '@/api/services/student.service';
 import ActionButtons from '@/components/molecules/ActionButtons';
 import CreateExamModal from '@/components/molecules/CreateExamModal';
 import Modal from '@/components/molecules/Modal';
 import SearchTable from '@/components/organisms/SearchTable';
+import SimpleTable from '@/components/organisms/SimpleTable';
 import useDebounce from '@/hooks/useDebounce';
 import { Locale } from '@/i18n';
 import { ITEMS_PER_PAGE } from '@/utils/constants/common';
@@ -29,6 +31,7 @@ import { languagePathHelper } from '@/utils/helpers/language';
 import { QUERY_KEY } from '@/utils/helpers/queryClient';
 import { Maybe } from '@/utils/models/common';
 import { ExamModel } from '@/utils/models/exam';
+import { ExamParticipantsListModel } from '@/utils/models/student';
 import { UpdateExamStatusValidation } from '@/utils/validation/exam';
 
 export default function ExamsList({ params }: { params: { lang: Locale } }) {
@@ -44,6 +47,13 @@ export default function ExamsList({ params }: { params: { lang: Locale } }) {
     isOpen: isDeleteModalOpen,
     onOpen: openDeleteModal,
     onClose: closeDeleteModal,
+  } = useDisclosure({
+    onClose() {},
+  });
+  const {
+    isOpen: isStudentsModalOpen,
+    onOpen: openStudentsModal,
+    onClose: closeStudentsModal,
   } = useDisclosure({
     onClose() {},
   });
@@ -68,6 +78,12 @@ export default function ExamsList({ params }: { params: { lang: Locale } }) {
         sorting: sorting,
         search: debouncedSearch,
       }),
+  });
+
+  const { data: studentsData } = useQuery({
+    queryKey: ['exam-students-list'],
+    queryFn: () => StudentService.getStudentsByExamId(selectedExam?.id!),
+    enabled: isStudentsModalOpen && !!selectedExam,
   });
 
   const pageCount = useMemo(() => {
@@ -101,6 +117,25 @@ export default function ExamsList({ params }: { params: { lang: Locale } }) {
       refetch();
     },
   });
+  const columnHelperStudents = createColumnHelper<ExamParticipantsListModel>();
+
+  const studentsColumns = [
+    columnHelperStudents.accessor('student.user.firstName', {
+      id: uuidv4(),
+      cell: info => info.getValue(),
+      header: t('firstName'),
+    }),
+    columnHelperStudents.accessor('student.user.lastName', {
+      id: uuidv4(),
+      cell: info => info.getValue(),
+      header: t('lastName'),
+    }),
+    columnHelperStudents.accessor('student.user.email', {
+      id: uuidv4(),
+      cell: info => info.getValue(),
+      header: t('email'),
+    }),
+  ];
 
   const columnHelper = createColumnHelper<ExamModel>();
 
@@ -187,7 +222,7 @@ export default function ExamsList({ params }: { params: { lang: Locale } }) {
         <Button
           variant="link"
           onClick={() => {
-            open;
+            openStudentsModal();
             setSelectedExam(info.row.original);
           }}>
           {t('seeStudents')}
@@ -294,6 +329,9 @@ export default function ExamsList({ params }: { params: { lang: Locale } }) {
         }}
         actionText="delete">
         {t('deleteExamQuestion')}
+      </Modal>
+      <Modal isOpen={isStudentsModalOpen} onClose={closeStudentsModal} isDeleteVariant>
+        <SimpleTable columns={studentsColumns as any} title="students" data={studentsData || []} />
       </Modal>
     </>
   );

@@ -101,7 +101,7 @@ const StudentExamList = ({ user, lang }: { user: User; lang: Locale }) => {
   ];
 
   return (
-    <Flex width="100%">
+    <Flex width="100%" pt={{ base: '30px', md: '100px' }}>
       <SimpleTable columns={columns as any} data={data || []} title="yourExams" />
     </Flex>
   );
