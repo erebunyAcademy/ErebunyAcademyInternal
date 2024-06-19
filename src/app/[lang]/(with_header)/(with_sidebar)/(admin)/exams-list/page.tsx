@@ -81,7 +81,7 @@ export default function ExamsList({ params }: { params: { lang: Locale } }) {
   });
 
   const { data: studentsData } = useQuery({
-    queryKey: ['exam-students-list'],
+    queryKey: ['exam-students-list', selectedExam?.id],
     queryFn: () => StudentService.getStudentsByExamId(selectedExam?.id!),
     enabled: isStudentsModalOpen && !!selectedExam,
   });
