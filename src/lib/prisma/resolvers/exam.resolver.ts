@@ -1,4 +1,4 @@
-import { Exam, ExamStatusEnum, LanguageTypeEnum } from '@prisma/client';
+import { Exam, ExamStatusEnum, LanguageTypeEnum, Prisma } from '@prisma/client';
 import { ConflictException, ForbiddenException, NotFoundException } from 'next-api-decorators';
 import { User } from 'next-auth';
 import { SortingType } from '@/api/types/common';
@@ -26,16 +26,46 @@ function checkStudentAnswers(testQuestions: any, studentAnswerGroupedByTestQuest
 
 export class ExamsResolver {
   static async list(skip: number, take: number, search: string, sorting: SortingType[]) {
+    const searchFilter: Prisma.ExamWhereInput = search
+      ? {
+          OR: [
+            {
+              courseGroup: {
+                title: { contains: search, mode: 'insensitive' },
+              },
+            },
+            {
+              course: {
+                title: { contains: search, mode: 'insensitive' },
+              },
+            },
+            {
+              faculty: {
+                title: { contains: search, mode: 'insensitive' },
+              },
+            },
+            {
+              examLanguages: {
+                some: {
+                  title: { contains: search, mode: 'insensitive' },
+                },
+              },
+            },
+          ],
+        }
+      : {};
+
+    const whereClause: Prisma.ExamWhereInput = {
+      isArchived: false,
+      ...searchFilter,
+    };
+
     return Promise.all([
       prisma.exam.count({
-        where: {
-          isArchived: false,
-        },
+        where: whereClause,
       }),
       prisma.exam.findMany({
-        where: {
-          isArchived: false,
-        },
+        where: whereClause,
         select: {
           duration: true,
           id: true,
@@ -61,12 +91,17 @@ export class ExamsResolver {
               id: true,
               title: true,
               facultyId: true,
+              faculty: {
+                select: {
+                  title: true,
+                  id: true,
+                },
+              },
             },
           },
           courseGroup: {
             select: {
               id: true,
-
               title: true,
             },
           },
@@ -87,7 +122,6 @@ export class ExamsResolver {
       exams,
     }));
   }
-
   static async createExam(data: CreateExamValidation) {
     const { subjectId, courseId, courseGroupId, studentIds, duration } = data;
     const createdExam = await prisma.exam.create({

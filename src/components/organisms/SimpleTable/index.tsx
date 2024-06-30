@@ -35,7 +35,7 @@ const SimpleTable = <T,>({ columns, data, title }: SimpleTableProps<T>): JSX.Ele
         mb="15px">
         {t(title)}
       </Text>
-      <Box maxWidth={{ base: '340px', sm: '670px', lg: '700px', xl: '100%' }}>
+      <Box maxWidth={{ base: '340px', sm: '670px', lg: '700px', xl: '100%' }} overflow="auto">
         <Table
           borderTop="1px solid rgb(226, 232, 240)"
           height="100%"

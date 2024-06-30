@@ -140,10 +140,20 @@ export default function ExamsList({ params }: { params: { lang: Locale } }) {
   const columnHelper = createColumnHelper<ExamModel>();
 
   const columns = [
+    columnHelper.accessor('course.faculty.title', {
+      id: uuidv4(),
+      cell: info => info.getValue(),
+      header: t('faculty'),
+    }),
     columnHelper.accessor('course.title', {
       id: uuidv4(),
       cell: info => info.getValue(),
       header: t('course'),
+    }),
+    columnHelper.accessor('courseGroup.title', {
+      id: uuidv4(),
+      cell: info => info.getValue(),
+      header: t('courseGroup'),
     }),
     columnHelper.accessor('status', {
       id: uuidv4(),
@@ -186,11 +196,7 @@ export default function ExamsList({ params }: { params: { lang: Locale } }) {
       },
       header: t('edit'),
     }),
-    columnHelper.accessor('courseGroup.title', {
-      id: uuidv4(),
-      cell: info => info.getValue(),
-      header: t('courseGroup'),
-    }),
+
     columnHelper.accessor('id', {
       id: uuidv4(),
       cell: info => (

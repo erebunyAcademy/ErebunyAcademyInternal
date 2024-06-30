@@ -1,4 +1,4 @@
-import { AttachmentTypeEnum, UserRoleEnum } from '@prisma/client';
+import { AttachmentTypeEnum, Prisma, UserRoleEnum } from '@prisma/client';
 import { NotFoundException } from 'next-api-decorators';
 import { User } from 'next-auth';
 import { SortingType } from '@/api/types/common';
@@ -8,27 +8,25 @@ import prisma from '..';
 
 export class StudentResolver {
   static async list(skip: number, take: number, search: string, sorting: SortingType[]) {
+    const OR: Prisma.UserWhereInput[] = [
+      { firstName: { contains: search, mode: 'insensitive' } },
+      { lastName: { contains: search, mode: 'insensitive' } },
+      { email: { contains: search, mode: 'insensitive' } },
+    ];
+
     const [count, users] = await Promise.all([
       prisma.user.count({
         where: {
           role: UserRoleEnum.STUDENT,
           isVerified: true,
-          OR: [
-            { firstName: { contains: search, mode: 'insensitive' } },
-            { lastName: { contains: search, mode: 'insensitive' } },
-            { email: { contains: search, mode: 'insensitive' } },
-          ],
+          OR,
         },
       }),
       prisma.user.findMany({
         where: {
           isVerified: true,
           role: UserRoleEnum.STUDENT,
-          OR: [
-            { firstName: { contains: search, mode: 'insensitive' } },
-            { lastName: { contains: search, mode: 'insensitive' } },
-            { email: { contains: search, mode: 'insensitive' } },
-          ],
+          OR,
         },
         select: {
           id: true,
