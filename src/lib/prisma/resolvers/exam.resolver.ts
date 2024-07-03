@@ -276,6 +276,7 @@ export class ExamsResolver {
   }
 
   static async getExamTranslationByExamIdAndLanguage(examId: string, language: LanguageTypeEnum) {
+    console.log({ examId, language });
     const examTranslation = await prisma.examTranslation.findUnique({
       where: {
         examLanguage: {
@@ -289,9 +290,6 @@ export class ExamsResolver {
         title: true,
         description: true,
         testQuestions: {
-          where: {
-            language,
-          },
           select: {
             id: true,
           },
