@@ -180,7 +180,14 @@ const CreateExamModal: FC<CreateExamModalProps> = ({ isOpen, onClose, exam, para
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={handleClose} title="createExam" size="6xl">
+    <Modal
+      isOpen={isOpen}
+      onClose={() => {
+        handleClose();
+        reset();
+      }}
+      title="createExam"
+      size="6xl">
       <Flex
         gap={{ base: '18px', sm: '30px' }}
         flexDirection={{ base: 'column', sm: 'row' }}
