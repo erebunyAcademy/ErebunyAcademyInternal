@@ -40,6 +40,7 @@ const Providers = ({ children }: { children: ReactNode }) => {
       },
     },
   };
+
   return (
     <SessionProvider>
       <CacheProvider>
