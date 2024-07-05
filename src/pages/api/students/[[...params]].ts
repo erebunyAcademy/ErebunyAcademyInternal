@@ -9,7 +9,6 @@ import {
   ValidationPipe,
 } from 'next-api-decorators';
 import { User } from 'next-auth';
-import { SortingType } from '@/api/types/common';
 import { CurrentUser } from '@/lib/prisma/decorators/current-user.decorator';
 import { exceptionHandler } from '@/lib/prisma/error';
 import { AdminGuard } from '@/lib/prisma/guards/admin';
@@ -25,9 +24,10 @@ class StudentsHandler {
     @Query('offset') skip: string,
     @Query('limit') take: string,
     @Query('search') search: string,
-    @Query('sorting') sorting: SortingType[],
+    @Query('sortBy') sortBy: string,
+    @Query('orderBy') orderBy: string,
   ) {
-    return StudentResolver.list(+skip, +take, search, sorting);
+    return StudentResolver.list(+skip, +take, search, sortBy, orderBy);
   }
 
   @AdminGuard()

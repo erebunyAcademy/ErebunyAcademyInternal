@@ -10,7 +10,7 @@ import {
 } from '@chakra-ui/react';
 import { LanguageTypeEnum } from '@prisma/client';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { createColumnHelper, SortingState } from '@tanstack/react-table';
+import { createColumnHelper } from '@tanstack/react-table';
 import dayjs from 'dayjs';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -34,8 +34,13 @@ import { ExamModel } from '@/utils/models/exam';
 import { ExamParticipantsListModel } from '@/utils/models/student';
 import { UpdateExamStatusValidation } from '@/utils/validation/exam';
 
-export default function ExamsList({ params }: { params: { lang: Locale } }) {
-  const [sorting, setSorting] = useState<SortingState>([]);
+export default function ExamsList({
+  params,
+  searchParams,
+}: {
+  params: { lang: Locale };
+  searchParams: { orderBy: string; sortBy: string };
+}) {
   const [search, setSearch] = useState('');
   const router = useRouter();
   const [page, setPage] = useState(1);
@@ -70,12 +75,13 @@ export default function ExamsList({ params }: { params: { lang: Locale } }) {
   });
 
   const { data, isLoading, isPlaceholderData, refetch } = useQuery({
-    queryKey: QUERY_KEY.allExams(debouncedSearch, page),
+    queryKey: QUERY_KEY.allExams(debouncedSearch, page, searchParams.orderBy, searchParams.sortBy),
     queryFn: () =>
       ExamService.list({
         offset: page === 1 ? 0 : (page - 1) * ITEMS_PER_PAGE,
         limit: ITEMS_PER_PAGE,
-        sorting,
+        orderBy: searchParams.orderBy,
+        sortBy: searchParams.sortBy,
         search: debouncedSearch,
       }),
   });
@@ -301,9 +307,7 @@ export default function ExamsList({ params }: { params: { lang: Locale } }) {
         count={data?.count || 0}
         // @ts-ignore
         columns={columns}
-        sorting={sorting}
         search={search}
-        setSorting={setSorting}
         setSearch={setSearchValue}
         hasNextPage={useMemo(
           () => !(!pageCount || page === pageCount || isPlaceholderData),

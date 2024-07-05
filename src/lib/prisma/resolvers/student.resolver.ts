@@ -1,17 +1,36 @@
 import { AttachmentTypeEnum, Prisma, UserRoleEnum } from '@prisma/client';
 import { NotFoundException } from 'next-api-decorators';
 import { User } from 'next-auth';
-import { SortingType } from '@/api/types/common';
 import { UpdateStudentValidation } from '@/utils/validation/student';
-import { orderBy } from './utils/common';
 import prisma from '..';
 
 export class StudentResolver {
-  static async list(skip: number, take: number, search: string, sorting: SortingType[]) {
+  static async list(skip: number, take: number, search: string, sortBy: string, orderBy: string) {
     const OR: Prisma.UserWhereInput[] = [
       { firstName: { contains: search, mode: 'insensitive' } },
       { lastName: { contains: search, mode: 'insensitive' } },
       { email: { contains: search, mode: 'insensitive' } },
+      {
+        student: {
+          courseGroup: {
+            title: { contains: search, mode: 'insensitive' },
+          },
+        },
+      },
+      {
+        student: {
+          course: {
+            title: { contains: search, mode: 'insensitive' },
+          },
+        },
+      },
+      {
+        student: {
+          faculty: {
+            title: { contains: search, mode: 'insensitive' },
+          },
+        },
+      },
     ];
 
     const [count, users] = await Promise.all([
@@ -63,7 +82,14 @@ export class StudentResolver {
             },
           },
         },
-        orderBy: sorting ? orderBy(sorting) : undefined,
+        orderBy:
+          sortBy && orderBy
+            ? {
+                [sortBy]: orderBy,
+              }
+            : {
+                createdAt: 'desc',
+              },
         skip,
         take,
       }),
