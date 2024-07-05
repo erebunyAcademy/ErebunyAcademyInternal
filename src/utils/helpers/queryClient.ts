@@ -1,6 +1,11 @@
 export const QUERY_KEY = {
   allStudents: (search: string, page: number) => [search ? `users/${search}` : 'users', page],
-  allExams: (search: string, page: number) => [search ? `exams/${search}` : 'exams', page],
+  allExams: (search: string, page: number, sortBy: string, orderBy: string) => [
+    search ? `exams/${search}` : 'exams',
+    page,
+    sortBy,
+    orderBy,
+  ],
   allFaculties: (search: string, page: number) => [
     search ? `faculties/${search}` : 'faculties',
     page,

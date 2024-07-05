@@ -1,14 +1,12 @@
 import { Exam, ExamStatusEnum, LanguageTypeEnum, Prisma } from '@prisma/client';
 import { ConflictException, ForbiddenException, NotFoundException } from 'next-api-decorators';
 import { User } from 'next-auth';
-import { SortingType } from '@/api/types/common';
 import {
   CreateExamValidation,
   ExamValidation,
   OptionalExamValidation,
   UpdateExamStatusValidation,
 } from '@/utils/validation/exam';
-import { orderBy } from './utils/common';
 import prisma from '..';
 
 function checkStudentAnswers(testQuestions: any, studentAnswerGroupedByTestQuestion: any) {
@@ -25,8 +23,7 @@ function checkStudentAnswers(testQuestions: any, studentAnswerGroupedByTestQuest
 }
 
 export class ExamsResolver {
-  static async list(skip: number, take: number, search: string, sorting: SortingType[]) {
-    console.log({ sorting });
+  static async list(skip: number, take: number, search: string, sortBy: string, orderBy: string) {
     const searchFilter: Prisma.ExamWhereInput = search
       ? {
           OR: [
@@ -114,7 +111,12 @@ export class ExamsResolver {
           },
           createdAt: true,
         },
-        orderBy: sorting ? orderBy(sorting) : { createdAt: 'desc' },
+        orderBy:
+          sortBy && orderBy
+            ? {
+                [sortBy]: orderBy,
+              }
+            : { createdAt: 'desc' },
         skip,
         take,
       }),

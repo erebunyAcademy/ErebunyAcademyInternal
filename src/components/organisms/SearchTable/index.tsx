@@ -87,32 +87,19 @@ function SearchTable<T>({
     },
   });
 
-  // const createQueryString = useCallback(
-  //   (name: string, value: string) => {
-  //     const params = new URLSearchParams(searchParams?.toString());
-  //     params.set(name, value);
-
-  //     return params.toString();
-  //   },
-  //   [searchParams],
-  // );
-
   const sortingHandler = useCallback(
     (val: any) => {
       const params = new URLSearchParams(searchParams?.toString());
       params;
-      const sortBy = val.column.columnDef.header
-        .split(' ')
-        .reduce(
-          (acc: string, cur: string, i: number) =>
-            (acc += i === 0 ? cur.toLowerCase() : cur[0].toUpperCase() + cur.slice(1)),
-          '',
-        );
 
-      const orderBy = searchParams?.has(sortBy);
-      console.log({ orderBy });
+      console.log({ val });
 
-      router.push(`${pathname}?sorting=${sortBy}&orderBy=${orderBy ? 'asc' : 'desc'}`);
+      if (val.column.columnDef.header === 'Status') {
+        const orderBy = params.get('orderBy');
+        router.push(`${pathname}?sortBy=status&orderBy=${orderBy === 'asc' ? 'desc' : 'asc'}`);
+      } else {
+        router.push(pathname!);
+      }
     },
     [pathname, router, searchParams],
   );
