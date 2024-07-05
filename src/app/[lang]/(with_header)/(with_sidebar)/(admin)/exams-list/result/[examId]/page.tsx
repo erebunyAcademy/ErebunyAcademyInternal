@@ -48,7 +48,7 @@ const ExamResult = ({ params }: { params: { examId: string } }) => {
 
   return (
     <Box>
-      {data && <SimpleTable columns={columns as any} data={data} title={t('studentsAnswers')} />}
+      {data && <SimpleTable columns={columns as any} data={data} title="studentsAnswers" />}
     </Box>
   );
 };

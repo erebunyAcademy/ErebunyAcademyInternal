@@ -181,11 +181,11 @@ const CreateTestQuestions = ({
     <form onSubmit={handleSubmit(onSubmit)}>
       <Box my={{ base: '25px', md: '50px' }}>
         <HStack>
-          <Flex overflowY="auto" flexDirection="column" width="100%" mb={100} height={700}>
+          <Flex overflowY="auto" flexDirection="column" width="100%" mb={100} maxH={800}>
             <SimpleTable
               columns={testQuestionColumns as any}
               data={testQuestionQueryData || []}
-              title={t('testQuestions')}
+              title="testQuestions"
             />
           </Flex>
         </HStack>
