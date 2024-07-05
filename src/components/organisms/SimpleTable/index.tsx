@@ -26,7 +26,7 @@ const SimpleTable = <T,>({ columns, data, title }: SimpleTableProps<T>): JSX.Ele
   });
 
   return (
-    <Box width="100%" maxHeight="700px">
+    <Box width="100%" maxHeight="800px">
       <Text
         as="h2"
         fontSize={{ base: '18px', sm: '24px' }}
@@ -35,10 +35,13 @@ const SimpleTable = <T,>({ columns, data, title }: SimpleTableProps<T>): JSX.Ele
         mb="15px">
         {t(title)}
       </Text>
-      <Box maxWidth={{ base: '340px', sm: '670px', lg: '700px', xl: '100%' }} overflow="auto">
+      <Box
+        maxWidth={{ base: '340px', sm: '670px', lg: '700px', xl: '100%' }}
+        height="400px"
+        overflow="auto">
         <Table
           borderTop="1px solid rgb(226, 232, 240)"
-          height="100%"
+          minHeight="70px"
           minWidth="100%"
           width="max-content">
           <Thead>
@@ -67,7 +70,7 @@ const SimpleTable = <T,>({ columns, data, title }: SimpleTableProps<T>): JSX.Ele
                     {row.getVisibleCells().map(cell => {
                       const meta: any = cell.column.columnDef.meta;
                       return (
-                        <Td key={cell.id} isNumeric={meta?.isNumeric}>
+                        <Td key={cell.id} isNumeric={meta?.isNumeric} py="12px">
                           {flexRender(cell.column.columnDef.cell, cell.getContext())}
                         </Td>
                       );

@@ -336,6 +336,7 @@ export default function ExamsList({ params }: { params: { lang: Locale } }) {
         actionText="delete">
         {t('deleteExamQuestion')}
       </Modal>
+
       <Modal isOpen={isStudentsModalOpen} onClose={closeStudentsModal} isDeleteVariant>
         <SimpleTable columns={studentsColumns as any} title="students" data={studentsData || []} />
       </Modal>
