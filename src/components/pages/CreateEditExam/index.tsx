@@ -45,6 +45,7 @@ const CreateEditExam: FC<CreateEditExamProps> = ({
 
   useEffect(() => {
     if (examTranslation) {
+      console.log({ examTranslation });
       reset({
         title: examTranslation.title,
         description: examTranslation.description || '',

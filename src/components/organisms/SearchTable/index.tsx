@@ -1,4 +1,5 @@
-import React, { Dispatch, memo, SetStateAction, useCallback, useState } from 'react';
+'use client';
+import React, { memo, useCallback, useState } from 'react';
 import { TriangleDownIcon, TriangleUpIcon } from '@chakra-ui/icons';
 import {
   Box,
@@ -25,15 +26,17 @@ import {
   flexRender,
   getCoreRowModel,
   getSortedRowModel,
-  SortingState,
   useReactTable,
 } from '@tanstack/react-table';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { ReadonlyURLSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import NoDataFound from '@/components/molecules/NoDataFound';
 import ChevronLeft from '@/icons/chevron_left.svg';
 import ChevronRight from '@/icons/chevron_right.svg';
 import InputSearchIcon from '@/icons/search_icon.svg';
 import { ITEMS_PER_PAGE } from '@/utils/constants/common';
+import { Maybe } from '@/utils/models/common';
 
 export type DataTableProps<T> = {
   title?: string;
@@ -41,8 +44,6 @@ export type DataTableProps<T> = {
   count: number;
   data: T[];
   columns: ColumnDef<T, any>[];
-  sorting: SortingState;
-  setSorting: Dispatch<SetStateAction<SortingState>>;
   setSearch: (value: string) => void;
   search: string;
   hasNextPage: boolean;
@@ -59,8 +60,6 @@ function SearchTable<T>({
   count,
   data,
   columns,
-  sorting,
-  setSorting,
   setSearch,
   search,
   hasNextPage,
@@ -70,22 +69,55 @@ function SearchTable<T>({
   addNew,
   withCheckbox,
 }: DataTableProps<T>) {
+  const router = useRouter();
+  const pathname = usePathname();
   const [selectedRows, setSelectedRows] = useState<Record<string, boolean>>({});
+  const searchParams: Maybe<ReadonlyURLSearchParams> = useSearchParams();
 
   const { getHeaderGroups, getRowModel } = useReactTable({
     columns,
     data,
     getCoreRowModel: getCoreRowModel(),
-    onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
     state: {
-      sorting,
       pagination: {
         pageIndex: 0,
         pageSize: ITEMS_PER_PAGE,
       },
     },
   });
+
+  // const createQueryString = useCallback(
+  //   (name: string, value: string) => {
+  //     const params = new URLSearchParams(searchParams?.toString());
+  //     params.set(name, value);
+
+  //     return params.toString();
+  //   },
+  //   [searchParams],
+  // );
+
+  const sortingHandler = useCallback(
+    (val: any) => {
+      const params = new URLSearchParams(searchParams?.toString());
+      params;
+      console.log({ params });
+
+      const sortBy = val.column.columnDef.header
+        .split(' ')
+        .reduce(
+          (acc: string, cur: string, i: number) =>
+            (acc += i === 0 ? cur.toLowerCase() : cur[0].toUpperCase() + cur.slice(1)),
+          '',
+        );
+
+      const orderBy = searchParams?.has(sortBy);
+      console.log({ orderBy });
+
+      router.push(`${pathname}?sorting=${sortBy}&orderBy=${orderBy ? 'asc' : 'desc'}`);
+    },
+    [pathname, router, searchParams],
+  );
 
   const userSearchHandler = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -143,7 +175,7 @@ function SearchTable<T>({
                   return (
                     <Th
                       key={header.id}
-                      onClick={header.column.getToggleSortingHandler()}
+                      onClick={() => sortingHandler(header)}
                       isNumeric={meta?.isNumeric}>
                       {flexRender(header.column.columnDef.header, header.getContext())}
                       <chakra.span pl="4">
