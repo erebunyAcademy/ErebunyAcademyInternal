@@ -25,7 +25,6 @@ export default function Users() {
       TeacherService.list({
         offset: page === 1 ? 0 : (page - 1) * ITEMS_PER_PAGE,
         limit: ITEMS_PER_PAGE,
-        sorting: sorting,
         search: debouncedSearch,
       }),
   });

@@ -75,7 +75,6 @@ const Subject = ({ params }: { params: { lang: Locale } }) => {
       SubjectService.subjectList({
         offset: page === 1 ? 0 : (page - 1) * ITEMS_PER_PAGE,
         limit: ITEMS_PER_PAGE,
-        sorting: sorting,
         search: debouncedSearch,
       }),
   });
@@ -246,7 +245,7 @@ const Subject = ({ params }: { params: { lang: Locale } }) => {
             <FormInput
               name={name}
               type="text"
-              formLabelName={t("subjectDescription")}
+              formLabelName={t('subjectDescription')}
               value={value}
               placeholder="enterDescription"
               handleInputChange={onChange}
