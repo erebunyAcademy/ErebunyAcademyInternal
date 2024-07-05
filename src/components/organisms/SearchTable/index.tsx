@@ -101,8 +101,6 @@ function SearchTable<T>({
     (val: any) => {
       const params = new URLSearchParams(searchParams?.toString());
       params;
-      console.log({ params });
-
       const sortBy = val.column.columnDef.header
         .split(' ')
         .reduce(
