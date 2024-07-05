@@ -38,8 +38,6 @@ const CreateEdit = ({
     queryKey: [searchParams.language],
   });
 
-  console.log({ data });
-
   return (
     <>
       <Tabs

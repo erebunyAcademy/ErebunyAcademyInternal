@@ -26,6 +26,7 @@ function checkStudentAnswers(testQuestions: any, studentAnswerGroupedByTestQuest
 
 export class ExamsResolver {
   static async list(skip: number, take: number, search: string, sorting: SortingType[]) {
+    console.log({ sorting });
     const searchFilter: Prisma.ExamWhereInput = search
       ? {
           OR: [
@@ -113,7 +114,7 @@ export class ExamsResolver {
           },
           createdAt: true,
         },
-        orderBy: sorting ? orderBy(sorting) : undefined,
+        orderBy: sorting ? orderBy(sorting) : { createdAt: 'desc' },
         skip,
         take,
       }),
@@ -259,6 +260,17 @@ export class ExamsResolver {
           title,
           description,
           language,
+        },
+      });
+
+      await prisma.testQuestion.updateMany({
+        where: {
+          id: {
+            in: testQuestionIds,
+          },
+        },
+        data: {
+          examTranslationId: createdTranslation.id,
         },
       });
 

@@ -15,7 +15,6 @@ import FormTextarea from '@/components/atoms/FormTextarea';
 import AnswersControl from '@/components/molecules/AnswerControl';
 import ExamsUploadByExcel, { UploadedExcelData } from '@/components/organisms/ExamsUploadByExcel';
 import SimpleTable from '@/components/organisms/SimpleTable';
-import { Locale } from '@/i18n';
 import { Maybe } from '@/utils/models/common';
 import { TestQuestionListModel } from '@/utils/models/test-question.model';
 import { TestQuestionValidation } from '@/utils/validation/exam';
@@ -52,7 +51,6 @@ const initValue = {
   subjectId: '',
   skillLevel: TestQuestionLevelEnum.EASY,
   options: [{ title: '', isRightAnswer: false }],
-  lang: LanguageTypeEnum.AM,
 };
 
 const resolver = classValidatorResolver(TestQuestionValidation);
@@ -61,7 +59,7 @@ const CreateTestQuestions = ({
   params: { subjectId },
   searchParams: { language },
 }: {
-  params: { lang: Locale; subjectId: string };
+  params: { subjectId: string };
   searchParams: { language: LanguageTypeEnum };
 }) => {
   const t = useTranslations();
@@ -77,7 +75,7 @@ const CreateTestQuestions = ({
   } = useForm<TestQuestionValidation>({
     resolver,
     defaultValues: {
-      questions: [initValue],
+      questions: [{ ...initValue, lang: language }],
     },
   });
 
@@ -327,7 +325,7 @@ const CreateTestQuestions = ({
               {questionIndex === questionFields.length - 1 && (
                 <Button
                   mt={5}
-                  onClick={() => appendQuestion(initValue)}
+                  onClick={() => appendQuestion({ ...initValue, lang: language })}
                   width="50%"
                   fontSize={{ base: '16px', lg: '20px' }}>
                   {t('addQuestion')}
