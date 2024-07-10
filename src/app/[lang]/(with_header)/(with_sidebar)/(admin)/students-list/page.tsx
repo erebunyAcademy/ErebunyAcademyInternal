@@ -29,6 +29,7 @@ import { UpdateStudentValidation } from '@/utils/validation/student';
 
 const resolver = classValidatorResolver(SelectStudentCourseGroupValidation);
 
+
 export default function StudentList() {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [search, setSearch] = useState('');
@@ -306,7 +307,8 @@ export default function StudentList() {
         onClose={closeAttachmentModal}
         title="studentAttachment">
         <Image
-          src={generateAWSUrl(attachmentKey)}
+          // src={require("../../../../../../../public/uploads/students/0a766412-9ca5-48be-9357-e945c24454f4/attachments/1720620405969_pexels-nout-gons-80280-378570.jpg")}
+          src={require("../../../../../../../public/images/test.jpg")}
           width={400}
           height={400}
           alt="student attachment"
