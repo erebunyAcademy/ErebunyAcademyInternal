@@ -42,7 +42,6 @@ const nextConfig = {
         hostname: 'pba-users-bucket.s3.amazonaws.com',
       },
     ],
-    domains: ['localhost'], // Add your image domains here
   },
   async redirects() {
     return [
