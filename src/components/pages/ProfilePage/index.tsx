@@ -141,8 +141,6 @@ const Profile = ({ sessionUser }: { sessionUser: User }) => {
       return localImage.localUrl;
     }
 
-    console.log(data?.user, '*********');
-
     return generateUserAvatar(data?.user as User);
   }, [localImage?.localUrl, data?.user]);
 

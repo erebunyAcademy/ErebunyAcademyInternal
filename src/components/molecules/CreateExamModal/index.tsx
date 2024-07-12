@@ -18,7 +18,6 @@ import { FormInput, SelectLabel } from '@/components/atoms';
 import TableCheckbox from '@/components/organisms/TableCheckbox';
 import { Locale } from '@/i18n';
 import { ROUTE_EXAMS } from '@/utils/constants/routes';
-import { generateAWSUrl } from '@/utils/helpers/aws';
 import { languagePathHelper } from '@/utils/helpers/language';
 import { Maybe } from '@/utils/models/common';
 import { ExamModel } from '@/utils/models/exam';
@@ -148,7 +147,7 @@ const CreateExamModal: FC<CreateExamModalProps> = ({ isOpen, onClose, exam, para
             bg="#319795"
             color="#fff"
             name={`${info.row.original.user.firstName} ${info.row.original.user.lastName}`}
-            src={generateAWSUrl(existingAvatar?.key || '')}
+            src={existingAvatar?.key ? `/api/readfile?path=uploads/${existingAvatar.key}` : ''}
           />
         );
       },
