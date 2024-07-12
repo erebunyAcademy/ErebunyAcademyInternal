@@ -1,6 +1,15 @@
 import { createStandaloneToast } from '@chakra-ui/react';
 import { Maybe } from '../models/common';
 
+function getAlphabetFromIndex(index: number) {
+  const alphabet = 'abcdefghijklmnopqrstuvwxyz';
+  if (index >= 0 && index < alphabet.length) {
+    return alphabet[index];
+  } else {
+    return null;
+  }
+}
+
 export const prepareExcelOptionsForExam = (data: Record<string, Maybe<string>>, column: string) => {
   const obj = data[column];
   const { toast } = createStandaloneToast({
@@ -18,18 +27,21 @@ export const prepareExcelOptionsForExam = (data: Record<string, Maybe<string>>, 
     .filter(line => line.trim() !== '');
 
   return optionsArray
-    .map(option => {
+    .map((option, idx) => {
       if (/^[a-z]\.\s/.test(option)) {
         const key = option[0];
         const value = option.slice(3).trim().slice(0, undefined);
 
         return { [key]: value };
       } else {
-        toast({
-          title: 'Invalid option format:',
-          description: `In ${column} column, "${option}"`,
-        });
-        return null;
+        const opt = `${getAlphabetFromIndex(idx)}. ${option}`;
+        const key = opt[0];
+        const value = opt.slice(3).trim().slice(0, undefined);
+        // toast({
+        //   title: 'Invalid option format:',
+        //   description: `In ${column} column, "${option}"`,
+        // });
+        return { [key]: value };
       }
     })
     .filter(option => !!option);

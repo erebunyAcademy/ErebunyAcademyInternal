@@ -11,7 +11,6 @@ import {
 } from '@chakra-ui/react';
 import { classValidatorResolver } from '@hookform/resolvers/class-validator';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import axios from 'axios';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
@@ -21,7 +20,7 @@ import { AuthService } from '@/api/services/auth.service';
 import { CourseGroupService } from '@/api/services/course-group.service';
 import { CourseService } from '@/api/services/courses.service';
 import { FacultyService } from '@/api/services/faculty.service';
-import { UserService } from '@/api/services/user.service';
+import { UploadService } from '@/api/services/upload.service';
 import { Locale } from '@/i18n';
 import { ROUTE_SIGN_IN } from '@/utils/constants/routes';
 import { languagePathHelper } from '@/utils/helpers/language';
@@ -65,14 +64,25 @@ const StudentSignUp = ({ lang }: { lang: Locale }) => {
     },
   });
 
+  const { mutate: uploadAttachment } = useMutation({
+    mutationFn: (data: { file: FormData; key: string }) => UploadService.uploadFile(data),
+  });
+
   const onStudentSubmit: SubmitHandler<StudentSignUpValidation> = async data => {
     setIsLoading(true);
     try {
       if (localImage) {
         const attachmentId = uuid();
         const key = `students/${attachmentId}/attachments/${Date.now()}_${localImage.file.name}`;
-        const { url } = await UserService.getPreSignedUrl(key);
-        await axios.put(url, localImage.file);
+
+        const formData = new FormData();
+        formData.append('file', localImage.file);
+
+        uploadAttachment({
+          file: formData,
+          key,
+        });
+
         mutate({
           ...data,
           attachment: {

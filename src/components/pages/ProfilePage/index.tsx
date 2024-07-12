@@ -13,13 +13,13 @@ import {
 } from '@chakra-ui/react';
 import { classValidatorResolver } from '@hookform/resolvers/class-validator';
 import { useMutation } from '@tanstack/react-query';
-import axios from 'axios';
 import { Country } from 'country-state-city';
 import { useRouter } from 'next/navigation';
 import { User } from 'next-auth';
 import { useSession } from 'next-auth/react';
 import { useTranslations } from 'next-intl';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
+import { UploadService } from '@/api/services/upload.service';
 import { UserService } from '@/api/services/user.service';
 import { FormInput, SelectLabel } from '@/components/atoms';
 import { generateUserAvatar } from '@/utils/helpers/aws';
@@ -80,17 +80,27 @@ const Profile = ({ sessionUser }: { sessionUser: User }) => {
     mutationFn: UserService.changeUserPassword,
   });
 
+  const { mutate: uploadAttachment } = useMutation({
+    mutationFn: (data: { file: FormData; key: string }) => UploadService.uploadFile(data),
+  });
+
   const onSubmit: SubmitHandler<UserProfileFormValidation> = useCallback(
     async payload => {
       setIsLoading(true);
       const reqData = { ...payload };
       try {
         if (localImage) {
-          // todo, need to change aws url
-          reqData.avatar = `academy/users/${data?.user?.id || ''}/${localImage?.file.name}`;
+          const key = `academy/users/${data?.user?.id || ''}/${localImage?.file.name}`;
           reqData.avatarMimetype = localImage?.file.type;
-          const { url } = await UserService.getPreSignedUrl(reqData.avatar);
-          await axios.put(url, localImage.file);
+          reqData.avatar = key;
+
+          const formData = new FormData();
+          formData.append('file', localImage.file);
+
+          uploadAttachment({
+            file: formData,
+            key,
+          });
         }
         await updateUserProfileMutation(reqData, {
           onSuccess: () => toast({ title: t('success'), status: 'success' }),
@@ -102,7 +112,7 @@ const Profile = ({ sessionUser }: { sessionUser: User }) => {
         setIsLoading(false);
       }
     },
-    [data?.user?.id, localImage, router, t, toast, updateUserProfileMutation],
+    [data?.user?.id, localImage, router, t, toast, updateUserProfileMutation, uploadAttachment],
   );
 
   const onFileSelect = useCallback(async (e: ChangeEvent<HTMLInputElement>) => {
@@ -130,6 +140,7 @@ const Profile = ({ sessionUser }: { sessionUser: User }) => {
     if (localImage?.localUrl) {
       return localImage.localUrl;
     }
+
     return generateUserAvatar(data?.user as User);
   }, [localImage?.localUrl, data?.user]);
 
