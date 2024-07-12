@@ -16,5 +16,5 @@ export const generateAWSUrl = (key: string) => {
 
 export const generateUserAvatar = (user: User) => {
   const key = user?.attachment.find(({ type }) => type === 'AVATAR')?.key;
-  return key ? generateAWSUrl(key) : '';
+  return key ? `/api/readfile?path=uploads/${key}` : '';
 };

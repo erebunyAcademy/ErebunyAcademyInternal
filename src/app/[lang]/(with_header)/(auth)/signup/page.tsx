@@ -18,7 +18,7 @@ const Signup = ({ params }: { params: { lang: Locale } }) => {
         <SelectLabel
           isRequired
           name={'userType'}
-          options={[{ name: UserRoleEnum.STUDENT }]}
+          options={[{ name: UserRoleEnum.STUDENT }, { name: UserRoleEnum.TEACHER }]}
           labelName="userType"
           valueLabel="name"
           nameLabel="name"
