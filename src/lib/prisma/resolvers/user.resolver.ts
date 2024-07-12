@@ -167,6 +167,7 @@ export class UserResolver {
 
   static async updateProfile(input: UserProfileFormValidation, user: NonNullable<User>) {
     const { avatar, avatarMimetype, ...userData } = input;
+
     const userAvatar = await prisma.attachment.findFirst({
       where: { userId: user.id, type: AttachmentTypeEnum.AVATAR },
     });

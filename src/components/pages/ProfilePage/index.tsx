@@ -91,6 +91,8 @@ const Profile = ({ sessionUser }: { sessionUser: User }) => {
       try {
         if (localImage) {
           const key = `academy/users/${data?.user?.id || ''}/${localImage?.file.name}`;
+          reqData.avatarMimetype = localImage?.file.type;
+          reqData.avatar = key;
 
           const formData = new FormData();
           formData.append('file', localImage.file);
