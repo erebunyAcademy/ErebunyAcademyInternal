@@ -9,8 +9,9 @@ import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { Controller, useForm } from 'react-hook-form';
 import { v4 as uuidv4 } from 'uuid';
+import { CourseService } from '@/api/services/courses.service';
 import { SubjectService } from '@/api/services/subject.service';
-import { FormInput } from '@/components/atoms';
+import { FormInput, SelectLabel } from '@/components/atoms';
 import ActionButtons from '@/components/molecules/ActionButtons';
 import Modal from '@/components/molecules/Modal';
 import SearchTable from '@/components/organisms/SearchTable';
@@ -21,6 +22,7 @@ import { ROUTE_SUBJECTS } from '@/utils/constants/routes';
 import { languagePathHelper } from '@/utils/helpers/language';
 import { QUERY_KEY } from '@/utils/helpers/queryClient';
 import { Maybe } from '@/utils/models/common';
+import { GetCoursesListModel } from '@/utils/models/course';
 import { SubjectModel } from '@/utils/models/subject';
 import { CreateEditSubjectValidation } from '@/utils/validation/subject';
 
@@ -38,13 +40,13 @@ const Subject = ({ params }: { params: { lang: Locale } }) => {
     control,
     handleSubmit,
     reset,
-    setValue,
     formState: { errors, isValid },
   } = useForm<CreateEditSubjectValidation>({
     resolver,
     defaultValues: {
       title: '',
       description: '',
+      courseId: '',
     },
   });
 
@@ -105,6 +107,12 @@ const Subject = ({ params }: { params: { lang: Locale } }) => {
     },
   });
 
+  const { data: courseQueryData } = useQuery<GetCoursesListModel>({
+    queryKey: ['course'],
+    queryFn: CourseService.list,
+    enabled: isCreateEditModalOpen,
+  });
+
   const pageCount = useMemo(() => {
     if (data?.count) {
       return Math.ceil(data.count / ITEMS_PER_PAGE);
@@ -153,8 +161,12 @@ const Subject = ({ params }: { params: { lang: Locale } }) => {
             color="green"
             onClick={() => {
               setSelectedSubject(row.original);
-              setValue('title', row.original.title || '');
-              setValue('description', row.original.description || '');
+              reset({
+                title: row.original.title,
+                description: row.original.description || '',
+                courseId: row.original.courseSubjects[0].course.id,
+                id: row.original.id,
+              });
               openCreateEditModal();
             }}>
             {t('edit')}
@@ -180,7 +192,7 @@ const Subject = ({ params }: { params: { lang: Locale } }) => {
   const onSubmitHandler = useCallback(
     (data: CreateEditSubjectValidation) => {
       if (selectedSubject) {
-        updateFaculty({ data, id: selectedSubject.id });
+        updateFaculty(data);
       } else {
         createFaculty(data);
       }
@@ -251,6 +263,24 @@ const Subject = ({ params }: { params: { lang: Locale } }) => {
               handleInputChange={onChange}
               isInvalid={!!errors.description?.message}
               formErrorMessage={errors.description?.message}
+            />
+          )}
+        />
+        <Controller
+          name="courseId"
+          control={control}
+          render={({ field: { onChange, value, name } }) => (
+            <SelectLabel
+              name={name}
+              isRequired
+              options={courseQueryData || []}
+              labelName="course"
+              valueLabel="id"
+              nameLabel="title"
+              onChange={onChange}
+              value={value}
+              isInvalid={!!errors.courseId?.message}
+              formErrorMessage={errors.courseId?.message}
             />
           )}
         />

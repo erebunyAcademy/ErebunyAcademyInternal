@@ -11,6 +11,7 @@ export const ROUTE_FACULTIES = '/faculty-list';
 export const ROUTE_COURSE = '/course-list';
 export const ROUTE_COURSE_GROUP = '/course-group-list';
 export const ROUTE_SUBJECTS = '/subject-list';
+export const ROUTE_SCHEDULES = '/schedule-list';
 
 export const ROUTE_STUDENT_EXAM_LIST = '/student-exam-list';
 export const ROUTE_EXAMINATION = '/examination';

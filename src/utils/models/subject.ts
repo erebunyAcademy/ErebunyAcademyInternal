@@ -1,7 +1,9 @@
-import { Prisma, Subject } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import { SubjectResolver } from '@/lib/prisma/resolvers/subject.resolver';
 
-export interface SubjectModel extends Subject {}
+export type SubjectListModel = Awaited<ReturnType<typeof SubjectResolver.list>>['subjects'];
+
+export type SubjectModel = SubjectListModel extends (infer SingleType)[] ? SingleType : never;
 
 export type SubjectSignupListModel = Prisma.PromiseReturnType<typeof SubjectResolver.getSubjects>;
 

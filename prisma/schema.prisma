@@ -43,8 +43,9 @@ model Teacher {
   user               User             @relation(fields: [userId], references: [id], onDelete: Cascade)
   subjectTeachers    SubjectTeacher[]
 
-  createdAt DateTime @default(now()) @db.Timestamp(0)
-  updatedAt DateTime @updatedAt @db.Timestamp(0)
+  createdAt       DateTime          @default(now()) @db.Timestamp(0)
+  updatedAt       DateTime          @updatedAt @db.Timestamp(0)
+  ScheduleTeacher ScheduleTeacher[]
 }
 
 model Admin {
@@ -135,6 +136,70 @@ model Subject {
   attachments    Attachment[]
   testQuestions  TestQuestion[]
   exam           Exam[]
+
+  createdAt DateTime @default(now()) @db.Timestamp(0)
+  updatedAt DateTime @updatedAt @db.Timestamp(0)
+}
+
+model Schedule {
+  id               String            @id @default(uuid())
+  scheduleTeachers ScheduleTeacher[]
+  hours            Float
+  startDayDate     DateTime
+  endDayDate       DateTime
+  isAssessment     Boolean           @default(false)
+  exam             DateTime
+  thematicPlan     ThematicPlan      @relation(fields: [thematicPlanId], references: [id])
+  thematicPlanId   String
+
+  createdAt DateTime @default(now()) @db.Timestamp(0)
+  updatedAt DateTime @updatedAt @db.Timestamp(0)
+}
+
+model ScheduleTeacher {
+  id         String    @id @default(uuid())
+  teacherId  String
+  subjectId  String
+  teacher    Teacher   @relation(fields: [teacherId], references: [id])
+  schedule   Schedule? @relation(fields: [scheduleId], references: [id])
+  scheduleId String?
+
+  createdAt DateTime @default(now()) @db.Timestamp(0)
+  updatedAt DateTime @updatedAt @db.Timestamp(0)
+
+  @@unique([teacherId, subjectId], name: "scheduleTeacherId")
+}
+
+model ThematicPlan {
+  id              String            @id @default(uuid())
+  totalHours      Float
+  schedule        Schedule[]
+  thematicSubPlan ThematicSubPlan[]
+
+  createdAt DateTime @default(now()) @db.Timestamp(0)
+  updatedAt DateTime @updatedAt @db.Timestamp(0)
+}
+
+model ThematicSubPlan {
+  id                      String                    @id @default(uuid())
+  totalHours              Float
+  thematicPlan            ThematicPlan?             @relation(fields: [thematicPlanId], references: [id])
+  thematicPlanId          String?
+  type                    ThematicSubPlanTypeEnum
+  thematicPlanDescription ThematicPlanDescription[]
+
+  createdAt DateTime @default(now()) @db.Timestamp(0)
+  updatedAt DateTime @updatedAt @db.Timestamp(0)
+
+  @@unique([thematicPlanId, type], name: "thematicPlanType")
+}
+
+model ThematicPlanDescription {
+  id                String           @id @default(uuid())
+  title             String
+  hour              String
+  thematicSubPlan   ThematicSubPlan? @relation(fields: [thematicSubPlanId], references: [id])
+  thematicSubPlanId String?
 
   createdAt DateTime @default(now()) @db.Timestamp(0)
   updatedAt DateTime @updatedAt @db.Timestamp(0)
@@ -320,6 +385,11 @@ enum TestQuestionTypeEnum {
 enum AttachmentTypeEnum {
   AVATAR
   FILE
+}
+
+enum ThematicSubPlanTypeEnum {
+  THEORETICAL
+  PRACTICAL
 }
 
 enum AdminRoleEnum {

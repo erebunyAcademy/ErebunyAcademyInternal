@@ -1,6 +1,6 @@
-import { Subject } from '@prisma/client';
 import { NotFoundException } from 'next-api-decorators';
 import { SortingType } from '@/api/types/common';
+import { CreateEditSubjectValidation } from '@/utils/validation/subject';
 import { orderBy } from './utils/common';
 import prisma from '..';
 
@@ -16,7 +16,21 @@ export class SubjectResolver {
         where: {
           OR: [{ title: { contains: search, mode: 'insensitive' } }],
         },
-        select: { id: true, title: true, description: true },
+        select: {
+          id: true,
+          title: true,
+          description: true,
+          courseSubjects: {
+            select: {
+              course: {
+                select: {
+                  title: true,
+                  id: true,
+                },
+              },
+            },
+          },
+        },
         orderBy: sorting ? orderBy(sorting) : undefined,
         skip,
         take,
@@ -36,8 +50,25 @@ export class SubjectResolver {
     });
   }
 
-  static createSubject(data: Pick<Subject, 'title' | 'description'>) {
-    return prisma.subject.create({ data });
+  static async createSubject(data: CreateEditSubjectValidation) {
+    const createdSubject = await prisma.subject.create({
+      data: {
+        title: data.title,
+        description: data.description,
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    await prisma.courseSubject.create({
+      data: {
+        courseId: data.courseId,
+        subjectId: createdSubject.id,
+      },
+    });
+
+    return createdSubject;
   }
 
   static getSubjectById(id: string) {
@@ -53,20 +84,68 @@ export class SubjectResolver {
       });
   }
 
-  static async updateSubjectById(subjectId: string, data: Partial<Subject>) {
+  static async updateSubjectById(subjectId: string, data: CreateEditSubjectValidation) {
     const { id } = await this.getSubjectById(subjectId);
+
+    const courseSubject = await prisma.courseSubject.findFirst({
+      where: {
+        subjectId: id,
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    if (!courseSubject) {
+      await prisma.courseSubject.create({
+        data: {
+          courseId: data.courseId,
+          subjectId: id,
+        },
+      });
+    } else {
+      await prisma.courseSubject.update({
+        where: {
+          id: courseSubject.id,
+        },
+        data: {
+          courseId: data.courseId,
+        },
+      });
+    }
 
     return prisma.subject.update({
       where: {
         id,
       },
-      data,
+      data: {
+        title: data.title,
+        description: data.description,
+      },
     });
   }
 
   static async deleteSubjectById(subjectId: string) {
     // todo
     const { id } = await this.getSubjectById(subjectId);
+
+    const courseSubject = await prisma.courseSubject.findFirst({
+      where: {
+        subjectId: id,
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    if (courseSubject) {
+      await prisma.courseSubject.delete({
+        where: {
+          id: courseSubject.id,
+        },
+      });
+    }
+
     return prisma.subject.delete({
       where: {
         id,
