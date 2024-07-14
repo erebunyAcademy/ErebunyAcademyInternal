@@ -35,7 +35,6 @@ const Courses = () => {
     control,
     handleSubmit,
     reset,
-    setValue,
     formState: { errors, isValid },
   } = useForm<CreateEditCourseValidation>({
     resolver,
@@ -150,9 +149,11 @@ const Courses = () => {
             color="green"
             onClick={() => {
               setSelectedCourse(row.original);
-              setValue('title', row.original.title || '');
-              setValue('description', row.original.description || '');
-              setValue('facultyId', row.original.faculty?.id || '');
+              reset({
+                title: row.original.title,
+                description: row.original.description || '',
+                facultyId: row.original.faculty?.id,
+              });
               openCreateEditModal();
             }}>
             {t('edit')}

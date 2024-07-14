@@ -20,6 +20,7 @@ class FacultyHandler {
 
   @Post()
   _createSchedule(@Body(ValidationPipe) input: CreateEditScheduleValidation) {
+    console.log(input.attachments, '--------------------');
     return ScheduleResolver.createSchedule(input);
   }
 }

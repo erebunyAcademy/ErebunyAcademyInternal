@@ -1,4 +1,4 @@
-import { ThematicSubPlanTypeEnum } from '@prisma/client';
+import { AttachmentTypeEnum, ThematicSubPlanTypeEnum } from '@prisma/client';
 import { SortingType } from '@/api/types/common';
 import { CreateEditScheduleValidation } from '@/utils/validation/schedule';
 import { orderBy } from './utils/common';
@@ -49,6 +49,7 @@ export class ScheduleResolver {
       links,
       subjectId,
       examDate,
+      attachments,
     } = data;
 
     const thematicPlans = [
@@ -93,8 +94,21 @@ export class ScheduleResolver {
             subjectId,
           },
         },
-        examDate,
+        examDate: new Date(examDate),
       },
+      select: {
+        id: true,
+      },
+    });
+
+    await prisma.attachment.createMany({
+      data: attachments.map(attachment => ({
+        title: attachment.title,
+        key: attachment.key,
+        scheduleId: createdSchedule.id,
+        type: AttachmentTypeEnum.FILE,
+        mimetype: attachment.mimetype,
+      })),
     });
 
     return createdSchedule;

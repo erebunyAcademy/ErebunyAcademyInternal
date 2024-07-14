@@ -46,6 +46,10 @@ export class AttachmentValidation {
   @IsString()
   @IsOptional()
   title: string;
+
+  @IsString()
+  @IsOptional()
+  mimetype: string;
 }
 
 export class CreateEditScheduleValidation {
@@ -103,7 +107,6 @@ export class CreateEditScheduleValidation {
   links: LinkValidation[];
 
   @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => AttachmentValidation)
-  attachemnts: AttachmentValidation[];
+  @IsOptional()
+  attachments: AttachmentValidation[];
 }

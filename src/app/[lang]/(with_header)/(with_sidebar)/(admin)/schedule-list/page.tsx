@@ -8,6 +8,7 @@ import {
   FormLabel,
   IconButton,
   Input,
+  MenuItem,
   Radio,
   RadioGroup,
   Stack,
@@ -23,7 +24,9 @@ import { v4 as uuidv4 } from 'uuid';
 import { ScheduleService } from '@/api/services/schedule.service';
 import { SubjectService } from '@/api/services/subject.service';
 import { TeacherService } from '@/api/services/teacher.service';
+import { UploadService } from '@/api/services/upload.service';
 import { FormInput, SelectLabel } from '@/components/atoms';
+import ActionButtons from '@/components/molecules/ActionButtons';
 import Modal from '@/components/molecules/Modal';
 import SearchTable from '@/components/organisms/SearchTable';
 import useDebounce from '@/hooks/useDebounce';
@@ -32,7 +35,7 @@ import { QUERY_KEY } from '@/utils/helpers/queryClient';
 import { Maybe } from '@/utils/models/common';
 import { ScheduleListModel, ScheduleSingleModel } from '@/utils/models/schedule';
 import { TeacherDataModel } from '@/utils/models/teachers';
-import { CreateEditScheduleValidation } from '@/utils/validation/schedule';
+import { AttachmentValidation, CreateEditScheduleValidation } from '@/utils/validation/schedule';
 
 const resolver = classValidatorResolver(CreateEditScheduleValidation);
 
@@ -62,6 +65,7 @@ export default function Schedule() {
       endDayDate: '',
       isAssessment: false,
       teacherId: '',
+      attachments: [],
       links: [
         {
           link: '',
@@ -90,6 +94,16 @@ export default function Schedule() {
   });
 
   const {
+    isOpen: isDeleteModalOpen,
+    onOpen: openDeleteModal,
+    onClose: closeDeleteModal,
+  } = useDisclosure({
+    onClose() {
+      setSelectedSchedule(null);
+    },
+  });
+
+  const {
     fields: practicalClassFields,
     append: appendPracticalClass,
     remove: removePracticalClass,
@@ -115,6 +129,7 @@ export default function Schedule() {
     onClose() {
       reset();
       setSelectedSchedule(null);
+      setSelectedSchedule(null);
     },
   });
 
@@ -137,6 +152,11 @@ export default function Schedule() {
   const { mutate: createSchedule } = useMutation({
     mutationFn: ScheduleService.createSchedule,
     mutationKey: ['create-schedule'],
+    onSuccess() {
+      reset();
+
+      closeCreateEditModal();
+    },
   });
 
   const { data, isLoading, isPlaceholderData } = useQuery({
@@ -181,12 +201,41 @@ export default function Schedule() {
     columnHelper.accessor('totalHours', {
       id: uuidv4(),
       cell: info => info.getValue(),
-      header: t('lastName'),
+      header: t('totalHours'),
     }),
     columnHelper.accessor('isAssessment', {
       id: uuidv4(),
       cell: info => info.getValue(),
-      header: t('lastName'),
+      header: t('isAssessment'),
+    }),
+    columnHelper.accessor('id', {
+      id: uuidv4(),
+      cell: ({ row }) => (
+        <ActionButtons>
+          <MenuItem
+            color="green"
+            onClick={() => {
+              console.log(row.original);
+              // setSelectedSchedule(row.original);
+              // reset({
+              //   title: row.original.ti,
+              // });
+              openCreateEditModal();
+            }}>
+            {t('edit')}
+          </MenuItem>
+          <MenuItem
+            color="red"
+            onClick={() => {
+              console.log(row.original);
+              // setSelectedSchedule(row.original);
+              openDeleteModal();
+            }}>
+            {t('delete')}
+          </MenuItem>
+        </ActionButtons>
+      ),
+      header: t('actions'),
     }),
   ];
 
@@ -197,17 +246,45 @@ export default function Schedule() {
     }
   };
 
+  const { mutate: uploadAttachment } = useMutation({
+    mutationFn: (data: { file: FormData; key: string }) => UploadService.uploadFile(data),
+  });
+
   const onSubmitHandler = useCallback(
     (data: CreateEditScheduleValidation) => {
+      const attachmentKeys: AttachmentValidation[] = [];
+      files?.forEach(file => {
+        console.log({ file });
+        const attachmentId = uuidv4();
+        const key = `attachments/${attachmentId}/subjects/${data.subjectId}/${Date.now()}_${file.name}`;
+
+        const formData = new FormData();
+        formData.append('file', file);
+
+        attachmentKeys.push({
+          title: file.name,
+          key,
+          mimetype: file.type,
+        });
+
+        uploadAttachment({
+          file: formData,
+          key,
+        });
+      });
+
+      if ((files || [])?.length > 0) {
+        data.attachments = attachmentKeys;
+      }
+
       createSchedule(data);
     },
-    [createSchedule],
+    [createSchedule, files, uploadAttachment],
   );
 
   const removeFile = (index: number) => {
     setFiles(prevFiles => prevFiles?.filter((_, i) => i !== index) || null);
   };
-  console.log(files);
 
   return (
     <>
@@ -690,6 +767,20 @@ export default function Schedule() {
             Add Practical Class
           </Button>
         </Box>
+      </Modal>
+
+      <Modal
+        isOpen={isDeleteModalOpen}
+        onClose={closeDeleteModal}
+        isDeleteVariant
+        title="faculty"
+        primaryAction={() => {
+          if (selectedSchedule) {
+            // mutate(selectedFaculty?.id);
+          }
+        }}
+        actionText="delete">
+        {t('deleteFacultyQuestion')}
       </Modal>
     </>
   );
