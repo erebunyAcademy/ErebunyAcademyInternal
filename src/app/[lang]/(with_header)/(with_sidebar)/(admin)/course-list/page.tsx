@@ -171,10 +171,6 @@ const Courses = () => {
     }),
   ];
 
-  const addNewCourseHandler = useCallback(() => {
-    openCreateEditModal();
-  }, [openCreateEditModal]);
-
   const onSubmitHandler = useCallback(
     (data: CreateEditCourseValidation) => {
       if (selectedCourse) {
@@ -209,7 +205,7 @@ const Courses = () => {
         )}
         fetchNextPage={useCallback(() => setPage(prev => ++prev), [])}
         fetchPreviousPage={useCallback(() => setPage(prev => --prev), [])}
-        addNew={addNewCourseHandler}
+        addNew={openCreateEditModal}
       />
 
       <Modal

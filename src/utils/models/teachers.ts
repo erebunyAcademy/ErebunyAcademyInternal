@@ -3,6 +3,7 @@ import { TeacherResolver } from '@/lib/prisma/resolvers/teacher.resolver';
 
 export type TeachersListModel = Prisma.PromiseReturnType<typeof TeacherResolver.list>;
 
+export type TeacherDataModel = Prisma.PromiseReturnType<typeof TeacherResolver.getTeachers>;
 export interface TeacherModel extends User {
   teacher: Teacher;
 }

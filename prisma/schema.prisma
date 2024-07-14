@@ -136,6 +136,7 @@ model Subject {
   attachments    Attachment[]
   testQuestions  TestQuestion[]
   exam           Exam[]
+  schedule       Schedule[]
 
   createdAt DateTime @default(now()) @db.Timestamp(0)
   updatedAt DateTime @updatedAt @db.Timestamp(0)
@@ -143,14 +144,19 @@ model Subject {
 
 model Schedule {
   id               String            @id @default(uuid())
+  title            String
+  description      String?
   scheduleTeachers ScheduleTeacher[]
-  hours            Float
+  subject          Subject           @relation(fields: [subjectId], references: [id])
+  totalHours       Float
   startDayDate     DateTime
   endDayDate       DateTime
   isAssessment     Boolean           @default(false)
-  exam             DateTime
-  thematicPlan     ThematicPlan      @relation(fields: [thematicPlanId], references: [id])
-  thematicPlanId   String
+  examDate         DateTime
+  thematicPlan     ThematicPlan[]
+  subjectId        String
+  links            Json
+  attachment       Attachment[]
 
   createdAt DateTime @default(now()) @db.Timestamp(0)
   updatedAt DateTime @updatedAt @db.Timestamp(0)
@@ -166,40 +172,27 @@ model ScheduleTeacher {
 
   createdAt DateTime @default(now()) @db.Timestamp(0)
   updatedAt DateTime @updatedAt @db.Timestamp(0)
-
-  @@unique([teacherId, subjectId], name: "scheduleTeacherId")
 }
 
 model ThematicPlan {
-  id              String            @id @default(uuid())
-  totalHours      Float
-  schedule        Schedule[]
-  thematicSubPlan ThematicSubPlan[]
-
-  createdAt DateTime @default(now()) @db.Timestamp(0)
-  updatedAt DateTime @updatedAt @db.Timestamp(0)
-}
-
-model ThematicSubPlan {
   id                      String                    @id @default(uuid())
+  title                   String?
   totalHours              Float
-  thematicPlan            ThematicPlan?             @relation(fields: [thematicPlanId], references: [id])
-  thematicPlanId          String?
+  schedule                Schedule                  @relation(fields: [scheduleId], references: [id])
+  scheduleId              String
   type                    ThematicSubPlanTypeEnum
   thematicPlanDescription ThematicPlanDescription[]
 
   createdAt DateTime @default(now()) @db.Timestamp(0)
   updatedAt DateTime @updatedAt @db.Timestamp(0)
-
-  @@unique([thematicPlanId, type], name: "thematicPlanType")
 }
 
 model ThematicPlanDescription {
-  id                String           @id @default(uuid())
-  title             String
-  hour              String
-  thematicSubPlan   ThematicSubPlan? @relation(fields: [thematicSubPlanId], references: [id])
-  thematicSubPlanId String?
+  id             String       @id @default(uuid())
+  title          String
+  hour           String
+  thematicPlanId String
+  thematicPlan   ThematicPlan @relation(fields: [thematicPlanId], references: [id])
 
   createdAt DateTime @default(now()) @db.Timestamp(0)
   updatedAt DateTime @updatedAt @db.Timestamp(0)
@@ -229,6 +222,8 @@ model Attachment {
   mimetype    String             @db.VarChar(60)
   userId      String?
   type        AttachmentTypeEnum
+  schedule    Schedule?          @relation(fields: [scheduleId], references: [id])
+  scheduleId  String?
 
   createdAt DateTime @default(now()) @db.Timestamp(0)
   updatedAt DateTime @updatedAt @db.Timestamp(0)
