@@ -316,11 +316,11 @@ export default function Schedule() {
         isOpen={isCreateEditModalOpen}
         onClose={closeCreateEditModal}
         title="schedule"
-        size="full"
+        size="7xl"
         primaryAction={handleSubmit(onSubmitHandler)}
         // isDisabled={!isValid}
         actionText={selectedSchedule ? 'edit' : 'create'}>
-        <Flex gap={5}>
+        <Flex gap={5} flexDirection={{ base: 'column', md: 'row' }}>
           <Controller
             name="title"
             control={control}
@@ -371,78 +371,88 @@ export default function Schedule() {
             )}
           />
         </Flex>
-        <Flex gap={5}>
-          <Controller
-            name="startDayDate"
-            control={control}
-            render={({ field: { onChange, value, name } }) => (
-              <FormInput
-                isRequired
-                isInvalid={!!errors[name]?.message}
-                name={name}
-                type="date"
-                formLabelName="Start day"
-                value={value}
-                handleInputChange={onChange}
-                formErrorMessage={errors[name]?.message}
-              />
-            )}
-          />
 
-          <Controller
-            name="examDate"
-            control={control}
-            render={({ field: { onChange, value, name } }) => (
-              <FormInput
-                isRequired
-                isInvalid={!!errors[name]?.message}
-                name={name}
-                type="date"
-                formLabelName="exam day"
-                value={value}
-                handleInputChange={onChange}
-                formErrorMessage={errors[name]?.message}
-              />
-            )}
-          />
+        <Flex gap={5} flexDirection={{ base: 'column', lg: 'row' }}>
+          <Flex
+            gap={5}
+            width={{ base: '100%', lg: '50%' }}
+            flexDirection={{ base: 'column', sm: 'row' }}>
+            <Controller
+              name="startDayDate"
+              control={control}
+              render={({ field: { onChange, value, name } }) => (
+                <FormInput
+                  isRequired
+                  name={name}
+                  type="date"
+                  formLabelName={t('startDay')}
+                  value={value}
+                  handleInputChange={onChange}
+                  isInvalid={!!errors[name]?.message}
+                  formErrorMessage={errors[name]?.message}
+                />
+              )}
+            />
 
-          <Controller
-            name="endDayDate"
-            control={control}
-            render={({ field: { onChange, value, name } }) => (
-              <FormInput
-                isRequired
-                name={name}
-                isInvalid={!!errors[name]?.message}
-                type="date"
-                formLabelName="End day"
-                value={value}
-                handleInputChange={onChange}
-                formErrorMessage={errors[name]?.message}
-              />
-            )}
-          />
-          <Controller
-            name="teacherId"
-            control={control}
-            render={({ field: { onChange, value, name } }) => (
-              <SelectLabel
-                name={name}
-                isRequired
-                options={teacherListData as any}
-                labelName="teacher"
-                valueLabel="id"
-                nameLabel="title"
-                onChange={onChange}
-                value={value}
-                isInvalid={!!errors[name]?.message}
-                formErrorMessage={errors[name]?.message}
-              />
-            )}
-          />
+            <Controller
+              name="examDate"
+              control={control}
+              render={({ field: { onChange, value, name } }) => (
+                <FormInput
+                  isRequired
+                  isInvalid={!!errors[name]?.message}
+                  name={name}
+                  type="date"
+                  formLabelName={t('examDay')}
+                  value={value}
+                  handleInputChange={onChange}
+                  formErrorMessage={errors[name]?.message}
+                />
+              )}
+            />
+          </Flex>
+          <Flex
+            gap={5}
+            width={{ base: '100%', lg: '50%' }}
+            flexDirection={{ base: 'column', sm: 'row' }}>
+            <Controller
+              name="endDayDate"
+              control={control}
+              render={({ field: { onChange, value, name } }) => (
+                <FormInput
+                  isRequired
+                  name={name}
+                  type="date"
+                  formLabelName={t('endDay')}
+                  value={value}
+                  handleInputChange={onChange}
+                  isInvalid={!!errors[name]?.message}
+                  formErrorMessage={errors[name]?.message}
+                />
+              )}
+            />
+            <Controller
+              name="teacherId"
+              control={control}
+              render={({ field: { onChange, value, name } }) => (
+                <SelectLabel
+                  name={name}
+                  isRequired
+                  options={teacherListData as any}
+                  labelName="teacher"
+                  valueLabel="id"
+                  nameLabel="title"
+                  onChange={onChange}
+                  value={value}
+                  isInvalid={!!errors[name]?.message}
+                  formErrorMessage={errors[name]?.message}
+                />
+              )}
+            />
+          </Flex>
         </Flex>
 
-        <Flex gap={5}>
+        <Flex gap={5} flexDirection={{ base: 'column', sm: 'row' }}>
           <Flex width={{ base: '100%', xl: '50%' }}>
             <Controller
               name="subjectId"
@@ -470,7 +480,7 @@ export default function Schedule() {
               lineHeight="20px"
               fontSize={14}
               color="#222">
-              Assessment
+              {t('assessment')}
               <Text as="span" color="#222">
                 *
               </Text>
@@ -488,8 +498,8 @@ export default function Schedule() {
                     name={name}
                     onChange={val => onChange(val === 'true')}
                     value={value ? 'true' : 'false'}>
-                    <Radio value="true">Yes</Radio>
-                    <Radio value="false">No</Radio>
+                    <Radio value="true">{t('yes')}</Radio>
+                    <Radio value="false">{t('no')}</Radio>
                   </RadioGroup>
                 </Stack>
               )}
@@ -497,10 +507,10 @@ export default function Schedule() {
           </Flex>
         </Flex>
 
-        <Flex gap={5} justifyContent="space-between">
+        <Flex gap={5} justifyContent="space-between" flexDirection={{ base: 'column', md: 'row' }}>
           <Box mt={5}>
-            <Text fontSize="lg" fontWeight="bold">
-              Links
+            <Text fontSize="lg" fontWeight="bold" mb="10px">
+              {t('links')}
             </Text>
             {linkFields.map((field, index) => (
               <Flex key={field.id} gap={5} alignItems="center">
@@ -511,9 +521,9 @@ export default function Schedule() {
                     <FormInput
                       name={field.name}
                       type="url"
-                      formLabelName="Link"
+                      formLabelName={t('link')}
                       value={field.value}
-                      placeholder="Enter link"
+                      placeholder="enterLink"
                       handleInputChange={field.onChange}
                       isInvalid={!!errors.links?.[index]?.message}
                       formErrorMessage={errors.links?.[index]?.message}
@@ -521,6 +531,9 @@ export default function Schedule() {
                   )}
                 />
                 <IconButton
+                  mt="20px"
+                  size="md"
+                  colorScheme="red"
                   aria-label="Delete link"
                   icon={<DeleteIcon />}
                   onClick={() => removeLink(index)}
@@ -528,18 +541,20 @@ export default function Schedule() {
               </Flex>
             ))}
             <Button mt={2} onClick={() => appendLink({ link: '' })} leftIcon={<AddIcon />}>
-              Add Link
+              {t('addLink')}
             </Button>
           </Box>
 
-          <Flex flexDirection="column" gap={5} alignItems="flex-end">
+          <Flex flexDirection="column" gap={5} alignItems={{ base: 'flex-start', md: 'flex-end' }}>
             <Box mt={3}>
               {files && (
                 <Stack spacing={3}>
                   {files.map((file: File, index: number) => (
-                    <Flex key={index} alignItems="center">
+                    <Flex key={index} alignItems="center" justifyContent="space-between">
                       <Text>{file.name}</Text>
                       <IconButton
+                        size="md"
+                        colorScheme="red"
                         aria-label="Delete file"
                         icon={<DeleteIcon />}
                         onClick={() => removeFile(index)}
@@ -606,11 +621,11 @@ export default function Schedule() {
         </Flex>
 
         <Box mt={5}>
-          <Text fontSize="lg" fontWeight="bold">
-            Theoretical Classes
+          <Text fontSize="lg" fontWeight="bold" mb="10px">
+            {t('theoreticalClasses')}
           </Text>
 
-          <Flex width="33%">
+          <Flex width={{ base: '100%', sm: '33%' }}>
             <Controller
               name="theoreticalClass.totalHours"
               control={control}
@@ -618,11 +633,11 @@ export default function Schedule() {
                 <FormInput
                   isRequired
                   name={name}
-                  isInvalid={!!errors.theoreticalClass?.totalHours?.message}
                   type="number"
-                  formLabelName="Total hour"
+                  formLabelName={t('totalHour')}
                   value={value}
                   handleInputChange={onChange}
+                  isInvalid={!!errors.theoreticalClass?.totalHours?.message}
                   formErrorMessage={errors.theoreticalClass?.totalHours?.message}
                 />
               )}
@@ -630,69 +645,80 @@ export default function Schedule() {
           </Flex>
 
           {theoreticalClassFields.map((field, index) => (
-            <Flex key={field.id} gap={5} alignItems="center">
-              <Controller
-                name={`theoreticalClass.classDescriptionRow.${index}.title`}
-                control={control}
-                render={({ field }) => (
-                  <FormInput
-                    name={field.name}
-                    type="text"
-                    formLabelName="Title"
-                    value={field.value}
-                    placeholder="Enter title"
-                    handleInputChange={field.onChange}
-                    isInvalid={
-                      !!errors.theoreticalClass?.classDescriptionRow?.[index]?.title?.message
-                    }
-                    formErrorMessage={
-                      errors.theoreticalClass?.classDescriptionRow?.[index]?.title?.message
-                    }
-                  />
-                )}
-              />
-              <Controller
-                name={`theoreticalClass.classDescriptionRow.${index}.hour`}
-                control={control}
-                render={({ field }) => (
-                  <FormInput
-                    name={field.name}
-                    type="number"
-                    formLabelName="Hours"
-                    value={field.value}
-                    placeholder="Enter hours"
-                    handleInputChange={field.onChange}
-                    isInvalid={
-                      !!errors.theoreticalClass?.classDescriptionRow?.[index]?.hour?.message
-                    }
-                    formErrorMessage={
-                      errors.theoreticalClass?.classDescriptionRow?.[index]?.hour?.message
-                    }
-                  />
-                )}
-              />
-              <IconButton
-                aria-label="Delete row"
-                colorScheme="red"
-                alignSelf="flex-end"
-                icon={<DeleteIcon />}
-                onClick={() => removeTheoreticalClass(index)}
-              />
+            <Flex
+              mt="12px"
+              key={field.id}
+              gap={{ base: '2px', md: '5px' }}
+              alignItems="center"
+              flexDirection={{ base: 'column', md: 'row' }}>
+              <Flex width={{ base: '100%', md: '50%' }}>
+                <Controller
+                  name={`theoreticalClass.classDescriptionRow.${index}.title`}
+                  control={control}
+                  render={({ field }) => (
+                    <FormInput
+                      name={field.name}
+                      type="text"
+                      formLabelName={t('title')}
+                      value={field.value}
+                      placeholder="enterClassTitle"
+                      handleInputChange={field.onChange}
+                      isInvalid={
+                        !!errors.theoreticalClass?.classDescriptionRow?.[index]?.title?.message
+                      }
+                      formErrorMessage={
+                        errors.theoreticalClass?.classDescriptionRow?.[index]?.title?.message
+                      }
+                    />
+                  )}
+                />
+              </Flex>
+              <Flex gap={5} width={{ base: '100%', md: '50%' }}>
+                <Controller
+                  name={`theoreticalClass.classDescriptionRow.${index}.hour`}
+                  control={control}
+                  render={({ field }) => (
+                    <FormInput
+                      name={field.name}
+                      type="number"
+                      formLabelName={t('hours')}
+                      value={field.value}
+                      placeholder="enterHours"
+                      handleInputChange={field.onChange}
+                      isInvalid={
+                        !!errors.theoreticalClass?.classDescriptionRow?.[index]?.hour?.message
+                      }
+                      formErrorMessage={
+                        errors.theoreticalClass?.classDescriptionRow?.[index]?.hour?.message
+                      }
+                    />
+                  )}
+                />
+                <IconButton
+                  mb="5px"
+                  size="md"
+                  aria-label="Delete row"
+                  colorScheme="red"
+                  alignSelf="flex-end"
+                  icon={<DeleteIcon />}
+                  onClick={() => removeTheoreticalClass(index)}
+                />
+              </Flex>
             </Flex>
           ))}
           <Button
             mt={2}
             onClick={() => appendTheoreticalClass({ title: '', hour: '' })}
             leftIcon={<AddIcon />}>
-            Add Theoretical Class
+            {t('addTheoreticalClass')}
           </Button>
         </Box>
 
         <Box mt={5}>
-          <Text fontSize="lg" fontWeight="bold">
-            Practical Classes
+          <Text fontSize="lg" fontWeight="bold" mb="10px">
+            {t('practicalClasses')}
           </Text>
-          <Flex width="33%">
+          <Flex width={{ base: '100%', sm: '33%' }}>
             <Controller
               name="practicalClass.totalHours"
               control={control}
@@ -700,11 +726,11 @@ export default function Schedule() {
                 <FormInput
                   isRequired
                   name={name}
-                  isInvalid={!!errors.practicalClass?.totalHours?.message}
                   type="number"
-                  formLabelName="Total hour"
+                  formLabelName={t('totalHour')}
                   value={value}
                   handleInputChange={onChange}
+                  isInvalid={!!errors.practicalClass?.totalHours?.message}
                   formErrorMessage={errors.practicalClass?.totalHours?.message}
                 />
               )}
@@ -712,59 +738,72 @@ export default function Schedule() {
           </Flex>
 
           {practicalClassFields.map((field, index) => (
-            <Flex key={field.id} gap={5} alignItems="center">
-              <Controller
-                name={`practicalClass.classDescriptionRow.${index}.title`}
-                control={control}
-                render={({ field }) => (
-                  <FormInput
-                    name={field.name}
-                    type="text"
-                    formLabelName="Title"
-                    value={field.value}
-                    placeholder="Enter title"
-                    handleInputChange={field.onChange}
-                    isInvalid={
-                      !!errors.practicalClass?.classDescriptionRow?.[index]?.title?.message
-                    }
-                    formErrorMessage={
-                      errors.practicalClass?.classDescriptionRow?.[index]?.title?.message
-                    }
-                  />
-                )}
-              />
-              <Controller
-                name={`practicalClass.classDescriptionRow.${index}.hour`}
-                control={control}
-                render={({ field }) => (
-                  <FormInput
-                    name={field.name}
-                    type="text"
-                    formLabelName="Hours"
-                    value={field.value}
-                    placeholder="Enter hours"
-                    handleInputChange={field.onChange}
-                    isInvalid={!!errors.practicalClass?.classDescriptionRow?.[index]?.hour?.message}
-                    formErrorMessage={
-                      errors.practicalClass?.classDescriptionRow?.[index]?.hour?.message
-                    }
-                  />
-                )}
-              />
-              <IconButton
-                aria-label="Delete row"
-                colorScheme="red"
-                alignSelf="flex-end"
-                icon={<DeleteIcon />}
-                onClick={() => removePracticalClass(index)}
-              />
+            <Flex
+              key={field.id}
+              mt="12px"
+              gap={{ base: '2px', md: '5px' }}
+              alignItems="center"
+              flexDirection={{ base: 'column', md: 'row' }}>
+              <Flex width={{ base: '100%', md: '50%' }}>
+                <Controller
+                  name={`practicalClass.classDescriptionRow.${index}.title`}
+                  control={control}
+                  render={({ field }) => (
+                    <FormInput
+                      name={field.name}
+                      type="text"
+                      formLabelName={t('title')}
+                      value={field.value}
+                      placeholder="enterClassTitle"
+                      handleInputChange={field.onChange}
+                      isInvalid={
+                        !!errors.practicalClass?.classDescriptionRow?.[index]?.title?.message
+                      }
+                      formErrorMessage={
+                        errors.practicalClass?.classDescriptionRow?.[index]?.title?.message
+                      }
+                    />
+                  )}
+                />
+              </Flex>
+              <Flex gap={5} width={{ base: '100%', md: '50%' }}>
+                <Controller
+                  name={`practicalClass.classDescriptionRow.${index}.hour`}
+                  control={control}
+                  render={({ field }) => (
+                    <FormInput
+                      name={field.name}
+                      type="text"
+                      formLabelName={t('hours')}
+                      value={field.value}
+                      placeholder="enterHours"
+                      handleInputChange={field.onChange}
+                      isInvalid={
+                        !!errors.practicalClass?.classDescriptionRow?.[index]?.hour?.message
+                      }
+                      formErrorMessage={
+                        errors.practicalClass?.classDescriptionRow?.[index]?.hour?.message
+                      }
+                    />
+                  )}
+                />
+                <IconButton
+                  size="md"
+                  mb="5px"
+                  aria-label="Delete row"
+                  colorScheme="red"
+                  alignSelf="flex-end"
+                  icon={<DeleteIcon />}
+                  onClick={() => removePracticalClass(index)}
+                />
+              </Flex>
             </Flex>
           ))}
           <Button
             mt={2}
             onClick={() => appendPracticalClass({ title: '', hour: '' })}
             leftIcon={<AddIcon />}>
-            Add Practical Class
+            {t('addPracticalClass')}
           </Button>
         </Box>
       </Modal>
