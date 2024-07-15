@@ -208,6 +208,12 @@ export class UserResolver {
 
     await Email.rejectUserAccountEmail(user.email, user.firstName, message);
 
+    await prisma.user.delete({
+      where: {
+        id: user.id,
+      },
+    });
+
     return true;
   }
 
