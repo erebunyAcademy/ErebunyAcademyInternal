@@ -236,5 +236,6 @@
   "endDay": "End day",
   "examDay": "Exam day",
   "totalHours": "Total hours",
-  "teacher": "Teacher"
+  "teacher": "Teacher",
+  "deleteScheduleQuestion": "Are you sure you want to delete this schedule?"
 }
