@@ -12,7 +12,7 @@ import { CourseGroupSingleModel } from '@/utils/models/courseGroup';
 import { CreateEditCourseGroupValidation } from '@/utils/validation/courseGroup';
 
 type CreateEditModalProps = {
-  selectedCourseGroup: CourseGroupSingleModel | null | undefined;
+  selectedCourseGroup: CourseGroupSingleModel | null;
   isCreateEditModalOpen: boolean;
   closeCreateEditModal: () => void;
   refetch: () => void;

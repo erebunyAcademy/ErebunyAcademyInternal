@@ -1,51 +1,43 @@
 'use client';
 import React, { FC, useCallback } from 'react';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import { useTranslations } from 'next-intl';
 import { Control, Controller, FieldErrors } from 'react-hook-form';
-import { CourseService } from '@/api/services/courses.service';
 import { FacultyService } from '@/api/services/faculty.service';
-import { FormInput, SelectLabel } from '@/components/atoms';
+import { FormInput } from '@/components/atoms';
 import Modal from '@/components/molecules/Modal';
-import { CourseModel } from '@/utils/models/course';
-import { FacultySignupListModel } from '@/utils/models/faculty';
-import { CreateEditCourseValidation } from '@/utils/validation/courses';
+import { FacultyModel } from '@/utils/models/faculty';
+import { CreateEditFacultyValidation } from '@/utils/validation/faculty';
 
-type CreateEditModalProps = {
+type createEditModalProps = {
+  selectedFaculty: FacultyModel | null;
   isCreateEditModalOpen: boolean;
   closeCreateEditModal: () => void;
-  selectedCourse: CourseModel | null | undefined;
   refetch: () => void;
   reset: () => void;
   isValid: boolean;
   handleSubmit: (
-    onSubmit: (data: CreateEditCourseValidation) => void,
+    onSubmit: (data: CreateEditFacultyValidation) => void,
   ) => (e?: React.BaseSyntheticEvent) => Promise<void>;
-  errors: FieldErrors<CreateEditCourseValidation>;
-  control: Control<CreateEditCourseValidation>;
+  errors: FieldErrors<CreateEditFacultyValidation>;
+  control: Control<CreateEditFacultyValidation>;
 };
 
-const CreateEditModal: FC<CreateEditModalProps> = ({
-  isCreateEditModalOpen,
+const CreateEditModal: FC<createEditModalProps> = ({
+  selectedFaculty,
   closeCreateEditModal,
-  selectedCourse,
+  isCreateEditModalOpen,
   refetch,
   reset,
-  control,
   isValid,
-  handleSubmit,
   errors,
+  handleSubmit,
+  control,
 }) => {
   const t = useTranslations();
 
-  const { data: facultyQueryData } = useQuery<FacultySignupListModel>({
-    queryKey: ['faculty'],
-    queryFn: FacultyService.list,
-    enabled: isCreateEditModalOpen,
-  });
-
-  const { mutate: createCourse } = useMutation({
-    mutationFn: CourseService.createCourse,
+  const { mutate: createFaculty } = useMutation({
+    mutationFn: FacultyService.createFaculty,
     onSuccess() {
       refetch();
       reset();
@@ -53,8 +45,8 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
     },
   });
 
-  const { mutate: updateCourse } = useMutation({
-    mutationFn: CourseService.updateCourse,
+  const { mutate: updateFaculty } = useMutation({
+    mutationFn: FacultyService.updateFaculty,
     onSuccess() {
       refetch();
       reset();
@@ -63,24 +55,24 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
   });
 
   const onSubmitHandler = useCallback(
-    (data: CreateEditCourseValidation) => {
-      if (selectedCourse) {
-        updateCourse({ data, id: selectedCourse.id });
+    (data: CreateEditFacultyValidation) => {
+      if (selectedFaculty) {
+        updateFaculty({ data, id: selectedFaculty.id });
       } else {
-        createCourse(data);
+        createFaculty(data);
       }
     },
-    [createCourse, selectedCourse, updateCourse],
+    [createFaculty, selectedFaculty, updateFaculty],
   );
 
   return (
     <Modal
       isOpen={isCreateEditModalOpen}
       onClose={closeCreateEditModal}
-      title="course"
+      title="faculty"
       primaryAction={handleSubmit(onSubmitHandler)}
       isDisabled={!isValid}
-      actionText={selectedCourse ? 'edit' : 'create'}>
+      actionText={selectedFaculty ? 'edit' : 'create'}>
       <Controller
         name="title"
         control={control}
@@ -89,7 +81,7 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
             isRequired
             name={name}
             type="text"
-            formLabelName={t('courseTitle')}
+            formLabelName={t('facultyName')}
             value={value}
             placeholder="enterTitle"
             handleInputChange={onChange}
@@ -105,30 +97,12 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
           <FormInput
             name={name}
             type="text"
-            formLabelName={t('courseDescription')}
+            formLabelName={t('facultyDescription')}
             value={value}
             placeholder="enterDescription"
             handleInputChange={onChange}
             isInvalid={!!errors.description?.message}
             formErrorMessage={errors.description?.message}
-          />
-        )}
-      />
-      <Controller
-        name="facultyId"
-        control={control}
-        render={({ field: { onChange, value, name } }) => (
-          <SelectLabel
-            name={name}
-            isRequired
-            options={facultyQueryData || []}
-            labelName="faculty"
-            valueLabel="id"
-            nameLabel="title"
-            onChange={onChange}
-            value={value}
-            isInvalid={!!errors.facultyId?.message}
-            formErrorMessage={errors.facultyId?.message}
           />
         )}
       />

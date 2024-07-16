@@ -2,27 +2,27 @@
 import React, { FC } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { useTranslations } from 'next-intl';
-import { CourseGroupService } from '@/api/services/course-group.service';
+import { FacultyService } from '@/api/services/faculty.service';
 import Modal from '@/components/molecules/Modal';
-import { CourseGroupSingleModel } from '@/utils/models/courseGroup';
+import { FacultyModel } from '@/utils/models/faculty';
 
 type DeleteModalProps = {
-  selectedCourseGroup: CourseGroupSingleModel | null | undefined;
+  selectedFaculty: FacultyModel | null;
   isDeleteModalOpen: boolean;
   closeDeleteModal: () => void;
   refetch: () => void;
 };
 
 const DeleteModal: FC<DeleteModalProps> = ({
-  selectedCourseGroup,
-  closeDeleteModal,
+  selectedFaculty,
   isDeleteModalOpen,
+  closeDeleteModal,
   refetch,
 }) => {
   const t = useTranslations();
 
   const { mutate } = useMutation({
-    mutationFn: CourseGroupService.deleteCourseGroup,
+    mutationFn: FacultyService.deleteFaculty,
     onSuccess() {
       closeDeleteModal();
       refetch();
@@ -34,14 +34,14 @@ const DeleteModal: FC<DeleteModalProps> = ({
       isOpen={isDeleteModalOpen}
       onClose={closeDeleteModal}
       isDeleteVariant
-      title="courseGroup"
+      title="faculty"
       primaryAction={() => {
-        if (selectedCourseGroup) {
-          mutate(selectedCourseGroup?.id);
+        if (selectedFaculty) {
+          mutate(selectedFaculty?.id);
         }
       }}
       actionText="delete">
-      {t('deleteCourseGroupQuestion')}
+      {t('deleteFacultyQuestion')}
     </Modal>
   );
 };

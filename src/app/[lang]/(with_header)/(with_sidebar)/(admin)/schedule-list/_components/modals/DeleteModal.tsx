@@ -1,10 +1,11 @@
+'use client';
 import React, { FC } from 'react';
 import { useTranslations } from 'next-intl';
 import Modal from '@/components/molecules/Modal';
 import { ScheduleSingleModel } from '@/utils/models/schedule';
 
 type DeleteModalProps = {
-  selectedSchedule: ScheduleSingleModel | null | undefined;
+  selectedSchedule: ScheduleSingleModel | null;
   isDeleteModalOpen: boolean;
   closeDeleteModal: () => void;
 };

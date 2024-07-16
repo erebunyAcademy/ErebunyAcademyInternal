@@ -1,3 +1,4 @@
+'use client';
 import React, { ChangeEvent, FC, useCallback, useState } from 'react';
 import { AddIcon, DeleteIcon } from '@chakra-ui/icons';
 import {
@@ -32,7 +33,7 @@ import { CreateEditScheduleValidation } from '@/utils/validation/schedule';
 type CreateEditModalProps = {
   isModalOpen: boolean;
   closeModal: () => void;
-  selectedSchedule: ScheduleSingleModel | null | undefined;
+  selectedSchedule: ScheduleSingleModel | null;
 };
 
 const resolver = classValidatorResolver(CreateEditScheduleValidation);
@@ -158,7 +159,7 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
           title: file.name,
           key,
           mimetype: file.type,
-          attachmentKey: ''
+          attachmentKey: '',
         });
 
         uploadAttachment({

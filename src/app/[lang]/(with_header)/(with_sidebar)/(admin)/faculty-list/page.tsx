@@ -16,8 +16,8 @@ import { QUERY_KEY } from '@/utils/helpers/queryClient';
 import { Maybe } from '@/utils/models/common';
 import { FacultyModel } from '@/utils/models/faculty';
 import { CreateEditFacultyValidation } from '@/utils/validation/faculty';
-import CreateEditModal from './_components/modals/create-edit-modal';
-import DeleteModal from './_components/modals/delete-modal';
+import CreateEditModal from './_components/modals/CreateEditModal';
+import DeleteModal from './_components/modals/DeleteModal';
 
 const resolver = classValidatorResolver(CreateEditFacultyValidation);
 
@@ -171,7 +171,12 @@ const Faculty = () => {
         handleSubmit={handleSubmit}
         control={control}
       />
-      <DeleteModal selectedFaculty={selectedFaculty} isDeleteModalOpen={isDeleteModalOpen} closeDeleteModal={closeDeleteModal} refetch={refetch}/>
+      <DeleteModal
+        selectedFaculty={selectedFaculty}
+        isDeleteModalOpen={isDeleteModalOpen}
+        closeDeleteModal={closeDeleteModal}
+        refetch={refetch}
+      />
     </>
   );
 };

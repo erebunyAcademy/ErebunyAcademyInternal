@@ -16,8 +16,8 @@ import { QUERY_KEY } from '@/utils/helpers/queryClient';
 import { Maybe } from '@/utils/models/common';
 import { CourseModel } from '@/utils/models/course';
 import { CreateEditCourseValidation } from '@/utils/validation/courses';
-import CreateEditModal from './_components/modals/create-edit-modal';
-import DeleteModal from './_components/modals/delete-modal';
+import CreateEditModal from './_components/modals/CreateEditModal';
+import DeleteModal from './_components/modals/DeleteModal';
 
 const resolver = classValidatorResolver(CreateEditCourseValidation);
 

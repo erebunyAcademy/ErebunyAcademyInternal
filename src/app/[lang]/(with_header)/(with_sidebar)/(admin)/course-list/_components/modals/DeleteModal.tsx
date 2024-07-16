@@ -7,7 +7,7 @@ import Modal from '@/components/molecules/Modal';
 import { CourseModel } from '@/utils/models/course';
 
 type DeleteModalProps = {
-  selectedCourse: CourseModel | null | undefined;
+  selectedCourse: CourseModel | null;
   refetch: () => void;
   closeDeleteModal: () => void;
   isDeleteModalOpen: boolean;

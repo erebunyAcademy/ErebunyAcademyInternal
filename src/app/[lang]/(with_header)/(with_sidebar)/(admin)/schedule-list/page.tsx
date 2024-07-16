@@ -13,8 +13,8 @@ import { ITEMS_PER_PAGE } from '@/utils/constants/common';
 import { QUERY_KEY } from '@/utils/helpers/queryClient';
 import { Maybe } from '@/utils/models/common';
 import { ScheduleListModel, ScheduleSingleModel } from '@/utils/models/schedule';
-import CreateEditModal from './_components/modals/create-edit-modal';
-import DeleteModal from './_components/modals/delete-modal';
+import CreateEditModal from './_components/modals/CreateEditModal';
+import DeleteModal from './_components/modals/DeleteModal';
 
 export default function Schedule() {
   const [sorting, setSorting] = useState<SortingState>([]);
