@@ -172,7 +172,7 @@
   "invalidNumber": "Недействительный номер",
   "passwordDontMatch": "Пароли не совпадают",
   "invalidPassword": "Недействительный пароль",
-  "contactCollegeRepresentative": "Пожалуйста, свяжитесь с представителем колледжа для подтверждения вашей учетной записи",
+  "contactCollegeRepresentative": "Пожалуйста, дождитесь подтверждения от EMAF. Вы получите электронное письмо.",
   "successfullySignedUp": "Вы успешно зарегистрировались",
   "selectYourFile": "Пожалуйста, выберите ваш файл",
   "selectExcelTYpe": "Пожалуйста, выберите только типы файлов excel",
