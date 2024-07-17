@@ -2,15 +2,13 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { MenuItem, useDisclosure } from '@chakra-ui/react';
 import { classValidatorResolver } from '@hookform/resolvers/class-validator';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { createColumnHelper, SortingState } from '@tanstack/react-table';
 import { useTranslations } from 'next-intl';
-import { Controller, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { v4 as uuidv4 } from 'uuid';
 import { FacultyService } from '@/api/services/faculty.service';
-import { FormInput } from '@/components/atoms';
 import ActionButtons from '@/components/molecules/ActionButtons';
-import Modal from '@/components/molecules/Modal';
 import SearchTable from '@/components/organisms/SearchTable';
 import useDebounce from '@/hooks/useDebounce';
 import { ITEMS_PER_PAGE } from '@/utils/constants/common';
@@ -18,6 +16,8 @@ import { QUERY_KEY } from '@/utils/helpers/queryClient';
 import { Maybe } from '@/utils/models/common';
 import { FacultyModel } from '@/utils/models/faculty';
 import { CreateEditFacultyValidation } from '@/utils/validation/faculty';
+import CreateEditModal from './_components/modals/CreateEditModal';
+import DeleteModal from './_components/modals/DeleteModal';
 
 const resolver = classValidatorResolver(CreateEditFacultyValidation);
 
@@ -72,32 +72,6 @@ const Faculty = () => {
         limit: ITEMS_PER_PAGE,
         search: debouncedSearch,
       }),
-  });
-
-  const { mutate: createFaculty } = useMutation({
-    mutationFn: FacultyService.createFaculty,
-    onSuccess() {
-      refetch();
-      reset();
-      closeCreateEditModal();
-    },
-  });
-
-  const { mutate: updateFaculty } = useMutation({
-    mutationFn: FacultyService.updateFaculty,
-    onSuccess() {
-      refetch();
-      reset();
-      closeCreateEditModal();
-    },
-  });
-
-  const { mutate } = useMutation({
-    mutationFn: FacultyService.deleteFaculty,
-    onSuccess() {
-      closeDeleteModal();
-      refetch();
-    },
   });
 
   const pageCount = useMemo(() => {
@@ -160,17 +134,6 @@ const Faculty = () => {
     openCreateEditModal();
   }, [openCreateEditModal]);
 
-  const onSubmitHandler = useCallback(
-    (data: CreateEditFacultyValidation) => {
-      if (selectedFaculty) {
-        updateFaculty({ data, id: selectedFaculty.id });
-      } else {
-        createFaculty(data);
-      }
-    },
-    [createFaculty, selectedFaculty, updateFaculty],
-  );
-
   return (
     <>
       <SearchTable
@@ -197,60 +160,23 @@ const Faculty = () => {
         addNew={addNewFacultyHandler}
       />
 
-      <Modal
-        isOpen={isCreateEditModalOpen}
-        onClose={closeCreateEditModal}
-        title="faculty"
-        primaryAction={handleSubmit(onSubmitHandler)}
-        isDisabled={!isValid}
-        actionText={selectedFaculty ? 'edit' : 'create'}>
-        <Controller
-          name="title"
-          control={control}
-          render={({ field: { onChange, value, name } }) => (
-            <FormInput
-              isRequired
-              name={name}
-              type="text"
-              formLabelName={t('facultyName')}
-              value={value}
-              placeholder="enterTitle"
-              handleInputChange={onChange}
-              isInvalid={!!errors.title?.message}
-              formErrorMessage={errors.title?.message}
-            />
-          )}
-        />
-        <Controller
-          name="description"
-          control={control}
-          render={({ field: { onChange, value, name } }) => (
-            <FormInput
-              name={name}
-              type="text"
-              formLabelName={t('facultyDescription')}
-              value={value}
-              placeholder="enterDescription"
-              handleInputChange={onChange}
-              isInvalid={!!errors.description?.message}
-              formErrorMessage={errors.description?.message}
-            />
-          )}
-        />
-      </Modal>
-      <Modal
-        isOpen={isDeleteModalOpen}
-        onClose={closeDeleteModal}
-        isDeleteVariant
-        title="faculty"
-        primaryAction={() => {
-          if (selectedFaculty) {
-            mutate(selectedFaculty?.id);
-          }
-        }}
-        actionText="delete">
-        {t('deleteFacultyQuestion')}
-      </Modal>
+      <CreateEditModal
+        selectedFaculty={selectedFaculty}
+        isCreateEditModalOpen={isCreateEditModalOpen}
+        closeCreateEditModal={closeCreateEditModal}
+        refetch={refetch}
+        reset={reset}
+        isValid={isValid}
+        errors={errors}
+        handleSubmit={handleSubmit}
+        control={control}
+      />
+      <DeleteModal
+        selectedFaculty={selectedFaculty}
+        isDeleteModalOpen={isDeleteModalOpen}
+        closeDeleteModal={closeDeleteModal}
+        refetch={refetch}
+      />
     </>
   );
 };

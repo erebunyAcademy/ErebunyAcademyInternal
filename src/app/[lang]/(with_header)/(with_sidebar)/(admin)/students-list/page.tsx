@@ -1,22 +1,17 @@
 'use client';
-import React, { ChangeEvent, useCallback, useMemo, useState } from 'react';
-import { Avatar, Button, Flex, MenuItem, useDisclosure } from '@chakra-ui/react';
+import React, { useCallback, useMemo, useState } from 'react';
+import { Avatar, Button, MenuItem, useDisclosure } from '@chakra-ui/react';
 import { classValidatorResolver } from '@hookform/resolvers/class-validator';
 import { AttachmentTypeEnum } from '@prisma/client';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { createColumnHelper, SortingState } from '@tanstack/react-table';
 import dayjs from 'dayjs';
-import Image from 'next/image';
 import { useTranslations } from 'next-intl';
-import { Controller, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { v4 as uuidv4 } from 'uuid';
-import { CourseGroupService } from '@/api/services/course-group.service';
 import { StudentService } from '@/api/services/student.service';
 import { UserService } from '@/api/services/user.service';
-import { SelectLabel } from '@/components/atoms';
-import FormTextarea from '@/components/atoms/FormTextarea';
 import ActionButtons from '@/components/molecules/ActionButtons';
-import Modal from '@/components/molecules/Modal';
 import SearchTable from '@/components/organisms/SearchTable';
 import useDebounce from '@/hooks/useDebounce';
 import { ITEMS_PER_PAGE } from '@/utils/constants/common';
@@ -24,7 +19,9 @@ import { QUERY_KEY } from '@/utils/helpers/queryClient';
 import { Maybe } from '@/utils/models/common';
 import { StudentModel } from '@/utils/models/student';
 import { SelectStudentCourseGroupValidation } from '@/utils/validation/courseGroup';
-import { UpdateStudentValidation } from '@/utils/validation/student';
+import EditStudentModal from './_components/modals/EditStudentModal';
+import RejectMessageModal from './_components/modals/RejectMessageModal';
+import StudentAttachmentModal from './_components/modals/StudentAttachmentModal';
 
 const resolver = classValidatorResolver(SelectStudentCourseGroupValidation);
 
@@ -34,8 +31,8 @@ export default function StudentList() {
   const [page, setPage] = useState(1);
   const debouncedSearch = useDebounce(search);
   const [attachmentKey, setAttachmentKey] = useState('');
-  const [rejectionText, setRejectionText] = useState('');
   const [selectedStudent, setSelectedStudent] = useState<Maybe<StudentModel>>(null);
+  const t = useTranslations();
 
   const {
     control,
@@ -48,13 +45,6 @@ export default function StudentList() {
       courseGroupId: '',
     },
   });
-
-  const { data: courseGroupData } = useQuery({
-    queryFn: CourseGroupService.list.bind(null),
-    queryKey: [''],
-  });
-
-  const t = useTranslations();
 
   const { data, isLoading, isPlaceholderData, refetch } = useQuery({
     queryKey: QUERY_KEY.allStudents(debouncedSearch, page),
@@ -88,22 +78,6 @@ export default function StudentList() {
     mutationFn: UserService.confirmUserVerificationById,
     onSuccess() {
       refetch();
-    },
-  });
-
-  const { mutate: updateStudentData } = useMutation({
-    mutationFn: (data: UpdateStudentValidation) =>
-      StudentService.updateStudentData(data, selectedStudent?.student?.id!),
-    onSuccess() {
-      refetch();
-      closeStudentEditModal();
-    },
-  });
-
-  const { mutate: rejectUser, isPending } = useMutation({
-    mutationFn: UserService.rejectUserEmail,
-    onSuccess() {
-      closeStudentRejectModal();
     },
   });
 
@@ -246,14 +220,6 @@ export default function StudentList() {
     }),
   ];
 
-  const valueChangeHandler = useCallback((e: ChangeEvent<HTMLTextAreaElement>) => {
-    setRejectionText(e.target.value);
-  }, []);
-
-  const updateStudentSubmitHandler = (data: UpdateStudentValidation) => {
-    updateStudentData(data);
-  };
-
   return (
     <>
       <SearchTable
@@ -280,71 +246,28 @@ export default function StudentList() {
         rowCondition="isAdminVerified"
       />
 
-      <Modal
-        isOpen={isRejectStudentModalIsOpen}
-        onClose={closeStudentRejectModal}
-        title="rejectionMessage">
-        <FormTextarea
-          handleInputChange={valueChangeHandler}
-          value={rejectionText}
-          name="reject-message"
-        />
-        <Button
-          isLoading={isPending}
-          onClick={() => {
-            if (selectedStudent) {
-              rejectUser({ userId: selectedStudent.id, message: rejectionText });
-            }
-          }}>
-          {t('send')}
-        </Button>
-      </Modal>
+      <RejectMessageModal
+        closeStudentRejectModal={closeStudentRejectModal}
+        isRejectStudentModalIsOpen={isRejectStudentModalIsOpen}
+        selectedStudent={selectedStudent}
+      />
 
-      <Modal
-        isOpen={isAttachmentModalOpen}
-        onClose={closeAttachmentModal}
-        title="studentAttachment">
-        <Image
-          src={`/api/readfile?path=uploads/${attachmentKey}`}
-          width={400}
-          height={400}
-          alt="student attachment"
-        />
-      </Modal>
+      <StudentAttachmentModal
+        isAttachmentModalOpen={isAttachmentModalOpen}
+        closeAttachmentModal={closeAttachmentModal}
+        attachmentKey={attachmentKey}
+      />
 
-      <Modal isOpen={isStudentEditModalOpen} onClose={closeStudentEditModal} title="editStudent">
-        <Flex
-          width={{ base: '100%' }}
-          flexDirection="column"
-          justifyContent="center"
-          alignItems="center"
-          gap="50px">
-          <Controller
-            name="courseGroupId"
-            control={control}
-            render={({ field: { onChange, value, name } }) => (
-              <SelectLabel
-                isRequired
-                name={name}
-                options={courseGroupData || []}
-                labelName="studentCourseGroup"
-                valueLabel="id"
-                nameLabel="title"
-                onChange={onChange}
-                value={value}
-                isInvalid={!!errors.courseGroupId?.message}
-                formErrorMessage={errors.courseGroupId?.message}
-              />
-            )}
-          />
-          <Button
-            onClick={handleSubmit(updateStudentSubmitHandler)}
-            isDisabled={!isValid}
-            width="100%">
-            {t('update')}
-          </Button>
-        </Flex>
-      </Modal>
+      <EditStudentModal
+        isStudentEditModalOpen={isStudentEditModalOpen}
+        closeStudentEditModal={closeStudentEditModal}
+        control={control}
+        handleSubmit={handleSubmit}
+        errors={errors}
+        isValid={isValid}
+        selectedStudent={selectedStudent}
+        refetch={refetch}
+      />
     </>
   );
 }
