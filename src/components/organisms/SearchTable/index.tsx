@@ -119,6 +119,7 @@ function SearchTable<T>({
   };
 
   const t = useTranslations();
+  const tableHeight = `calc(100vh - 264px)`;
 
   return (
     <Box minHeight="700px" width="100%">
@@ -146,7 +147,10 @@ function SearchTable<T>({
           />
         </InputGroup>
       </FormControl>
-      <Box overflow="auto" maxWidth={{ base: '340px', sm: '670px', lg: '700px', xl: '100%' }}>
+      <Box
+        maxH={tableHeight}
+        overflowY="auto"
+        maxWidth={{ base: '340px', sm: '670px', lg: '700px', xl: '100%' }}>
         <Table
           borderTop="1px solid rgb(226, 232, 240)"
           height="100%"
@@ -223,7 +227,7 @@ function SearchTable<T>({
           <Tfoot width="100%" borderBottom="1px solid #DEDEDE">
             <Tr>
               <Td colSpan={1} border="none">
-                <Text>
+                <Text my="15px">
                   {t('count')} - {count}
                 </Text>
               </Td>
