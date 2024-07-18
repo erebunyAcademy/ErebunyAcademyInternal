@@ -159,7 +159,7 @@ model Attachment {
   description String?            @db.VarChar(60)
   key         String             @db.Text
   subjectId   String?
-  subject     Subject?           @relation(fields: [subjectId], references: [id])
+  subject     Subject?           @relation(fields: [subjectId], references: [id], onDelete: Cascade)
   user        User?              @relation(fields: [userId], references: [id], onDelete: Cascade)
   mimetype    String             @db.VarChar(60)
   userId      String?

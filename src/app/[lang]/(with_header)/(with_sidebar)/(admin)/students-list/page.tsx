@@ -20,7 +20,6 @@ import Modal from '@/components/molecules/Modal';
 import SearchTable from '@/components/organisms/SearchTable';
 import useDebounce from '@/hooks/useDebounce';
 import { ITEMS_PER_PAGE } from '@/utils/constants/common';
-import { generateAWSUrl } from '@/utils/helpers/aws';
 import { QUERY_KEY } from '@/utils/helpers/queryClient';
 import { Maybe } from '@/utils/models/common';
 import { StudentModel } from '@/utils/models/student';
@@ -127,6 +126,45 @@ export default function StudentList() {
   const columnHelper = createColumnHelper<StudentModel>();
 
   const columns = [
+    columnHelper.accessor('id', {
+      id: uuidv4(),
+      cell: ({ row }) => (
+        <ActionButtons>
+          {!row.original.isAdminVerified && (
+            <>
+              <MenuItem
+                color="green"
+                disabled={row.original.isAdminVerified}
+                onClick={() => {
+                  confirmUserById(row.original.id);
+                }}>
+                {t('confirm')}
+              </MenuItem>
+              <MenuItem
+                color="red"
+                onClick={() => {
+                  openStudentRejectModal();
+                  setSelectedStudent(row.original);
+                }}>
+                {t('reject')}
+              </MenuItem>
+            </>
+          )}
+          <MenuItem
+            color="green"
+            onClick={() => {
+              openStudentEditModal();
+              setSelectedStudent(row.original);
+              if (row.original.student?.courseGroup?.id) {
+                setValue('courseGroupId', row.original.student.courseGroup.id);
+              }
+            }}>
+            {t('edit')}
+          </MenuItem>
+        </ActionButtons>
+      ),
+      header: t('actions'),
+    }),
     columnHelper.accessor('attachment', {
       id: uuidv4(),
       cell: info => {
@@ -138,7 +176,7 @@ export default function StudentList() {
             bg="#319795"
             color="#fff"
             name={`${info.row.original.firstName} ${info.row.original.lastName}`}
-            src={generateAWSUrl(existingAvatar?.key || '')}
+            src={existingAvatar?.key ? `/api/readfile?path=uploads/${existingAvatar.key}` : ''}
           />
         );
       },
@@ -206,45 +244,6 @@ export default function StudentList() {
       },
       header: t('createdAt'),
     }),
-    columnHelper.accessor('id', {
-      id: uuidv4(),
-      cell: ({ row }) => (
-        <ActionButtons>
-          {!row.original.isAdminVerified && (
-            <>
-              <MenuItem
-                color="green"
-                disabled={row.original.isAdminVerified}
-                onClick={() => {
-                  confirmUserById(row.original.id);
-                }}>
-                {t('confirm')}
-              </MenuItem>
-              <MenuItem
-                color="red"
-                onClick={() => {
-                  openStudentRejectModal();
-                  setSelectedStudent(row.original);
-                }}>
-                {t('reject')}
-              </MenuItem>
-            </>
-          )}
-          <MenuItem
-            color="green"
-            onClick={() => {
-              openStudentEditModal();
-              setSelectedStudent(row.original);
-              if (row.original.student?.courseGroup?.id) {
-                setValue('courseGroupId', row.original.student.courseGroup.id);
-              }
-            }}>
-            {t('edit')}
-          </MenuItem>
-        </ActionButtons>
-      ),
-      header: t('actions'),
-    }),
   ];
 
   const valueChangeHandler = useCallback((e: ChangeEvent<HTMLTextAreaElement>) => {
@@ -306,7 +305,7 @@ export default function StudentList() {
         onClose={closeAttachmentModal}
         title="studentAttachment">
         <Image
-          src={generateAWSUrl(attachmentKey)}
+          src={`/api/readfile?path=uploads/${attachmentKey}`}
           width={400}
           height={400}
           alt="student attachment"

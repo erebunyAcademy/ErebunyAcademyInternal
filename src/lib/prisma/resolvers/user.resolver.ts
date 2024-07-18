@@ -1,7 +1,9 @@
 import { AttachmentTypeEnum } from '@prisma/client';
 import bcrypt from 'bcrypt';
+import fs from 'fs';
 import { ConflictException, NotFoundException } from 'next-api-decorators';
 import { User } from 'next-auth';
+import path from 'path';
 import { ERROR_MESSAGES } from '@/utils/constants/common';
 import {
   ChangePasswordValidation,
@@ -167,6 +169,7 @@ export class UserResolver {
 
   static async updateProfile(input: UserProfileFormValidation, user: NonNullable<User>) {
     const { avatar, avatarMimetype, ...userData } = input;
+
     const userAvatar = await prisma.attachment.findFirst({
       where: { userId: user.id, type: AttachmentTypeEnum.AVATAR },
     });
@@ -206,6 +209,28 @@ export class UserResolver {
     }
 
     await Email.rejectUserAccountEmail(user.email, user.firstName, message);
+
+    const userAttachment = await prisma.attachment.findFirst({
+      where: {
+        userId: user.id,
+        type: AttachmentTypeEnum.FILE,
+      },
+      select: {
+        key: true,
+      },
+    });
+
+    if (userAttachment?.key) {
+      const filePath = path.join(process.cwd(), 'uploads', userAttachment.key);
+      console.log({ filePath });
+      await fs.promises.unlink(filePath);
+    }
+
+    await prisma.user.delete({
+      where: {
+        id: user.id,
+      },
+    });
 
     return true;
   }
