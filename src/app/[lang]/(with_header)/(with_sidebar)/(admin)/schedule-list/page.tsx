@@ -12,7 +12,7 @@ import useDebounce from '@/hooks/useDebounce';
 import { ITEMS_PER_PAGE } from '@/utils/constants/common';
 import { QUERY_KEY } from '@/utils/helpers/queryClient';
 import { Maybe } from '@/utils/models/common';
-import { ScheduleListModel, ScheduleSingleModel } from '@/utils/models/schedule';
+import { ScheduleSingleModel } from '@/utils/models/schedule';
 import CreateEditModal from './_components/modals/CreateEditModal';
 import DeleteModal from './_components/modals/DeleteModal';
 
@@ -72,7 +72,7 @@ export default function Schedule() {
     [page],
   );
 
-  const columnHelper = createColumnHelper<ScheduleListModel>();
+  const columnHelper = createColumnHelper<ScheduleSingleModel>();
 
   const columns = [
     columnHelper.accessor('title', {
@@ -102,22 +102,12 @@ export default function Schedule() {
           <MenuItem
             color="green"
             onClick={() => {
-              console.log(row.original);
-              // setSelectedSchedule(row.original);
-              // reset({
-              //   title: row.original.ti,
-              // });
+              setSelectedSchedule(row.original);
               openCreateEditModal();
             }}>
             {t('edit')}
           </MenuItem>
-          <MenuItem
-            color="red"
-            onClick={() => {
-              console.log(row.original);
-              // setSelectedSchedule(row.original);
-              openDeleteModal();
-            }}>
+          <MenuItem color="red" onClick={openDeleteModal}>
             {t('delete')}
           </MenuItem>
         </ActionButtons>

@@ -16,16 +16,26 @@ export class ScheduleResolver {
         where: {
           OR: [{ title: { contains: search, mode: 'insensitive' } }],
         },
-        select: {
-          id: true,
-          title: true,
-          description: true,
-          totalHours: true,
-          startDayDate: true,
-          endDayDate: true,
-          isAssessment: true,
-          createdAt: true,
+        include: {
+          thematicPlan: {
+            include: {
+              thematicPlanDescription: true,
+            },
+          },
+          scheduleTeachers: {
+            select: {
+              teacherId: true,
+            },
+          },
+          attachment: {
+            select: {
+              key: true,
+              title: true,
+              mimetype: true,
+            },
+          },
         },
+
         orderBy: sorting ? orderBy(sorting) : undefined,
         skip,
         take,
@@ -101,15 +111,17 @@ export class ScheduleResolver {
       },
     });
 
-    await prisma.attachment.createMany({
-      data: attachments.map(attachment => ({
-        title: attachment.title,
-        key: attachment.key,
-        scheduleId: createdSchedule.id,
-        type: AttachmentTypeEnum.FILE,
-        mimetype: attachment.mimetype,
-      })),
-    });
+    if (attachments) {
+      await prisma.attachment.createMany({
+        data: attachments.map(attachment => ({
+          title: attachment.title,
+          key: attachment.key,
+          scheduleId: createdSchedule.id,
+          type: AttachmentTypeEnum.FILE,
+          mimetype: attachment.mimetype,
+        })),
+      });
+    }
 
     return createdSchedule;
   }

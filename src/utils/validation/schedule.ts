@@ -67,7 +67,7 @@ export class CreateEditScheduleValidation {
 
   @IsString()
   @IsOptional()
-  description: string;
+  description?: string;
 
   @IsString()
   @IsNotEmpty()
@@ -108,5 +108,5 @@ export class CreateEditScheduleValidation {
 
   @IsArray()
   @IsOptional()
-  attachments: AttachmentValidation[];
+  attachments?: AttachmentValidation[];
 }

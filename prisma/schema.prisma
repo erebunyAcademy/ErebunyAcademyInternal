@@ -35,17 +35,17 @@ model User {
 }
 
 model Teacher {
-  id                 String           @id @default(uuid())
-  profession         String           @db.VarChar(60)
-  workPlace          String           @db.VarChar(60)
-  scientificActivity String?          @db.VarChar(60)
-  userId             String           @unique
-  user               User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                 String            @id @default(uuid())
+  profession         String            @db.VarChar(60)
+  workPlace          String            @db.VarChar(60)
+  scientificActivity String?           @db.VarChar(60)
+  userId             String            @unique
+  user               User              @relation(fields: [userId], references: [id], onDelete: Cascade)
   subjectTeachers    SubjectTeacher[]
+  scheduleTeacher    ScheduleTeacher[]
 
-  createdAt       DateTime          @default(now()) @db.Timestamp(0)
-  updatedAt       DateTime          @updatedAt @db.Timestamp(0)
-  ScheduleTeacher ScheduleTeacher[]
+  createdAt DateTime @default(now()) @db.Timestamp(0)
+  updatedAt DateTime @updatedAt @db.Timestamp(0)
 }
 
 model Admin {
@@ -146,16 +146,16 @@ model Schedule {
   id               String            @id @default(uuid())
   title            String
   description      String?
-  scheduleTeachers ScheduleTeacher[]
   subject          Subject           @relation(fields: [subjectId], references: [id])
   totalHours       Float
   startDayDate     DateTime
   endDayDate       DateTime
   isAssessment     Boolean           @default(false)
   examDate         DateTime
-  thematicPlan     ThematicPlan[]
   subjectId        String
   links            Json
+  thematicPlan     ThematicPlan[]
+  scheduleTeachers ScheduleTeacher[]
   attachment       Attachment[]
 
   createdAt DateTime @default(now()) @db.Timestamp(0)
@@ -178,8 +178,8 @@ model ThematicPlan {
   id                      String                    @id @default(uuid())
   title                   String?
   totalHours              Float
-  schedule                Schedule                  @relation(fields: [scheduleId], references: [id])
   scheduleId              String
+  schedule                Schedule                  @relation(fields: [scheduleId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   type                    ThematicSubPlanTypeEnum
   thematicPlanDescription ThematicPlanDescription[]
 
@@ -192,7 +192,7 @@ model ThematicPlanDescription {
   title          String
   hour           String
   thematicPlanId String
-  thematicPlan   ThematicPlan @relation(fields: [thematicPlanId], references: [id])
+  thematicPlan   ThematicPlan @relation(fields: [thematicPlanId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   createdAt DateTime @default(now()) @db.Timestamp(0)
   updatedAt DateTime @updatedAt @db.Timestamp(0)

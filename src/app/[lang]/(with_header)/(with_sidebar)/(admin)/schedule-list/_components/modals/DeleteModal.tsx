@@ -2,10 +2,11 @@
 import React, { FC } from 'react';
 import { useTranslations } from 'next-intl';
 import Modal from '@/components/molecules/Modal';
+import { Maybe } from '@/utils/models/common';
 import { ScheduleSingleModel } from '@/utils/models/schedule';
 
 type DeleteModalProps = {
-  selectedSchedule: ScheduleSingleModel | null;
+  selectedSchedule: Maybe<ScheduleSingleModel>;
   isDeleteModalOpen: boolean;
   closeDeleteModal: () => void;
 };

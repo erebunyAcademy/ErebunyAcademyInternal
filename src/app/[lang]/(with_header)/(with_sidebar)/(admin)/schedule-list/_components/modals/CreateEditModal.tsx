@@ -1,5 +1,5 @@
 'use client';
-import React, { ChangeEvent, FC, useCallback, useState } from 'react';
+import React, { ChangeEvent, FC, useCallback, useEffect, useState } from 'react';
 import { AddIcon, DeleteIcon } from '@chakra-ui/icons';
 import {
   Box,
@@ -33,10 +33,15 @@ import { CreateEditScheduleValidation } from '@/utils/validation/schedule';
 type CreateEditModalProps = {
   isModalOpen: boolean;
   closeModal: () => void;
-  selectedSchedule: ScheduleSingleModel | null;
+  selectedSchedule: Maybe<ScheduleSingleModel>;
 };
 
 const resolver = classValidatorResolver(CreateEditScheduleValidation);
+
+const thematicInitialClass = {
+  totalHours: '',
+  classDescriptionRow: [{ title: '', hour: '' }],
+};
 
 const CreateEditModal: FC<CreateEditModalProps> = ({
   isModalOpen,
@@ -69,16 +74,56 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
           link: '',
         },
       ],
-      theoreticalClass: {
-        totalHours: '',
-        classDescriptionRow: [{ title: '', hour: '' }],
-      },
-      practicalClass: {
-        totalHours: '',
-        classDescriptionRow: [{ title: '', hour: '' }],
-      },
+      theoreticalClass: thematicInitialClass,
+      practicalClass: thematicInitialClass,
     },
   });
+
+  useEffect(() => {
+    if (selectedSchedule) {
+      const thereoticalThematicPlan: any =
+        selectedSchedule.thematicPlan.find(thematicPlan => (thematicPlan.type = 'THEORETICAL')) ||
+        thematicInitialClass;
+      const practicalThematicPlan: any =
+        selectedSchedule.thematicPlan.find(thematicPlan => (thematicPlan.type = 'PRACTICAL')) ||
+        thematicInitialClass;
+
+      console.log({ thereoticalThematicPlan, practicalThematicPlan });
+      reset({
+        totalHours: selectedSchedule.totalHours.toString(),
+        subjectId: selectedSchedule.subjectId,
+        title: selectedSchedule.title,
+        description: selectedSchedule.description || '',
+        startDayDate: '',
+        examDate: '',
+        endDayDate: '',
+        isAssessment: selectedSchedule.isAssessment,
+        teacherId: selectedSchedule.scheduleTeachers[0].teacherId,
+        attachments: selectedSchedule.attachment.map(attachment => ({
+          key: attachment.key,
+          mimetype: attachment.mimetype,
+          title: attachment.title || '',
+        })),
+        links: (Array.isArray(selectedSchedule.links) ? selectedSchedule.links : ([] as any)).map(
+          (link: string) => ({ link }),
+        ),
+        theoreticalClass: {
+          totalHours: (thereoticalThematicPlan.totalHours || '').toString(),
+          classDescriptionRow: thereoticalThematicPlan.thematicPlanDescription.map((row: any) => ({
+            title: row.title,
+            hour: row.hour,
+          })),
+        },
+        practicalClass: {
+          totalHours: (practicalThematicPlan.totalHours || '').toString(),
+          classDescriptionRow: practicalThematicPlan.thematicPlanDescription.map((row: any) => ({
+            title: row.title,
+            hour: row.hour,
+          })),
+        },
+      });
+    }
+  }, [reset, selectedSchedule]);
 
   const { data: teachersQueryData } = useQuery<TeacherDataModel>({
     queryKey: ['teachers'],
@@ -638,7 +683,7 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
                 render={({ field }) => (
                   <FormInput
                     name={field.name}
-                    type="text"
+                    type="number"
                     formLabelName={t('hours')}
                     value={field.value}
                     placeholder="enterHours"
