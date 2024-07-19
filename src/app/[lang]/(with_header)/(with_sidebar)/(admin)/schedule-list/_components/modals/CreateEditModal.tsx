@@ -478,7 +478,6 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
             {t('addLink')}
           </Button>
         </Box>
-        {/* /api/readfile?path=uploads/${existingAvatar.key} */}
 
         <Flex flexDirection="column" gap={5} alignItems={{ base: 'flex-start', md: 'flex-end' }}>
           <Box mt={3}>
@@ -486,10 +485,7 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
               <Stack spacing={3}>
                 {files.map((fileObj, index) => (
                   <Flex key={index} alignItems="center" justifyContent="space-between">
-                    <Text
-                      as="a"
-                      href={`/api/download?path=uploads/${fileObj.localUrl}`}
-                      target="_blank">
+                    <Text as="a" href={fileObj.localUrl} download={fileObj.file.name}>
                       {fileObj.file.name}
                     </Text>
                     <IconButton
