@@ -1,8 +1,9 @@
 'use client';
-import React, { FC, useCallback } from 'react';
+import React, { FC, useCallback, useEffect } from 'react';
+import { classValidatorResolver } from '@hookform/resolvers/class-validator';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useTranslations } from 'next-intl';
-import { Control, Controller, FieldErrors } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { CourseService } from '@/api/services/courses.service';
 import { FacultyService } from '@/api/services/faculty.service';
 import { FormInput, SelectLabel } from '@/components/atoms';
@@ -11,18 +12,13 @@ import { CourseModel } from '@/utils/models/course';
 import { FacultySignupListModel } from '@/utils/models/faculty';
 import { CreateEditCourseValidation } from '@/utils/validation/courses';
 
+const resolver = classValidatorResolver(CreateEditCourseValidation);
+
 type CreateEditModalProps = {
   isCreateEditModalOpen: boolean;
   closeCreateEditModal: () => void;
   selectedCourse: CourseModel | null;
   refetch: () => void;
-  reset: () => void;
-  isValid: boolean;
-  handleSubmit: (
-    onSubmit: (data: CreateEditCourseValidation) => void,
-  ) => (e?: React.BaseSyntheticEvent) => Promise<void>;
-  errors: FieldErrors<CreateEditCourseValidation>;
-  control: Control<CreateEditCourseValidation>;
 };
 
 const CreateEditModal: FC<CreateEditModalProps> = ({
@@ -30,13 +26,32 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
   closeCreateEditModal,
   selectedCourse,
   refetch,
-  reset,
-  control,
-  isValid,
-  handleSubmit,
-  errors,
 }) => {
   const t = useTranslations();
+
+  const {
+    control,
+    handleSubmit,
+    reset,
+    formState: { errors, isValid },
+  } = useForm<CreateEditCourseValidation>({
+    resolver,
+    defaultValues: {
+      title: '',
+      description: '',
+      facultyId: '',
+    },
+  });
+
+  useEffect(() => {
+    if (selectedCourse) {
+      reset({
+        title: selectedCourse.title,
+        description: selectedCourse.description || '',
+        facultyId: selectedCourse.faculty?.id,
+      });
+    }
+  }, [selectedCourse, reset]);
 
   const { data: facultyQueryData } = useQuery<FacultySignupListModel>({
     queryKey: ['faculty'],

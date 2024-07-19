@@ -55,6 +55,7 @@ export default function Schedule() {
         search: debouncedSearch,
       }),
   });
+  console.log(data, 'data');
 
   const { mutate: deleteScheduleMutation } = useMutation({
     mutationFn: ScheduleService.deleteScheduleById,
@@ -100,8 +101,8 @@ export default function Schedule() {
     }),
     columnHelper.accessor('isAssessment', {
       id: uuidv4(),
-      cell: info => info.getValue(),
-      header: t('isAssessment'),
+      cell: info => (info.getValue() ? t('yes') : t('no')),
+      header: t('assessment'),
     }),
     columnHelper.accessor('id', {
       id: uuidv4(),

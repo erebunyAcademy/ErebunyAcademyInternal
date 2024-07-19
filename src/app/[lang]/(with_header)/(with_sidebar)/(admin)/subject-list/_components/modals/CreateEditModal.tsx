@@ -1,8 +1,9 @@
 'use client';
-import React, { FC, useCallback } from 'react';
+import React, { FC, useCallback, useEffect } from 'react';
+import { classValidatorResolver } from '@hookform/resolvers/class-validator';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useTranslations } from 'next-intl';
-import { Control, Controller, FieldErrors } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { CourseService } from '@/api/services/courses.service';
 import { SubjectService } from '@/api/services/subject.service';
 import { FormInput, SelectLabel } from '@/components/atoms';
@@ -11,32 +12,47 @@ import { GetCoursesListModel } from '@/utils/models/course';
 import { SubjectModel } from '@/utils/models/subject';
 import { CreateEditSubjectValidation } from '@/utils/validation/subject';
 
+const resolver = classValidatorResolver(CreateEditSubjectValidation);
+
 type CreateEditModalProps = {
   isCreateEditModalOpen: boolean;
   closeCreateEditModal: () => void;
   refetch: () => void;
-  reset: () => void;
   selectedSubject: SubjectModel | null;
-  isValid: boolean;
-  handleSubmit: (
-    onSubmit: (data: CreateEditSubjectValidation) => void,
-  ) => (e?: React.BaseSyntheticEvent) => Promise<void>;
-  errors: FieldErrors<CreateEditSubjectValidation>;
-  control: Control<CreateEditSubjectValidation>;
 };
 
 const CreateEditModal: FC<CreateEditModalProps> = ({
   isCreateEditModalOpen,
   closeCreateEditModal,
   refetch,
-  reset,
   selectedSubject,
-  isValid,
-  errors,
-  handleSubmit,
-  control,
 }) => {
   const t = useTranslations();
+
+  const {
+    control,
+    handleSubmit,
+    reset,
+    formState: { errors, isValid },
+  } = useForm<CreateEditSubjectValidation>({
+    resolver,
+    defaultValues: {
+      title: '',
+      description: '',
+      courseId: '',
+    },
+  });
+
+  useEffect(() => {
+    if (selectedSubject) {
+      reset({
+        title: selectedSubject.title,
+        description: selectedSubject.description || '',
+        courseId: selectedSubject.courseSubjects[0].course.id,
+        id: selectedSubject.id,
+      });
+    }
+  }, [selectedSubject, reset]);
 
   const { data: courseQueryData } = useQuery<GetCoursesListModel>({
     queryKey: ['course'],

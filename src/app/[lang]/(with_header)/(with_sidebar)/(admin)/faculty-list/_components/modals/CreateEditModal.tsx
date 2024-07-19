@@ -1,8 +1,9 @@
 'use client';
-import React, { FC, useCallback } from 'react';
+import React, { FC, useCallback, useEffect } from 'react';
+import { classValidatorResolver } from '@hookform/resolvers/class-validator';
 import { useMutation } from '@tanstack/react-query';
 import { useTranslations } from 'next-intl';
-import { Control, Controller, FieldErrors } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { FacultyService } from '@/api/services/faculty.service';
 import { FormInput } from '@/components/atoms';
 import Modal from '@/components/molecules/Modal';
@@ -14,27 +15,39 @@ type createEditModalProps = {
   isCreateEditModalOpen: boolean;
   closeCreateEditModal: () => void;
   refetch: () => void;
-  reset: () => void;
-  isValid: boolean;
-  handleSubmit: (
-    onSubmit: (data: CreateEditFacultyValidation) => void,
-  ) => (e?: React.BaseSyntheticEvent) => Promise<void>;
-  errors: FieldErrors<CreateEditFacultyValidation>;
-  control: Control<CreateEditFacultyValidation>;
 };
+const resolver = classValidatorResolver(CreateEditFacultyValidation);
 
 const CreateEditModal: FC<createEditModalProps> = ({
   selectedFaculty,
   closeCreateEditModal,
   isCreateEditModalOpen,
   refetch,
-  reset,
-  isValid,
-  errors,
-  handleSubmit,
-  control,
 }) => {
   const t = useTranslations();
+
+  const {
+    control,
+    handleSubmit,
+    reset,
+    formState: { errors, isValid },
+  } = useForm<CreateEditFacultyValidation>({
+    resolver,
+    defaultValues: {
+      title: '',
+      description: '',
+    },
+  });
+
+  useEffect(() => {
+    if (selectedFaculty) {
+      reset({
+        title: selectedFaculty.title || '',
+        description: selectedFaculty.description || '',
+      });
+    }
+  }, [selectedFaculty, reset]);
+  
 
   const { mutate: createFaculty } = useMutation({
     mutationFn: FacultyService.createFaculty,

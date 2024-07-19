@@ -1,13 +1,12 @@
 'use client';
 import { useCallback, useMemo, useState } from 'react';
 import { Button, MenuItem, useDisclosure } from '@chakra-ui/react';
-import { classValidatorResolver } from '@hookform/resolvers/class-validator';
 import { LanguageTypeEnum } from '@prisma/client';
 import { useQuery } from '@tanstack/react-query';
 import { createColumnHelper, SortingState } from '@tanstack/react-table';
+import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
-import { useForm } from 'react-hook-form';
 import { v4 as uuidv4 } from 'uuid';
 import { SubjectService } from '@/api/services/subject.service';
 import ActionButtons from '@/components/molecules/ActionButtons';
@@ -20,11 +19,9 @@ import { languagePathHelper } from '@/utils/helpers/language';
 import { QUERY_KEY } from '@/utils/helpers/queryClient';
 import { Maybe } from '@/utils/models/common';
 import { SubjectModel } from '@/utils/models/subject';
-import { CreateEditSubjectValidation } from '@/utils/validation/subject';
-import CreateEditModal from './_components/modals/CreateEditModal';
-import DeleteModal from './_components/modals/DeleteModal';
 
-const resolver = classValidatorResolver(CreateEditSubjectValidation);
+const DeleteModal = dynamic(() => import('./_components/modals/DeleteModal'));
+const CreateEditModal = dynamic(() => import('./_components/modals/CreateEditModal'));
 
 const Subject = ({ params }: { params: { lang: Locale } }) => {
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -35,26 +32,11 @@ const Subject = ({ params }: { params: { lang: Locale } }) => {
   const t = useTranslations();
 
   const {
-    control,
-    handleSubmit,
-    reset,
-    formState: { errors, isValid },
-  } = useForm<CreateEditSubjectValidation>({
-    resolver,
-    defaultValues: {
-      title: '',
-      description: '',
-      courseId: '',
-    },
-  });
-
-  const {
     isOpen: isCreateEditModalOpen,
     onOpen: openCreateEditModal,
     onClose: closeCreateEditModal,
   } = useDisclosure({
     onClose() {
-      reset();
       setSelectedSubject(null);
     },
   });
@@ -127,12 +109,6 @@ const Subject = ({ params }: { params: { lang: Locale } }) => {
             color="green"
             onClick={() => {
               setSelectedSubject(row.original);
-              reset({
-                title: row.original.title,
-                description: row.original.description || '',
-                courseId: row.original.courseSubjects[0].course.id,
-                id: row.original.id,
-              });
               openCreateEditModal();
             }}>
             {t('edit')}
@@ -181,24 +157,22 @@ const Subject = ({ params }: { params: { lang: Locale } }) => {
         addNew={addNewFacultyHandler}
       />
 
-      <CreateEditModal
-        isCreateEditModalOpen={isCreateEditModalOpen}
-        closeCreateEditModal={closeCreateEditModal}
-        refetch={refetch}
-        reset={reset}
-        selectedSubject={selectedSubject}
-        errors={errors}
-        isValid={isValid}
-        handleSubmit={handleSubmit}
-        control={control}
-      />
-
-      <DeleteModal
-        closeDeleteModal={closeDeleteModal}
-        refetch={refetch}
-        isDeleteModalOpen={isDeleteModalOpen}
-        selectedSubject={selectedSubject}
-      />
+      {isCreateEditModalOpen && (
+        <CreateEditModal
+          isCreateEditModalOpen={isCreateEditModalOpen}
+          closeCreateEditModal={closeCreateEditModal}
+          refetch={refetch}
+          selectedSubject={selectedSubject}
+        />
+      )}
+      {isDeleteModalOpen && (
+        <DeleteModal
+          closeDeleteModal={closeDeleteModal}
+          refetch={refetch}
+          isDeleteModalOpen={isDeleteModalOpen}
+          selectedSubject={selectedSubject}
+        />
+      )}
     </>
   );
 };

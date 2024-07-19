@@ -1,11 +1,10 @@
 'use client';
 import React, { useCallback, useMemo, useState } from 'react';
 import { MenuItem, useDisclosure } from '@chakra-ui/react';
-import { classValidatorResolver } from '@hookform/resolvers/class-validator';
 import { useQuery } from '@tanstack/react-query';
 import { createColumnHelper, SortingState } from '@tanstack/react-table';
+import dynamic from 'next/dynamic';
 import { useTranslations } from 'next-intl';
-import { useForm } from 'react-hook-form';
 import { v4 as uuidv4 } from 'uuid';
 import { FacultyService } from '@/api/services/faculty.service';
 import ActionButtons from '@/components/molecules/ActionButtons';
@@ -15,11 +14,9 @@ import { ITEMS_PER_PAGE } from '@/utils/constants/common';
 import { QUERY_KEY } from '@/utils/helpers/queryClient';
 import { Maybe } from '@/utils/models/common';
 import { FacultyModel } from '@/utils/models/faculty';
-import { CreateEditFacultyValidation } from '@/utils/validation/faculty';
-import CreateEditModal from './_components/modals/CreateEditModal';
-import DeleteModal from './_components/modals/DeleteModal';
 
-const resolver = classValidatorResolver(CreateEditFacultyValidation);
+const DeleteModal = dynamic(() => import('./_components/modals/DeleteModal'));
+const CreateEditModal = dynamic(() => import('./_components/modals/CreateEditModal'));
 
 const Faculty = () => {
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -30,26 +27,11 @@ const Faculty = () => {
   const t = useTranslations();
 
   const {
-    control,
-    handleSubmit,
-    reset,
-    setValue,
-    formState: { errors, isValid },
-  } = useForm<CreateEditFacultyValidation>({
-    resolver,
-    defaultValues: {
-      title: '',
-      description: '',
-    },
-  });
-
-  const {
     isOpen: isCreateEditModalOpen,
     onOpen: openCreateEditModal,
     onClose: closeCreateEditModal,
   } = useDisclosure({
     onClose() {
-      reset();
       setSelectedFaculty(null);
     },
   });
@@ -110,8 +92,6 @@ const Faculty = () => {
             color="green"
             onClick={() => {
               setSelectedFaculty(row.original);
-              setValue('title', row.original.title || '');
-              setValue('description', row.original.description || '');
               openCreateEditModal();
             }}>
             {t('edit')}
@@ -159,24 +139,22 @@ const Faculty = () => {
         fetchPreviousPage={useCallback(() => setPage(prev => --prev), [])}
         addNew={addNewFacultyHandler}
       />
-
-      <CreateEditModal
-        selectedFaculty={selectedFaculty}
-        isCreateEditModalOpen={isCreateEditModalOpen}
-        closeCreateEditModal={closeCreateEditModal}
-        refetch={refetch}
-        reset={reset}
-        isValid={isValid}
-        errors={errors}
-        handleSubmit={handleSubmit}
-        control={control}
-      />
-      <DeleteModal
-        selectedFaculty={selectedFaculty}
-        isDeleteModalOpen={isDeleteModalOpen}
-        closeDeleteModal={closeDeleteModal}
-        refetch={refetch}
-      />
+      {isCreateEditModalOpen && (
+        <CreateEditModal
+          selectedFaculty={selectedFaculty}
+          isCreateEditModalOpen={isCreateEditModalOpen}
+          closeCreateEditModal={closeCreateEditModal}
+          refetch={refetch}
+        />
+      )}
+      {isDeleteModalOpen && (
+        <DeleteModal
+          selectedFaculty={selectedFaculty}
+          isDeleteModalOpen={isDeleteModalOpen}
+          closeDeleteModal={closeDeleteModal}
+          refetch={refetch}
+        />
+      )}
     </>
   );
 };
