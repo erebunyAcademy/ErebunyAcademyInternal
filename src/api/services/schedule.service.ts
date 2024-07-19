@@ -11,4 +11,11 @@ export class ScheduleService {
   static createSchedule(data: CreateEditScheduleValidation) {
     return $apiClient.post('/schedules', data);
   }
+  static updateSchedule(data: CreateEditScheduleValidation) {
+    return $apiClient.patch(`/schedules/${data.id}`, data);
+  }
+
+  static deleteScheduleById(scheduleId: string) {
+    return $apiClient.delete(`/schedules/${scheduleId}`);
+  }
 }

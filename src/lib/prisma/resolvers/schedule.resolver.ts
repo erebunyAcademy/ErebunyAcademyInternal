@@ -128,9 +128,8 @@ export class ScheduleResolver {
     return createdSchedule;
   }
 
-  static async updateSchedule(data: CreateEditScheduleValidation) {
+  static async updateSchedule(id: string, data: CreateEditScheduleValidation) {
     const {
-      id,
       title,
       description,
       practicalClass,
@@ -168,63 +167,104 @@ export class ScheduleResolver {
       },
     ];
 
-    const updatedSchedule = await prisma.schedule.update({
-      where: { id },
-      data: {
-        title,
-        description,
-        totalHours: +totalHours,
-        startDayDate: new Date(startDayDate),
-        endDayDate: new Date(endDayDate),
-        isAssessment: data.isAssessment,
-        subjectId: data.subjectId,
-        links: {
-          set: links.map(({ link }) => link),
-        },
-        thematicPlan: {
-          deleteMany: {},
-          create: thematicPlans,
-        },
-        scheduleTeachers: {
-          deleteMany: {},
-          create: {
-            teacherId,
-            subjectId,
+    // Start a transaction
+    const updatedSchedule = await prisma.$transaction(async prisma => {
+      // Delete existing thematicPlan and scheduleTeachers records
+      await prisma.thematicPlan.deleteMany({
+        where: { scheduleId: id },
+      });
+
+      await prisma.scheduleTeacher.deleteMany({
+        where: { scheduleId: id },
+      });
+
+      // Update the schedule
+      const updatedSchedule = await prisma.schedule.update({
+        where: { id },
+        data: {
+          title,
+          description,
+          totalHours: +totalHours,
+          startDayDate: new Date(startDayDate),
+          endDayDate: new Date(endDayDate),
+          isAssessment: data.isAssessment,
+          subjectId: data.subjectId,
+          links: {
+            set: links.map(({ link }) => link),
           },
+          thematicPlan: {
+            create: thematicPlans,
+          },
+          scheduleTeachers: {
+            create: {
+              teacherId,
+              subjectId,
+            },
+          },
+          examDate: new Date(examDate),
         },
-        examDate: new Date(examDate),
+        select: {
+          id: true,
+        },
+      });
+
+      if (attachments && attachments.length > 0) {
+        const allAttachments = await prisma.attachment.findMany({
+          where: { scheduleId: updatedSchedule.id },
+        });
+
+        for (const attachment of allAttachments) {
+          const filePath = path.join(process.cwd(), 'uploads', attachment.key);
+          if (filePath) {
+            await fs.promises.unlink(filePath);
+          }
+        }
+
+        await prisma.attachment.deleteMany({
+          where: { scheduleId: updatedSchedule.id },
+        });
+
+        await prisma.attachment.createMany({
+          data: attachments.map(attachment => ({
+            title: attachment.title,
+            key: attachment.key,
+            scheduleId: updatedSchedule.id,
+            type: AttachmentTypeEnum.FILE,
+            mimetype: attachment.mimetype,
+          })),
+        });
+      }
+
+      return updatedSchedule;
+    });
+
+    return updatedSchedule;
+  }
+
+  static async deleteSchedule(id: string) {
+    const schedule = await prisma.schedule.findUniqueOrThrow({
+      where: {
+        id,
       },
-      select: {
-        id: true,
+      include: {
+        attachment: true,
       },
     });
 
-    if (attachments && attachments.length > 0) {
-      const allAttachments = await prisma.attachment.findMany({
-        where: { scheduleId: updatedSchedule.id },
-      });
-
-      for (const attachment of allAttachments) {
-        const filePath = path.join(process.cwd(), 'uploads', attachment.key);
-        console.log({ filePath });
+    for (const attachment of schedule.attachment) {
+      const filePath = path.join(process.cwd(), 'uploads', attachment.key);
+      try {
+        await fs.promises.access(filePath);
         await fs.promises.unlink(filePath);
+      } catch (err) {
+        console.error(`Error deleting file ${filePath}:`, err);
       }
-
-      await prisma.attachment.deleteMany({
-        where: { scheduleId: updatedSchedule.id },
-      });
-
-      await prisma.attachment.createMany({
-        data: attachments.map(attachment => ({
-          title: attachment.title,
-          key: attachment.key,
-          scheduleId: updatedSchedule.id,
-          type: AttachmentTypeEnum.FILE,
-          mimetype: attachment.mimetype,
-        })),
-      });
     }
 
-    return updatedSchedule;
+    return prisma.schedule.delete({
+      where: {
+        id: schedule.id,
+      },
+    });
   }
 }

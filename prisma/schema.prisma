@@ -166,8 +166,8 @@ model ScheduleTeacher {
   id         String    @id @default(uuid())
   teacherId  String
   subjectId  String
-  teacher    Teacher   @relation(fields: [teacherId], references: [id])
-  schedule   Schedule? @relation(fields: [scheduleId], references: [id])
+  teacher    Teacher   @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  schedule   Schedule? @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
   scheduleId String?
 
   createdAt DateTime @default(now()) @db.Timestamp(0)

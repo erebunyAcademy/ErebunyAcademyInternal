@@ -9,12 +9,14 @@ type DeleteModalProps = {
   selectedSchedule: Maybe<ScheduleSingleModel>;
   isDeleteModalOpen: boolean;
   closeDeleteModal: () => void;
+  actionHandler: (id: string) => void;
 };
 
 const DeleteModal: FC<DeleteModalProps> = ({
   selectedSchedule,
   isDeleteModalOpen,
   closeDeleteModal,
+  actionHandler,
 }) => {
   const t = useTranslations();
   return (
@@ -25,7 +27,7 @@ const DeleteModal: FC<DeleteModalProps> = ({
       title="schedule"
       primaryAction={() => {
         if (selectedSchedule) {
-          // mutate(selectedFaculty?.id);
+          actionHandler(selectedSchedule.id);
         }
       }}
       actionText="delete">

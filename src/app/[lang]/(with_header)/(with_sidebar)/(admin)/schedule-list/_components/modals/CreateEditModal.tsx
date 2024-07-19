@@ -15,6 +15,7 @@ import {
 } from '@chakra-ui/react';
 import { classValidatorResolver } from '@hookform/resolvers/class-validator';
 import { useMutation, useQuery } from '@tanstack/react-query';
+import dayjs from 'dayjs';
 import { useTranslations } from 'next-intl';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import { v4 as uuidv4 } from 'uuid';
@@ -43,13 +44,18 @@ const thematicInitialClass = {
   classDescriptionRow: [{ title: '', hour: '' }],
 };
 
+type FileWithLocalUrl = {
+  file: File;
+  localUrl: string;
+};
+
 const CreateEditModal: FC<CreateEditModalProps> = ({
   isModalOpen,
   closeModal,
   selectedSchedule,
 }) => {
   const t = useTranslations();
-  const [files, setFiles] = useState<Maybe<File[]>>(null);
+  const [files, setFiles] = useState<Maybe<FileWithLocalUrl[]>>(null);
 
   const {
     control,
@@ -88,15 +94,28 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
         selectedSchedule.thematicPlan.find(thematicPlan => (thematicPlan.type = 'PRACTICAL')) ||
         thematicInitialClass;
 
-      console.log({ thereoticalThematicPlan, practicalThematicPlan });
+      const attachmentWithUrls = selectedSchedule.attachment.map(attachment => ({
+        key: attachment.key,
+        mimetype: attachment.mimetype,
+        title: attachment.title || '',
+        localUrl: `/uploads/${attachment.key}`, // Assuming your files are served from the `/uploads` directory
+      }));
+
+      setFiles(
+        attachmentWithUrls.map(att => ({
+          file: new File([], att.title),
+          localUrl: att.localUrl,
+        })),
+      );
+
       reset({
         totalHours: selectedSchedule.totalHours.toString(),
         subjectId: selectedSchedule.subjectId,
         title: selectedSchedule.title,
         description: selectedSchedule.description || '',
-        startDayDate: '',
-        examDate: '',
-        endDayDate: '',
+        startDayDate: dayjs(selectedSchedule.startDayDate).format('YYYY-MM-DD'),
+        examDate: dayjs(selectedSchedule.examDate).format('YYYY-MM-DD'),
+        endDayDate: dayjs(selectedSchedule.endDayDate).format('YYYY-MM-DD'),
         isAssessment: selectedSchedule.isAssessment,
         teacherId: selectedSchedule.scheduleTeachers[0].teacherId,
         attachments: selectedSchedule.attachment.map(attachment => ({
@@ -131,12 +150,11 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
     enabled: isModalOpen,
   });
 
-  const { mutate: createSchedule } = useMutation({
-    mutationFn: ScheduleService.createSchedule,
+  const { mutate: createEditSchedule } = useMutation({
+    mutationFn: ScheduleService[selectedSchedule ? 'updateSchedule' : 'createSchedule'],
     mutationKey: ['create-schedule'],
     onSuccess() {
       reset();
-
       closeModal();
     },
   });
@@ -179,9 +197,13 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
   });
 
   const onFileSelect = (e: ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (files?.length) {
-      setFiles(Array.from(files));
+    const selectedFiles = e.target.files;
+    if (selectedFiles?.length) {
+      const fileArray = Array.from(selectedFiles).map(file => {
+        const localUrl = URL.createObjectURL(file);
+        return { file, localUrl };
+      });
+      setFiles(fileArray);
     }
   };
 
@@ -192,8 +214,7 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
   const onSubmitHandler = useCallback(
     (data: CreateEditScheduleValidation) => {
       const attachmentKeys: AttachmentValidation[] = [];
-      files?.forEach(file => {
-        console.log({ file });
+      files?.forEach(({ file }) => {
         const attachmentId = uuidv4();
         const key = `attachments/${attachmentId}/subjects/${data.subjectId}/${Date.now()}_${file.name}`;
 
@@ -217,9 +238,15 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
         data.attachments = attachmentKeys;
       }
 
-      createSchedule(data);
+      if (selectedSchedule) {
+        data.id = selectedSchedule.id;
+      }
+
+      console.log({ data });
+
+      createEditSchedule(data);
     },
-    [createSchedule, files, uploadAttachment],
+    [createEditSchedule, files, selectedSchedule, uploadAttachment],
   );
 
   const removeFile = (index: number) => {
@@ -459,9 +486,28 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
           <Box mt={3}>
             {files && (
               <Stack spacing={3}>
-                {files.map((file: File, index: number) => (
+                {files.map((fileObj, index) => (
                   <Flex key={index} alignItems="center" justifyContent="space-between">
-                    <Text>{file.name}</Text>
+                    <Text as="a" href={fileObj.localUrl} download={fileObj.file.name}>
+                      {fileObj.file.name}
+                    </Text>
+                    <IconButton
+                      size="md"
+                      colorScheme="red"
+                      aria-label="Delete file"
+                      icon={<DeleteIcon />}
+                      onClick={() => removeFile(index)}
+                      ml={2}
+                    />
+                  </Flex>
+                ))}
+              </Stack>
+            )}
+            {selectedSchedule?.attachment && (
+              <Stack spacing={3}>
+                {selectedSchedule.attachment.map((attachment, index: number) => (
+                  <Flex key={attachment.key} alignItems="center" justifyContent="space-between">
+                    <Text>{attachment.title}</Text>
                     <IconButton
                       size="md"
                       colorScheme="red"

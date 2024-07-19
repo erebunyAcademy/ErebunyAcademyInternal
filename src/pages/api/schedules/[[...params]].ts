@@ -2,7 +2,9 @@ import {
   Body,
   Catch,
   createHandler,
+  Delete,
   Get,
+  Param,
   Patch,
   Post,
   Query,
@@ -32,9 +34,17 @@ class FacultyHandler {
     return ScheduleResolver.createSchedule(input);
   }
 
-  @Patch()
-  _updateSchedule(@Body(ValidationPipe) input: CreateEditScheduleValidation) {
-    return ScheduleResolver.updateSchedule(input);
+  @Patch('/:scheduleId')
+  _updateSchedule(
+    @Param('scheduleId') scheduleId: string,
+    @Body(ValidationPipe) input: CreateEditScheduleValidation,
+  ) {
+    return ScheduleResolver.updateSchedule(scheduleId, input);
+  }
+
+  @Delete('/:scheduleId')
+  _deleteSchedule(@Param('scheduleId') scheduleId: string) {
+    return ScheduleResolver.deleteSchedule(scheduleId);
   }
 }
 

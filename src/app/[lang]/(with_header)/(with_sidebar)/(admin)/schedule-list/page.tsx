@@ -1,8 +1,9 @@
 'use client';
 import React, { useCallback, useMemo, useState } from 'react';
 import { MenuItem, useDisclosure } from '@chakra-ui/react';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { createColumnHelper, SortingState } from '@tanstack/react-table';
+import dynamic from 'next/dynamic';
 import { useTranslations } from 'next-intl';
 import { v4 as uuidv4 } from 'uuid';
 import { ScheduleService } from '@/api/services/schedule.service';
@@ -13,15 +14,15 @@ import { ITEMS_PER_PAGE } from '@/utils/constants/common';
 import { QUERY_KEY } from '@/utils/helpers/queryClient';
 import { Maybe } from '@/utils/models/common';
 import { ScheduleSingleModel } from '@/utils/models/schedule';
-import CreateEditModal from './_components/modals/CreateEditModal';
-import DeleteModal from './_components/modals/DeleteModal';
+
+const DeleteModal = dynamic(() => import('./_components/modals/DeleteModal'));
+const CreateEditModal = dynamic(() => import('./_components/modals/CreateEditModal'));
 
 export default function Schedule() {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const [selectedSchedule, setSelectedSchedule] = useState<Maybe<ScheduleSingleModel>>(null);
-
   const debouncedSearch = useDebounce(search);
   const t = useTranslations();
 
@@ -42,11 +43,10 @@ export default function Schedule() {
   } = useDisclosure({
     onClose() {
       setSelectedSchedule(null);
-      setSelectedSchedule(null);
     },
   });
 
-  const { data, isLoading, isPlaceholderData } = useQuery({
+  const { data, isLoading, isPlaceholderData, refetch } = useQuery({
     queryKey: QUERY_KEY.allTeachers(debouncedSearch, page),
     queryFn: () =>
       ScheduleService.list({
@@ -54,6 +54,14 @@ export default function Schedule() {
         limit: ITEMS_PER_PAGE,
         search: debouncedSearch,
       }),
+  });
+
+  const { mutate: deleteScheduleMutation } = useMutation({
+    mutationFn: ScheduleService.deleteScheduleById,
+    onSuccess() {
+      closeDeleteModal();
+      refetch();
+    },
   });
 
   const pageCount = useMemo(() => {
@@ -107,7 +115,12 @@ export default function Schedule() {
             }}>
             {t('edit')}
           </MenuItem>
-          <MenuItem color="red" onClick={openDeleteModal}>
+          <MenuItem
+            color="red"
+            onClick={() => {
+              setSelectedSchedule(row.original);
+              openDeleteModal();
+            }}>
             {t('delete')}
           </MenuItem>
         </ActionButtons>
@@ -142,17 +155,22 @@ export default function Schedule() {
         addNew={openCreateEditModal}
       />
 
-      <CreateEditModal
-        isModalOpen={isCreateEditModalOpen}
-        closeModal={closeCreateEditModal}
-        selectedSchedule={selectedSchedule}
-      />
+      {isCreateEditModalOpen && (
+        <CreateEditModal
+          isModalOpen={isCreateEditModalOpen}
+          closeModal={closeCreateEditModal}
+          selectedSchedule={selectedSchedule}
+        />
+      )}
 
-      <DeleteModal
-        selectedSchedule={selectedSchedule}
-        isDeleteModalOpen={isDeleteModalOpen}
-        closeDeleteModal={closeDeleteModal}
-      />
+      {isDeleteModalOpen && (
+        <DeleteModal
+          selectedSchedule={selectedSchedule}
+          isDeleteModalOpen={isDeleteModalOpen}
+          closeDeleteModal={closeDeleteModal}
+          actionHandler={deleteScheduleMutation}
+        />
+      )}
     </>
   );
 }
