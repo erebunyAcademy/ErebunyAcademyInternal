@@ -100,6 +100,45 @@ export default function StudentList() {
   const columnHelper = createColumnHelper<StudentModel>();
 
   const columns = [
+    columnHelper.accessor('id', {
+      id: uuidv4(),
+      cell: ({ row }) => (
+        <ActionButtons>
+          {!row.original.isAdminVerified && (
+            <>
+              <MenuItem
+                color="green"
+                disabled={row.original.isAdminVerified}
+                onClick={() => {
+                  confirmUserById(row.original.id);
+                }}>
+                {t('confirm')}
+              </MenuItem>
+              <MenuItem
+                color="red"
+                onClick={() => {
+                  openStudentRejectModal();
+                  setSelectedStudent(row.original);
+                }}>
+                {t('reject')}
+              </MenuItem>
+            </>
+          )}
+          <MenuItem
+            color="green"
+            onClick={() => {
+              openStudentEditModal();
+              setSelectedStudent(row.original);
+              if (row.original.student?.courseGroup?.id) {
+                setValue('courseGroupId', row.original.student.courseGroup.id);
+              }
+            }}>
+            {t('edit')}
+          </MenuItem>
+        </ActionButtons>
+      ),
+      header: t('actions'),
+    }),
     columnHelper.accessor('attachment', {
       id: uuidv4(),
       cell: info => {
@@ -178,45 +217,6 @@ export default function StudentList() {
         return currentDate.format('YYYY-MM-DD');
       },
       header: t('createdAt'),
-    }),
-    columnHelper.accessor('id', {
-      id: uuidv4(),
-      cell: ({ row }) => (
-        <ActionButtons>
-          {!row.original.isAdminVerified && (
-            <>
-              <MenuItem
-                color="green"
-                disabled={row.original.isAdminVerified}
-                onClick={() => {
-                  confirmUserById(row.original.id);
-                }}>
-                {t('confirm')}
-              </MenuItem>
-              <MenuItem
-                color="red"
-                onClick={() => {
-                  openStudentRejectModal();
-                  setSelectedStudent(row.original);
-                }}>
-                {t('reject')}
-              </MenuItem>
-            </>
-          )}
-          <MenuItem
-            color="green"
-            onClick={() => {
-              openStudentEditModal();
-              setSelectedStudent(row.original);
-              if (row.original.student?.courseGroup?.id) {
-                setValue('courseGroupId', row.original.student.courseGroup.id);
-              }
-            }}>
-            {t('edit')}
-          </MenuItem>
-        </ActionButtons>
-      ),
-      header: t('actions'),
     }),
   ];
 

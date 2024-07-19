@@ -1,4 +1,13 @@
-import { Body, Catch, createHandler, Get, Post, Query, ValidationPipe } from 'next-api-decorators';
+import {
+  Body,
+  Catch,
+  createHandler,
+  Get,
+  Patch,
+  Post,
+  Query,
+  ValidationPipe,
+} from 'next-api-decorators';
 import { SortingType } from '@/api/types/common';
 import { exceptionHandler } from '@/lib/prisma/error';
 import { AdminGuard } from '@/lib/prisma/guards/admin';
@@ -20,8 +29,12 @@ class FacultyHandler {
 
   @Post()
   _createSchedule(@Body(ValidationPipe) input: CreateEditScheduleValidation) {
-    console.log(input.attachments, '--------------------');
     return ScheduleResolver.createSchedule(input);
+  }
+
+  @Patch()
+  _updateSchedule(@Body(ValidationPipe) input: CreateEditScheduleValidation) {
+    return ScheduleResolver.updateSchedule(input);
   }
 }
 
