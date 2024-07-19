@@ -1,45 +1,38 @@
 'use client';
 import React, { useCallback, useMemo, useState } from 'react';
 import { MenuItem, useDisclosure } from '@chakra-ui/react';
-import { classValidatorResolver } from '@hookform/resolvers/class-validator';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { createColumnHelper, SortingState } from '@tanstack/react-table';
+import dynamic from 'next/dynamic';
 import { useTranslations } from 'next-intl';
-import { useForm } from 'react-hook-form';
 import { v4 as uuidv4 } from 'uuid';
-import { FacultyService } from '@/api/services/faculty.service';
+import { ScheduleService } from '@/api/services/schedule.service';
 import ActionButtons from '@/components/molecules/ActionButtons';
 import SearchTable from '@/components/organisms/SearchTable';
 import useDebounce from '@/hooks/useDebounce';
 import { ITEMS_PER_PAGE } from '@/utils/constants/common';
 import { QUERY_KEY } from '@/utils/helpers/queryClient';
 import { Maybe } from '@/utils/models/common';
-import { FacultyModel } from '@/utils/models/faculty';
-import { CreateEditFacultyValidation } from '@/utils/validation/faculty';
-import CreateEditModal from './_components/modals/CreateEditModal';
-import DeleteModal from './_components/modals/DeleteModal';
+import { ScheduleSingleModel } from '@/utils/models/schedule';
 
-const resolver = classValidatorResolver(CreateEditFacultyValidation);
+const DeleteModal = dynamic(() => import('./_components/modals/DeleteModal'));
+const CreateEditModal = dynamic(() => import('./_components/modals/CreateEditModal'));
 
-const Faculty = () => {
+export default function Schedule() {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
+  const [selectedSchedule, setSelectedSchedule] = useState<Maybe<ScheduleSingleModel>>(null);
   const debouncedSearch = useDebounce(search);
-  const [selectedFaculty, setSelectedFaculty] = useState<Maybe<FacultyModel>>(null);
   const t = useTranslations();
 
   const {
-    control,
-    handleSubmit,
-    reset,
-    setValue,
-    formState: { errors, isValid },
-  } = useForm<CreateEditFacultyValidation>({
-    resolver,
-    defaultValues: {
-      title: '',
-      description: '',
+    isOpen: isDeleteModalOpen,
+    onOpen: openDeleteModal,
+    onClose: closeDeleteModal,
+  } = useDisclosure({
+    onClose() {
+      setSelectedSchedule(null);
     },
   });
 
@@ -49,29 +42,26 @@ const Faculty = () => {
     onClose: closeCreateEditModal,
   } = useDisclosure({
     onClose() {
-      reset();
-      setSelectedFaculty(null);
-    },
-  });
-
-  const {
-    isOpen: isDeleteModalOpen,
-    onOpen: openDeleteModal,
-    onClose: closeDeleteModal,
-  } = useDisclosure({
-    onClose() {
-      setSelectedFaculty(null);
+      setSelectedSchedule(null);
     },
   });
 
   const { data, isLoading, isPlaceholderData, refetch } = useQuery({
-    queryKey: QUERY_KEY.allFaculties(debouncedSearch, page),
+    queryKey: QUERY_KEY.allTeachers(debouncedSearch, page),
     queryFn: () =>
-      FacultyService.facultyList({
+      ScheduleService.list({
         offset: page === 1 ? 0 : (page - 1) * ITEMS_PER_PAGE,
         limit: ITEMS_PER_PAGE,
         search: debouncedSearch,
       }),
+  });
+
+  const { mutate: deleteScheduleMutation } = useMutation({
+    mutationFn: ScheduleService.deleteScheduleById,
+    onSuccess() {
+      closeDeleteModal();
+      refetch();
+    },
   });
 
   const pageCount = useMemo(() => {
@@ -90,7 +80,8 @@ const Faculty = () => {
     [page],
   );
 
-  const columnHelper = createColumnHelper<FacultyModel>();
+  const columnHelper = createColumnHelper<ScheduleSingleModel>();
+
   const columns = [
     columnHelper.accessor('title', {
       id: uuidv4(),
@@ -102,6 +93,16 @@ const Faculty = () => {
       cell: info => info.getValue(),
       header: t('description'),
     }),
+    columnHelper.accessor('totalHours', {
+      id: uuidv4(),
+      cell: info => info.getValue(),
+      header: t('totalHours'),
+    }),
+    columnHelper.accessor('isAssessment', {
+      id: uuidv4(),
+      cell: info => info.getValue(),
+      header: t('isAssessment'),
+    }),
     columnHelper.accessor('id', {
       id: uuidv4(),
       cell: ({ row }) => (
@@ -109,9 +110,7 @@ const Faculty = () => {
           <MenuItem
             color="green"
             onClick={() => {
-              setSelectedFaculty(row.original);
-              setValue('title', row.original.title || '');
-              setValue('description', row.original.description || '');
+              setSelectedSchedule(row.original);
               openCreateEditModal();
             }}>
             {t('edit')}
@@ -119,7 +118,7 @@ const Faculty = () => {
           <MenuItem
             color="red"
             onClick={() => {
-              setSelectedFaculty(row.original);
+              setSelectedSchedule(row.original);
               openDeleteModal();
             }}>
             {t('delete')}
@@ -130,16 +129,12 @@ const Faculty = () => {
     }),
   ];
 
-  const addNewFacultyHandler = useCallback(() => {
-    openCreateEditModal();
-  }, [openCreateEditModal]);
-
   return (
     <>
       <SearchTable
-        title="facultyList"
+        title="scheduleList"
         isLoading={isLoading}
-        data={data?.faculties || []}
+        data={data?.schedules || []}
         count={data?.count || 0}
         // @ts-ignore
         columns={columns}
@@ -157,28 +152,25 @@ const Faculty = () => {
         )}
         fetchNextPage={useCallback(() => setPage(prev => ++prev), [])}
         fetchPreviousPage={useCallback(() => setPage(prev => --prev), [])}
-        addNew={addNewFacultyHandler}
+        addNew={openCreateEditModal}
       />
 
-      <CreateEditModal
-        selectedFaculty={selectedFaculty}
-        isCreateEditModalOpen={isCreateEditModalOpen}
-        closeCreateEditModal={closeCreateEditModal}
-        refetch={refetch}
-        reset={reset}
-        isValid={isValid}
-        errors={errors}
-        handleSubmit={handleSubmit}
-        control={control}
-      />
-      <DeleteModal
-        selectedFaculty={selectedFaculty}
-        isDeleteModalOpen={isDeleteModalOpen}
-        closeDeleteModal={closeDeleteModal}
-        refetch={refetch}
-      />
+      {isCreateEditModalOpen && (
+        <CreateEditModal
+          isModalOpen={isCreateEditModalOpen}
+          closeModal={closeCreateEditModal}
+          selectedSchedule={selectedSchedule}
+        />
+      )}
+
+      {isDeleteModalOpen && (
+        <DeleteModal
+          selectedSchedule={selectedSchedule}
+          isDeleteModalOpen={isDeleteModalOpen}
+          closeDeleteModal={closeDeleteModal}
+          actionHandler={deleteScheduleMutation}
+        />
+      )}
     </>
   );
-};
-
-export default Faculty;
+}

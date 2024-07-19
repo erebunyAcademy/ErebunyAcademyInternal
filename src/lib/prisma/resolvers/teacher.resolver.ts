@@ -48,6 +48,23 @@ export class TeacherResolver {
       users,
     }));
   }
+
+  static getTeachers() {
+    return prisma.user.findMany({
+      where: {
+        role: UserRoleEnum.TEACHER,
+      },
+      select: {
+        firstName: true,
+        lastName: true,
+        teacher: {
+          select: {
+            id: true,
+          },
+        },
+      },
+    });
+  }
   static getTeacherById(id: string) {
     return prisma.student
       .findUnique({

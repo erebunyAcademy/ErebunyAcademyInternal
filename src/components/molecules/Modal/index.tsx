@@ -17,7 +17,7 @@ type ModalProps = {
   title?: string;
   primaryAction?: () => void;
   actionText?: string;
-  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | '6xl' | 'full';
+  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | '6xl' | '7xl' | 'full';
   isDeleteVariant?: boolean;
   isDisabled?: boolean;
 };

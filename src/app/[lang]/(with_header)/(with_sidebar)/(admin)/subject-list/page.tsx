@@ -3,16 +3,14 @@ import { useCallback, useMemo, useState } from 'react';
 import { Button, MenuItem, useDisclosure } from '@chakra-ui/react';
 import { classValidatorResolver } from '@hookform/resolvers/class-validator';
 import { LanguageTypeEnum } from '@prisma/client';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { createColumnHelper, SortingState } from '@tanstack/react-table';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
-import { Controller, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { v4 as uuidv4 } from 'uuid';
 import { SubjectService } from '@/api/services/subject.service';
-import { FormInput } from '@/components/atoms';
 import ActionButtons from '@/components/molecules/ActionButtons';
-import Modal from '@/components/molecules/Modal';
 import SearchTable from '@/components/organisms/SearchTable';
 import useDebounce from '@/hooks/useDebounce';
 import { Locale } from '@/i18n';
@@ -23,6 +21,8 @@ import { QUERY_KEY } from '@/utils/helpers/queryClient';
 import { Maybe } from '@/utils/models/common';
 import { SubjectModel } from '@/utils/models/subject';
 import { CreateEditSubjectValidation } from '@/utils/validation/subject';
+import CreateEditModal from './_components/modals/CreateEditModal';
+import DeleteModal from './_components/modals/DeleteModal';
 
 const resolver = classValidatorResolver(CreateEditSubjectValidation);
 
@@ -38,13 +38,13 @@ const Subject = ({ params }: { params: { lang: Locale } }) => {
     control,
     handleSubmit,
     reset,
-    setValue,
     formState: { errors, isValid },
   } = useForm<CreateEditSubjectValidation>({
     resolver,
     defaultValues: {
       title: '',
       description: '',
+      courseId: '',
     },
   });
 
@@ -77,32 +77,6 @@ const Subject = ({ params }: { params: { lang: Locale } }) => {
         limit: ITEMS_PER_PAGE,
         search: debouncedSearch,
       }),
-  });
-
-  const { mutate: createFaculty } = useMutation({
-    mutationFn: SubjectService.createSubject,
-    onSuccess() {
-      refetch();
-      reset();
-      closeCreateEditModal();
-    },
-  });
-
-  const { mutate: updateFaculty } = useMutation({
-    mutationFn: SubjectService.updateSubject,
-    onSuccess() {
-      refetch();
-      reset();
-      closeCreateEditModal();
-    },
-  });
-
-  const { mutate } = useMutation({
-    mutationFn: SubjectService.deleteSubject,
-    onSuccess() {
-      closeDeleteModal();
-      refetch();
-    },
   });
 
   const pageCount = useMemo(() => {
@@ -153,8 +127,12 @@ const Subject = ({ params }: { params: { lang: Locale } }) => {
             color="green"
             onClick={() => {
               setSelectedSubject(row.original);
-              setValue('title', row.original.title || '');
-              setValue('description', row.original.description || '');
+              reset({
+                title: row.original.title,
+                description: row.original.description || '',
+                courseId: row.original.courseSubjects[0].course.id,
+                id: row.original.id,
+              });
               openCreateEditModal();
             }}>
             {t('edit')}
@@ -176,17 +154,6 @@ const Subject = ({ params }: { params: { lang: Locale } }) => {
   const addNewFacultyHandler = useCallback(() => {
     openCreateEditModal();
   }, [openCreateEditModal]);
-
-  const onSubmitHandler = useCallback(
-    (data: CreateEditSubjectValidation) => {
-      if (selectedSubject) {
-        updateFaculty({ data, id: selectedSubject.id });
-      } else {
-        createFaculty(data);
-      }
-    },
-    [createFaculty, selectedSubject, updateFaculty],
-  );
 
   return (
     <>
@@ -214,60 +181,24 @@ const Subject = ({ params }: { params: { lang: Locale } }) => {
         addNew={addNewFacultyHandler}
       />
 
-      <Modal
-        isOpen={isCreateEditModalOpen}
-        onClose={closeCreateEditModal}
-        title={'subject'}
-        primaryAction={handleSubmit(onSubmitHandler)}
-        isDisabled={!isValid}
-        actionText={selectedSubject ? 'edit' : 'create'}>
-        <Controller
-          name="title"
-          control={control}
-          render={({ field: { onChange, value, name } }) => (
-            <FormInput
-              isRequired
-              name={name}
-              type="text"
-              formLabelName={t('subjectName')}
-              value={value}
-              placeholder="enterTitle"
-              handleInputChange={onChange}
-              isInvalid={!!errors.title?.message}
-              formErrorMessage={errors.title?.message}
-            />
-          )}
-        />
-        <Controller
-          name="description"
-          control={control}
-          render={({ field: { onChange, value, name } }) => (
-            <FormInput
-              name={name}
-              type="text"
-              formLabelName={t('subjectDescription')}
-              value={value}
-              placeholder="enterDescription"
-              handleInputChange={onChange}
-              isInvalid={!!errors.description?.message}
-              formErrorMessage={errors.description?.message}
-            />
-          )}
-        />
-      </Modal>
-      <Modal
-        isOpen={isDeleteModalOpen}
-        isDeleteVariant
-        onClose={closeDeleteModal}
-        title={'subject'}
-        primaryAction={() => {
-          if (selectedSubject) {
-            mutate(selectedSubject?.id);
-          }
-        }}
-        actionText={'delete'}>
-        {t('deleteSubjectQuestion')}
-      </Modal>
+      <CreateEditModal
+        isCreateEditModalOpen={isCreateEditModalOpen}
+        closeCreateEditModal={closeCreateEditModal}
+        refetch={refetch}
+        reset={reset}
+        selectedSubject={selectedSubject}
+        errors={errors}
+        isValid={isValid}
+        handleSubmit={handleSubmit}
+        control={control}
+      />
+
+      <DeleteModal
+        closeDeleteModal={closeDeleteModal}
+        refetch={refetch}
+        isDeleteModalOpen={isDeleteModalOpen}
+        selectedSubject={selectedSubject}
+      />
     </>
   );
 };

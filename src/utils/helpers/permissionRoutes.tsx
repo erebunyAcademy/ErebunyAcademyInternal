@@ -8,6 +8,7 @@ import ExamsIcon from '@/icons/exam_icon.svg';
 import FacultiesIcon from '@/icons/faculty_icon.svg';
 import LogoutIcon from '@/icons/log-out.svg';
 import ProfileIcon from '@/icons/profile.svg';
+import ScheduleIcon from '@/icons/schedule.svg';
 import StudentIcon from '@/icons/student_icon.svg';
 import SubjectsIcon from '@/icons/subjects_icon.svg';
 import TeacherIcon from '@/icons/teacher_icon.svg';
@@ -18,6 +19,7 @@ import {
   ROUTE_EXAMS,
   ROUTE_FACULTIES,
   ROUTE_PROFILE,
+  ROUTE_SCHEDULES,
   ROUTE_STUDENT_EXAM_LIST,
   ROUTE_STUDENTS,
   ROUTE_SUBJECTS,
@@ -59,6 +61,7 @@ export const linkItems: LinkItemsFunction = (user: Maybe<User>) => {
         { id: 6, name: 'exams', icon: <ExamsIcon />, href: ROUTE_EXAMS },
         { id: 7, name: 'teachers', icon: <TeacherIcon />, href: ROUTE_TEACHERS },
         { id: 8, name: 'subjects', icon: <SubjectsIcon />, href: ROUTE_SUBJECTS },
+        { id: 8, name: 'schedules', icon: <ScheduleIcon />, href: ROUTE_SCHEDULES },
         commonLinks[2],
       ];
     case UserRoleEnum.STUDENT:

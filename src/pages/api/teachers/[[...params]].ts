@@ -16,6 +16,12 @@ class TeachersHandler {
   ) {
     return TeacherResolver.list(+skip, +take, search, sorting);
   }
+
+  @Get()
+  @AdminGuard()
+  _teacherData() {
+    return TeacherResolver.getTeachers();
+  }
 }
 
 export default createHandler(TeachersHandler);
