@@ -61,7 +61,7 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
     control,
     handleSubmit,
     reset,
-    formState: { errors },
+    formState: { errors, isValid },
   } = useForm<CreateEditScheduleValidation>({
     resolver,
     defaultValues: {
@@ -75,11 +75,7 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
       isAssessment: false,
       teacherId: '',
       attachments: [],
-      links: [
-        {
-          link: '',
-        },
-      ],
+      links: [],
       theoreticalClass: thematicInitialClass,
       practicalClass: thematicInitialClass,
     },
@@ -98,7 +94,7 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
         key: attachment.key,
         mimetype: attachment.mimetype,
         title: attachment.title || '',
-        localUrl: `/uploads/${attachment.key}`, // Assuming your files are served from the `/uploads` directory
+        localUrl: attachment.key, // Assuming your files are served from the `/uploads` directory
       }));
 
       setFiles(
@@ -257,6 +253,7 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
     <Modal
       isOpen={isModalOpen}
       onClose={closeModal}
+      isDisabled={!isValid}
       title="schedule"
       size="7xl"
       primaryAction={handleSubmit(onSubmitHandler)}
@@ -481,6 +478,7 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
             {t('addLink')}
           </Button>
         </Box>
+        {/* /api/readfile?path=uploads/${existingAvatar.key} */}
 
         <Flex flexDirection="column" gap={5} alignItems={{ base: 'flex-start', md: 'flex-end' }}>
           <Box mt={3}>
@@ -488,26 +486,12 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
               <Stack spacing={3}>
                 {files.map((fileObj, index) => (
                   <Flex key={index} alignItems="center" justifyContent="space-between">
-                    <Text as="a" href={fileObj.localUrl} download={fileObj.file.name}>
+                    <Text
+                      as="a"
+                      href={`/api/download?path=uploads/${fileObj.localUrl}`}
+                      target="_blank">
                       {fileObj.file.name}
                     </Text>
-                    <IconButton
-                      size="md"
-                      colorScheme="red"
-                      aria-label="Delete file"
-                      icon={<DeleteIcon />}
-                      onClick={() => removeFile(index)}
-                      ml={2}
-                    />
-                  </Flex>
-                ))}
-              </Stack>
-            )}
-            {selectedSchedule?.attachment && (
-              <Stack spacing={3}>
-                {selectedSchedule.attachment.map((attachment, index: number) => (
-                  <Flex key={attachment.key} alignItems="center" justifyContent="space-between">
-                    <Text>{attachment.title}</Text>
                     <IconButton
                       size="md"
                       colorScheme="red"
