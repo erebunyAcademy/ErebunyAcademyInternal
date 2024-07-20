@@ -122,7 +122,7 @@
   "deleteAnswer": "Ջնջել պատասխանը",
   "submitExam": "Հանձնել քննությունը",
   "createExam": "Ստեղծել քննություն",
-  "submitTestQuestions": "Հանձնել թեստի հարցերը",
+  "submitTestQuestions": "Պահպանել թեստի հարցերը",
   "uploadExcelFile": "Վերբեռնել excel ֆայլը",
   "selectStudentsForExam": "Ընտրել ուսանողներին քննությանը մասնակցելու համար",
   "selectTests": "Ընտրել թեստեր",
@@ -172,7 +172,7 @@
   "invalidNumber": "Վավեր թիվ չէ",
   "passwordDontMatch": "Գաղտնաբառերը չեն համընկնում",
   "invalidPassword": "Գաղտնաբառը վավեր չէ",
-  "contactCollegeRepresentative": "Խնդրում ենք կապ հաստատել ակադեմայի ներկայացուցչի հետ՝ ձեր հաշիվը հաստատելու համար",
+  "contactCollegeRepresentative": Խնդրում եմ սպասեք հաստատման ԷԲԱՀ ի կողմից։ Դուք կստանաք email հաղորդագրություն։",
   "successfullySignedUp": "Դուք հաջողությամբ գրանցվել եք",
   "selectYourFile": "Խնդրում ենք ընտրել ձեր ֆայլը",
   "selectExcelTYpe": "Խնդրում ենք ընտրել միայն excel ֆայլերի տեսակները",
@@ -213,9 +213,9 @@
   "testQuestions": "Թեստային հարցեր",
   "seeStudents": "Տեսնել մասնակիցներին",
 
-  "scheduleList": "Ժամանակացույցի ցանկ",
-  "schedules": "Ժամանակացույցեր",
-  "schedule": "Ժամանակացույց",
+  "scheduleList": "Դասացուցակի ցանկ",
+  "schedules": "Դասացուցակներ",
+  "schedule": "Դասացուցակ",
   "addPracticalClass": "Ավելացնել գործնական դաս",
   "practicalClasses": "Գործնական դասեր",
   "enterHours": "Մուտքագրեք ժամերը",
@@ -236,5 +236,5 @@
   "examDay": "Քննության օր",
   "totalHours": "Ընդհանուր ժամեր",
   "teacher": "Ուսուցիչ",
-  "deleteScheduleQuestion": "Վստա՞հ եք, որ ցանկանում եք հեռացնել այս ժամանակացույցը:"
+  "deleteScheduleQuestion": "Վստա՞հ եք, որ ցանկանում եք հեռացնել այս դասացուցակը:"
 }
