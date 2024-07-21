@@ -1,5 +1,5 @@
 'use client';
-import React, { ChangeEvent, FC, useCallback, useEffect, useState } from 'react';
+import React, { ChangeEvent, FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { AddIcon, DeleteIcon } from '@chakra-ui/icons';
 import {
   Box,
@@ -165,10 +165,14 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
     title: `${subject.title} (${subject.course?.title})`,
   }));
 
-  const teacherListData = (teachersQueryData || [])?.map(teacher => ({
-    id: teacher.teacher?.id,
-    title: `${teacher.firstName} ${teacher.lastName}`,
-  }));
+  const teacherListData = useMemo(
+    () =>
+      (teachersQueryData || [])?.map(teacher => ({
+        id: teacher.teacher?.id,
+        title: `${teacher.firstName} ${teacher.lastName}`,
+      })),
+    [teachersQueryData],
+  );
 
   const {
     fields: theoreticalClassFields,
