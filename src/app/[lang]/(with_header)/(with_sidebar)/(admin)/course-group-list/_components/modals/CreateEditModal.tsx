@@ -1,8 +1,9 @@
 'use client';
-import React, { FC, useCallback } from 'react';
+import React, { FC, useCallback, useEffect } from 'react';
+import { classValidatorResolver } from '@hookform/resolvers/class-validator';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useTranslations } from 'next-intl';
-import { Control, Controller, FieldErrors } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { CourseGroupService } from '@/api/services/course-group.service';
 import { CourseService } from '@/api/services/courses.service';
 import { FormInput, SelectLabel } from '@/components/atoms';
@@ -11,18 +12,13 @@ import { GetCoursesListModel } from '@/utils/models/course';
 import { CourseGroupSingleModel } from '@/utils/models/courseGroup';
 import { CreateEditCourseGroupValidation } from '@/utils/validation/courseGroup';
 
+const resolver = classValidatorResolver(CreateEditCourseGroupValidation);
+
 type CreateEditModalProps = {
   selectedCourseGroup: CourseGroupSingleModel | null;
   isCreateEditModalOpen: boolean;
   closeCreateEditModal: () => void;
   refetch: () => void;
-  reset: () => void;
-  isValid: boolean;
-  handleSubmit: (
-    onSubmit: (data: CreateEditCourseGroupValidation) => void,
-  ) => (e?: React.BaseSyntheticEvent) => Promise<void>;
-  errors: FieldErrors<CreateEditCourseGroupValidation>;
-  control: Control<CreateEditCourseGroupValidation>;
 };
 
 const CreateEditModal: FC<CreateEditModalProps> = ({
@@ -30,13 +26,32 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
   isCreateEditModalOpen,
   closeCreateEditModal,
   refetch,
-  reset,
-  isValid,
-  handleSubmit,
-  errors,
-  control,
 }) => {
   const t = useTranslations();
+
+  const {
+    control,
+    handleSubmit,
+    reset,
+    formState: { errors, isValid },
+  } = useForm<CreateEditCourseGroupValidation>({
+    resolver,
+    defaultValues: {
+      title: '',
+      description: '',
+      courseId: '',
+    },
+  });
+
+  useEffect(() => {
+    if (selectedCourseGroup) {
+      reset({
+        title: selectedCourseGroup.title,
+        description: selectedCourseGroup.description || '',
+        courseId: selectedCourseGroup.course?.id,
+      });
+    }
+  }, [selectedCourseGroup, reset]);
 
   const { data: courseQueryData } = useQuery<GetCoursesListModel>({
     queryKey: ['course'],
