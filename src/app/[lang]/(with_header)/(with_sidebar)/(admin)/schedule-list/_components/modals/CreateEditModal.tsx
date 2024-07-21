@@ -160,6 +160,11 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
     queryFn: SubjectService.list,
   });
 
+  const subjectCourseNameList = (subjectList || []).map(subject => ({
+    id: subject.id,
+    title: `${subject.title} (${subject.course?.title})`,
+  }));
+
   const teacherListData = (teachersQueryData || [])?.map(teacher => ({
     id: teacher.teacher?.id,
     title: `${teacher.firstName} ${teacher.lastName}`,
@@ -210,6 +215,7 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
   const onSubmitHandler = useCallback(
     (data: CreateEditScheduleValidation) => {
       const attachmentKeys: AttachmentValidation[] = [];
+
       files?.forEach(({ file }) => {
         const attachmentId = uuidv4();
         const key = `attachments/${attachmentId}/subjects/${data.subjectId}/${Date.now()}_${file.name}`;
@@ -230,7 +236,15 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
         });
       });
 
-      if ((files || [])?.length > 0) {
+      console.log(data.attachments);
+
+      if (
+        selectedSchedule?.attachment &&
+        selectedSchedule?.attachment.length > 0 &&
+        files?.length === 0
+      ) {
+        data.attachments = [];
+      } else if ((files || [])?.length > 0) {
         data.attachments = attachmentKeys;
       }
 
@@ -238,15 +252,13 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
         data.id = selectedSchedule.id;
       }
 
-      console.log({ data });
-
       createEditSchedule(data);
     },
     [createEditSchedule, files, selectedSchedule, uploadAttachment],
   );
 
-  const removeFile = (index: number) => {
-    setFiles(prevFiles => prevFiles?.filter((_, i) => i !== index) || null);
+  const removeFile = (localUrl: string) => {
+    setFiles(prevFiles => prevFiles?.filter(file => file.localUrl !== localUrl) || null);
   };
 
   return (
@@ -257,7 +269,6 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
       title="schedule"
       size="7xl"
       primaryAction={handleSubmit(onSubmitHandler)}
-      // isDisabled={!isValid}
       actionText={selectedSchedule ? 'edit' : 'create'}>
       <Flex gap={5} flexDirection={{ base: 'column', md: 'row' }}>
         <Controller
@@ -400,7 +411,7 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
               <SelectLabel
                 isRequired
                 name={name}
-                options={subjectList || []}
+                options={subjectCourseNameList}
                 labelName="selectSubject"
                 valueLabel="id"
                 nameLabel="title"
@@ -493,7 +504,7 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
                       colorScheme="red"
                       aria-label="Delete file"
                       icon={<DeleteIcon />}
-                      onClick={() => removeFile(index)}
+                      onClick={() => removeFile(fileObj.localUrl)}
                       ml={2}
                     />
                   </Flex>

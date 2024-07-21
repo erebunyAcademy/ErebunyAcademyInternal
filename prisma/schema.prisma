@@ -86,29 +86,16 @@ model Faculty {
   Exam      Exam[]
 }
 
-model CourseSubject {
-  id        String  @id @default(uuid())
-  courseId  String
-  subjectId String
-  course    Course  @relation(fields: [courseId], references: [id])
-  subject   Subject @relation(fields: [subjectId], references: [id])
-
-  createdAt DateTime @default(now()) @db.Timestamp(0)
-  updatedAt DateTime @updatedAt @db.Timestamp(0)
-
-  @@unique([courseId, subjectId], name: "courseSubjectId")
-}
-
 model Course {
-  id             String          @id @default(uuid())
-  title          String          @db.VarChar(60)
-  description    String?         @db.VarChar(60)
-  groups         CourseGroup[]
-  courseSubjects CourseSubject[]
-  faculty        Faculty?        @relation(fields: [facultyId], references: [id], onDelete: Cascade)
-  facultyId      String?
-  students       Student[]
-  exams          Exam[]
+  id          String        @id @default(uuid())
+  title       String        @db.VarChar(60)
+  description String?       @db.VarChar(60)
+  groups      CourseGroup[]
+  subjects    Subject[]
+  faculty     Faculty?      @relation(fields: [facultyId], references: [id], onDelete: Cascade)
+  facultyId   String?
+  students    Student[]
+  exams       Exam[]
 
   createdAt DateTime @default(now()) @db.Timestamp(0)
   updatedAt DateTime @updatedAt @db.Timestamp(0)
@@ -131,12 +118,13 @@ model Subject {
   id             String           @id @default(uuid())
   title          String           @db.VarChar(60)
   description    String?          @db.VarChar(60)
-  courseSubjects CourseSubject[]
   subjectTeacher SubjectTeacher[]
   attachments    Attachment[]
   testQuestions  TestQuestion[]
   exam           Exam[]
   schedule       Schedule[]
+  course         Course?          @relation(fields: [courseId], references: [id])
+  courseId       String?
 
   createdAt DateTime @default(now()) @db.Timestamp(0)
   updatedAt DateTime @updatedAt @db.Timestamp(0)
@@ -146,7 +134,7 @@ model Schedule {
   id               String            @id @default(uuid())
   title            String
   description      String?
-  subject          Subject           @relation(fields: [subjectId], references: [id])
+  subject          Subject           @relation(fields: [subjectId], references: [id], onDelete: Cascade)
   totalHours       Float
   startDayDate     DateTime
   endDayDate       DateTime
@@ -219,7 +207,7 @@ model Attachment {
   subjectId   String?
   subject     Subject?           @relation(fields: [subjectId], references: [id], onDelete: Cascade)
   user        User?              @relation(fields: [userId], references: [id], onDelete: Cascade)
-  mimetype    String             @db.VarChar(60)
+  mimetype    String             @db.Text
   userId      String?
   type        AttachmentTypeEnum
   schedule    Schedule?          @relation(fields: [scheduleId], references: [id])

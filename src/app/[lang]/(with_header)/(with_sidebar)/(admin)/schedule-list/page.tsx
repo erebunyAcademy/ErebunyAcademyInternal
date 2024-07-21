@@ -26,26 +26,6 @@ export default function Schedule() {
   const debouncedSearch = useDebounce(search);
   const t = useTranslations();
 
-  const {
-    isOpen: isDeleteModalOpen,
-    onOpen: openDeleteModal,
-    onClose: closeDeleteModal,
-  } = useDisclosure({
-    onClose() {
-      setSelectedSchedule(null);
-    },
-  });
-
-  const {
-    isOpen: isCreateEditModalOpen,
-    onOpen: openCreateEditModal,
-    onClose: closeCreateEditModal,
-  } = useDisclosure({
-    onClose() {
-      setSelectedSchedule(null);
-    },
-  });
-
   const { data, isLoading, isPlaceholderData, refetch } = useQuery({
     queryKey: QUERY_KEY.allTeachers(debouncedSearch, page),
     queryFn: () =>
@@ -56,11 +36,32 @@ export default function Schedule() {
       }),
   });
 
+  const {
+    isOpen: isDeleteModalOpen,
+    onOpen: openDeleteModal,
+    onClose: closeDeleteModal,
+  } = useDisclosure({
+    onClose() {
+      refetch();
+      setSelectedSchedule(null);
+    },
+  });
+
+  const {
+    isOpen: isCreateEditModalOpen,
+    onOpen: openCreateEditModal,
+    onClose: closeCreateEditModal,
+  } = useDisclosure({
+    onClose() {
+      refetch();
+      setSelectedSchedule(null);
+    },
+  });
+
   const { mutate: deleteScheduleMutation } = useMutation({
     mutationFn: ScheduleService.deleteScheduleById,
     onSuccess() {
       closeDeleteModal();
-      refetch();
     },
   });
 

@@ -130,7 +130,7 @@ const Subject = ({ params }: { params: { lang: Locale } }) => {
               reset({
                 title: row.original.title,
                 description: row.original.description || '',
-                courseId: row.original.courseSubjects[0].course.id,
+                courseId: row.original.course?.id,
                 id: row.original.id,
               });
               openCreateEditModal();

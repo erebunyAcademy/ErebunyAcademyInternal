@@ -144,6 +144,12 @@ export class ScheduleResolver {
       attachments,
     } = data;
 
+    const schedule = await prisma.schedule.findUniqueOrThrow({
+      where: {
+        id,
+      },
+    });
+
     const thematicPlans = [
       {
         totalHours: +practicalClass.totalHours,
@@ -167,20 +173,19 @@ export class ScheduleResolver {
       },
     ];
 
-    // Start a transaction
     const updatedSchedule = await prisma.$transaction(async prisma => {
-      // Delete existing thematicPlan and scheduleTeachers records
       await prisma.thematicPlan.deleteMany({
-        where: { scheduleId: id },
+        where: { scheduleId: schedule.id },
       });
 
       await prisma.scheduleTeacher.deleteMany({
-        where: { scheduleId: id },
+        where: { scheduleId: schedule.id },
       });
 
-      // Update the schedule
       const updatedSchedule = await prisma.schedule.update({
-        where: { id },
+        where: {
+          id: schedule.id,
+        },
         data: {
           title,
           description,
@@ -208,24 +213,39 @@ export class ScheduleResolver {
         },
       });
 
-      if (attachments && attachments.length > 0) {
-        const allAttachments = await prisma.attachment.findMany({
-          where: { scheduleId: updatedSchedule.id },
-        });
+      const existingAttachments = await prisma.attachment.findMany({
+        where: {
+          scheduleId: schedule.id,
+        },
+      });
 
-        for (const attachment of allAttachments) {
-          const filePath = path.join(process.cwd(), 'uploads', attachment.key);
-          if (filePath) {
-            await fs.promises.unlink(filePath);
-          }
+      const existingAttachmentKeys = new Set(existingAttachments.map(att => att.key));
+      const newAttachmentKeys = new Set(attachments?.map(att => att.key) || []);
+
+      const attachmentsToDelete = existingAttachments.filter(
+        att => !newAttachmentKeys.has(att.key),
+      );
+
+      for (const attachment of attachmentsToDelete) {
+        const filePath = path.join(process.cwd(), 'uploads', attachment.key);
+        if (filePath) {
+          await fs.promises.unlink(filePath);
         }
+      }
 
-        await prisma.attachment.deleteMany({
-          where: { scheduleId: updatedSchedule.id },
-        });
+      await prisma.attachment.deleteMany({
+        where: {
+          key: {
+            in: attachmentsToDelete.map(att => att.key),
+          },
+        },
+      });
 
+      const attachmentsToCreate = attachments?.filter(att => !existingAttachmentKeys.has(att.key));
+
+      if (attachmentsToCreate?.length) {
         await prisma.attachment.createMany({
-          data: attachments.map(attachment => ({
+          data: attachmentsToCreate.map(attachment => ({
             title: attachment.title,
             key: attachment.key,
             scheduleId: updatedSchedule.id,
