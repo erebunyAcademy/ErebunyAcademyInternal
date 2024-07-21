@@ -20,14 +20,10 @@ export class SubjectResolver {
           id: true,
           title: true,
           description: true,
-          courseSubjects: {
+          course: {
             select: {
-              course: {
-                select: {
-                  title: true,
-                  id: true,
-                },
-              },
+              id: true,
+              title: true,
             },
           },
         },
@@ -46,6 +42,12 @@ export class SubjectResolver {
       select: {
         id: true,
         title: true,
+        course: {
+          select: {
+            id: true,
+            title: true,
+          },
+        },
       },
     });
   }
@@ -55,16 +57,10 @@ export class SubjectResolver {
       data: {
         title: data.title,
         description: data.description,
+        courseId: data.courseId,
       },
       select: {
         id: true,
-      },
-    });
-
-    await prisma.courseSubject.create({
-      data: {
-        courseId: data.courseId,
-        subjectId: createdSubject.id,
       },
     });
 
@@ -87,64 +83,20 @@ export class SubjectResolver {
   static async updateSubjectById(subjectId: string, data: CreateEditSubjectValidation) {
     const { id } = await this.getSubjectById(subjectId);
 
-    const courseSubject = await prisma.courseSubject.findFirst({
-      where: {
-        subjectId: id,
-      },
-      select: {
-        id: true,
-      },
-    });
-
-    if (!courseSubject) {
-      await prisma.courseSubject.create({
-        data: {
-          courseId: data.courseId,
-          subjectId: id,
-        },
-      });
-    } else {
-      await prisma.courseSubject.update({
-        where: {
-          id: courseSubject.id,
-        },
-        data: {
-          courseId: data.courseId,
-        },
-      });
-    }
-
     return prisma.subject.update({
       where: {
         id,
       },
       data: {
         title: data.title,
+        courseId: data.courseId,
         description: data.description,
       },
     });
   }
 
   static async deleteSubjectById(subjectId: string) {
-    // todo
     const { id } = await this.getSubjectById(subjectId);
-
-    const courseSubject = await prisma.courseSubject.findFirst({
-      where: {
-        subjectId: id,
-      },
-      select: {
-        id: true,
-      },
-    });
-
-    if (courseSubject) {
-      await prisma.courseSubject.delete({
-        where: {
-          id: courseSubject.id,
-        },
-      });
-    }
 
     return prisma.subject.delete({
       where: {

@@ -1,13 +1,12 @@
 'use client';
 import React, { useCallback, useMemo, useState } from 'react';
 import { Avatar, Button, MenuItem, useDisclosure } from '@chakra-ui/react';
-import { classValidatorResolver } from '@hookform/resolvers/class-validator';
 import { AttachmentTypeEnum } from '@prisma/client';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { createColumnHelper, SortingState } from '@tanstack/react-table';
 import dayjs from 'dayjs';
+import dynamic from 'next/dynamic';
 import { useTranslations } from 'next-intl';
-import { useForm } from 'react-hook-form';
 import { v4 as uuidv4 } from 'uuid';
 import { StudentService } from '@/api/services/student.service';
 import { UserService } from '@/api/services/user.service';
@@ -18,12 +17,10 @@ import { ITEMS_PER_PAGE } from '@/utils/constants/common';
 import { QUERY_KEY } from '@/utils/helpers/queryClient';
 import { Maybe } from '@/utils/models/common';
 import { StudentModel } from '@/utils/models/student';
-import { SelectStudentCourseGroupValidation } from '@/utils/validation/courseGroup';
-import EditStudentModal from './_components/modals/EditStudentModal';
-import RejectMessageModal from './_components/modals/RejectMessageModal';
-import StudentAttachmentModal from './_components/modals/StudentAttachmentModal';
 
-const resolver = classValidatorResolver(SelectStudentCourseGroupValidation);
+const EditStudentModal = dynamic(() => import('./_components/modals/EditStudentModal'));
+const RejectMessageModal = dynamic(() => import('./_components/modals/RejectMessageModal'));
+const StudentAttachmentModal = dynamic(() => import('./_components/modals/StudentAttachmentModal'));
 
 export default function StudentList() {
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -33,18 +30,6 @@ export default function StudentList() {
   const [attachmentKey, setAttachmentKey] = useState('');
   const [selectedStudent, setSelectedStudent] = useState<Maybe<StudentModel>>(null);
   const t = useTranslations();
-
-  const {
-    control,
-    handleSubmit,
-    setValue,
-    formState: { errors, isValid },
-  } = useForm<SelectStudentCourseGroupValidation>({
-    resolver,
-    defaultValues: {
-      courseGroupId: '',
-    },
-  });
 
   const { data, isLoading, isPlaceholderData, refetch } = useQuery({
     queryKey: QUERY_KEY.allStudents(debouncedSearch, page),
@@ -129,9 +114,6 @@ export default function StudentList() {
             onClick={() => {
               openStudentEditModal();
               setSelectedStudent(row.original);
-              if (row.original.student?.courseGroup?.id) {
-                setValue('courseGroupId', row.original.student.courseGroup.id);
-              }
             }}>
             {t('edit')}
           </MenuItem>
@@ -245,29 +227,28 @@ export default function StudentList() {
         fetchPreviousPage={useCallback(() => setPage(prev => --prev), [])}
         rowCondition="isAdminVerified"
       />
-
-      <RejectMessageModal
-        closeStudentRejectModal={closeStudentRejectModal}
-        isRejectStudentModalIsOpen={isRejectStudentModalIsOpen}
-        selectedStudent={selectedStudent}
-      />
-
-      <StudentAttachmentModal
-        isAttachmentModalOpen={isAttachmentModalOpen}
-        closeAttachmentModal={closeAttachmentModal}
-        attachmentKey={attachmentKey}
-      />
-
-      <EditStudentModal
-        isStudentEditModalOpen={isStudentEditModalOpen}
-        closeStudentEditModal={closeStudentEditModal}
-        control={control}
-        handleSubmit={handleSubmit}
-        errors={errors}
-        isValid={isValid}
-        selectedStudent={selectedStudent}
-        refetch={refetch}
-      />
+      {isRejectStudentModalIsOpen && (
+        <RejectMessageModal
+          closeStudentRejectModal={closeStudentRejectModal}
+          isRejectStudentModalIsOpen={isRejectStudentModalIsOpen}
+          selectedStudent={selectedStudent}
+        />
+      )}
+      {isAttachmentModalOpen && (
+        <StudentAttachmentModal
+          isAttachmentModalOpen={isAttachmentModalOpen}
+          closeAttachmentModal={closeAttachmentModal}
+          attachmentKey={attachmentKey}
+        />
+      )}
+      {isStudentEditModalOpen && (
+        <EditStudentModal
+          isStudentEditModalOpen={isStudentEditModalOpen}
+          closeStudentEditModal={closeStudentEditModal}
+          selectedStudent={selectedStudent}
+          refetch={refetch}
+        />
+      )}
     </>
   );
 }

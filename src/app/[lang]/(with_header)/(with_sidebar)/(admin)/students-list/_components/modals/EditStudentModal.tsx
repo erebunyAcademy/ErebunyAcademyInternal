@@ -1,25 +1,23 @@
 'use client';
-import React, { FC } from 'react';
+import React, { FC, useEffect } from 'react';
 import { Button, Flex } from '@chakra-ui/react';
+import { classValidatorResolver } from '@hookform/resolvers/class-validator';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useTranslations } from 'next-intl';
-import { Control, Controller, FieldErrors } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { CourseGroupService } from '@/api/services/course-group.service';
 import { StudentService } from '@/api/services/student.service';
 import { SelectLabel } from '@/components/atoms';
 import Modal from '@/components/molecules/Modal';
 import { StudentModel } from '@/utils/models/student';
+import { SelectStudentCourseGroupValidation } from '@/utils/validation/courseGroup';
 import { UpdateStudentValidation } from '@/utils/validation/student';
+
+const resolver = classValidatorResolver(SelectStudentCourseGroupValidation);
 
 type EditStudentModalProps = {
   isStudentEditModalOpen: boolean;
   closeStudentEditModal: () => void;
-  isValid: boolean;
-  handleSubmit: (
-    onSubmit: (data: UpdateStudentValidation) => void,
-  ) => (e?: React.BaseSyntheticEvent) => Promise<void>;
-  errors: FieldErrors<UpdateStudentValidation>;
-  control: Control<UpdateStudentValidation>;
   refetch: () => void;
   selectedStudent: StudentModel | null;
 };
@@ -27,14 +25,30 @@ type EditStudentModalProps = {
 const EditStudentModal: FC<EditStudentModalProps> = ({
   isStudentEditModalOpen,
   closeStudentEditModal,
-  control,
-  errors,
-  isValid,
-  handleSubmit,
   refetch,
   selectedStudent,
 }) => {
   const t = useTranslations();
+
+  const {
+    control,
+    handleSubmit,
+    reset,
+    formState: { errors, isValid },
+  } = useForm<SelectStudentCourseGroupValidation>({
+    resolver,
+    defaultValues: {
+      courseGroupId: '',
+    },
+  });
+
+  useEffect(() => {
+    if (selectedStudent?.student?.courseGroup?.id) {
+      reset({
+        courseGroupId: selectedStudent.student?.courseGroup?.id,
+      });
+    }
+  }, [reset, selectedStudent]);
 
   const { data: courseGroupData } = useQuery({
     queryFn: CourseGroupService.list.bind(null),

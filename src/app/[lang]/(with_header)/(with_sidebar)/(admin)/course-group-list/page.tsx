@@ -1,11 +1,10 @@
 'use client';
 import React, { useCallback, useMemo, useState } from 'react';
 import { MenuItem, useDisclosure } from '@chakra-ui/react';
-import { classValidatorResolver } from '@hookform/resolvers/class-validator';
 import { useQuery } from '@tanstack/react-query';
 import { createColumnHelper, SortingState } from '@tanstack/react-table';
+import dynamic from 'next/dynamic';
 import { useTranslations } from 'next-intl';
-import { useForm } from 'react-hook-form';
 import { v4 as uuidv4 } from 'uuid';
 import { CourseGroupService } from '@/api/services/course-group.service';
 import ActionButtons from '@/components/molecules/ActionButtons';
@@ -15,11 +14,9 @@ import { ITEMS_PER_PAGE } from '@/utils/constants/common';
 import { QUERY_KEY } from '@/utils/helpers/queryClient';
 import { Maybe } from '@/utils/models/common';
 import { CourseGroupSingleModel } from '@/utils/models/courseGroup';
-import { CreateEditCourseGroupValidation } from '@/utils/validation/courseGroup';
-import CreateEditModal from './_components/modals/CreateEditModal';
-import DeleteModal from './_components/modals/DeleteModal';
 
-const resolver = classValidatorResolver(CreateEditCourseGroupValidation);
+const DeleteModal = dynamic(() => import('./_components/modals/DeleteModal'));
+const CreateEditModal = dynamic(() => import('./_components/modals/CreateEditModal'));
 
 const CourseGroup = () => {
   const t = useTranslations();
@@ -31,27 +28,11 @@ const CourseGroup = () => {
     useState<Maybe<CourseGroupSingleModel>>(null);
 
   const {
-    control,
-    handleSubmit,
-    reset,
-    setValue,
-    formState: { errors, isValid },
-  } = useForm<CreateEditCourseGroupValidation>({
-    resolver,
-    defaultValues: {
-      title: '',
-      description: '',
-      courseId: '',
-    },
-  });
-
-  const {
     isOpen: isCreateEditModalOpen,
     onOpen: openCreateEditModal,
     onClose: closeCreateEditModal,
   } = useDisclosure({
     onClose() {
-      reset();
       setSelectedCourseGroup(null);
     },
   });
@@ -124,9 +105,6 @@ const CourseGroup = () => {
             color="green"
             onClick={() => {
               setSelectedCourseGroup(row.original);
-              setValue('title', row.original.title || '');
-              setValue('description', row.original.description || '');
-              setValue('courseId', row.original.course?.id || '');
               openCreateEditModal();
             }}>
             {t('edit')}
@@ -174,24 +152,22 @@ const CourseGroup = () => {
         fetchPreviousPage={useCallback(() => setPage(prev => --prev), [])}
         addNew={addNewStudentGradeGroupHandler}
       />
-
-      <CreateEditModal
-        isCreateEditModalOpen={isCreateEditModalOpen}
-        closeCreateEditModal={closeCreateEditModal}
-        selectedCourseGroup={selectedCourseGroup}
-        refetch={refetch}
-        reset={reset}
-        handleSubmit={handleSubmit}
-        isValid={isValid}
-        control={control}
-        errors={errors}
-      />
-      <DeleteModal
-        selectedCourseGroup={selectedCourseGroup}
-        isDeleteModalOpen={isDeleteModalOpen}
-        closeDeleteModal={closeDeleteModal}
-        refetch={refetch}
-      />
+      {isCreateEditModalOpen && (
+        <CreateEditModal
+          isCreateEditModalOpen={isCreateEditModalOpen}
+          closeCreateEditModal={closeCreateEditModal}
+          selectedCourseGroup={selectedCourseGroup}
+          refetch={refetch}
+        />
+      )}
+      {isDeleteModalOpen && (
+        <DeleteModal
+          selectedCourseGroup={selectedCourseGroup}
+          isDeleteModalOpen={isDeleteModalOpen}
+          closeDeleteModal={closeDeleteModal}
+          refetch={refetch}
+        />
+      )}
     </>
   );
 };

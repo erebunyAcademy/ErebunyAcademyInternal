@@ -26,12 +26,24 @@ export default function Schedule() {
   const debouncedSearch = useDebounce(search);
   const t = useTranslations();
 
+  const { data, isLoading, isPlaceholderData, refetch } = useQuery({
+    queryKey: QUERY_KEY.allTeachers(debouncedSearch, page),
+    queryFn: () =>
+      ScheduleService.list({
+        offset: page === 1 ? 0 : (page - 1) * ITEMS_PER_PAGE,
+        limit: ITEMS_PER_PAGE,
+        search: debouncedSearch,
+      }),
+  });
+  console.log(data, 'data');
+
   const {
     isOpen: isDeleteModalOpen,
     onOpen: openDeleteModal,
     onClose: closeDeleteModal,
   } = useDisclosure({
     onClose() {
+      refetch();
       setSelectedSchedule(null);
     },
   });
@@ -42,25 +54,15 @@ export default function Schedule() {
     onClose: closeCreateEditModal,
   } = useDisclosure({
     onClose() {
+      refetch();
       setSelectedSchedule(null);
     },
-  });
-
-  const { data, isLoading, isPlaceholderData, refetch } = useQuery({
-    queryKey: QUERY_KEY.allTeachers(debouncedSearch, page),
-    queryFn: () =>
-      ScheduleService.list({
-        offset: page === 1 ? 0 : (page - 1) * ITEMS_PER_PAGE,
-        limit: ITEMS_PER_PAGE,
-        search: debouncedSearch,
-      }),
   });
 
   const { mutate: deleteScheduleMutation } = useMutation({
     mutationFn: ScheduleService.deleteScheduleById,
     onSuccess() {
       closeDeleteModal();
-      refetch();
     },
   });
 
@@ -100,8 +102,8 @@ export default function Schedule() {
     }),
     columnHelper.accessor('isAssessment', {
       id: uuidv4(),
-      cell: info => info.getValue(),
-      header: t('isAssessment'),
+      cell: info => (info.getValue() ? t('yes') : t('no')),
+      header: t('assessment'),
     }),
     columnHelper.accessor('id', {
       id: uuidv4(),
