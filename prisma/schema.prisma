@@ -80,10 +80,10 @@ model Faculty {
   description String?   @db.VarChar(60)
   students    Student[]
   courses     Course[]
+  exams       Exam[]
 
   createdAt DateTime @default(now()) @db.Timestamp(0)
   updatedAt DateTime @updatedAt @db.Timestamp(0)
-  Exam      Exam[]
 }
 
 model Course {
@@ -137,19 +137,20 @@ model Schedule {
   examType         ScheduleExamTypeEnum
   title            String
   description      String?
-  subject          Subject              @relation(fields: [subjectId], references: [id], onDelete: Cascade)
   totalHours       Float
   startDayDate     DateTime
   endDayDate       DateTime
   isAssessment     Boolean              @default(false)
   examDate         DateTime
-  subjectId        String
   links            Json
   thematicPlan     ThematicPlan[]
   scheduleTeachers ScheduleTeacher[]
   attachment       Attachment[]
-  courseGroup      CourseGroup          @relation(fields: [courseGroupId], references: [id])
-  courseGroupId    String
+
+  subject       Subject     @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  subjectId     String
+  courseGroup   CourseGroup @relation(fields: [courseGroupId], references: [id])
+  courseGroupId String
 
   createdAt DateTime @default(now()) @db.Timestamp(0)
   updatedAt DateTime @updatedAt @db.Timestamp(0)
