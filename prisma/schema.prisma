@@ -102,13 +102,14 @@ model Course {
 }
 
 model CourseGroup {
-  id          String    @id @default(uuid())
-  title       String    @db.VarChar(60)
-  description String?   @db.VarChar(60)
+  id          String     @id @default(uuid())
+  title       String     @db.VarChar(60)
+  description String?    @db.VarChar(60)
   courseId    String?
-  course      Course?   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  course      Course?    @relation(fields: [courseId], references: [id], onDelete: Cascade)
   students    Student[]
   exams       Exam[]
+  schedules   Schedule[]
 
   createdAt DateTime @default(now()) @db.Timestamp(0)
   updatedAt DateTime @updatedAt @db.Timestamp(0)
@@ -131,20 +132,24 @@ model Subject {
 }
 
 model Schedule {
-  id               String            @id @default(uuid())
+  id               String               @id @default(uuid())
+  type             ScheduleTypeEnum
+  examType         ScheduleExamTypeEnum
   title            String
   description      String?
-  subject          Subject           @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  subject          Subject              @relation(fields: [subjectId], references: [id], onDelete: Cascade)
   totalHours       Float
   startDayDate     DateTime
   endDayDate       DateTime
-  isAssessment     Boolean           @default(false)
+  isAssessment     Boolean              @default(false)
   examDate         DateTime
   subjectId        String
   links            Json
   thematicPlan     ThematicPlan[]
   scheduleTeachers ScheduleTeacher[]
   attachment       Attachment[]
+  courseGroup      CourseGroup          @relation(fields: [courseGroupId], references: [id])
+  courseGroupId    String
 
   createdAt DateTime @default(now()) @db.Timestamp(0)
   updatedAt DateTime @updatedAt @db.Timestamp(0)
@@ -360,6 +365,11 @@ enum ExamTypeEnum {
   TEST
 }
 
+enum ScheduleTypeEnum {
+  CYCLIC
+  NON_CYCLIC
+}
+
 enum TestQuestionTypeEnum {
   RADIO
   CHECKBOX
@@ -373,6 +383,12 @@ enum AttachmentTypeEnum {
 enum ThematicSubPlanTypeEnum {
   THEORETICAL
   PRACTICAL
+}
+
+enum ScheduleExamTypeEnum {
+  THEORETICAL
+  VERBAL
+  ASSESSMENT
 }
 
 enum AdminRoleEnum {
