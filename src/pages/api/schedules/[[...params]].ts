@@ -14,7 +14,10 @@ import { SortingType } from '@/api/types/common';
 import { exceptionHandler } from '@/lib/prisma/error';
 import { AdminGuard } from '@/lib/prisma/guards/admin';
 import { ScheduleResolver } from '@/lib/prisma/resolvers/schedule.resolver';
-import { CreateEditScheduleValidation } from '@/utils/validation/schedule';
+import {
+  AddEditThematicPlanValidation,
+  CreateEditScheduleValidation,
+} from '@/utils/validation/schedule';
 
 @Catch(exceptionHandler)
 class FacultyHandler {
@@ -45,6 +48,22 @@ class FacultyHandler {
   @Delete('/:scheduleId')
   _deleteSchedule(@Param('scheduleId') scheduleId: string) {
     return ScheduleResolver.deleteSchedule(scheduleId);
+  }
+
+  @Post('/:scheduleId/thematic-plan')
+  _createThematicPlan(
+    @Param('scheduleId') scheduleId: string,
+    @Body(ValidationPipe) input: AddEditThematicPlanValidation,
+  ) {
+    return ScheduleResolver.createThematicPlan(scheduleId, input);
+  }
+
+  @Patch('/:scheduleId/thematic-plan')
+  _updateThematicPlan(
+    @Param('scheduleId') scheduleId: string,
+    @Body(ValidationPipe) input: AddEditThematicPlanValidation,
+  ) {
+    return ScheduleResolver.updateThematicPlan(scheduleId, input);
   }
 }
 

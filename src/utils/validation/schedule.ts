@@ -1,8 +1,10 @@
 import 'reflect-metadata';
+import { ScheduleExamTypeEnum } from '@prisma/client';
 import { Type } from 'class-transformer';
 import {
   IsArray,
   IsBoolean,
+  IsEnum,
   IsNotEmpty,
   IsOptional,
   IsString,
@@ -57,9 +59,18 @@ export class CreateEditScheduleValidation {
   @IsOptional()
   id?: string;
 
+  @IsEnum(ScheduleExamTypeEnum)
+  @IsNotEmpty()
+  @IsString()
+  examType: ScheduleExamTypeEnum;
+
   @IsString()
   @IsNotEmpty()
   subjectId: string;
+
+  @IsString()
+  @IsNotEmpty()
+  courseGroupId: string;
 
   @IsString()
   @IsNotEmpty()
@@ -93,14 +104,6 @@ export class CreateEditScheduleValidation {
   @IsNotEmpty()
   teacherId: string;
 
-  @ValidateNested({ each: true })
-  @Type(() => CourseClassValidation)
-  theoreticalClass: CourseClassValidation;
-
-  @ValidateNested({ each: true })
-  @Type(() => CourseClassValidation)
-  practicalClass: CourseClassValidation;
-
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => LinkValidation)
@@ -109,4 +112,14 @@ export class CreateEditScheduleValidation {
   @IsArray()
   @IsOptional()
   attachments?: AttachmentValidation[];
+}
+
+export class AddEditThematicPlanValidation {
+  @ValidateNested({ each: true })
+  @Type(() => CourseClassValidation)
+  theoreticalClass: CourseClassValidation;
+
+  @ValidateNested({ each: true })
+  @Type(() => CourseClassValidation)
+  practicalClass: CourseClassValidation;
 }

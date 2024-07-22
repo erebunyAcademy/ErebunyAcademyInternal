@@ -99,4 +99,24 @@ export class CourseGroupResolver {
       },
     });
   }
+
+  static async getCourseGroupListBySubjectId(subjectId: string) {
+    return prisma.subject.findUniqueOrThrow({
+      where: {
+        id: subjectId,
+      },
+      select: {
+        course: {
+          select: {
+            groups: {
+              select: {
+                id: true,
+                title: true,
+              },
+            },
+          },
+        },
+      },
+    });
+  }
 }

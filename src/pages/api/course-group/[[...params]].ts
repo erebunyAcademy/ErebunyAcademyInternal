@@ -40,6 +40,12 @@ class CourseGroupHandler {
     return CourseGroupResolver.getCourseGroupListByCourseId(courseId);
   }
 
+  @AdminGuard()
+  @Get('/subjects/:subjectId')
+  getCourseGroupsBySubjectId(@Param('subjectId') subjectId: string) {
+    return CourseGroupResolver.getCourseGroupListBySubjectId(subjectId);
+  }
+
   @Get('/:id')
   getCourseGroupById(@Param('id') id: string) {
     return CourseGroupResolver.getCourseGroupById(id);

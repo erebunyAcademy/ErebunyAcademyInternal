@@ -14,6 +14,7 @@ import { ITEMS_PER_PAGE } from '@/utils/constants/common';
 import { QUERY_KEY } from '@/utils/helpers/queryClient';
 import { Maybe } from '@/utils/models/common';
 import { ScheduleSingleModel } from '@/utils/models/schedule';
+import AddEditThematicPlan from './_components/modals/AddEditThematicPlan';
 
 const DeleteModal = dynamic(() => import('./_components/modals/DeleteModal'));
 const CreateEditModal = dynamic(() => import('./_components/modals/CreateEditModal'));
@@ -35,7 +36,6 @@ export default function Schedule() {
         search: debouncedSearch,
       }),
   });
-  console.log(data, 'data');
 
   const {
     isOpen: isDeleteModalOpen,
@@ -52,6 +52,17 @@ export default function Schedule() {
     isOpen: isCreateEditModalOpen,
     onOpen: openCreateEditModal,
     onClose: closeCreateEditModal,
+  } = useDisclosure({
+    onClose() {
+      refetch();
+      setSelectedSchedule(null);
+    },
+  });
+
+  const {
+    isOpen: isCreateEditThematicPlanModalIsOpen,
+    onOpen: openAddEditThematicPlanModal,
+    onClose: closeCreateEditThematicPlanModal,
   } = useDisclosure({
     onClose() {
       refetch();
@@ -113,6 +124,14 @@ export default function Schedule() {
             color="green"
             onClick={() => {
               setSelectedSchedule(row.original);
+              openAddEditThematicPlanModal();
+            }}>
+            Add Thematic plan
+          </MenuItem>
+          <MenuItem
+            color="green"
+            onClick={() => {
+              setSelectedSchedule(row.original);
               openCreateEditModal();
             }}>
             {t('edit')}
@@ -161,6 +180,14 @@ export default function Schedule() {
         <CreateEditModal
           isModalOpen={isCreateEditModalOpen}
           closeModal={closeCreateEditModal}
+          selectedSchedule={selectedSchedule}
+        />
+      )}
+
+      {isCreateEditThematicPlanModalIsOpen && selectedSchedule && (
+        <AddEditThematicPlan
+          isModalOpen={isCreateEditThematicPlanModalIsOpen}
+          closeModal={closeCreateEditThematicPlanModal}
           selectedSchedule={selectedSchedule}
         />
       )}

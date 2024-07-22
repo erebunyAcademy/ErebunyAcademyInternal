@@ -1,3 +1,5 @@
+import { ScheduleExamTypeEnum, ScheduleTypeEnum } from '@prisma/client';
+
 export const ERROR_MESSAGES = {
   somethingWentWrong: 'somethingWentWrong',
   verifyYourEmail: 'verifyYourEmail',
@@ -15,3 +17,13 @@ export const ERROR_MESSAGES = {
 };
 
 export const ITEMS_PER_PAGE = 20;
+
+export const scheduleExamType = Object.values(ScheduleExamTypeEnum).map(title => ({
+  id: title,
+  title: title,
+}));
+
+export const scheduleType = Object.values(ScheduleTypeEnum).map(title => ({
+  id: title,
+  title: title,
+}));

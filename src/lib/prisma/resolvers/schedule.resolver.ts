@@ -2,7 +2,10 @@ import { AttachmentTypeEnum, ThematicSubPlanTypeEnum } from '@prisma/client';
 import fs from 'fs';
 import path from 'path';
 import { SortingType } from '@/api/types/common';
-import { CreateEditScheduleValidation } from '@/utils/validation/schedule';
+import {
+  AddEditThematicPlanValidation,
+  CreateEditScheduleValidation,
+} from '@/utils/validation/schedule';
 import { orderBy } from './utils/common';
 import prisma from '..';
 
@@ -48,12 +51,52 @@ export class ScheduleResolver {
     }));
   }
 
+  static async createThematicPlan(scheduleId: string, data: AddEditThematicPlanValidation) {
+    const { practicalClass, theoreticalClass } = data;
+
+    prisma.thematicPlan
+      .create({
+        data: {
+          scheduleId,
+          totalHours: +practicalClass.totalHours,
+          type: ThematicSubPlanTypeEnum.PRACTICAL,
+          thematicPlanDescription: {
+            create: practicalClass.classDescriptionRow.map(row => ({
+              title: row.title,
+              hour: row.hour,
+            })),
+          },
+        },
+      })
+      .catch(console.error);
+
+    return prisma.thematicPlan.create({
+      data: {
+        scheduleId,
+        totalHours: +theoreticalClass.totalHours,
+        type: ThematicSubPlanTypeEnum.THEORETICAL,
+        thematicPlanDescription: {
+          create: theoreticalClass.classDescriptionRow.map(row => ({
+            title: row.title,
+            hour: row.hour,
+          })),
+        },
+      },
+    });
+  }
+
+  static async updateThematicPlan(scheduleId: string, data: AddEditThematicPlanValidation) {
+    await prisma.thematicPlan.deleteMany({
+      where: { scheduleId },
+    });
+
+    return ScheduleResolver.createThematicPlan(scheduleId, data);
+  }
+
   static async createSchedule(data: CreateEditScheduleValidation) {
     const {
       title,
       description,
-      practicalClass,
-      theoreticalClass,
       totalHours,
       startDayDate,
       endDayDate,
@@ -64,42 +107,19 @@ export class ScheduleResolver {
       attachments,
     } = data;
 
-    const thematicPlans = [
-      {
-        totalHours: +practicalClass.totalHours,
-        type: ThematicSubPlanTypeEnum.PRACTICAL,
-        thematicPlanDescription: {
-          create: practicalClass.classDescriptionRow.map(row => ({
-            title: row.title,
-            hour: row.hour,
-          })),
-        },
-      },
-      {
-        totalHours: +theoreticalClass.totalHours,
-        type: ThematicSubPlanTypeEnum.THEORETICAL,
-        thematicPlanDescription: {
-          create: theoreticalClass.classDescriptionRow.map(row => ({
-            title: row.title,
-            hour: row.hour,
-          })),
-        },
-      },
-    ];
-
     const createdSchedule = await prisma.schedule.create({
       data: {
+        courseGroupId: data.courseGroupId,
         title,
         description,
+        examType: data.examType,
+        type: 'CYCLIC',
         totalHours: +totalHours,
         startDayDate: new Date(startDayDate),
         endDayDate: new Date(endDayDate),
         isAssessment: data.isAssessment,
         subjectId: data.subjectId,
         links: links.map(({ link }) => link),
-        thematicPlan: {
-          create: thematicPlans,
-        },
         scheduleTeachers: {
           create: {
             teacherId,
@@ -132,8 +152,6 @@ export class ScheduleResolver {
     const {
       title,
       description,
-      practicalClass,
-      theoreticalClass,
       totalHours,
       startDayDate,
       endDayDate,
@@ -149,29 +167,6 @@ export class ScheduleResolver {
         id,
       },
     });
-
-    const thematicPlans = [
-      {
-        totalHours: +practicalClass.totalHours,
-        type: ThematicSubPlanTypeEnum.PRACTICAL,
-        thematicPlanDescription: {
-          create: practicalClass.classDescriptionRow.map(row => ({
-            title: row.title,
-            hour: row.hour,
-          })),
-        },
-      },
-      {
-        totalHours: +theoreticalClass.totalHours,
-        type: ThematicSubPlanTypeEnum.THEORETICAL,
-        thematicPlanDescription: {
-          create: theoreticalClass.classDescriptionRow.map(row => ({
-            title: row.title,
-            hour: row.hour,
-          })),
-        },
-      },
-    ];
 
     const updatedSchedule = await prisma.$transaction(async prisma => {
       await prisma.thematicPlan.deleteMany({
@@ -196,9 +191,6 @@ export class ScheduleResolver {
           subjectId: data.subjectId,
           links: {
             set: links.map(({ link }) => link),
-          },
-          thematicPlan: {
-            create: thematicPlans,
           },
           scheduleTeachers: {
             create: {
