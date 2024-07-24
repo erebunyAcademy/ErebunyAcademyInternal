@@ -3,8 +3,8 @@ import React, { ChangeEvent, FC, useCallback, useEffect, useMemo, useState } fro
 import { AddIcon, DeleteIcon } from '@chakra-ui/icons';
 import { Box, Button, Divider, Flex, IconButton, Input, Stack, Text } from '@chakra-ui/react';
 import { classValidatorResolver } from '@hookform/resolvers/class-validator';
+import { WeekDayEnum } from '@prisma/client';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import dayjs from 'dayjs';
 import { useTranslations } from 'next-intl';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import { v4 as uuidv4 } from 'uuid';
@@ -15,21 +15,21 @@ import { TeacherService } from '@/api/services/teacher.service';
 import { UploadService } from '@/api/services/upload.service';
 import { FormInput, SelectLabel } from '@/components/atoms';
 import Modal from '@/components/molecules/Modal';
-import { scheduleExamType } from '@/utils/constants/common';
+import { periodListData, scheduleExamType, weekendDayList } from '@/utils/constants/common';
 import { Maybe } from '@/utils/models/common';
 import { GetCourseGroupsBySubjectId } from '@/utils/models/courseGroup';
-import { ScheduleSingleModel } from '@/utils/models/schedule';
+import { NoneCyclicScheduleSingleModel } from '@/utils/models/none-cyclic.schedule';
 import { TeacherDataModel } from '@/utils/models/teachers';
 import { AttachmentValidation } from '@/utils/validation';
-import { CreateEditScheduleValidation } from '@/utils/validation/schedule';
+import { CreateEditNonCylicScheduleValidation } from '@/utils/validation/non-cyclic';
 
 type CreateEditModalProps = {
   isModalOpen: boolean;
   closeModal: () => void;
-  selectedSchedule: Maybe<ScheduleSingleModel>;
+  selectedSchedule: Maybe<NoneCyclicScheduleSingleModel>;
 };
 
-const resolver = classValidatorResolver(CreateEditScheduleValidation);
+const resolver = classValidatorResolver(CreateEditNonCylicScheduleValidation);
 
 type FileWithLocalUrl = {
   file: File;
@@ -50,17 +50,15 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
     watch,
     reset,
     formState: { errors, isValid },
-  } = useForm<CreateEditScheduleValidation>({
+  } = useForm<CreateEditNonCylicScheduleValidation>({
     resolver,
     defaultValues: {
       totalHours: '',
+      availableDay: WeekDayEnum.MONDAY,
       subjectId: '',
+      period: '1-2',
       title: '',
       description: '',
-      startDayDate: '',
-      examDate: '',
-      endDayDate: '',
-      isAssessment: false,
       examType: 'ASSESSMENT',
       teacherId: '',
       courseGroupId: '',
@@ -68,6 +66,8 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
       links: [],
     },
   });
+
+  console.log({ errors });
 
   useEffect(() => {
     if (selectedSchedule) {
@@ -90,10 +90,6 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
         subjectId: selectedSchedule.subjectId,
         title: selectedSchedule.title,
         description: selectedSchedule.description || '',
-        startDayDate: dayjs(selectedSchedule.startDayDate).format('YYYY-MM-DD'),
-        examDate: dayjs(selectedSchedule.examDate).format('YYYY-MM-DD'),
-        endDayDate: dayjs(selectedSchedule.endDayDate).format('YYYY-MM-DD'),
-        isAssessment: selectedSchedule.isAssessment,
         teacherId: selectedSchedule.scheduleTeachers[0].teacherId,
         attachments: selectedSchedule.attachment.map(attachment => ({
           key: attachment.key,
@@ -114,8 +110,11 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
   });
 
   const { mutate: createEditSchedule } = useMutation({
-    mutationFn: ScheduleService[selectedSchedule ? 'updateSchedule' : 'createSchedule'],
-    mutationKey: ['create-schedule'],
+    mutationFn: (data: CreateEditNonCylicScheduleValidation) =>
+      ScheduleService[selectedSchedule ? 'updateNoneCyclicSchedule' : 'createNoneCyclicSchedule'](
+        data,
+      ),
+    mutationKey: ['create-none-cyclic-schedule'],
     onSuccess() {
       reset();
       closeModal();
@@ -174,8 +173,10 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
   });
 
   const onSubmitHandler = useCallback(
-    (data: CreateEditScheduleValidation) => {
+    (data: CreateEditNonCylicScheduleValidation) => {
       const attachmentKeys: AttachmentValidation[] = [];
+
+      console.log({ data });
 
       files?.forEach(({ file }) => {
         const attachmentId = uuidv4();
@@ -321,56 +322,6 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
             />
           )}
         />
-        <Controller
-          name="startDayDate"
-          control={control}
-          render={({ field: { onChange, value, name } }) => (
-            <FormInput
-              isRequired
-              name={name}
-              type="date"
-              formLabelName={t('startDay')}
-              value={value}
-              handleInputChange={onChange}
-              isInvalid={!!errors[name]?.message}
-              formErrorMessage={errors[name]?.message}
-            />
-          )}
-        />
-
-        <Controller
-          name="endDayDate"
-          control={control}
-          render={({ field: { onChange, value, name } }) => (
-            <FormInput
-              isRequired
-              name={name}
-              type="date"
-              formLabelName={t('endDay')}
-              value={value}
-              handleInputChange={onChange}
-              isInvalid={!!errors[name]?.message}
-              formErrorMessage={errors[name]?.message}
-            />
-          )}
-        />
-
-        <Controller
-          name="examDate"
-          control={control}
-          render={({ field: { onChange, value, name } }) => (
-            <FormInput
-              isRequired
-              isInvalid={!!errors[name]?.message}
-              name={name}
-              type="date"
-              formLabelName={t('examDay')}
-              value={value}
-              handleInputChange={onChange}
-              formErrorMessage={errors[name]?.message}
-            />
-          )}
-        />
       </Flex>
 
       <Flex gap={5} flexDirection={{ base: 'column', sm: 'row' }}>
@@ -401,6 +352,42 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
               isRequired
               options={courseGroupQueryData?.course?.groups || []}
               labelName="courseGroup"
+              valueLabel="id"
+              nameLabel="title"
+              onChange={onChange}
+              value={value}
+              isInvalid={!!errors[name]?.message}
+              formErrorMessage={errors[name]?.message}
+            />
+          )}
+        />
+        <Controller
+          name="availableDay"
+          control={control}
+          render={({ field: { onChange, value, name } }) => (
+            <SelectLabel
+              name={name}
+              isRequired
+              options={weekendDayList}
+              labelName="weekendDay"
+              valueLabel="id"
+              nameLabel="title"
+              onChange={onChange}
+              value={value}
+              isInvalid={!!errors[name]?.message}
+              formErrorMessage={errors[name]?.message}
+            />
+          )}
+        />
+        <Controller
+          name="period"
+          control={control}
+          render={({ field: { onChange, value, name } }) => (
+            <SelectLabel
+              name={name}
+              isRequired
+              options={periodListData}
+              labelName="period"
               valueLabel="id"
               nameLabel="title"
               onChange={onChange}

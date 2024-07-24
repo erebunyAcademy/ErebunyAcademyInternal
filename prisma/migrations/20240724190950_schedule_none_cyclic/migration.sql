@@ -13,6 +13,9 @@ CREATE TYPE "ThematicSubPlanTypeEnum" AS ENUM ('THEORETICAL', 'PRACTICAL');
 -- CreateEnum
 CREATE TYPE "ScheduleExamTypeEnum" AS ENUM ('THEORETICAL', 'VERBAL', 'ASSESSMENT');
 
+-- CreateEnum
+CREATE TYPE "WeekDayEnum" AS ENUM ('MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY');
+
 -- DropForeignKey
 ALTER TABLE "Attachment" DROP CONSTRAINT "Attachment_subjectId_fkey";
 
@@ -23,7 +26,8 @@ ALTER TABLE "CourseSubject" DROP CONSTRAINT "CourseSubject_courseId_fkey";
 ALTER TABLE "CourseSubject" DROP CONSTRAINT "CourseSubject_subjectId_fkey";
 
 -- AlterTable
-ALTER TABLE "Attachment" ADD COLUMN     "scheduleId" TEXT,
+ALTER TABLE "Attachment" ADD COLUMN     "nonCyclicScheduleId" TEXT,
+ADD COLUMN     "scheduleId" TEXT,
 ALTER COLUMN "mimetype" SET DATA TYPE TEXT;
 
 -- AlterTable
@@ -35,7 +39,6 @@ DROP TABLE "CourseSubject";
 -- CreateTable
 CREATE TABLE "Schedule" (
     "id" TEXT NOT NULL,
-    "type" "ScheduleTypeEnum" NOT NULL,
     "examType" "ScheduleExamTypeEnum" NOT NULL,
     "title" TEXT NOT NULL,
     "description" TEXT,
@@ -54,11 +57,30 @@ CREATE TABLE "Schedule" (
 );
 
 -- CreateTable
+CREATE TABLE "NonCyclicSchedule" (
+    "id" TEXT NOT NULL,
+    "availableDay" "WeekDayEnum" NOT NULL,
+    "period" TEXT NOT NULL,
+    "subjectId" TEXT NOT NULL,
+    "totalHours" DOUBLE PRECISION NOT NULL,
+    "courseGroupId" TEXT NOT NULL,
+    "links" JSONB NOT NULL,
+    "title" TEXT NOT NULL,
+    "description" TEXT,
+    "examType" "ScheduleExamTypeEnum" NOT NULL,
+    "createdAt" TIMESTAMP(0) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(0) NOT NULL,
+
+    CONSTRAINT "NonCyclicSchedule_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "ScheduleTeacher" (
     "id" TEXT NOT NULL,
     "teacherId" TEXT NOT NULL,
     "subjectId" TEXT NOT NULL,
     "scheduleId" TEXT,
+    "nonCyclicScheduleId" TEXT,
     "createdAt" TIMESTAMP(0) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(0) NOT NULL,
 
@@ -70,8 +92,9 @@ CREATE TABLE "ThematicPlan" (
     "id" TEXT NOT NULL,
     "title" TEXT,
     "totalHours" DOUBLE PRECISION NOT NULL,
-    "scheduleId" TEXT NOT NULL,
+    "scheduleId" TEXT,
     "type" "ThematicSubPlanTypeEnum" NOT NULL,
+    "nonCyclicScheduleId" TEXT,
     "createdAt" TIMESTAMP(0) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(0) NOT NULL,
 
@@ -100,13 +123,25 @@ ALTER TABLE "Schedule" ADD CONSTRAINT "Schedule_subjectId_fkey" FOREIGN KEY ("su
 ALTER TABLE "Schedule" ADD CONSTRAINT "Schedule_courseGroupId_fkey" FOREIGN KEY ("courseGroupId") REFERENCES "CourseGroup"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "NonCyclicSchedule" ADD CONSTRAINT "NonCyclicSchedule_subjectId_fkey" FOREIGN KEY ("subjectId") REFERENCES "Subject"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "NonCyclicSchedule" ADD CONSTRAINT "NonCyclicSchedule_courseGroupId_fkey" FOREIGN KEY ("courseGroupId") REFERENCES "CourseGroup"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "ScheduleTeacher" ADD CONSTRAINT "ScheduleTeacher_teacherId_fkey" FOREIGN KEY ("teacherId") REFERENCES "Teacher"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "ScheduleTeacher" ADD CONSTRAINT "ScheduleTeacher_scheduleId_fkey" FOREIGN KEY ("scheduleId") REFERENCES "Schedule"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "ScheduleTeacher" ADD CONSTRAINT "ScheduleTeacher_nonCyclicScheduleId_fkey" FOREIGN KEY ("nonCyclicScheduleId") REFERENCES "NonCyclicSchedule"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "ThematicPlan" ADD CONSTRAINT "ThematicPlan_scheduleId_fkey" FOREIGN KEY ("scheduleId") REFERENCES "Schedule"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "ThematicPlan" ADD CONSTRAINT "ThematicPlan_nonCyclicScheduleId_fkey" FOREIGN KEY ("nonCyclicScheduleId") REFERENCES "NonCyclicSchedule"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "ThematicPlanDescription" ADD CONSTRAINT "ThematicPlanDescription_thematicPlanId_fkey" FOREIGN KEY ("thematicPlanId") REFERENCES "ThematicPlan"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -116,3 +151,6 @@ ALTER TABLE "Attachment" ADD CONSTRAINT "Attachment_subjectId_fkey" FOREIGN KEY 
 
 -- AddForeignKey
 ALTER TABLE "Attachment" ADD CONSTRAINT "Attachment_scheduleId_fkey" FOREIGN KEY ("scheduleId") REFERENCES "Schedule"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Attachment" ADD CONSTRAINT "Attachment_nonCyclicScheduleId_fkey" FOREIGN KEY ("nonCyclicScheduleId") REFERENCES "NonCyclicSchedule"("id") ON DELETE SET NULL ON UPDATE CASCADE;

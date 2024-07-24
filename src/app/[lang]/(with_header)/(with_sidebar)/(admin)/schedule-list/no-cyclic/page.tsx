@@ -13,7 +13,7 @@ import useDebounce from '@/hooks/useDebounce';
 import { ITEMS_PER_PAGE } from '@/utils/constants/common';
 import { QUERY_KEY } from '@/utils/helpers/queryClient';
 import { Maybe } from '@/utils/models/common';
-import { ScheduleSingleModel } from '@/utils/models/schedule';
+import { NoneCyclicScheduleSingleModel } from '@/utils/models/none-cyclic.schedule';
 import AddEditThematicPlan from './_components/modals/AddEditThematicPlan';
 
 const DeleteModal = dynamic(() => import('./_components/modals/DeleteModal'));
@@ -23,14 +23,15 @@ export default function Schedule() {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
-  const [selectedSchedule, setSelectedSchedule] = useState<Maybe<ScheduleSingleModel>>(null);
+  const [selectedSchedule, setSelectedSchedule] =
+    useState<Maybe<NoneCyclicScheduleSingleModel>>(null);
   const debouncedSearch = useDebounce(search);
   const t = useTranslations();
 
   const { data, isLoading, isPlaceholderData, refetch } = useQuery({
     queryKey: QUERY_KEY.allTeachers(debouncedSearch, page),
     queryFn: () =>
-      ScheduleService.list({
+      ScheduleService.noneCyclicList({
         offset: page === 1 ? 0 : (page - 1) * ITEMS_PER_PAGE,
         limit: ITEMS_PER_PAGE,
         search: debouncedSearch,
@@ -71,7 +72,7 @@ export default function Schedule() {
   });
 
   const { mutate: deleteScheduleMutation } = useMutation({
-    mutationFn: ScheduleService.deleteScheduleById,
+    mutationFn: ScheduleService.deleteNoneCyclicScheduleById,
     onSuccess() {
       closeDeleteModal();
     },
@@ -93,7 +94,7 @@ export default function Schedule() {
     [page],
   );
 
-  const columnHelper = createColumnHelper<ScheduleSingleModel>();
+  const columnHelper = createColumnHelper<NoneCyclicScheduleSingleModel>();
 
   const columns = [
     columnHelper.accessor('title', {
@@ -110,11 +111,6 @@ export default function Schedule() {
       id: uuidv4(),
       cell: info => info.getValue(),
       header: t('totalHours'),
-    }),
-    columnHelper.accessor('isAssessment', {
-      id: uuidv4(),
-      cell: info => (info.getValue() ? t('yes') : t('no')),
-      header: t('assessment'),
     }),
     columnHelper.accessor('id', {
       id: uuidv4(),

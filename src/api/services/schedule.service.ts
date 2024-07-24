@@ -1,4 +1,6 @@
+import { NoneCyclicScheduleListDataModel } from '@/utils/models/none-cyclic.schedule';
 import { ScheduleListDataModel } from '@/utils/models/schedule';
+import { CreateEditNonCylicScheduleValidation } from '@/utils/validation/non-cyclic';
 import {
   AddEditThematicPlanValidation,
   CreateEditScheduleValidation,
@@ -28,6 +30,33 @@ export class ScheduleService {
   }
 
   static editThematicPlan(scheduleId: string, input: AddEditThematicPlanValidation) {
+    return $apiClient.patch(`/schedules/${scheduleId}/thematic-plan`, input);
+  }
+
+  // NONE-CYCLIC
+  static noneCyclicList(params?: QueryParams): Promise<NoneCyclicScheduleListDataModel> {
+    return $apiClient.get<NoneCyclicScheduleListDataModel>('/schedules/none-cyclic/list', {
+      params,
+    });
+  }
+
+  static createNoneCyclicSchedule(data: CreateEditNonCylicScheduleValidation) {
+    return $apiClient.post('/schedules/none-cyclic', data);
+  }
+
+  static updateNoneCyclicSchedule(data: CreateEditNonCylicScheduleValidation) {
+    return $apiClient.patch(`/schedules/none-cyclic/${data.id}`, data);
+  }
+
+  static deleteNoneCyclicScheduleById(scheduleId: string) {
+    return $apiClient.delete(`/schedules/none-cyclic/${scheduleId}`);
+  }
+
+  static createNonCyclicThematicPlan(scheduleId: string, input: AddEditThematicPlanValidation) {
+    return $apiClient.post(`/schedules/${scheduleId}/thematic-plan`, input);
+  }
+
+  static editNoneCyclicThematicPlan(scheduleId: string, input: AddEditThematicPlanValidation) {
     return $apiClient.patch(`/schedules/${scheduleId}/thematic-plan`, input);
   }
 }

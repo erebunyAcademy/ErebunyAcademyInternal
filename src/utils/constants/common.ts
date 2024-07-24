@@ -1,4 +1,4 @@
-import { ScheduleExamTypeEnum, ScheduleTypeEnum } from '@prisma/client';
+import { ScheduleExamTypeEnum, WeekDayEnum } from '@prisma/client';
 
 export const ERROR_MESSAGES = {
   somethingWentWrong: 'somethingWentWrong',
@@ -23,7 +23,12 @@ export const scheduleExamType = Object.values(ScheduleExamTypeEnum).map(title =>
   title: title,
 }));
 
-export const scheduleType = Object.values(ScheduleTypeEnum).map(title => ({
-  id: title,
-  title: title,
+export const weekendDayList = Object.values(WeekDayEnum).map((weekendDay: WeekDayEnum) => ({
+  id: weekendDay,
+  title: weekendDay,
+}));
+
+export const periodListData = Array.from({ length: 10 }, (_, i) => ({
+  id: `${i + 1}-${i + 2}`,
+  title: `${i + 1}-${i + 2}`,
 }));

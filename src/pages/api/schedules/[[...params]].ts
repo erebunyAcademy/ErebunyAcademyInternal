@@ -14,6 +14,7 @@ import { SortingType } from '@/api/types/common';
 import { exceptionHandler } from '@/lib/prisma/error';
 import { AdminGuard } from '@/lib/prisma/guards/admin';
 import { ScheduleResolver } from '@/lib/prisma/resolvers/schedule.resolver';
+import { CreateEditNonCylicScheduleValidation } from '@/utils/validation/non-cyclic';
 import {
   AddEditThematicPlanValidation,
   CreateEditScheduleValidation,
@@ -64,6 +65,34 @@ class FacultyHandler {
     @Body(ValidationPipe) input: AddEditThematicPlanValidation,
   ) {
     return ScheduleResolver.updateThematicPlan(scheduleId, input);
+  }
+
+  @Get('/none-cyclic/list')
+  _nonCyclicList(
+    @Query('offset') skip: string,
+    @Query('limit') take: string,
+    @Query('search') search: string,
+    @Query('sorting') sorting: SortingType[],
+  ) {
+    return ScheduleResolver.nonCycleSchedulelist(+skip, +take, search, sorting);
+  }
+
+  @Post('/none-cyclic')
+  _createNoneCyclicSchedule(@Body(ValidationPipe) input: CreateEditNonCylicScheduleValidation) {
+    return ScheduleResolver.createNonCyclicSchedule(input);
+  }
+
+  @Patch('/none-cyclic/:scheduleId')
+  _updateNoneCyclicSchedule(
+    @Param('scheduleId') scheduleId: string,
+    @Body(ValidationPipe) input: CreateEditNonCylicScheduleValidation,
+  ) {
+    return ScheduleResolver.updateNonCycleSchedule(scheduleId, input);
+  }
+
+  @Delete('none-cyclic/:scheduleId')
+  _deleteNoneCyclicSchedule(@Param('scheduleId') scheduleId: string) {
+    return ScheduleResolver.deleteNonCyclicSchedule(scheduleId);
   }
 }
 

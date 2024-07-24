@@ -3,10 +3,10 @@ import React, { FC } from 'react';
 import { useTranslations } from 'next-intl';
 import Modal from '@/components/molecules/Modal';
 import { Maybe } from '@/utils/models/common';
-import { ScheduleSingleModel } from '@/utils/models/schedule';
+import { NoneCyclicScheduleSingleModel } from '@/utils/models/none-cyclic.schedule';
 
 type DeleteModalProps = {
-  selectedSchedule: Maybe<ScheduleSingleModel>;
+  selectedSchedule: Maybe<NoneCyclicScheduleSingleModel>;
   isDeleteModalOpen: boolean;
   closeDeleteModal: () => void;
   actionHandler: (id: string) => void;
