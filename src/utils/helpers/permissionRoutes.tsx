@@ -32,6 +32,8 @@ export interface LinkItemProps {
   icon: ReactNode;
   id: number;
   href?: string;
+  isExpandable?: boolean;
+  children?: any[];
 }
 
 export type LinkItemsFunction = (user: User) => Array<LinkItemProps>;
@@ -61,7 +63,22 @@ export const linkItems: LinkItemsFunction = (user: Maybe<User>) => {
         { id: 6, name: 'exams', icon: <ExamsIcon />, href: ROUTE_EXAMS },
         { id: 7, name: 'teachers', icon: <TeacherIcon />, href: ROUTE_TEACHERS },
         { id: 8, name: 'subjects', icon: <SubjectsIcon />, href: ROUTE_SUBJECTS },
-        { id: 8, name: 'schedules', icon: <ScheduleIcon />, href: ROUTE_SCHEDULES },
+        {
+          id: 118,
+          name: 'schedules',
+          icon: <ScheduleIcon />,
+          isExpandable: true,
+          href: '',
+          children: [
+            { id: 111, name: 'cyclic', icon: <TeacherIcon />, href: `${ROUTE_SCHEDULES}/cyclic` },
+            {
+              id: 122,
+              name: 'notCyclic',
+              icon: <SubjectsIcon />,
+              href: `${ROUTE_SCHEDULES}/no-cyclic`,
+            },
+          ],
+        },
         commonLinks[2],
       ];
     case UserRoleEnum.STUDENT:
