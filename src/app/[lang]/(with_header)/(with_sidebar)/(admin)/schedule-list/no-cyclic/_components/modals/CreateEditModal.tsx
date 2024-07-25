@@ -67,42 +67,6 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
     },
   });
 
-  // console.log({ errors });
-
-  // useEffect(() => {
-  //   if (selectedSchedule) {
-  //     const attachmentWithUrls = selectedSchedule.attachment.map(attachment => ({
-  //       key: attachment.key,
-  //       mimetype: attachment.mimetype,
-  //       title: attachment.title || '',
-  //       localUrl: attachment.key, // Assuming your files are served from the `/uploads` directory
-  //     }));
-
-  //     setFiles(
-  //       attachmentWithUrls.map(att => ({
-  //         file: new File([], att.title),
-  //         localUrl: att.localUrl,
-  //       })),
-  //     );
-
-  //     console.log(selectedSchedule.links, '**************************');
-
-  //     reset({
-  //       totalHours: selectedSchedule.totalHours.toString(),
-  //       subjectId: selectedSchedule.subjectId,
-  //       title: selectedSchedule.title,
-  //       description: selectedSchedule.description || '',
-  //       teacherId: selectedSchedule.scheduleTeachers[0].teacherId,
-  //       attachments: selectedSchedule.attachment.map(attachment => ({
-  //         key: attachment.key,
-  //         mimetype: attachment.mimetype,
-  //         title: attachment.title || '',
-  //       })),
-  //       links: (selectedSchedule.links as any).map((link: any) => ({ link })),
-  //     });
-  //   }
-  // }, [reset, selectedSchedule]);
-
   const { data: teachersQueryData } = useQuery<TeacherDataModel>({
     queryKey: ['teachers'],
     queryFn: TeacherService.getTeachers,
@@ -232,8 +196,6 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
         });
       });
 
-      console.log(data.attachments);
-
       if (
         selectedSchedule?.attachment &&
         selectedSchedule?.attachment.length > 0 &&
@@ -305,6 +267,7 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
           control={control}
           render={({ field: { onChange, value, name } }) => (
             <FormInput
+              isRequired
               name={name}
               type="number"
               formLabelName={t('totalHours')}
@@ -346,7 +309,7 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
               name={name}
               isRequired
               options={teacherListData as any}
-              labelName="teacher"
+              labelName="lecturer"
               valueLabel="id"
               nameLabel="title"
               onChange={onChange}
