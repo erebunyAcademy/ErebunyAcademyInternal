@@ -69,6 +69,8 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
     },
   });
 
+
+
   useEffect(() => {
     if (selectedSchedule) {
       const attachmentWithUrls = selectedSchedule.attachment.map(attachment => ({
@@ -311,7 +313,7 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
               name={name}
               isRequired
               options={teacherListData as any}
-              labelName="teacher"
+              labelName="lecturer"
               valueLabel="id"
               nameLabel="title"
               onChange={onChange}

@@ -95,6 +95,7 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
         endDayDate: dayjs(selectedSchedule.endDayDate).format('YYYY-MM-DD'),
         isAssessment: selectedSchedule.isAssessment,
         teacherId: selectedSchedule.scheduleTeachers[0].teacherId,
+        courseGroupId: selectedSchedule.courseGroupId,
         attachments: selectedSchedule.attachment.map(attachment => ({
           key: attachment.key,
           mimetype: attachment.mimetype,
@@ -311,7 +312,7 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
               name={name}
               isRequired
               options={teacherListData as any}
-              labelName="teacher"
+              labelName="lecturer"
               valueLabel="id"
               nameLabel="title"
               onChange={onChange}

@@ -9,6 +9,7 @@ import FacultiesIcon from '@/icons/faculty_icon.svg';
 import LogoutIcon from '@/icons/log-out.svg';
 import ProfileIcon from '@/icons/profile.svg';
 import ScheduleIcon from '@/icons/schedule.svg';
+import ScheduleChildrenIcon from '@/icons/schedule_.svg';
 import StudentIcon from '@/icons/student_icon.svg';
 import SubjectsIcon from '@/icons/subjects_icon.svg';
 import TeacherIcon from '@/icons/teacher_icon.svg';
@@ -70,11 +71,11 @@ export const linkItems: LinkItemsFunction = (user: Maybe<User>) => {
           isExpandable: true,
           href: '',
           children: [
-            { id: 111, name: 'cyclic', icon: <TeacherIcon />, href: `${ROUTE_SCHEDULES}/cyclic` },
+            { id: 111, name: 'cyclic', icon: <ScheduleChildrenIcon />, href: `${ROUTE_SCHEDULES}/cyclic` },
             {
               id: 122,
               name: 'notCyclic',
-              icon: <SubjectsIcon />,
+              icon: <ScheduleChildrenIcon />,
               href: `${ROUTE_SCHEDULES}/no-cyclic`,
             },
           ],
