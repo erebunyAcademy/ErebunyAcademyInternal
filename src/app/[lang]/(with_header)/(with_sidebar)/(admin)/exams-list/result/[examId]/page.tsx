@@ -34,15 +34,10 @@ const ExamResult = ({ params }: { params: { examId: string } }) => {
       cell: info => info.getValue(),
       header: t('email'),
     }),
-    columnHelper.accessor('rightAnswers', {
+    columnHelper.accessor('studentExamResult', {
       id: uuidv4(),
       cell: info => info.getValue(),
-      header: t('rightAnswers'),
-    }),
-    columnHelper.accessor('total', {
-      id: uuidv4(),
-      cell: info => info.getValue(),
-      header: t('totalQuestions'),
+      header: t('result'),
     }),
   ];
 

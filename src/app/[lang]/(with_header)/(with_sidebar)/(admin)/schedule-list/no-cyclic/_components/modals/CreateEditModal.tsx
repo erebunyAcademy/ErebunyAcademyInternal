@@ -1,5 +1,5 @@
 'use client';
-import React, { ChangeEvent, FC, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { ChangeEvent, FC, useCallback, useMemo, useState } from 'react';
 import { AddIcon, DeleteIcon } from '@chakra-ui/icons';
 import { Box, Button, Divider, Flex, IconButton, Input, Stack, Text } from '@chakra-ui/react';
 import { classValidatorResolver } from '@hookform/resolvers/class-validator';
@@ -67,41 +67,41 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
     },
   });
 
-  console.log({ errors });
+  // console.log({ errors });
 
-  useEffect(() => {
-    if (selectedSchedule) {
-      const attachmentWithUrls = selectedSchedule.attachment.map(attachment => ({
-        key: attachment.key,
-        mimetype: attachment.mimetype,
-        title: attachment.title || '',
-        localUrl: attachment.key, // Assuming your files are served from the `/uploads` directory
-      }));
+  // useEffect(() => {
+  //   if (selectedSchedule) {
+  //     const attachmentWithUrls = selectedSchedule.attachment.map(attachment => ({
+  //       key: attachment.key,
+  //       mimetype: attachment.mimetype,
+  //       title: attachment.title || '',
+  //       localUrl: attachment.key, // Assuming your files are served from the `/uploads` directory
+  //     }));
 
-      setFiles(
-        attachmentWithUrls.map(att => ({
-          file: new File([], att.title),
-          localUrl: att.localUrl,
-        })),
-      );
+  //     setFiles(
+  //       attachmentWithUrls.map(att => ({
+  //         file: new File([], att.title),
+  //         localUrl: att.localUrl,
+  //       })),
+  //     );
 
-      reset({
-        totalHours: selectedSchedule.totalHours.toString(),
-        subjectId: selectedSchedule.subjectId,
-        title: selectedSchedule.title,
-        description: selectedSchedule.description || '',
-        teacherId: selectedSchedule.scheduleTeachers[0].teacherId,
-        attachments: selectedSchedule.attachment.map(attachment => ({
-          key: attachment.key,
-          mimetype: attachment.mimetype,
-          title: attachment.title || '',
-        })),
-        links: (Array.isArray(selectedSchedule.links) ? selectedSchedule.links : ([] as any)).map(
-          (link: string) => ({ link }),
-        ),
-      });
-    }
-  }, [reset, selectedSchedule]);
+  //     console.log(selectedSchedule.links, '**************************');
+
+  //     reset({
+  //       totalHours: selectedSchedule.totalHours.toString(),
+  //       subjectId: selectedSchedule.subjectId,
+  //       title: selectedSchedule.title,
+  //       description: selectedSchedule.description || '',
+  //       teacherId: selectedSchedule.scheduleTeachers[0].teacherId,
+  //       attachments: selectedSchedule.attachment.map(attachment => ({
+  //         key: attachment.key,
+  //         mimetype: attachment.mimetype,
+  //         title: attachment.title || '',
+  //       })),
+  //       links: (selectedSchedule.links as any).map((link: any) => ({ link })),
+  //     });
+  //   }
+  // }, [reset, selectedSchedule]);
 
   const { data: teachersQueryData } = useQuery<TeacherDataModel>({
     queryKey: ['teachers'],
@@ -147,6 +147,40 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
       })),
     [teachersQueryData],
   );
+
+  useMemo(() => {
+    if (selectedSchedule) {
+      const attachmentWithUrls = selectedSchedule.attachment.map(attachment => ({
+        key: attachment.key,
+        mimetype: attachment.mimetype,
+        title: attachment.title || '',
+        localUrl: attachment.key, // Assuming your files are served from the `/uploads` directory
+      }));
+
+      setFiles(
+        attachmentWithUrls.map(att => ({
+          file: new File([], att.title),
+          localUrl: att.localUrl,
+        })),
+      );
+
+      console.log(selectedSchedule.links, '**************************');
+
+      reset({
+        totalHours: selectedSchedule.totalHours.toString(),
+        subjectId: selectedSchedule.subjectId,
+        title: selectedSchedule.title,
+        description: selectedSchedule.description || '',
+        teacherId: selectedSchedule.scheduleTeachers[0].teacherId,
+        attachments: selectedSchedule.attachment.map(attachment => ({
+          key: attachment.key,
+          mimetype: attachment.mimetype,
+          title: attachment.title || '',
+        })),
+        links: (selectedSchedule.links as any).map((link: any) => ({ link })),
+      });
+    }
+  }, [reset, selectedSchedule]);
 
   const {
     fields: linkFields,

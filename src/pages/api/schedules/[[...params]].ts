@@ -90,7 +90,7 @@ class FacultyHandler {
     return ScheduleResolver.updateNonCycleSchedule(scheduleId, input);
   }
 
-  @Delete('none-cyclic/:scheduleId')
+  @Delete('/none-cyclic/:scheduleId')
   _deleteNoneCyclicSchedule(@Param('scheduleId') scheduleId: string) {
     return ScheduleResolver.deleteNonCyclicSchedule(scheduleId);
   }
