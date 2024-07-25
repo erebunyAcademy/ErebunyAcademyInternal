@@ -42,8 +42,6 @@ const ProfileNavItem: FC<ProfileNavItemProps> = ({ user, onClose, linkItems, lan
     router.refresh();
   }, [router, lang]);
 
-  console.log({ linkItems });
-
   return (
     <AccordionItem pl={8}>
       <AccordionButton display="flex">

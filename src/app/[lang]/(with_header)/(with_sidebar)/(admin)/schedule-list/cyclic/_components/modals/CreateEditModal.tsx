@@ -96,6 +96,7 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
         isAssessment: selectedSchedule.isAssessment,
         teacherId: selectedSchedule.scheduleTeachers[0].teacherId,
         courseGroupId: selectedSchedule.courseGroupId,
+        examType: selectedSchedule.examType,
         attachments: selectedSchedule.attachment.map(attachment => ({
           key: attachment.key,
           mimetype: attachment.mimetype,
@@ -269,6 +270,7 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
           control={control}
           render={({ field: { onChange, value, name } }) => (
             <FormInput
+              isRequired
               name={name}
               type="number"
               formLabelName={t('totalHours')}
