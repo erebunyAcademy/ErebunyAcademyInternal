@@ -236,6 +236,10 @@
   "endDay": "End day",
   "examDay": "Exam day",
   "totalHours": "Total hours",
-  "teacher": "Teacher",
-  "deleteScheduleQuestion": "Are you sure you want to delete this schedule?"
+  "lecturer": "Lecturer",
+  "deleteScheduleQuestion": "Are you sure you want to delete this schedule?",
+  "addThematicPlan": " Add Thematic plan",
+  "examType": "Exam type",
+  "cyclic": "Cyclic",
+  "notCyclic": "Not cyclic"
 }

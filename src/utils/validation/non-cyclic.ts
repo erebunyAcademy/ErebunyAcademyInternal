@@ -1,9 +1,8 @@
 import 'reflect-metadata';
-import { ScheduleExamTypeEnum } from '@prisma/client';
+import { ScheduleExamTypeEnum, WeekDayEnum } from '@prisma/client';
 import { Type } from 'class-transformer';
 import {
   IsArray,
-  IsBoolean,
   IsEnum,
   IsNotEmpty,
   IsOptional,
@@ -54,7 +53,7 @@ export class AttachmentValidation {
   mimetype: string;
 }
 
-export class CreateEditScheduleValidation {
+export class CreateEditNonCylicScheduleValidation {
   @IsString()
   @IsOptional()
   id?: string;
@@ -63,6 +62,15 @@ export class CreateEditScheduleValidation {
   @IsNotEmpty()
   @IsString()
   examType: ScheduleExamTypeEnum;
+
+  @IsEnum(WeekDayEnum)
+  @IsString()
+  @IsNotEmpty()
+  availableDay: WeekDayEnum;
+
+  @IsString()
+  @IsNotEmpty()
+  period: string;
 
   @IsString()
   @IsNotEmpty()
@@ -83,22 +91,6 @@ export class CreateEditScheduleValidation {
   @IsString()
   @IsNotEmpty()
   totalHours: string;
-
-  @IsString()
-  @IsOptional()
-  startDayDate: string;
-
-  @IsString()
-  @IsOptional()
-  examDate: string;
-
-  @IsString()
-  @IsOptional()
-  endDayDate: string;
-
-  @IsBoolean()
-  @IsNotEmpty()
-  isAssessment: boolean;
 
   @IsString()
   @IsNotEmpty()

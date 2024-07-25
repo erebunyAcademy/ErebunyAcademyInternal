@@ -718,16 +718,31 @@ export class ExamsResolver {
 
     const studentResult = checkStudentAnswers(data, studentAnswerGroupedByTestQuestion);
 
-    return {
+    const examResult = {
       rightAnswers: studentResult.filter(({ isCorrect }: any) => isCorrect).length,
       total: studentResult.length,
     };
+
+    await prisma.studentExam.update({
+      where: { id: studentExam.id },
+      data: {
+        studentExamResult: `${examResult.rightAnswers}/${examResult.total}`,
+      },
+    });
+
+    return examResult;
   }
 
   static async getStudentsExamResults(examId: string) {
-    const studentExams = await prisma.studentExam.findMany({
+    const exam = await prisma.exam.findUniqueOrThrow({
       where: {
-        examId,
+        id: examId,
+      },
+    });
+
+    return prisma.studentExam.findMany({
+      where: {
+        examId: exam.id,
         hasFinished: true,
       },
       include: {
@@ -743,62 +758,6 @@ export class ExamsResolver {
         },
       },
     });
-
-    const results = [];
-
-    for await (const stExam of studentExams) {
-      const [examTranslation] = stExam.exam.examLanguages;
-      console.log({ examTranslation });
-
-      const examTranslationTests = await prisma.examTranslationTests.findMany({
-        where: {
-          examTranslationId: examTranslation.id,
-        },
-        select: {
-          testQuestion: {
-            select: {
-              id: true,
-              options: {
-                where: {
-                  isRightAnswer: true,
-                },
-                select: {
-                  id: true,
-                },
-              },
-            },
-          },
-        },
-      });
-
-      const data = examTranslationTests.map(exTrTest => exTrTest.testQuestion);
-
-      const result = await prisma.studentAnswerOption.findMany({
-        where: { studentExamId: stExam.id },
-        select: { options: true, testQuestionId: true },
-      });
-
-      console.log(result);
-
-      const studentAnswerGroupedByTestQuestion = new Map();
-
-      result.forEach(({ testQuestionId, options }) => {
-        const existingAnswers = studentAnswerGroupedByTestQuestion.get(testQuestionId) || [];
-        studentAnswerGroupedByTestQuestion.set(testQuestionId, [...existingAnswers, options?.id]);
-      });
-
-      const studentResult = checkStudentAnswers(data, studentAnswerGroupedByTestQuestion);
-
-      console.log({ studentResult });
-
-      results.push({
-        student: stExam.student,
-        rightAnswers: studentResult.filter(({ isCorrect }: any) => isCorrect).length,
-        total: studentResult.length,
-      });
-    }
-
-    return results;
   }
 
   static async getIsFinished(studentId?: string, examId?: string) {

@@ -69,8 +69,6 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
     },
   });
 
-
-
   useEffect(() => {
     if (selectedSchedule) {
       const attachmentWithUrls = selectedSchedule.attachment.map(attachment => ({

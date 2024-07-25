@@ -119,6 +119,7 @@ export class StudentResolver {
         studentId: user?.student?.id,
       },
       select: {
+        studentExamResult: true,
         exam: {
           select: {
             status: true,

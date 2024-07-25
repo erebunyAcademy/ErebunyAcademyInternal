@@ -1,5 +1,5 @@
 'use client';
-import React, { FC, memo, useCallback, useMemo } from 'react';
+import React, { FC, Fragment, memo, useCallback, useMemo } from 'react';
 import {
   Accordion,
   AccordionButton,
@@ -68,18 +68,54 @@ const ProfileNavItem: FC<ProfileNavItemProps> = ({ user, onClose, linkItems, lan
       </AccordionButton>
       <AccordionPanel pb={0} bg="#F9FAFB" pt={0}>
         <Accordion allowToggle>
-          {linkItems.map(({ href, name, icon, id }) => (
-            <AccordionItem key={id}>
-              <AccordionButton
-                {...(href
-                  ? { as: Link, href: languagePathHelper(lang, href || ROUTE_DASHBOARD) || '' }
-                  : { onClick: id === 9 ? logout : () => {} })}>
-                <Flex as="span" flex="1" textAlign="left" pl="24px" alignItems="center" gap="8px">
-                  {icon}
-                  {t(name)}
-                </Flex>
-              </AccordionButton>
-            </AccordionItem>
+          {linkItems.map(({ href, name, icon, id, isExpandable }) => (
+            <Fragment key={id}>
+              {isExpandable ? (
+                <AccordionItem>
+                  <AccordionButton>
+                    <Flex
+                      as="span"
+                      flex="1"
+                      textAlign="left"
+                      pl="24px"
+                      alignItems="center"
+                      gap="8px">
+                      {icon}
+                      dasdasdasdasdas
+                      {t(name)}
+                    </Flex>
+                  </AccordionButton>
+                  <AccordionPanel pb={4}>
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+                    incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
+                    nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                  </AccordionPanel>
+                  <AccordionPanel pb={4}>
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+                    incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
+                    nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                  </AccordionPanel>
+                </AccordionItem>
+              ) : (
+                <AccordionItem>
+                  <AccordionButton
+                    {...(href
+                      ? { as: Link, href: languagePathHelper(lang, href || ROUTE_DASHBOARD) || '' }
+                      : { onClick: id === 9 ? logout : () => {} })}>
+                    <Flex
+                      as="span"
+                      flex="1"
+                      textAlign="left"
+                      pl="24px"
+                      alignItems="center"
+                      gap="8px">
+                      {icon}
+                      {t(name)}
+                    </Flex>
+                  </AccordionButton>
+                </AccordionItem>
+              )}
+            </Fragment>
           ))}
         </Accordion>
       </AccordionPanel>

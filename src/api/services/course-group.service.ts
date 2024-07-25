@@ -1,4 +1,8 @@
-import { CourseGroupAdminListModel, PublicCourseGroupListModel } from '@/utils/models/courseGroup';
+import {
+  CourseGroupAdminListModel,
+  GetCourseGroupsBySubjectId,
+  PublicCourseGroupListModel,
+} from '@/utils/models/courseGroup';
 import { CreateEditCourseGroupValidation } from '@/utils/validation/courseGroup';
 import $apiClient from '../axiosClient';
 import { QueryParams } from '../types/common';
@@ -31,5 +35,9 @@ export class CourseGroupService {
 
   static getCourseGroupByCourseId(id: string) {
     return $apiClient.get(`/course-group/courses/${id}`);
+  }
+
+  static getCourseGroupsBySubjectId(subjectId: string) {
+    return $apiClient.get<GetCourseGroupsBySubjectId>(`/course-group/subjects/${subjectId}`);
   }
 }

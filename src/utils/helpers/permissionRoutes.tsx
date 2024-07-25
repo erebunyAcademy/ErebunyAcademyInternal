@@ -9,6 +9,7 @@ import FacultiesIcon from '@/icons/faculty_icon.svg';
 import LogoutIcon from '@/icons/log-out.svg';
 import ProfileIcon from '@/icons/profile.svg';
 import ScheduleIcon from '@/icons/schedule.svg';
+import ScheduleChildrenIcon from '@/icons/schedule_.svg';
 import StudentIcon from '@/icons/student_icon.svg';
 import SubjectsIcon from '@/icons/subjects_icon.svg';
 import TeacherIcon from '@/icons/teacher_icon.svg';
@@ -32,6 +33,8 @@ export interface LinkItemProps {
   icon: ReactNode;
   id: number;
   href?: string;
+  isExpandable?: boolean;
+  children?: any[];
 }
 
 export type LinkItemsFunction = (user: User) => Array<LinkItemProps>;
@@ -61,7 +64,22 @@ export const linkItems: LinkItemsFunction = (user: Maybe<User>) => {
         { id: 6, name: 'exams', icon: <ExamsIcon />, href: ROUTE_EXAMS },
         { id: 7, name: 'teachers', icon: <TeacherIcon />, href: ROUTE_TEACHERS },
         { id: 8, name: 'subjects', icon: <SubjectsIcon />, href: ROUTE_SUBJECTS },
-        { id: 8, name: 'schedules', icon: <ScheduleIcon />, href: ROUTE_SCHEDULES },
+        {
+          id: 118,
+          name: 'schedules',
+          icon: <ScheduleIcon />,
+          isExpandable: true,
+          href: '',
+          children: [
+            { id: 111, name: 'cyclic', icon: <ScheduleChildrenIcon />, href: `${ROUTE_SCHEDULES}/cyclic` },
+            {
+              id: 122,
+              name: 'notCyclic',
+              icon: <ScheduleChildrenIcon />,
+              href: `${ROUTE_SCHEDULES}/no-cyclic`,
+            },
+          ],
+        },
         commonLinks[2],
       ];
     case UserRoleEnum.STUDENT:

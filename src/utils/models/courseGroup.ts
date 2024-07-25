@@ -12,3 +12,7 @@ export type CourseGroupSingleModel = CourseGroupListModel extends (infer SingleT
 export type PublicCourseGroupListModel = Prisma.PromiseReturnType<
   typeof CourseGroupResolver.getCourseGroupList
 >;
+
+export type GetCourseGroupsBySubjectId = Prisma.PromiseReturnType<
+  typeof CourseGroupResolver.getCourseGroupListBySubjectId
+>;

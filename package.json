@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "start:node": "npx ts-node -r tsconfig-paths/register node_app/app.ts",
+    "create:admin": "node ./prisma/jsMigrations/create-admin-account.js",
     "dev": "concurrently \"next dev\" \"yarn start:node\"",
     "build": "next build",
     "start": "concurrently \"next start\" \"yarn start:node\"",

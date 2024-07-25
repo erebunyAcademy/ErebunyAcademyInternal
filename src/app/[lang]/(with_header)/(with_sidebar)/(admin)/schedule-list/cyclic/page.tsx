@@ -126,7 +126,7 @@ export default function Schedule() {
               setSelectedSchedule(row.original);
               openAddEditThematicPlanModal();
             }}>
-            {t('addThematicPlan')}
+           {t("addThematicPlan")}
           </MenuItem>
           <MenuItem
             color="green"
