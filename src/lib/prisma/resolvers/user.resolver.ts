@@ -79,6 +79,7 @@ export class UserResolver {
         },
         teacher: {
           select: {
+            id:true,
             profession: true,
             workPlace: true,
             scientificActivity: true,

@@ -75,10 +75,7 @@ export default function Users() {
     }),
     columnHelper.accessor('createdAt', {
       id: uuidv4(),
-      cell: info => {
-        const currentDate = dayjs(info.getValue());
-        return currentDate.format('YYYY-MM-DD');
-      },
+      cell: info => dayjs(info.getValue()).format('YYYY-MM-DD'),
       header: t('createdAt'),
     }),
   ];

@@ -37,6 +37,8 @@ export class SubjectResolver {
     }));
   }
 
+  
+
   static getSubjects() {
     return prisma.subject.findMany({
       select: {

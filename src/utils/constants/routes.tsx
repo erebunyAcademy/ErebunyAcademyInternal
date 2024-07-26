@@ -17,3 +17,4 @@ export const ROUTE_STUDENT_EXAM_LIST = '/student-exam-list';
 export const ROUTE_EXAMINATION = '/examination';
 
 export const ROUTE_STUDENT_SCHEDULE = '/student-schedule';
+export const ROUTE_TEACHER_SCHEDULE = '/teacher-schedule';
