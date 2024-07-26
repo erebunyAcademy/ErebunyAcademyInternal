@@ -160,6 +160,8 @@ export class ScheduleResolver {
       subjectId,
       examDate,
       attachments,
+      examType,
+      courseGroupId,
     } = data;
 
     const schedule = await prisma.schedule.findUniqueOrThrow({
@@ -184,6 +186,8 @@ export class ScheduleResolver {
         data: {
           title,
           description,
+          examType,
+          courseGroupId,
           totalHours: +totalHours,
           startDayDate: new Date(startDayDate),
           endDayDate: new Date(endDayDate),
