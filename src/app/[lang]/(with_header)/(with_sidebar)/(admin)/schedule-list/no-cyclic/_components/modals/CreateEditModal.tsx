@@ -128,20 +128,24 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
         })),
       );
 
-      console.log(selectedSchedule.links, '**************************');
-
       reset({
         totalHours: selectedSchedule.totalHours.toString(),
         subjectId: selectedSchedule.subjectId,
         title: selectedSchedule.title,
         description: selectedSchedule.description || '',
         teacherId: selectedSchedule.scheduleTeachers[0].teacherId,
+        examType: selectedSchedule.examType,
+        courseGroupId: selectedSchedule.courseGroupId,
+        availableDay: selectedSchedule.availableDay,
+        period: selectedSchedule.period,
         attachments: selectedSchedule.attachment.map(attachment => ({
           key: attachment.key,
           mimetype: attachment.mimetype,
           title: attachment.title || '',
         })),
-        links: (selectedSchedule.links as any).map((link: any) => ({ link })),
+        links: (Array.isArray(selectedSchedule.links) ? selectedSchedule.links : ([] as any)).map(
+          (link: string) => ({ link }),
+        ),
       });
     }
   }, [reset, selectedSchedule]);
@@ -366,7 +370,7 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
               name={name}
               isRequired
               options={weekendDayList}
-              labelName="weekendDay"
+              labelName="weekDay"
               valueLabel="id"
               nameLabel="title"
               onChange={onChange}

@@ -107,6 +107,7 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
         ),
       });
     }
+    console.log(selectedSchedule, '---------');
   }, [reset, selectedSchedule]);
 
   const { data: teachersQueryData } = useQuery<TeacherDataModel>({
