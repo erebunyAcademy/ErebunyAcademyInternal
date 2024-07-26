@@ -56,6 +56,18 @@ class StudentsHandler {
   getStudentsInfoByExamId(@Param('examId') examId: string) {
     return StudentResolver.getStudentsInfoByExamId(examId);
   }
+
+  @StudentGuard()
+  @Get('/schedules/cyclic')
+  getStudentCyclicSchedule(@CurrentUser() user: NonNullable<User>) {
+    return StudentResolver.getStudentCyclicSchedule(user);
+  }
+
+  @StudentGuard()
+  @Get('/schedules/no-cyclic')
+  getStudentNoneCyclicSchedule(@CurrentUser() user: NonNullable<User>) {
+    return StudentResolver.getStudentNoneCyclicSchedule(user);
+  }
 }
 
 export default createHandler(StudentsHandler);

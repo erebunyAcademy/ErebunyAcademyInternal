@@ -1,5 +1,5 @@
 import { AttachmentTypeEnum, Prisma, UserRoleEnum } from '@prisma/client';
-import { NotFoundException } from 'next-api-decorators';
+import { ForbiddenException, NotFoundException } from 'next-api-decorators';
 import { User } from 'next-auth';
 import { UpdateStudentValidation } from '@/utils/validation/student';
 import prisma from '..';
@@ -214,6 +214,48 @@ export class StudentResolver {
             },
           },
         },
+      },
+    });
+  }
+
+  static async getStudentCyclicSchedule(user: NonNullable<User>) {
+    if (!user.student?.courseGroup?.id) {
+      throw new ForbiddenException('User does not have course group');
+    }
+
+    return prisma.schedule.findMany({
+      where: {
+        courseGroupId: user.student.courseGroup.id,
+      },
+      include: {
+        thematicPlan: {
+          include: {
+            thematicPlanDescription: true,
+          },
+        },
+        attachment: true,
+        subject:true,
+      },
+    });
+  }
+
+  static async getStudentNoneCyclicSchedule(user: NonNullable<User>) {
+    if (!user.student?.courseGroup?.id) {
+      throw new ForbiddenException('User does not have course group');
+    }
+
+    return prisma.nonCyclicSchedule.findMany({
+      where: {
+        courseGroupId: user.student.courseGroup.id,
+      },
+      include: {
+        thematicPlan: {
+          include: {
+            thematicPlanDescription: true,
+          },
+        },
+        attachment: true,
+        subject:true,
       },
     });
   }

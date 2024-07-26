@@ -71,6 +71,7 @@ export class UserResolver {
             },
             courseGroup: {
               select: {
+                id: true,
                 title: true,
               },
             },

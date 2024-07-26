@@ -22,6 +22,7 @@ import {
   ROUTE_PROFILE,
   ROUTE_SCHEDULES,
   ROUTE_STUDENT_EXAM_LIST,
+  ROUTE_STUDENT_SCHEDULE,
   ROUTE_STUDENTS,
   ROUTE_SUBJECTS,
   ROUTE_TEACHERS,
@@ -86,6 +87,7 @@ export const linkItems: LinkItemsFunction = (user: Maybe<User>) => {
       return [
         ...commonLinks.slice(0, 2),
         { id: 6, name: 'examination', icon: <ExamsIcon />, href: ROUTE_STUDENT_EXAM_LIST },
+        { id: 33, name: 'examination', icon: <ExamsIcon />, href: ROUTE_STUDENT_SCHEDULE },
         commonLinks[2],
       ];
 
