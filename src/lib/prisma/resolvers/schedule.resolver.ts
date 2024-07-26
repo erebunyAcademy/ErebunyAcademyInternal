@@ -410,6 +410,7 @@ export class ScheduleResolver {
       title,
       attachments,
       courseGroupId,
+      examType,
     } = data;
 
     const nonCycleSchedule = await prisma.nonCyclicSchedule.findUniqueOrThrow({
@@ -437,6 +438,7 @@ export class ScheduleResolver {
           period,
           title,
           description,
+          examType,
           totalHours: +totalHours,
           subjectId: data.subjectId,
           links: {
