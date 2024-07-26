@@ -106,11 +106,6 @@ const StudentSchedule = () => {
       cell: info => info.getValue(),
       header: t('title'),
     }),
-    notCyclicyclicColumnHelper.accessor('period', {
-      id: uuidv4(),
-      cell: info => info.getValue(),
-      header: t('period'),
-    }),
     notCyclicyclicColumnHelper.accessor('subject.title', {
       id: uuidv4(),
       cell: info => info.getValue(),

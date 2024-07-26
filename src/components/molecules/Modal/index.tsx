@@ -37,7 +37,7 @@ const Modal: FC<PropsWithChildren<ModalProps>> = ({
   return (
     <ChakraModal isOpen={isOpen} onClose={onClose} size={size} isCentered>
       <ModalOverlay />
-      <ModalContent py="20px">
+      <ModalContent py="20px" overflow="auto" height="100%">
         <ModalHeader>
           {actionText ? t(actionText) : ''} {title ? t(title) : ''}
         </ModalHeader>

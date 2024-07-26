@@ -32,3 +32,8 @@ export const periodListData = Array.from({ length: 10 }, (_, i) => ({
   id: `${i + 1}-${i + 2}`,
   title: `${i + 1}-${i + 2}`,
 }));
+
+export const academicYearListData = Array.from({ length: 5 }, (_, i) => ({
+  id: `${new Date().getFullYear() + i}-${new Date().getFullYear() + 1 + i}`,
+  title: `${new Date().getFullYear() + i}-${new Date().getFullYear() + 1 + i}`,
+}));

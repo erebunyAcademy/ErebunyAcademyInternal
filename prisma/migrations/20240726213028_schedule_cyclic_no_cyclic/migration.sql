@@ -31,6 +31,9 @@ ADD COLUMN     "scheduleId" TEXT,
 ALTER COLUMN "mimetype" SET DATA TYPE TEXT;
 
 -- AlterTable
+ALTER TABLE "StudentExam" ADD COLUMN     "studentExamResult" TEXT;
+
+-- AlterTable
 ALTER TABLE "Subject" ADD COLUMN     "courseId" TEXT;
 
 -- DropTable
@@ -59,7 +62,7 @@ CREATE TABLE "Schedule" (
 -- CreateTable
 CREATE TABLE "NonCyclicSchedule" (
     "id" TEXT NOT NULL,
-    "availableDay" "WeekDayEnum" NOT NULL,
+    "academicYear" TEXT NOT NULL,
     "period" TEXT NOT NULL,
     "subjectId" TEXT NOT NULL,
     "totalHours" DOUBLE PRECISION NOT NULL,
@@ -72,6 +75,18 @@ CREATE TABLE "NonCyclicSchedule" (
     "updatedAt" TIMESTAMP(0) NOT NULL,
 
     CONSTRAINT "NonCyclicSchedule_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "ScheduleTime" (
+    "id" TEXT NOT NULL,
+    "availableDay" "WeekDayEnum" NOT NULL,
+    "period" TEXT NOT NULL,
+    "nonCyclicScheduleId" TEXT,
+    "createdAt" TIMESTAMP(0) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(0) NOT NULL,
+
+    CONSTRAINT "ScheduleTime_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -127,6 +142,9 @@ ALTER TABLE "NonCyclicSchedule" ADD CONSTRAINT "NonCyclicSchedule_subjectId_fkey
 
 -- AddForeignKey
 ALTER TABLE "NonCyclicSchedule" ADD CONSTRAINT "NonCyclicSchedule_courseGroupId_fkey" FOREIGN KEY ("courseGroupId") REFERENCES "CourseGroup"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "ScheduleTime" ADD CONSTRAINT "ScheduleTime_nonCyclicScheduleId_fkey" FOREIGN KEY ("nonCyclicScheduleId") REFERENCES "NonCyclicSchedule"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "ScheduleTeacher" ADD CONSTRAINT "ScheduleTeacher_teacherId_fkey" FOREIGN KEY ("teacherId") REFERENCES "Teacher"("id") ON DELETE CASCADE ON UPDATE CASCADE;

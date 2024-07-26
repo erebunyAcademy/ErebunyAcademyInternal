@@ -53,6 +53,16 @@ export class AttachmentValidation {
   mimetype: string;
 }
 
+export class AvailableDaysValidation {
+  @IsEnum(WeekDayEnum)
+  @IsNotEmpty()
+  availableDay: WeekDayEnum;
+
+  @IsString()
+  @IsNotEmpty()
+  period: string;
+}
+
 export class CreateEditNonCylicScheduleValidation {
   @IsString()
   @IsOptional()
@@ -62,11 +72,6 @@ export class CreateEditNonCylicScheduleValidation {
   @IsNotEmpty()
   @IsString()
   examType: ScheduleExamTypeEnum;
-
-  @IsEnum(WeekDayEnum)
-  @IsString()
-  @IsNotEmpty()
-  availableDay: WeekDayEnum;
 
   @IsString()
   @IsNotEmpty()
@@ -95,6 +100,15 @@ export class CreateEditNonCylicScheduleValidation {
   @IsString()
   @IsNotEmpty()
   teacherId: string;
+
+  @IsString()
+  @IsNotEmpty()
+  academicYear: string;
+
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => AvailableDaysValidation)
+  availableDays: AvailableDaysValidation[];
 
   @IsArray()
   @ValidateNested({ each: true })

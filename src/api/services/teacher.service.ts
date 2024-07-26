@@ -1,4 +1,9 @@
-import { TeacherCyclicScheduleListType, TeacherDataModel, TeacherNoCyclicScheduleListType, TeachersListModel } from '@/utils/models/teachers';
+import {
+  TeacherCyclicScheduleListType,
+  TeacherDataModel,
+  TeacherNoCyclicScheduleListType,
+  TeachersListModel,
+} from '@/utils/models/teachers';
 import $apiClient from '../axiosClient';
 import { QueryParams } from '../types/common';
 
@@ -10,7 +15,7 @@ export class TeacherService {
     return $apiClient.get<TeacherDataModel>('/teachers');
   }
 
-    static getTeacherCyclicSchedule() {
+  static getTeacherCyclicSchedule() {
     return $apiClient.get<TeacherCyclicScheduleListType>('/teachers/schedules/cyclic');
   }
   static getTeacherNoCyclicSchedule() {

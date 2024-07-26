@@ -3,7 +3,6 @@ import React, { ChangeEvent, FC, useCallback, useMemo, useState } from 'react';
 import { AddIcon, DeleteIcon } from '@chakra-ui/icons';
 import { Box, Button, Divider, Flex, IconButton, Input, Stack, Text } from '@chakra-ui/react';
 import { classValidatorResolver } from '@hookform/resolvers/class-validator';
-import { WeekDayEnum } from '@prisma/client';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useTranslations } from 'next-intl';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
@@ -15,7 +14,12 @@ import { TeacherService } from '@/api/services/teacher.service';
 import { UploadService } from '@/api/services/upload.service';
 import { FormInput, SelectLabel } from '@/components/atoms';
 import Modal from '@/components/molecules/Modal';
-import { periodListData, scheduleExamType, weekendDayList } from '@/utils/constants/common';
+import {
+  academicYearListData,
+  periodListData,
+  scheduleExamType,
+  weekendDayList,
+} from '@/utils/constants/common';
 import { Maybe } from '@/utils/models/common';
 import { GetCourseGroupsBySubjectId } from '@/utils/models/courseGroup';
 import { NoneCyclicScheduleSingleModel } from '@/utils/models/none-cyclic.schedule';
@@ -54,7 +58,6 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
     resolver,
     defaultValues: {
       totalHours: '',
-      availableDay: WeekDayEnum.MONDAY,
       subjectId: '',
       period: '1-2',
       title: '',
@@ -64,6 +67,8 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
       courseGroupId: '',
       attachments: [],
       links: [],
+      academicYear: '',
+      availableDays: [{ availableDay: 'MONDAY', period: '' }],
     },
   });
 
@@ -129,6 +134,7 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
       );
 
       reset({
+        availableDays: selectedSchedule.availableDays,
         totalHours: selectedSchedule.totalHours.toString(),
         subjectId: selectedSchedule.subjectId,
         title: selectedSchedule.title,
@@ -136,8 +142,6 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
         teacherId: selectedSchedule.scheduleTeachers[0].teacherId,
         examType: selectedSchedule.examType,
         courseGroupId: selectedSchedule.courseGroupId,
-        availableDay: selectedSchedule.availableDay,
-        period: selectedSchedule.period,
         attachments: selectedSchedule.attachment.map(attachment => ({
           key: attachment.key,
           mimetype: attachment.mimetype,
@@ -157,6 +161,15 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
   } = useFieldArray({
     control,
     name: 'links',
+  });
+
+  const {
+    fields: availableDayFields,
+    append: appendavailableDay,
+    remove: removeavailableDay,
+  } = useFieldArray({
+    control,
+    name: 'availableDays',
   });
 
   const onFileSelect = (e: ChangeEvent<HTMLInputElement>) => {
@@ -363,14 +376,14 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
           )}
         />
         <Controller
-          name="availableDay"
+          name="academicYear"
           control={control}
           render={({ field: { onChange, value, name } }) => (
             <SelectLabel
               name={name}
               isRequired
-              options={weekendDayList}
-              labelName="weekDay"
+              options={academicYearListData}
+              labelName="academicYear"
               valueLabel="id"
               nameLabel="title"
               onChange={onChange}
@@ -380,24 +393,63 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
             />
           )}
         />
-        <Controller
-          name="period"
-          control={control}
-          render={({ field: { onChange, value, name } }) => (
-            <SelectLabel
-              name={name}
-              isRequired
-              options={periodListData}
-              labelName="period"
-              valueLabel="id"
-              nameLabel="title"
-              onChange={onChange}
-              value={value}
-              isInvalid={!!errors[name]?.message}
-              formErrorMessage={errors[name]?.message}
+      </Flex>
+      <Flex gap={32} flexDirection="column">
+        {availableDayFields.map((field, index: number) => (
+          <Flex key={field.id} gap={24}>
+            <Controller
+              name={`availableDays.${index}.availableDay`}
+              control={control}
+              render={({ field: { onChange, value, name } }) => (
+                <SelectLabel
+                  name={name}
+                  isRequired
+                  options={weekendDayList}
+                  labelName="day"
+                  valueLabel="id"
+                  nameLabel="title"
+                  onChange={onChange}
+                  value={value}
+                  isInvalid={!!errors.availableDays?.[index]?.message}
+                  formErrorMessage={errors.availableDays?.[index]?.message}
+                />
+              )}
             />
-          )}
-        />
+            <Controller
+              name={`availableDays.${index}.period`}
+              control={control}
+              render={({ field: { onChange, value, name } }) => (
+                <SelectLabel
+                  name={name}
+                  isRequired
+                  options={periodListData}
+                  labelName="period"
+                  valueLabel="id"
+                  nameLabel="title"
+                  onChange={onChange}
+                  value={value}
+                  isInvalid={!!errors.availableDays?.[index]?.message}
+                  formErrorMessage={errors.availableDays?.[index]?.message}
+                />
+              )}
+            />
+
+            <IconButton
+              mt="20px"
+              size="md"
+              colorScheme="red"
+              aria-label="Delete link"
+              icon={<DeleteIcon />}
+              onClick={() => removeavailableDay(index)}
+            />
+          </Flex>
+        ))}
+        <Button
+          mt={2}
+          onClick={() => appendavailableDay({ availableDay: 'MONDAY', period: '' })}
+          leftIcon={<AddIcon />}>
+          {t('addClassDay')}
+        </Button>
       </Flex>
       <Divider />
 

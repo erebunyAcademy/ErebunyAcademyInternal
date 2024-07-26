@@ -304,6 +304,7 @@ export class ScheduleResolver {
               teacherId: true,
             },
           },
+
           attachment: {
             select: {
               key: true,
@@ -311,6 +312,7 @@ export class ScheduleResolver {
               mimetype: true,
             },
           },
+          availableDays: true,
         },
 
         orderBy: sorting ? orderBy(sorting) : undefined,
@@ -352,10 +354,11 @@ export class ScheduleResolver {
 
   static async createNonCyclicSchedule(data: CreateEditNonCylicScheduleValidation) {
     const {
-      availableDay,
-      period,
+      academicYear,
+      availableDays,
       description,
       totalHours,
+      examType,
       teacherId,
       links,
       subjectId,
@@ -368,12 +371,11 @@ export class ScheduleResolver {
       data: {
         title,
         courseGroupId,
-        period,
-        availableDay,
         description,
-        examType: data.examType,
+        academicYear,
+        subjectId,
+        examType,
         totalHours: +totalHours,
-        subjectId: data.subjectId,
         links: links.map(({ link }) => link),
         scheduleTeachers: {
           create: {
@@ -385,6 +387,14 @@ export class ScheduleResolver {
       select: {
         id: true,
       },
+    });
+
+    await prisma.scheduleTime.createMany({
+      data: availableDays.map(day => ({
+        availableDay: day.availableDay,
+        period: day.period,
+        nonCyclicScheduleId: createdSchedule.id,
+      })),
     });
 
     if (attachments) {
@@ -404,8 +414,7 @@ export class ScheduleResolver {
 
   static async updateNonCycleSchedule(id: string, data: CreateEditNonCylicScheduleValidation) {
     const {
-      availableDay,
-      period,
+      availableDays,
       description,
       totalHours,
       teacherId,
@@ -432,14 +441,26 @@ export class ScheduleResolver {
         where: { nonCyclicScheduleId: nonCycleSchedule.id },
       });
 
+      await prisma.scheduleTime.deleteMany({
+        where: {
+          nonCyclicScheduleId: nonCycleSchedule.id,
+        },
+      });
+
+      await prisma.scheduleTime.createMany({
+        data: availableDays.map(day => ({
+          availableDay: day.availableDay,
+          period: day.period,
+          nonCyclicScheduleId: nonCycleSchedule.id,
+        })),
+      });
+
       const updatedSchedule = await prisma.nonCyclicSchedule.update({
         where: {
           id: nonCycleSchedule.id,
         },
         data: {
           courseGroupId,
-          availableDay,
-          period,
           title,
           description,
           examType,
