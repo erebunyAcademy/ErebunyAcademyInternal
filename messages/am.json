@@ -240,5 +240,9 @@
   "addThematicPlan": "Ավելացնել թեմատիկ պլան",
   "examType": "Քննության տեսակը",
   "cyclic": "Ցիկլային",
-  "notCyclic": "Ոչ ցիկլային"
+  "notCyclic": "Ոչ ցիկլային",
+  "cyclicScheduleList": "Ցիկլային գրաֆիկի ցուցակ",
+  "notCyclicScheduleList": "Ոչ ցիկլային գրաֆիկի ցուցակ",
+  "weekDay": "Շաբաթվա օր",
+  "period": "Ժամանակաշրջան"
 }

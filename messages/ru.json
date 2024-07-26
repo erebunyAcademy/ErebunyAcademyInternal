@@ -240,5 +240,9 @@
   "addThematicPlan": "Добавить тематический план",
   "examType": "Тип экзамена",
   "cyclic": "Циклический",
-  "notCyclic": "Не циклический"
+  "notCyclic": "Не циклический",
+  "cyclicScheduleList": "Список циклических расписаний",
+  "notCyclicScheduleList": "Список нециклических расписаний",
+  "weekDay": "День недели",
+  "period": "Период"
 }

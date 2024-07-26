@@ -153,7 +153,7 @@ export default function Schedule() {
   return (
     <>
       <SearchTable
-        title="scheduleList"
+        title="cyclicScheduleList"
         isLoading={isLoading}
         data={data?.schedules || []}
         count={data?.count || 0}

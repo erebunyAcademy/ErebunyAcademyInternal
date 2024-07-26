@@ -241,5 +241,9 @@
   "addThematicPlan": " Add Thematic plan",
   "examType": "Exam type",
   "cyclic": "Cyclic",
-  "notCyclic": "Not cyclic"
+  "notCyclic": "Not cyclic",
+  "cyclicScheduleList": "Cyclic schedule list",
+  "notCyclicScheduleList": "Not cyclic schedule list",
+  "weekDay": "Weekday",
+  "period": "Period"
 }
