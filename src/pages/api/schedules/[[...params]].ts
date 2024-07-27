@@ -56,7 +56,14 @@ class FacultyHandler {
     @Param('scheduleId') scheduleId: string,
     @Body(ValidationPipe) input: AddEditThematicPlanValidation,
   ) {
-    return ScheduleResolver.createThematicPlan(scheduleId, input);
+    return ScheduleResolver.createCyclicThematicPlan(scheduleId, input);
+  }
+  @Post('/:scheduleId/no-cyclic/thematic-plan')
+  _createNoCyclicThematicPlan(
+    @Param('scheduleId') scheduleId: string,
+    @Body(ValidationPipe) input: AddEditThematicPlanValidation,
+  ) {
+    return ScheduleResolver.createNoCyclicThematicPlan(scheduleId, input);
   }
 
   @Patch('/:scheduleId/thematic-plan')

@@ -1,9 +1,11 @@
 'use client';
 import React, { useCallback, useMemo, useState } from 'react';
-import { MenuItem, useDisclosure } from '@chakra-ui/react';
+import { Button, MenuItem, useDisclosure } from '@chakra-ui/react';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { createColumnHelper, SortingState } from '@tanstack/react-table';
+import dayjs from 'dayjs';
 import dynamic from 'next/dynamic';
+import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { v4 as uuidv4 } from 'uuid';
 import { ScheduleService } from '@/api/services/schedule.service';
@@ -11,6 +13,7 @@ import ActionButtons from '@/components/molecules/ActionButtons';
 import SearchTable from '@/components/organisms/SearchTable';
 import useDebounce from '@/hooks/useDebounce';
 import { ITEMS_PER_PAGE } from '@/utils/constants/common';
+import { ROUTE_SCHEDULES } from '@/utils/constants/routes';
 import { QUERY_KEY } from '@/utils/helpers/queryClient';
 import { Maybe } from '@/utils/models/common';
 import { NoneCyclicScheduleSingleModel } from '@/utils/models/none-cyclic.schedule';
@@ -97,6 +100,15 @@ export default function Schedule() {
   const columnHelper = createColumnHelper<NoneCyclicScheduleSingleModel>();
 
   const columns = [
+    columnHelper.accessor('id', {
+      id: uuidv4(),
+      header: t('seeDetails'),
+      cell: info => (
+        <Button as={Link} href={`${ROUTE_SCHEDULES}/no-cyclic/${info.getValue()}`} variant="link">
+          {t('seeDetails')}
+        </Button>
+      ),
+    }),
     columnHelper.accessor('title', {
       id: uuidv4(),
       cell: info => info.getValue(),
@@ -111,6 +123,32 @@ export default function Schedule() {
       id: uuidv4(),
       cell: info => info.getValue(),
       header: t('totalHours'),
+    }),
+    columnHelper.accessor('scheduleTeachers', {
+      id: uuidv4(),
+      cell: info =>
+        `${info.getValue()[0].teacher.user.firstName} ${info.getValue()[0].teacher.user.lastName}`,
+      header: t('teacher'),
+    }),
+    columnHelper.accessor('subject.title', {
+      id: uuidv4(),
+      cell: info => info.getValue(),
+      header: t('subject'),
+    }),
+    columnHelper.accessor('academicYear', {
+      id: uuidv4(),
+      cell: info => info.getValue(),
+      header: t('academicYear'),
+    }),
+    columnHelper.accessor('examType', {
+      id: uuidv4(),
+      cell: info => info.getValue(),
+      header: t('examType'),
+    }),
+    columnHelper.accessor('createdAt', {
+      id: uuidv4(),
+      cell: info => dayjs(info.getValue()).format('YYYY-MM-DD'),
+      header: t('createdAt'),
     }),
     columnHelper.accessor('id', {
       id: uuidv4(),

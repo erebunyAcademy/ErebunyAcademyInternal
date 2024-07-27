@@ -61,9 +61,11 @@ const TestQuestions: FC<Props> = ({
   } = useDisclosure();
 
   const navigate = usePushToQuestion(lang, examId, examTranslationId);
+
   const { control, handleSubmit, reset } = useForm<FormData>({
     defaultValues: { checkboxOptions: [], radioOption: '' },
   });
+
   const { mutate: finish } = useFinishExam();
 
   const { data, isSuccess, isLoading, error } = useQuery({

@@ -98,10 +98,9 @@ const AddEditThematicPlan: FC<AddEditThematicPlanProps> = ({
 
   const { mutate } = useMutation({
     mutationFn: (data: AddEditThematicPlanValidation) =>
-      ScheduleService[thematicPlanisBeingCreated ? 'editThematicPlan' : 'createThematicPlan'](
-        selectedSchedule.id,
-        data,
-      ),
+      ScheduleService[
+        thematicPlanisBeingCreated ? 'editThematicPlan' : 'createNoCyclicThematicPlan'
+      ](selectedSchedule.id, data),
     onSuccess() {
       closeModal();
     },

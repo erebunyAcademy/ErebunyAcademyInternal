@@ -143,7 +143,7 @@ model Schedule {
   endDayDate       DateTime
   isAssessment     Boolean              @default(false)
   examDate         DateTime
-  links            Json
+  links            String[]
   thematicPlan     ThematicPlan[]
   scheduleTeachers ScheduleTeacher[]
   attachment       Attachment[]
@@ -164,7 +164,7 @@ model NonCyclicSchedule {
   subjectId     String
   totalHours    Float
   courseGroupId String
-  links         Json
+  links         String[]
   title         String
   description   String?
   examType      ScheduleExamTypeEnum
@@ -212,7 +212,7 @@ model ThematicPlan {
   schedule                Schedule?                 @relation(fields: [scheduleId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   type                    ThematicSubPlanTypeEnum
   thematicPlanDescription ThematicPlanDescription[]
-  nonCyclicSchedule       NonCyclicSchedule?        @relation(fields: [nonCyclicScheduleId], references: [id])
+  nonCyclicSchedule       NonCyclicSchedule?        @relation(fields: [nonCyclicScheduleId], references: [id], onDelete: Cascade)
   nonCyclicScheduleId     String?
 
   createdAt DateTime @default(now()) @db.Timestamp(0)

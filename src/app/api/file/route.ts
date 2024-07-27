@@ -9,13 +9,13 @@ export const POST = async (req: NextRequest) => {
     const headersList = headers();
     const key = headersList.get('x-file-key')!;
     const formData = await req.formData();
-    const file: any = formData.get('file');
+    const file = formData.get('file') as File;
 
     if (!file) {
       return NextResponse.json({ error: 'No files received.' }, { status: 400 });
     }
 
-    const buffer = Buffer.from(await file.arrayBuffer());
+    const buffer = new Uint8Array(await file.arrayBuffer());
 
     const uploadPath = path.join(process.cwd(), 'uploads', path.dirname(key));
     const filePath = path.join(uploadPath, path.basename(key));

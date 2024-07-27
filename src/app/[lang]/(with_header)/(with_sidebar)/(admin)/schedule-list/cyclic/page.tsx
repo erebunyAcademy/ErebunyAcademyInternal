@@ -1,9 +1,10 @@
 'use client';
 import React, { useCallback, useMemo, useState } from 'react';
-import { MenuItem, useDisclosure } from '@chakra-ui/react';
+import { Button, MenuItem, useDisclosure } from '@chakra-ui/react';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { createColumnHelper, SortingState } from '@tanstack/react-table';
 import dynamic from 'next/dynamic';
+import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { v4 as uuidv4 } from 'uuid';
 import { ScheduleService } from '@/api/services/schedule.service';
@@ -11,6 +12,7 @@ import ActionButtons from '@/components/molecules/ActionButtons';
 import SearchTable from '@/components/organisms/SearchTable';
 import useDebounce from '@/hooks/useDebounce';
 import { ITEMS_PER_PAGE } from '@/utils/constants/common';
+import { ROUTE_SCHEDULES } from '@/utils/constants/routes';
 import { QUERY_KEY } from '@/utils/helpers/queryClient';
 import { Maybe } from '@/utils/models/common';
 import { ScheduleSingleModel } from '@/utils/models/schedule';
@@ -96,6 +98,15 @@ export default function Schedule() {
   const columnHelper = createColumnHelper<ScheduleSingleModel>();
 
   const columns = [
+    columnHelper.accessor('id', {
+      id: uuidv4(),
+      header: t('seeDetails'),
+      cell: info => (
+        <Button as={Link} href={`${ROUTE_SCHEDULES}/cyclic/${info.getValue()}`} variant="link">
+          {t('seeDetails')}
+        </Button>
+      ),
+    }),
     columnHelper.accessor('title', {
       id: uuidv4(),
       cell: info => info.getValue(),
@@ -126,7 +137,7 @@ export default function Schedule() {
               setSelectedSchedule(row.original);
               openAddEditThematicPlanModal();
             }}>
-           {t("addThematicPlan")}
+            {t('addThematicPlan')}
           </MenuItem>
           <MenuItem
             color="green"

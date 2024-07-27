@@ -52,13 +52,19 @@ export class ScheduleResolver {
     }));
   }
 
-  static async createThematicPlan(scheduleId: string, data: AddEditThematicPlanValidation) {
+  static async createNoCyclicThematicPlan(scheduleId: string, data: AddEditThematicPlanValidation) {
+    const nonCyclicSchedule = await prisma.nonCyclicSchedule.findFirstOrThrow({
+      where: {
+        id: scheduleId,
+      },
+    });
+
     const { practicalClass, theoreticalClass } = data;
 
-    prisma.thematicPlan
-      .create({
+    const result = await prisma.$transaction(async tx => {
+      const practicalPlan = await tx.thematicPlan.create({
         data: {
-          scheduleId,
+          nonCyclicScheduleId: nonCyclicSchedule.id,
           totalHours: +practicalClass.totalHours,
           type: ThematicSubPlanTypeEnum.PRACTICAL,
           thematicPlanDescription: {
@@ -68,12 +74,56 @@ export class ScheduleResolver {
             })),
           },
         },
-      })
-      .catch(console.error);
+      });
 
+      // Create Theoretical Thematic Plan
+      const theoreticalPlan = await tx.thematicPlan.create({
+        data: {
+          nonCyclicScheduleId: nonCyclicSchedule.id,
+          totalHours: +theoreticalClass.totalHours,
+          type: ThematicSubPlanTypeEnum.THEORETICAL,
+          thematicPlanDescription: {
+            create: theoreticalClass.classDescriptionRow.map(row => ({
+              title: row.title,
+              hour: row.hour,
+            })),
+          },
+        },
+      });
+
+      return { practicalPlan, theoreticalPlan };
+    });
+
+    return result;
+  }
+
+  static async createCyclicThematicPlan(scheduleId: string, data: AddEditThematicPlanValidation) {
+    const cyclicSchedule = await prisma.schedule.findFirstOrThrow({
+      where: {
+        id: scheduleId,
+      },
+    });
+
+    const { practicalClass, theoreticalClass } = data;
+
+    await prisma.thematicPlan.create({
+      data: {
+        scheduleId: cyclicSchedule.id,
+        totalHours: +practicalClass.totalHours,
+        type: ThematicSubPlanTypeEnum.PRACTICAL,
+        thematicPlanDescription: {
+          create: practicalClass.classDescriptionRow.map(row => ({
+            title: row.title,
+            hour: row.hour,
+          })),
+        },
+      },
+    });
+
+    // Create Theoretical Thematic Plan
     return prisma.thematicPlan.create({
       data: {
-        scheduleId,
+        scheduleId: cyclicSchedule.id,
         totalHours: +theoreticalClass.totalHours,
         type: ThematicSubPlanTypeEnum.THEORETICAL,
         thematicPlanDescription: {
@@ -87,11 +137,24 @@ export class ScheduleResolver {
   }
 
   static async updateThematicPlan(scheduleId: string, data: AddEditThematicPlanValidation) {
+    const thematicPlan = await prisma.thematicPlan.findFirst({
+      where: {
+        scheduleId,
+      },
+      select: {
+        scheduleId: true,
+      },
+    });
+
     await prisma.thematicPlan.deleteMany({
       where: { scheduleId },
     });
 
-    return ScheduleResolver.createThematicPlan(scheduleId, data);
+    if (thematicPlan?.scheduleId) {
+      return ScheduleResolver.createCyclicThematicPlan(scheduleId, data);
+    }
+
+    return ScheduleResolver.createNoCyclicThematicPlan(scheduleId, data);
   }
 
   static async createSchedule(data: CreateEditScheduleValidation) {
@@ -301,6 +364,16 @@ export class ScheduleResolver {
           },
           scheduleTeachers: {
             select: {
+              teacher: {
+                select: {
+                  user: {
+                    select: {
+                      firstName: true,
+                      lastName: true,
+                    },
+                  },
+                },
+              },
               teacherId: true,
             },
           },
@@ -313,6 +386,7 @@ export class ScheduleResolver {
             },
           },
           availableDays: true,
+          subject: true,
         },
 
         orderBy: sorting ? orderBy(sorting) : undefined,
@@ -573,5 +647,69 @@ export class ScheduleResolver {
     });
 
     return ScheduleResolver.createNonCyclicThematicPlan(nonCyclicScheduleId, data);
+  }
+
+  static getCyclicSchedule(id: string) {
+    return prisma.schedule.findUniqueOrThrow({
+      where: {
+        id,
+      },
+      include: {
+        attachment: true,
+        scheduleTeachers: {
+          include: {
+            teacher: {
+              select: {
+                user: {
+                  select: {
+                    firstName: true,
+                    lastName: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+        thematicPlan: {
+          include: {
+            thematicPlanDescription: true,
+          },
+        },
+        subject: true,
+        courseGroup: true,
+      },
+    });
+  }
+
+  static getNoCyclicSchedule(id: string) {
+    return prisma.nonCyclicSchedule.findUniqueOrThrow({
+      where: {
+        id,
+      },
+      include: {
+        attachment: true,
+        scheduleTeachers: {
+          include: {
+            teacher: {
+              select: {
+                user: {
+                  select: {
+                    firstName: true,
+                    lastName: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+        thematicPlan: {
+          include: {
+            thematicPlanDescription: true,
+          },
+        },
+        subject: true,
+        courseGroup: true,
+      },
+    });
   }
 }
