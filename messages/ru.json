@@ -20,7 +20,7 @@
   "teachingSubject": "Преподаваемый предмет",
   "exams": "Экзамены",
   "exam": "Экзамен",
-  "teachers": "Учителя",
+  "teachers": "Лекторы",
   "students": "Студенты",
   "subject": "Предмет",
   "subjects": "Предметы",
@@ -61,7 +61,7 @@
 
   "facultyList": "Список факультетов",
   "studentsList": "Список студентов",
-  "teachersList": "Список учителей",
+  "teachersList": "Список лекторов",
   "courseList": "Список курсов",
   "courseGroupList": "Список групп курсов",
   "examList": "Список экзаменов",

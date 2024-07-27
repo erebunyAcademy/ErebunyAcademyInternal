@@ -20,7 +20,7 @@
   "teachingSubject": "Teaching subject",
   "exams": "Exams",
   "exam": "Exam",
-  "teachers": "Teachers",
+  "teachers": "Lecturers",
   "students": "Students",
   "subject": "Subject",
   "subjects": "Subjects",
@@ -61,7 +61,7 @@
 
   "facultyList": "Faculty List",
   "studentsList": "Students List",
-  "teachersList": "Teachers List",
+  "teachersList": "Lecturers List",
   "courseList": "Course List",
   "courseGroupList": "Course Group List",
   "examList": "Exam List",

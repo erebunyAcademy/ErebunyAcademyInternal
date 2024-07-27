@@ -26,7 +26,7 @@ const ScheduleDetails = async ({ params }: { params: { scheduleId: string } }) =
       <Text> Subject : {scheduleData.subject.title}</Text>
       <Text> Course group : {scheduleData.courseGroup.title}</Text>
       <Text>
-        Teacher : {scheduleData.scheduleTeachers[0].teacher.user.firstName}{' '}
+        Lecturer : {scheduleData.scheduleTeachers[0].teacher.user.firstName}{' '}
         {scheduleData.scheduleTeachers[0].teacher.user.lastName}{' '}
       </Text>
 
