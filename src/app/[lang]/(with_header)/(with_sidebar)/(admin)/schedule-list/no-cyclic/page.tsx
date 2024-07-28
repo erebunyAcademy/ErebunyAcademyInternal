@@ -13,7 +13,6 @@ import ActionButtons from '@/components/molecules/ActionButtons';
 import SearchTable from '@/components/organisms/SearchTable';
 import useDebounce from '@/hooks/useDebounce';
 import { ITEMS_PER_PAGE } from '@/utils/constants/common';
-import { ROUTE_SCHEDULES } from '@/utils/constants/routes';
 import { QUERY_KEY } from '@/utils/helpers/queryClient';
 import { Maybe } from '@/utils/models/common';
 import { NoneCyclicScheduleSingleModel } from '@/utils/models/none-cyclic.schedule';
@@ -104,7 +103,7 @@ export default function Schedule() {
       id: uuidv4(),
       header: t('seeDetails'),
       cell: info => (
-        <Button as={Link} href={`${ROUTE_SCHEDULES}/no-cyclic/${info.getValue()}`} variant="link">
+        <Button as={Link} href={`/no-cyclic-schedule/${info.getValue()}`} variant="link">
           {t('seeDetails')}
         </Button>
       ),
