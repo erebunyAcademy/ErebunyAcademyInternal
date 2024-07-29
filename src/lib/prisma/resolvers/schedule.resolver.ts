@@ -397,8 +397,16 @@ export class ScheduleResolver {
               mimetype: true,
             },
           },
-          availableDays: true,
+          
+          availableDays: {
+            select: {
+              availableDay: true,
+              period: true,
+            },
+          },
+
           subject: true,
+          courseGroup: true,
         },
 
         orderBy: sorting ? orderBy(sorting) : undefined,

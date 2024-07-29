@@ -31,7 +31,7 @@ const AddEditThematicPlan: FC<AddEditThematicPlanProps> = ({
 }) => {
   const t = useTranslations();
 
-  const thematicPlanisBeingCreated = useMemo(
+  const thematicPlanIsBeingCreated = useMemo(
     () => selectedSchedule && selectedSchedule?.thematicPlan?.length > 0,
     [selectedSchedule],
   );
@@ -50,8 +50,8 @@ const AddEditThematicPlan: FC<AddEditThematicPlanProps> = ({
   });
 
   useMemo(() => {
-    if (thematicPlanisBeingCreated) {
-      const thereoticalThematicPlan: any =
+    if (thematicPlanIsBeingCreated) {
+      const theoreticalThematicPlan: any =
         selectedSchedule.thematicPlan.find(thematicPlan => thematicPlan.type === 'THEORETICAL') ||
         thematicInitialClass;
 
@@ -61,8 +61,8 @@ const AddEditThematicPlan: FC<AddEditThematicPlanProps> = ({
 
       reset({
         theoreticalClass: {
-          totalHours: (thereoticalThematicPlan.totalHours || '').toString(),
-          classDescriptionRow: thereoticalThematicPlan.thematicPlanDescription.map((row: any) => ({
+          totalHours: (theoreticalThematicPlan.totalHours || '').toString(),
+          classDescriptionRow: theoreticalThematicPlan.thematicPlanDescription.map((row: any) => ({
             title: row.title,
             hour: row.hour,
           })),
@@ -76,7 +76,7 @@ const AddEditThematicPlan: FC<AddEditThematicPlanProps> = ({
         },
       });
     }
-  }, [reset, selectedSchedule.thematicPlan, thematicPlanisBeingCreated]);
+  }, [reset, selectedSchedule.thematicPlan, thematicPlanIsBeingCreated]);
 
   const {
     fields: theoreticalClassFields,
@@ -98,7 +98,7 @@ const AddEditThematicPlan: FC<AddEditThematicPlanProps> = ({
 
   const { mutate } = useMutation({
     mutationFn: (data: AddEditThematicPlanValidation) =>
-      ScheduleService[thematicPlanisBeingCreated ? 'editThematicPlan' : 'createThematicPlan'](
+      ScheduleService[thematicPlanIsBeingCreated ? 'editThematicPlan' : 'createThematicPlan'](
         selectedSchedule.id,
         data,
       ),

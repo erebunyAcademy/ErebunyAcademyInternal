@@ -39,7 +39,6 @@ export default function Schedule() {
         search: debouncedSearch,
       }),
   });
-  console.log(selectedSchedule);
 
   const {
     isOpen: isDeleteModalOpen,
@@ -141,6 +140,16 @@ export default function Schedule() {
         </Button>
       ),
     }),
+    columnHelper.accessor('courseGroup.title', {
+      id: uuidv4(),
+      cell: info => info.getValue(),
+      header: t('courseGroup'),
+    }),
+    columnHelper.accessor('subject.title', {
+      id: uuidv4(),
+      cell: info => info.getValue(),
+      header: t('subject'),
+    }),
     columnHelper.accessor('title', {
       id: uuidv4(),
       cell: info => info.getValue(),
@@ -167,11 +176,7 @@ export default function Schedule() {
         `${info.getValue()[0].teacher?.user.firstName} ${info.getValue()[0].teacher?.user.lastName}`,
       header: t('lecturer'),
     }),
-    columnHelper.accessor('subject.title', {
-      id: uuidv4(),
-      cell: info => info.getValue(),
-      header: t('subject'),
-    }),
+
     columnHelper.accessor('academicYear', {
       id: uuidv4(),
       cell: info => info.getValue(),
