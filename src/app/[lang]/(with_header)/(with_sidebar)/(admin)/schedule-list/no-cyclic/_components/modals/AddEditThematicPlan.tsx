@@ -160,7 +160,7 @@ const AddEditThematicPlan: FC<AddEditThematicPlanProps> = ({
                 <FormInput
                   name={field.name}
                   type="text"
-                  formLabelName={t('title')}
+                  formLabelName={t('description')}
                   value={field.value}
                   placeholder="enterClassTitle"
                   handleInputChange={field.onChange}

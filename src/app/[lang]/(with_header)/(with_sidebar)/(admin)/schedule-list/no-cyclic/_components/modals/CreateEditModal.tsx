@@ -53,13 +53,13 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
     handleSubmit,
     watch,
     reset,
-    formState: { errors, isValid },
+    formState: { errors, isValid, isDirty },
   } = useForm<CreateEditNonCylicScheduleValidation>({
     resolver,
     defaultValues: {
       totalHours: '',
       subjectId: '',
-      period: '1-2',
+      // period: '1-2',
       title: '',
       description: '',
       examType: 'ASSESSMENT',
@@ -68,9 +68,13 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
       attachments: [],
       links: [],
       academicYear: '',
-      availableDays: [{ availableDay: 'MONDAY', period: '' }],
+      availableDays: [{ availableDay: 'MONDAY', period: '1-2' }],
     },
   });
+  console.log(errors);
+  console.log(isValid);
+
+  
 
   const { data: teachersQueryData } = useQuery<TeacherDataModel>({
     queryKey: ['teachers'],
@@ -142,6 +146,7 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
         teacherId: selectedSchedule.scheduleTeachers[0].teacherId,
         examType: selectedSchedule.examType,
         courseGroupId: selectedSchedule.courseGroupId,
+        academicYear: selectedSchedule.academicYear,
         attachments: selectedSchedule.attachment.map(attachment => ({
           key: attachment.key,
           mimetype: attachment.mimetype,
@@ -236,11 +241,14 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
     setFiles(prevFiles => prevFiles?.filter(file => file.localUrl !== localUrl) || null);
   };
 
+  const actionText = selectedSchedule ? 'edit' : 'create';
+  const isDisabled = actionText === 'edit' ? !isDirty : !isValid;
+
   return (
     <Modal
       isOpen={isModalOpen}
       onClose={closeModal}
-      isDisabled={!isValid}
+      isDisabled={isDisabled}
       title="schedule"
       size="6xl"
       primaryAction={handleSubmit(onSubmitHandler)}
@@ -405,7 +413,7 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
                   name={name}
                   isRequired
                   options={weekendDayList}
-                  labelName="day"
+                  labelName="weekDay"
                   valueLabel="id"
                   nameLabel="title"
                   onChange={onChange}

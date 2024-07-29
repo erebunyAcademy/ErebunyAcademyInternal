@@ -39,6 +39,7 @@ export default function Schedule() {
         search: debouncedSearch,
       }),
   });
+  console.log(selectedSchedule);
 
   const {
     isOpen: isDeleteModalOpen,
@@ -101,56 +102,6 @@ export default function Schedule() {
   const columns = [
     columnHelper.accessor('id', {
       id: uuidv4(),
-      header: t('seeDetails'),
-      cell: info => (
-        <Button as={Link} href={`/no-cyclic-schedule/${info.getValue()}`} variant="link">
-          {t('seeDetails')}
-        </Button>
-      ),
-    }),
-    columnHelper.accessor('title', {
-      id: uuidv4(),
-      cell: info => info.getValue(),
-      header: t('title'),
-    }),
-    columnHelper.accessor('description', {
-      id: uuidv4(),
-      cell: info => info.getValue(),
-      header: t('description'),
-    }),
-    columnHelper.accessor('totalHours', {
-      id: uuidv4(),
-      cell: info => info.getValue(),
-      header: t('totalHours'),
-    }),
-    columnHelper.accessor('scheduleTeachers', {
-      id: uuidv4(),
-      cell: info =>
-        `${info.getValue()[0].teacher.user.firstName} ${info.getValue()[0].teacher.user.lastName}`,
-      header: t('teacher'),
-    }),
-    columnHelper.accessor('subject.title', {
-      id: uuidv4(),
-      cell: info => info.getValue(),
-      header: t('subject'),
-    }),
-    columnHelper.accessor('academicYear', {
-      id: uuidv4(),
-      cell: info => info.getValue(),
-      header: t('academicYear'),
-    }),
-    columnHelper.accessor('examType', {
-      id: uuidv4(),
-      cell: info => info.getValue(),
-      header: t('examType'),
-    }),
-    columnHelper.accessor('createdAt', {
-      id: uuidv4(),
-      cell: info => dayjs(info.getValue()).format('YYYY-MM-DD'),
-      header: t('createdAt'),
-    }),
-    columnHelper.accessor('id', {
-      id: uuidv4(),
       cell: ({ row }) => (
         <ActionButtons>
           <MenuItem
@@ -180,6 +131,57 @@ export default function Schedule() {
         </ActionButtons>
       ),
       header: t('actions'),
+    }),
+    columnHelper.accessor('id', {
+      id: uuidv4(),
+      header: t('seeDetails'),
+      cell: info => (
+        <Button as={Link} href={`/no-cyclic-schedule/${info.getValue()}`} variant="link">
+          {t('seeDetails')}
+        </Button>
+      ),
+    }),
+    columnHelper.accessor('title', {
+      id: uuidv4(),
+      cell: info => info.getValue(),
+      header: t('title'),
+    }),
+    columnHelper.accessor('description', {
+      id: uuidv4(),
+      cell: info => info.getValue(),
+      header: t('description'),
+    }),
+    columnHelper.accessor('totalHours', {
+      id: uuidv4(),
+      cell: info => info.getValue(),
+      header: t('totalHours'),
+    }),
+    columnHelper.accessor('examType', {
+      id: uuidv4(),
+      cell: info => info.getValue(),
+      header: t('examType'),
+    }),
+    columnHelper.accessor('scheduleTeachers', {
+      id: uuidv4(),
+      cell: info =>
+        `${info.getValue()[0].teacher?.user.firstName} ${info.getValue()[0].teacher?.user.lastName}`,
+      header: t('lecturer'),
+    }),
+    columnHelper.accessor('subject.title', {
+      id: uuidv4(),
+      cell: info => info.getValue(),
+      header: t('subject'),
+    }),
+    columnHelper.accessor('academicYear', {
+      id: uuidv4(),
+      cell: info => info.getValue(),
+      header: t('academicYear'),
+    }),
+
+    columnHelper.accessor('createdAt', {
+      id: uuidv4(),
+      cell: info => dayjs(info.getValue()).format('YYYY-MM-DD'),
+      header: t('createdAt'),
     }),
   ];
 

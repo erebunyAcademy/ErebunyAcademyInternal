@@ -244,5 +244,12 @@
   "cyclicScheduleList": "Ցիկլային գրաֆիկի ցուցակ",
   "notCyclicScheduleList": "Ոչ ցիկլային գրաֆիկի ցուցակ",
   "weekDay": "Շաբաթվա օր",
-  "period": "Ժամանակաշրջան"
+  "period": "Ժամանակաշրջան",
+  "details": "Մանրամասներ",
+  "seeDetails": "Տեսնել մանրամասները",
+  "academicYear": "Ուսումնական տարի",
+  "addClassDay": "Ավելացնել դասընթացի օր",
+  "thematicPlans": "Թեմատիկ պլաններ",
+  "thematicPlanType": "Թեմատիկ պլանի տեսակ",
+  "referencesUsed": "Նյութերի համար օգտագործված հղումներ"
 }
