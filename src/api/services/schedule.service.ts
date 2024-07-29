@@ -29,10 +29,6 @@ export class ScheduleService {
     return $apiClient.post(`/schedules/${scheduleId}/thematic-plan`, input);
   }
 
-  static createNoCyclicThematicPlan(scheduleId: string, input: AddEditThematicPlanValidation) {
-    return $apiClient.post(`/schedules/${scheduleId}/no-cyclic/thematic-plan`, input);
-  }
-
   static editThematicPlan(scheduleId: string, input: AddEditThematicPlanValidation) {
     return $apiClient.patch(`/schedules/${scheduleId}/thematic-plan`, input);
   }
@@ -56,11 +52,11 @@ export class ScheduleService {
     return $apiClient.delete(`/schedules/none-cyclic/${scheduleId}`);
   }
 
-  static createNonCyclicThematicPlan(scheduleId: string, input: AddEditThematicPlanValidation) {
-    return $apiClient.post(`/schedules/${scheduleId}/thematic-plan`, input);
+  static createNoCyclicThematicPlan(scheduleId: string, input: AddEditThematicPlanValidation) {
+    return $apiClient.post(`/schedules/${scheduleId}/no-cyclic/thematic-plan`, input);
   }
 
   static editNoneCyclicThematicPlan(scheduleId: string, input: AddEditThematicPlanValidation) {
-    return $apiClient.patch(`/schedules/${scheduleId}/thematic-plan`, input);
+    return $apiClient.patch(`/schedules/none-cyclic/${scheduleId}/thematic-plan`, input);
   }
 }

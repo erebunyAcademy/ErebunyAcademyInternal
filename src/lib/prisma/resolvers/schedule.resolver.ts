@@ -357,7 +357,7 @@ export class ScheduleResolver {
     });
   }
 
-  static nonCycleSchedulelist(skip: number, take: number, search: string, sorting: SortingType[]) {
+  static nonCycleScheduleList(skip: number, take: number, search: string, sorting: SortingType[]) {
     return Promise.all([
       prisma.nonCyclicSchedule.count({
         where: {

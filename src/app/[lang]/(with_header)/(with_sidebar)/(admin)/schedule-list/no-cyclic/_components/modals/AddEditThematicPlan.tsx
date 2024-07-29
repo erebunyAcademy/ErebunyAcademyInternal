@@ -52,12 +52,14 @@ const AddEditThematicPlan: FC<AddEditThematicPlanProps> = ({
   useMemo(() => {
     if (thematicPlanisBeingCreated) {
       const thereoticalThematicPlan: any =
-        selectedSchedule.thematicPlan.find(thematicPlan => thematicPlan.type === 'THEORETICAL') ||
-        thematicInitialClass;
+        selectedSchedule.thematicPlan.find(
+          (thematicPlan: { type: string }) => thematicPlan.type === 'THEORETICAL',
+        ) || thematicInitialClass;
 
       const practicalThematicPlan: any =
-        selectedSchedule.thematicPlan.find(thematicPlan => thematicPlan.type === 'PRACTICAL') ||
-        thematicInitialClass;
+        selectedSchedule.thematicPlan.find(
+          (thematicPlan: { type: string }) => thematicPlan.type === 'PRACTICAL',
+        ) || thematicInitialClass;
 
       reset({
         theoreticalClass: {
@@ -99,7 +101,7 @@ const AddEditThematicPlan: FC<AddEditThematicPlanProps> = ({
   const { mutate } = useMutation({
     mutationFn: (data: AddEditThematicPlanValidation) =>
       ScheduleService[
-        thematicPlanisBeingCreated ? 'editThematicPlan' : 'createNoCyclicThematicPlan'
+        thematicPlanisBeingCreated ? 'editNoneCyclicThematicPlan' : 'createNoCyclicThematicPlan'
       ](selectedSchedule.id, data),
     onSuccess() {
       closeModal();
