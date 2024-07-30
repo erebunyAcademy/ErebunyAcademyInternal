@@ -1,9 +1,10 @@
 'use client';
 import React, { Fragment } from 'react';
-import { Flex } from '@chakra-ui/react';
+import { Button, Flex } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import { createColumnHelper } from '@tanstack/react-table';
 import dayjs from 'dayjs';
+import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { v4 as uuidv4 } from 'uuid';
 import { TeacherService } from '@/api/services/teacher.service';
@@ -31,6 +32,15 @@ const StudentSchedule = () => {
   const cyclicColumnHelper = createColumnHelper<TeacherScheduleListSingleType>();
 
   const cyclicScheduleColumns = [
+    cyclicColumnHelper.accessor('id', {
+      id: uuidv4(),
+      header: t('seeDetails'),
+      cell: info => (
+        <Button as={Link} href={`/no-cyclic-schedule/${info.getValue()}`} variant="link">
+          {t('seeDetails')}
+        </Button>
+      ),
+    }),
     cyclicColumnHelper.accessor('title', {
       id: uuidv4(),
       cell: info => info.getValue(),
@@ -91,6 +101,15 @@ const StudentSchedule = () => {
   const notCyclicyclicColumnHelper = createColumnHelper<TeacherNoCyclicScheduleListSingleType>();
 
   const notCyclicScheduleColumns = [
+    cyclicColumnHelper.accessor('id', {
+      id: uuidv4(),
+      header: t('seeDetails'),
+      cell: info => (
+        <Button as={Link} href={`/no-cyclic-schedule/${info.getValue()}`} variant="link">
+          {t('seeDetails')}
+        </Button>
+      ),
+    }),
     notCyclicyclicColumnHelper.accessor('courseGroup.title', {
       id: uuidv4(),
       cell: info => info.getValue(),

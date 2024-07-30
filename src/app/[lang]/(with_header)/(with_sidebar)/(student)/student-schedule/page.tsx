@@ -116,8 +116,6 @@ const StudentSchedule = () => {
     }),
   ];
 
-  console.log({ cyclicData, noCyclicData });
-
   return (
     <Fragment>
       <Flex flexDirection="column" gap="100px" width="100%" mt="50px">
