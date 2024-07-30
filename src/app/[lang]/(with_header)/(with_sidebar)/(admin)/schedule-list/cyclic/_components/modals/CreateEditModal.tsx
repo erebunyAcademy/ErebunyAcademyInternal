@@ -1,5 +1,5 @@
 'use client';
-import React, { ChangeEvent, FC, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { ChangeEvent, FC, useCallback, useMemo, useState } from 'react';
 import { AddIcon, DeleteIcon } from '@chakra-ui/icons';
 import { Box, Button, Divider, Flex, IconButton, Input, Stack, Text } from '@chakra-ui/react';
 import { classValidatorResolver } from '@hookform/resolvers/class-validator';
@@ -69,7 +69,7 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
     },
   });
 
-  useEffect(() => {
+  useMemo(() => {
     if (selectedSchedule) {
       const attachmentWithUrls = selectedSchedule.attachment.map(attachment => ({
         key: attachment.key,
@@ -167,7 +167,12 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
         const localUrl = URL.createObjectURL(file);
         return { file, localUrl };
       });
-      setFiles(fileArray);
+      setFiles(prevState => {
+        if (prevState?.length) {
+          return [...prevState, ...fileArray];
+        }
+        return fileArray;
+      });
     }
   };
 
@@ -180,6 +185,10 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
       const attachmentKeys: AttachmentValidation[] = [];
 
       files?.forEach(({ file }) => {
+        if (!file) {
+          return;
+        }
+
         const attachmentId = uuidv4();
         const key = `attachments/${attachmentId}/subjects/${data.subjectId}/${Date.now()}_${file.name}`;
 
@@ -523,7 +532,7 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
                   backgroundColor: '#fff',
                 }}
               />
-              {t('uploadDocument')}*
+              {t('uploadDocument')}
             </Button>
           </Box>
         </Flex>

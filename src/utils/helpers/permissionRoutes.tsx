@@ -22,8 +22,10 @@ import {
   ROUTE_PROFILE,
   ROUTE_SCHEDULES,
   ROUTE_STUDENT_EXAM_LIST,
+  ROUTE_STUDENT_SCHEDULE,
   ROUTE_STUDENTS,
   ROUTE_SUBJECTS,
+  ROUTE_TEACHER_SCHEDULE,
   ROUTE_TEACHERS,
 } from '../constants/routes';
 import { Maybe } from '../models/common';
@@ -86,10 +88,19 @@ export const linkItems: LinkItemsFunction = (user: Maybe<User>) => {
       return [
         ...commonLinks.slice(0, 2),
         { id: 6, name: 'examination', icon: <ExamsIcon />, href: ROUTE_STUDENT_EXAM_LIST },
+        { id: 33, name: 'schedule', icon: <ScheduleIcon />, href: ROUTE_STUDENT_SCHEDULE },
         commonLinks[2],
       ];
 
     case UserRoleEnum.TEACHER:
+      return [
+        ...commonLinks.slice(0, 2),
+        { id: 34, name: 'schedule', icon: <ScheduleIcon />, href: ROUTE_TEACHER_SCHEDULE },
+        commonLinks[2],
+      ];
+
+
+
     default:
       return commonLinks;
   }

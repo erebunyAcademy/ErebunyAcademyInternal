@@ -1,9 +1,11 @@
 'use client';
 import React, { useCallback, useMemo, useState } from 'react';
-import { MenuItem, useDisclosure } from '@chakra-ui/react';
+import { Button, MenuItem, useDisclosure } from '@chakra-ui/react';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { createColumnHelper, SortingState } from '@tanstack/react-table';
+import dayjs from 'dayjs';
 import dynamic from 'next/dynamic';
+import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { v4 as uuidv4 } from 'uuid';
 import { ScheduleService } from '@/api/services/schedule.service';
@@ -97,21 +99,6 @@ export default function Schedule() {
   const columnHelper = createColumnHelper<NoneCyclicScheduleSingleModel>();
 
   const columns = [
-    columnHelper.accessor('title', {
-      id: uuidv4(),
-      cell: info => info.getValue(),
-      header: t('title'),
-    }),
-    columnHelper.accessor('description', {
-      id: uuidv4(),
-      cell: info => info.getValue(),
-      header: t('description'),
-    }),
-    columnHelper.accessor('totalHours', {
-      id: uuidv4(),
-      cell: info => info.getValue(),
-      header: t('totalHours'),
-    }),
     columnHelper.accessor('id', {
       id: uuidv4(),
       cell: ({ row }) => (
@@ -144,12 +131,69 @@ export default function Schedule() {
       ),
       header: t('actions'),
     }),
+    columnHelper.accessor('id', {
+      id: uuidv4(),
+      header: t('seeDetails'),
+      cell: info => (
+        <Button as={Link} href={`/no-cyclic-schedule/${info.getValue()}`} variant="link">
+          {t('seeDetails')}
+        </Button>
+      ),
+    }),
+    columnHelper.accessor('courseGroup.title', {
+      id: uuidv4(),
+      cell: info => info.getValue(),
+      header: t('courseGroup'),
+    }),
+    columnHelper.accessor('subject.title', {
+      id: uuidv4(),
+      cell: info => info.getValue(),
+      header: t('subject'),
+    }),
+    columnHelper.accessor('title', {
+      id: uuidv4(),
+      cell: info => info.getValue(),
+      header: t('title'),
+    }),
+    columnHelper.accessor('description', {
+      id: uuidv4(),
+      cell: info => info.getValue(),
+      header: t('description'),
+    }),
+    columnHelper.accessor('totalHours', {
+      id: uuidv4(),
+      cell: info => info.getValue(),
+      header: t('totalHours'),
+    }),
+    columnHelper.accessor('examType', {
+      id: uuidv4(),
+      cell: info => info.getValue(),
+      header: t('examType'),
+    }),
+    columnHelper.accessor('scheduleTeachers', {
+      id: uuidv4(),
+      cell: info =>
+        `${info.getValue()[0].teacher?.user.firstName} ${info.getValue()[0].teacher?.user.lastName}`,
+      header: t('lecturer'),
+    }),
+
+    columnHelper.accessor('academicYear', {
+      id: uuidv4(),
+      cell: info => info.getValue(),
+      header: t('academicYear'),
+    }),
+
+    columnHelper.accessor('createdAt', {
+      id: uuidv4(),
+      cell: info => dayjs(info.getValue()).format('YYYY-MM-DD'),
+      header: t('createdAt'),
+    }),
   ];
 
   return (
     <>
       <SearchTable
-        title="scheduleList"
+        title="notCyclicScheduleList"
         isLoading={isLoading}
         data={data?.schedules || []}
         count={data?.count || 0}

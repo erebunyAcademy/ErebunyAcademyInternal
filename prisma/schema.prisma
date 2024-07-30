@@ -143,7 +143,7 @@ model Schedule {
   endDayDate       DateTime
   isAssessment     Boolean              @default(false)
   examDate         DateTime
-  links            Json
+  links            String[]
   thematicPlan     ThematicPlan[]
   scheduleTeachers ScheduleTeacher[]
   attachment       Attachment[]
@@ -158,21 +158,33 @@ model Schedule {
 }
 
 model NonCyclicSchedule {
-  id               String               @id @default(uuid())
-  availableDay     WeekDayEnum
-  period           String
-  subject          Subject              @relation(fields: [subjectId], references: [id], onDelete: Cascade)
-  subjectId        String
-  totalHours       Float
-  courseGroup      CourseGroup          @relation(fields: [courseGroupId], references: [id])
-  courseGroupId    String
+  id            String               @id @default(uuid())
+  academicYear  String
+  subject       Subject              @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  subjectId     String
+  totalHours    Float
+  courseGroupId String
+  links         String[]
+  title         String
+  description   String?
+  examType      ScheduleExamTypeEnum
+
+  availableDays    ScheduleTime[]
+  thematicPlan     ThematicPlan[]
   scheduleTeachers ScheduleTeacher[]
   attachment       Attachment[]
-  links            Json
-  thematicPlan     ThematicPlan[]
-  title            String
-  description      String?
-  examType         ScheduleExamTypeEnum
+  courseGroup      CourseGroup       @relation(fields: [courseGroupId], references: [id])
+
+  createdAt DateTime @default(now()) @db.Timestamp(0)
+  updatedAt DateTime @updatedAt @db.Timestamp(0)
+}
+
+model ScheduleTime {
+  id                  String             @id @default(uuid())
+  availableDay        WeekDayEnum
+  period              String
+  nonCyclicSchedule   NonCyclicSchedule? @relation(fields: [nonCyclicScheduleId], references: [id], onDelete: Cascade)
+  nonCyclicScheduleId String?
 
   createdAt DateTime @default(now()) @db.Timestamp(0)
   updatedAt DateTime @updatedAt @db.Timestamp(0)
@@ -200,7 +212,7 @@ model ThematicPlan {
   schedule                Schedule?                 @relation(fields: [scheduleId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   type                    ThematicSubPlanTypeEnum
   thematicPlanDescription ThematicPlanDescription[]
-  nonCyclicSchedule       NonCyclicSchedule?        @relation(fields: [nonCyclicScheduleId], references: [id])
+  nonCyclicSchedule       NonCyclicSchedule?        @relation(fields: [nonCyclicScheduleId], references: [id], onDelete: Cascade)
   nonCyclicScheduleId     String?
 
   createdAt DateTime @default(now()) @db.Timestamp(0)

@@ -27,16 +27,15 @@ const Providers = ({ children }: { children: ReactNode }) => {
   const toast = useToast();
   const t = useTranslations();
   const gqlGlobalOptions: QueryClientConfig = {
-    queryCache: new QueryCache({}),
+    queryCache: new QueryCache({
+        onError: err => {
+          toast({ title: t(err.message), status: 'error', position: 'bottom-right' });
+        },
+    }),
     defaultOptions: {
       queries: {
         retry: 1,
         refetchOnWindowFocus: false,
-      },
-      mutations: {
-        onError: err => {
-          toast({ title: t(err.message), status: 'error', position: 'bottom-right' });
-        },
       },
     },
   };

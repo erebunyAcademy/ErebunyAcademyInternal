@@ -30,6 +30,16 @@ export class ScheduleResolver {
           },
           scheduleTeachers: {
             select: {
+              teacher: {
+                select: {
+                  user: {
+                    select: {
+                      firstName: true,
+                      lastName: true,
+                    },
+                  },
+                },
+              },
               teacherId: true,
             },
           },
@@ -40,6 +50,8 @@ export class ScheduleResolver {
               mimetype: true,
             },
           },
+          subject: true,
+          courseGroup: true,
         },
 
         orderBy: sorting ? orderBy(sorting) : undefined,
@@ -52,13 +64,19 @@ export class ScheduleResolver {
     }));
   }
 
-  static async createThematicPlan(scheduleId: string, data: AddEditThematicPlanValidation) {
+  static async createNoCyclicThematicPlan(scheduleId: string, data: AddEditThematicPlanValidation) {
+    const nonCyclicSchedule = await prisma.nonCyclicSchedule.findFirstOrThrow({
+      where: {
+        id: scheduleId,
+      },
+    });
+
     const { practicalClass, theoreticalClass } = data;
 
-    prisma.thematicPlan
-      .create({
+    const result = await prisma.$transaction(async tx => {
+      const practicalPlan = await tx.thematicPlan.create({
         data: {
-          scheduleId,
+          nonCyclicScheduleId: nonCyclicSchedule.id,
           totalHours: +practicalClass.totalHours,
           type: ThematicSubPlanTypeEnum.PRACTICAL,
           thematicPlanDescription: {
@@ -68,12 +86,56 @@ export class ScheduleResolver {
             })),
           },
         },
-      })
-      .catch(console.error);
+      });
 
+      // Create Theoretical Thematic Plan
+      const theoreticalPlan = await tx.thematicPlan.create({
+        data: {
+          nonCyclicScheduleId: nonCyclicSchedule.id,
+          totalHours: +theoreticalClass.totalHours,
+          type: ThematicSubPlanTypeEnum.THEORETICAL,
+          thematicPlanDescription: {
+            create: theoreticalClass.classDescriptionRow.map(row => ({
+              title: row.title,
+              hour: row.hour,
+            })),
+          },
+        },
+      });
+
+      return { practicalPlan, theoreticalPlan };
+    });
+
+    return result;
+  }
+
+  static async createCyclicThematicPlan(scheduleId: string, data: AddEditThematicPlanValidation) {
+    const cyclicSchedule = await prisma.schedule.findFirstOrThrow({
+      where: {
+        id: scheduleId,
+      },
+    });
+
+    const { practicalClass, theoreticalClass } = data;
+
+    await prisma.thematicPlan.create({
+      data: {
+        scheduleId: cyclicSchedule.id,
+        totalHours: +practicalClass.totalHours,
+        type: ThematicSubPlanTypeEnum.PRACTICAL,
+        thematicPlanDescription: {
+          create: practicalClass.classDescriptionRow.map(row => ({
+            title: row.title,
+            hour: row.hour,
+          })),
+        },
+      },
+    });
+
+    // Create Theoretical Thematic Plan
     return prisma.thematicPlan.create({
       data: {
-        scheduleId,
+        scheduleId: cyclicSchedule.id,
         totalHours: +theoreticalClass.totalHours,
         type: ThematicSubPlanTypeEnum.THEORETICAL,
         thematicPlanDescription: {
@@ -87,11 +149,24 @@ export class ScheduleResolver {
   }
 
   static async updateThematicPlan(scheduleId: string, data: AddEditThematicPlanValidation) {
+    const thematicPlan = await prisma.thematicPlan.findFirst({
+      where: {
+        scheduleId,
+      },
+      select: {
+        scheduleId: true,
+      },
+    });
+
     await prisma.thematicPlan.deleteMany({
       where: { scheduleId },
     });
 
-    return ScheduleResolver.createThematicPlan(scheduleId, data);
+    if (thematicPlan?.scheduleId) {
+      return ScheduleResolver.createCyclicThematicPlan(scheduleId, data);
+    }
+
+    return ScheduleResolver.createNoCyclicThematicPlan(scheduleId, data);
   }
 
   static async createSchedule(data: CreateEditScheduleValidation) {
@@ -160,6 +235,8 @@ export class ScheduleResolver {
       subjectId,
       examDate,
       attachments,
+      examType,
+      courseGroupId,
     } = data;
 
     const schedule = await prisma.schedule.findUniqueOrThrow({
@@ -184,6 +261,8 @@ export class ScheduleResolver {
         data: {
           title,
           description,
+          examType,
+          courseGroupId,
           totalHours: +totalHours,
           startDayDate: new Date(startDayDate),
           endDayDate: new Date(endDayDate),
@@ -278,7 +357,7 @@ export class ScheduleResolver {
     });
   }
 
-  static nonCycleSchedulelist(skip: number, take: number, search: string, sorting: SortingType[]) {
+  static nonCycleScheduleList(skip: number, take: number, search: string, sorting: SortingType[]) {
     return Promise.all([
       prisma.nonCyclicSchedule.count({
         where: {
@@ -297,9 +376,20 @@ export class ScheduleResolver {
           },
           scheduleTeachers: {
             select: {
+              teacher: {
+                select: {
+                  user: {
+                    select: {
+                      firstName: true,
+                      lastName: true,
+                    },
+                  },
+                },
+              },
               teacherId: true,
             },
           },
+
           attachment: {
             select: {
               key: true,
@@ -307,6 +397,16 @@ export class ScheduleResolver {
               mimetype: true,
             },
           },
+          
+          availableDays: {
+            select: {
+              availableDay: true,
+              period: true,
+            },
+          },
+
+          subject: true,
+          courseGroup: true,
         },
 
         orderBy: sorting ? orderBy(sorting) : undefined,
@@ -348,10 +448,11 @@ export class ScheduleResolver {
 
   static async createNonCyclicSchedule(data: CreateEditNonCylicScheduleValidation) {
     const {
-      availableDay,
-      period,
+      academicYear,
+      availableDays,
       description,
       totalHours,
+      examType,
       teacherId,
       links,
       subjectId,
@@ -364,12 +465,12 @@ export class ScheduleResolver {
       data: {
         title,
         courseGroupId,
-        period,
-        availableDay,
         description,
-        examType: data.examType,
+        academicYear,
+        subjectId,
+        examType,
+
         totalHours: +totalHours,
-        subjectId: data.subjectId,
         links: links.map(({ link }) => link),
         scheduleTeachers: {
           create: {
@@ -381,6 +482,14 @@ export class ScheduleResolver {
       select: {
         id: true,
       },
+    });
+
+    await prisma.scheduleTime.createMany({
+      data: availableDays.map(day => ({
+        availableDay: day.availableDay,
+        period: day.period,
+        nonCyclicScheduleId: createdSchedule.id,
+      })),
     });
 
     if (attachments) {
@@ -400,8 +509,7 @@ export class ScheduleResolver {
 
   static async updateNonCycleSchedule(id: string, data: CreateEditNonCylicScheduleValidation) {
     const {
-      availableDay,
-      period,
+      availableDays,
       description,
       totalHours,
       teacherId,
@@ -410,6 +518,8 @@ export class ScheduleResolver {
       title,
       attachments,
       courseGroupId,
+      examType,
+      academicYear,
     } = data;
 
     const nonCycleSchedule = await prisma.nonCyclicSchedule.findUniqueOrThrow({
@@ -427,16 +537,30 @@ export class ScheduleResolver {
         where: { nonCyclicScheduleId: nonCycleSchedule.id },
       });
 
+      await prisma.scheduleTime.deleteMany({
+        where: {
+          nonCyclicScheduleId: nonCycleSchedule.id,
+        },
+      });
+
+      await prisma.scheduleTime.createMany({
+        data: availableDays.map(day => ({
+          availableDay: day.availableDay,
+          period: day.period,
+          nonCyclicScheduleId: nonCycleSchedule.id,
+        })),
+      });
+
       const updatedSchedule = await prisma.nonCyclicSchedule.update({
         where: {
           id: nonCycleSchedule.id,
         },
         data: {
           courseGroupId,
-          availableDay,
-          period,
           title,
           description,
+          examType,
+          academicYear,
           totalHours: +totalHours,
           subjectId: data.subjectId,
           links: {
@@ -546,5 +670,69 @@ export class ScheduleResolver {
     });
 
     return ScheduleResolver.createNonCyclicThematicPlan(nonCyclicScheduleId, data);
+  }
+
+  static getCyclicSchedule(id: string) {
+    return prisma.schedule.findUniqueOrThrow({
+      where: {
+        id,
+      },
+      include: {
+        attachment: true,
+        scheduleTeachers: {
+          include: {
+            teacher: {
+              select: {
+                user: {
+                  select: {
+                    firstName: true,
+                    lastName: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+        thematicPlan: {
+          include: {
+            thematicPlanDescription: true,
+          },
+        },
+        subject: true,
+        courseGroup: true,
+      },
+    });
+  }
+
+  static getNoCyclicSchedule(id: string) {
+    return prisma.nonCyclicSchedule.findUniqueOrThrow({
+      where: {
+        id,
+      },
+      include: {
+        attachment: true,
+        scheduleTeachers: {
+          include: {
+            teacher: {
+              select: {
+                user: {
+                  select: {
+                    firstName: true,
+                    lastName: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+        thematicPlan: {
+          include: {
+            thematicPlanDescription: true,
+          },
+        },
+        subject: true,
+        courseGroup: true,
+      },
+    });
   }
 }
