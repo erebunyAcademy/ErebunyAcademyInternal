@@ -244,5 +244,12 @@
   "cyclicScheduleList": "Список циклических расписаний",
   "notCyclicScheduleList": "Список нециклических расписаний",
   "weekDay": "День недели",
-  "period": "Период"
+  "period": "Период",
+  "details": "Детали",
+  "seeDetails": "Посмотреть детали",
+  "academicYear": "Академический год",
+  "addClassDay": "Добавить день занятия",
+  "thematicPlans": "Тематические планы",
+  "thematicPlanType": "Тип тематического плана",
+  "referencesUsed": "Использованные источники для материалов"
 }

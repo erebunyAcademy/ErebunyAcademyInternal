@@ -59,7 +59,6 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
     defaultValues: {
       totalHours: '',
       subjectId: '',
-      period: '1-2',
       title: '',
       description: '',
       examType: 'ASSESSMENT',
@@ -67,8 +66,8 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
       courseGroupId: '',
       attachments: [],
       links: [],
-      academicYear: '',
-      availableDays: [{ availableDay: 'MONDAY', period: '' }],
+      academicYear: '2024-2025',
+      availableDays: [{ availableDay: 'MONDAY', period: '1-2' }],
     },
   });
 
@@ -142,6 +141,7 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
         teacherId: selectedSchedule.scheduleTeachers[0].teacherId,
         examType: selectedSchedule.examType,
         courseGroupId: selectedSchedule.courseGroupId,
+        academicYear: selectedSchedule.academicYear,
         attachments: selectedSchedule.attachment.map(attachment => ({
           key: attachment.key,
           mimetype: attachment.mimetype,
@@ -165,8 +165,8 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
 
   const {
     fields: availableDayFields,
-    append: appendavailableDay,
-    remove: removeavailableDay,
+    append: appendAvailableDay,
+    remove: removeAvailableDay,
   } = useFieldArray({
     control,
     name: 'availableDays',
@@ -190,8 +190,6 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
   const onSubmitHandler = useCallback(
     (data: CreateEditNonCylicScheduleValidation) => {
       const attachmentKeys: AttachmentValidation[] = [];
-
-      console.log({ data });
 
       files?.forEach(({ file }) => {
         const attachmentId = uuidv4();
@@ -405,7 +403,7 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
                   name={name}
                   isRequired
                   options={weekendDayList}
-                  labelName="day"
+                  labelName="weekDay"
                   valueLabel="id"
                   nameLabel="title"
                   onChange={onChange}
@@ -440,13 +438,13 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
               colorScheme="red"
               aria-label="Delete link"
               icon={<DeleteIcon />}
-              onClick={() => removeavailableDay(index)}
+              onClick={() => removeAvailableDay(index)}
             />
           </Flex>
         ))}
         <Button
           mt={2}
-          onClick={() => appendavailableDay({ availableDay: 'MONDAY', period: '' })}
+          onClick={() => appendAvailableDay({ availableDay: 'MONDAY', period: '' })}
           leftIcon={<AddIcon />}>
           {t('addClassDay')}
         </Button>

@@ -245,5 +245,12 @@
   "cyclicScheduleList": "Cyclic schedule list",
   "notCyclicScheduleList": "Not cyclic schedule list",
   "weekDay": "Weekday",
-  "period": "Period"
+  "period": "Period",
+  "details": "Details",
+  "seeDetails": "See details",
+  "academicYear": "Academic year",
+  "addClassDay": "Add Class Day",
+  "thematicPlans": "Thematic plans",
+  "thematicPlanType": "Thematic plan type",
+  "referencesUsed": "References used for materials"
 }

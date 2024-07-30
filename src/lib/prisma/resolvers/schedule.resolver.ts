@@ -30,6 +30,16 @@ export class ScheduleResolver {
           },
           scheduleTeachers: {
             select: {
+              teacher: {
+                select: {
+                  user: {
+                    select: {
+                      firstName: true,
+                      lastName: true,
+                    },
+                  },
+                },
+              },
               teacherId: true,
             },
           },
@@ -40,6 +50,8 @@ export class ScheduleResolver {
               mimetype: true,
             },
           },
+          subject: true,
+          courseGroup: true,
         },
 
         orderBy: sorting ? orderBy(sorting) : undefined,
@@ -345,7 +357,7 @@ export class ScheduleResolver {
     });
   }
 
-  static nonCycleSchedulelist(skip: number, take: number, search: string, sorting: SortingType[]) {
+  static nonCycleScheduleList(skip: number, take: number, search: string, sorting: SortingType[]) {
     return Promise.all([
       prisma.nonCyclicSchedule.count({
         where: {
@@ -385,8 +397,16 @@ export class ScheduleResolver {
               mimetype: true,
             },
           },
-          availableDays: true,
+          
+          availableDays: {
+            select: {
+              availableDay: true,
+              period: true,
+            },
+          },
+
           subject: true,
+          courseGroup: true,
         },
 
         orderBy: sorting ? orderBy(sorting) : undefined,
@@ -449,6 +469,7 @@ export class ScheduleResolver {
         academicYear,
         subjectId,
         examType,
+
         totalHours: +totalHours,
         links: links.map(({ link }) => link),
         scheduleTeachers: {
@@ -498,6 +519,7 @@ export class ScheduleResolver {
       attachments,
       courseGroupId,
       examType,
+      academicYear,
     } = data;
 
     const nonCycleSchedule = await prisma.nonCyclicSchedule.findUniqueOrThrow({
@@ -538,6 +560,7 @@ export class ScheduleResolver {
           title,
           description,
           examType,
+          academicYear,
           totalHours: +totalHours,
           subjectId: data.subjectId,
           links: {

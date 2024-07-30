@@ -3,6 +3,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { Button, MenuItem, useDisclosure } from '@chakra-ui/react';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { createColumnHelper, SortingState } from '@tanstack/react-table';
+import dayjs from 'dayjs';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
@@ -99,35 +100,6 @@ export default function Schedule() {
   const columns = [
     columnHelper.accessor('id', {
       id: uuidv4(),
-      header: t('seeDetails'),
-      cell: info => (
-        <Button as={Link} href={`/cyclic-schedule/${info.getValue()}`} variant="link">
-          {t('seeDetails')}
-        </Button>
-      ),
-    }),
-    columnHelper.accessor('title', {
-      id: uuidv4(),
-      cell: info => info.getValue(),
-      header: t('title'),
-    }),
-    columnHelper.accessor('description', {
-      id: uuidv4(),
-      cell: info => info.getValue(),
-      header: t('description'),
-    }),
-    columnHelper.accessor('totalHours', {
-      id: uuidv4(),
-      cell: info => info.getValue(),
-      header: t('totalHours'),
-    }),
-    columnHelper.accessor('isAssessment', {
-      id: uuidv4(),
-      cell: info => (info.getValue() ? t('yes') : t('no')),
-      header: t('assessment'),
-    }),
-    columnHelper.accessor('id', {
-      id: uuidv4(),
       cell: ({ row }) => (
         <ActionButtons>
           <MenuItem
@@ -157,6 +129,80 @@ export default function Schedule() {
         </ActionButtons>
       ),
       header: t('actions'),
+    }),
+    columnHelper.accessor('id', {
+      id: uuidv4(),
+      header: t('details'),
+      cell: info => (
+        <Button as={Link} href={`/cyclic-schedule/${info.getValue()}`} variant="link">
+          {t('seeDetails')}
+        </Button>
+      ),
+    }),
+    columnHelper.accessor('courseGroup.title', {
+      id: uuidv4(),
+      cell: info => info.getValue(),
+      header: t('courseGroup'),
+    }),
+    columnHelper.accessor('subject.title', {
+      id: uuidv4(),
+      cell: info => info.getValue(),
+      header: t('subject'),
+    }),
+    columnHelper.accessor('title', {
+      id: uuidv4(),
+      cell: info => info.getValue(),
+      header: t('title'),
+    }),
+    columnHelper.accessor('description', {
+      id: uuidv4(),
+      cell: info => info.getValue(),
+      header: t('description'),
+    }),
+    columnHelper.accessor('totalHours', {
+      id: uuidv4(),
+      cell: info => info.getValue(),
+      header: t('totalHours'),
+    }),
+    columnHelper.accessor('examType', {
+      id: uuidv4(),
+      cell: info => info.getValue(),
+      header: t('examType'),
+    }),
+    columnHelper.accessor('scheduleTeachers', {
+      id: uuidv4(),
+      cell: info =>
+        `${info.getValue()[0].teacher?.user.firstName} ${info.getValue()[0].teacher?.user.lastName}`,
+      header: t('lecturer'),
+    }),
+    columnHelper.accessor('startDayDate', {
+      id: uuidv4(),
+      cell: info => {
+        const currentDate = dayjs(info.getValue());
+        return currentDate.format('YYYY-MM-DD');
+      },
+      header: t('startDay'),
+    }),
+    columnHelper.accessor('endDayDate', {
+      id: uuidv4(),
+      cell: info => {
+        const currentDate = dayjs(info.getValue());
+        return currentDate.format('YYYY-MM-DD');
+      },
+      header: t('endDay'),
+    }),
+    columnHelper.accessor('examDate', {
+      id: uuidv4(),
+      cell: info => {
+        const currentDate = dayjs(info.getValue());
+        return currentDate.format('YYYY-MM-DD');
+      },
+      header: t('examDay'),
+    }),
+    columnHelper.accessor('createdAt', {
+      id: uuidv4(),
+      cell: info => dayjs(info.getValue()).format('YYYY-MM-DD'),
+      header: t('createdAt'),
     }),
   ];
 

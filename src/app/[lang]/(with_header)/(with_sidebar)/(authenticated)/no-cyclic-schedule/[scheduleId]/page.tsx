@@ -4,6 +4,7 @@ import {
   Button,
   Divider,
   Flex,
+  Heading,
   Table,
   Tbody,
   Td,
@@ -12,38 +13,87 @@ import {
   Thead,
   Tr,
 } from '@chakra-ui/react';
+import { getTranslations } from 'next-intl/server';
 import { ScheduleResolver } from '@/lib/prisma/resolvers/schedule.resolver';
 
 const ScheduleDetails = async ({ params }: { params: { scheduleId: string } }) => {
   const scheduleData = await ScheduleResolver.getNoCyclicSchedule(params.scheduleId);
 
+  const t = await getTranslations();
+
   return (
-    <Box>
-      <Text> Title: {scheduleData.title} </Text>
-      <Text> Description: {scheduleData.description} </Text>
-      <Text> Exam type : {scheduleData.examType} </Text>
-      <Text> Total hours : {scheduleData.totalHours}</Text>
-      <Text> Subject : {scheduleData.subject.title}</Text>
-      <Text> Course group : {scheduleData.courseGroup.title}</Text>
-      <Text>
-        Lecturer : {scheduleData.scheduleTeachers[0].teacher.user.firstName}{' '}
-        {scheduleData.scheduleTeachers[0].teacher.user.lastName}{' '}
-      </Text>
+    <Box m={{ base: '16px', lg: '40px' }} width="100%">
+      <Box fontSize={{ base: '16px', lg: '18px' }}>
+        <Text>
+          <Text as="span" fontWeight={500} mr="10px">
+            {t('title')}:
+          </Text>
+          {scheduleData.title}
+        </Text>
+        <Text>
+          <Text as="span" fontWeight={500} mr="10px">
+            {t('description')}:
+          </Text>
+          {scheduleData.description}{' '}
+        </Text>
+        <Text>
+          <Text as="span" fontWeight={500} mr="10px">
+            {t('examType')}:
+          </Text>
+          {scheduleData.examType}{' '}
+        </Text>
+        <Text>
+          <Text as="span" fontWeight={500} mr="10px">
+            {t('totalHours')}:
+          </Text>
+          {scheduleData.totalHours}
+        </Text>
+        <Text>
+          <Text as="span" fontWeight={500} mr="10px">
+            {t('subject')}:
+          </Text>
+          {scheduleData.subject.title}
+        </Text>
+        <Text>
+          <Text as="span" fontWeight={500} mr="10px">
+            {t('courseGroup')}:
+          </Text>
+          {scheduleData.courseGroup.title}
+        </Text>
+        <Text>
+          <Text as="span" fontWeight={500} mr="10px">
+            {t('lecturer')}:
+          </Text>
+          {scheduleData.scheduleTeachers[0].teacher.user.firstName}{' '}
+          {scheduleData.scheduleTeachers[0].teacher.user.lastName}{' '}
+        </Text>
+      </Box>
+      <Divider mt="20px" />
 
-      <Divider />
-
-      <Flex my="30px" flexDirection="column" gap="100px">
-        <Text textAlign="center"> Thematic plans </Text>
+      <Flex
+        my={{ base: '15px', lg: '30px' }}
+        flexDirection="column"
+        gap={{ base: '15px', lg: '30px' }}>
+        <Heading fontSize={{ base: '25px', lg: '30px' }} fontWeight={500} textAlign="center">
+          {t('thematicPlans')}
+        </Heading>
         {scheduleData.thematicPlan.map(tPlan => (
-          <Box key={tPlan.id} border="1px solid #ccc">
-            <Text> Title: {tPlan.title}</Text>
-            <Text>Total hours: {tPlan.totalHours}</Text>
-            <Text>Thematic plan type: {tPlan.type}</Text>
-            <Table>
+          <Box
+            key={tPlan.id}
+            border="1px solid #ccc"
+            p={{ base: '10px', lg: '20px' }}
+            fontSize="17px">
+            <Text>
+              {t('totalHours')}: {tPlan.totalHours}
+            </Text>
+            <Text>
+              {t('thematicPlanType')}: {tPlan.type}
+            </Text>
+            <Table mt="15px">
               <Thead>
                 <Tr>
-                  <Th>Description</Th>
-                  <Th>Hour</Th>
+                  <Th>{t('description')}</Th>
+                  <Th>{t('hours')}</Th>
                 </Tr>
               </Thead>
               <Tbody>
@@ -61,21 +111,27 @@ const ScheduleDetails = async ({ params }: { params: { scheduleId: string } }) =
 
       <Divider />
 
-      <Box>
-        <Text textAlign="center">References used for material </Text>
-        <Flex justifyContent="space-between">
-          <Flex gap="30px" flexDirection="column">
+      <Box maxWidth="1500px" overflow="auto" mb="40px">
+        <Text
+          fontSize={{ base: '20px', lg: '25px' }}
+          fontWeight={500}
+          my={{ base: '15px', lg: '30px' }}>
+          {t('referencesUsed')}
+        </Text>
+        <Flex gap={{ base: '30px', md: '80px' }} flexDirection={{ base: 'column', md: 'row' }}>
+          <Flex gap="30px" flexDirection="column" alignItems="flex-start">
             {scheduleData.links?.map((link: string, index: number) => (
-              <Button variant="link" as="a" href={link} key={index}>
+              <Button variant="link" as="a" href={link} key={index} fontSize="16px">
                 {link}
               </Button>
             ))}
           </Flex>
-          <Flex gap="30px" flexDirection="column">
+          <Flex gap="30px" flexDirection="column" alignItems="flex-start">
             {scheduleData.attachment.map((attachment, index: number) => (
               <Button
                 variant="link"
                 as="a"
+                fontSize="16px"
                 href={`/api/download?path=uploads/${attachment.key}`}
                 key={index}>
                 {attachment.title}

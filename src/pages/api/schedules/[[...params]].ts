@@ -21,7 +21,7 @@ import {
 } from '@/utils/validation/schedule';
 
 @Catch(exceptionHandler)
-class FacultyHandler {
+class ScheduleHandler {
   @AdminGuard()
   @Get('/list')
   _list(
@@ -58,13 +58,6 @@ class FacultyHandler {
   ) {
     return ScheduleResolver.createCyclicThematicPlan(scheduleId, input);
   }
-  @Post('/:scheduleId/no-cyclic/thematic-plan')
-  _createNoCyclicThematicPlan(
-    @Param('scheduleId') scheduleId: string,
-    @Body(ValidationPipe) input: AddEditThematicPlanValidation,
-  ) {
-    return ScheduleResolver.createNoCyclicThematicPlan(scheduleId, input);
-  }
 
   @Patch('/:scheduleId/thematic-plan')
   _updateThematicPlan(
@@ -74,6 +67,7 @@ class FacultyHandler {
     return ScheduleResolver.updateThematicPlan(scheduleId, input);
   }
 
+  //NON-CYCLIC
   @Get('/none-cyclic/list')
   _nonCyclicList(
     @Query('offset') skip: string,
@@ -81,7 +75,7 @@ class FacultyHandler {
     @Query('search') search: string,
     @Query('sorting') sorting: SortingType[],
   ) {
-    return ScheduleResolver.nonCycleSchedulelist(+skip, +take, search, sorting);
+    return ScheduleResolver.nonCycleScheduleList(+skip, +take, search, sorting);
   }
 
   @Post('/none-cyclic')
@@ -101,6 +95,22 @@ class FacultyHandler {
   _deleteNoneCyclicSchedule(@Param('scheduleId') scheduleId: string) {
     return ScheduleResolver.deleteNonCyclicSchedule(scheduleId);
   }
+
+  @Post('/:scheduleId/no-cyclic/thematic-plan')
+  _createNoCyclicThematicPlan(
+    @Param('scheduleId') scheduleId: string,
+    @Body(ValidationPipe) input: AddEditThematicPlanValidation,
+  ) {
+    return ScheduleResolver.createNoCyclicThematicPlan(scheduleId, input);
+  }
+
+  @Patch('/none-cyclic/:scheduleId/thematic-plan')
+  _updateNonCyclicThematicPlan(
+    @Param('scheduleId') scheduleId: string,
+    @Body(ValidationPipe) input: AddEditThematicPlanValidation,
+  ) {
+    return ScheduleResolver.updateNonCyclicThematicPlan(scheduleId, input);
+  }
 }
 
-export default createHandler(FacultyHandler);
+export default createHandler(ScheduleHandler);
