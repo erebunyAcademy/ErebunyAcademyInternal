@@ -20,7 +20,7 @@
   "teachingSubject": "Преподаваемый предмет",
   "exams": "Экзамены",
   "exam": "Экзамен",
-  "teachers": "Учителя",
+  "teachers": "Лекторы",
   "students": "Студенты",
   "subject": "Предмет",
   "subjects": "Предметы",
@@ -61,7 +61,7 @@
 
   "facultyList": "Список факультетов",
   "studentsList": "Список студентов",
-  "teachersList": "Список учителей",
+  "teachersList": "Список лекторов",
   "courseList": "Список курсов",
   "courseGroupList": "Список групп курсов",
   "examList": "Список экзаменов",
@@ -244,5 +244,12 @@
   "cyclicScheduleList": "Список циклических расписаний",
   "notCyclicScheduleList": "Список нециклических расписаний",
   "weekDay": "День недели",
-  "period": "Период"
+  "period": "Период",
+  "details": "Детали",
+  "seeDetails": "Посмотреть детали",
+  "academicYear": "Академический год",
+  "addClassDay": "Добавить день занятия",
+  "thematicPlans": "Тематические планы",
+  "thematicPlanType": "Тип тематического плана",
+  "referencesUsed": "Использованные источники для материалов"
 }

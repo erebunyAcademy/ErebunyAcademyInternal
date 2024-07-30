@@ -20,7 +20,7 @@
   "teachingSubject": "Teaching subject",
   "exams": "Exams",
   "exam": "Exam",
-  "teachers": "Teachers",
+  "teachers": "Lecturers",
   "students": "Students",
   "subject": "Subject",
   "subjects": "Subjects",
@@ -61,7 +61,7 @@
 
   "facultyList": "Faculty List",
   "studentsList": "Students List",
-  "teachersList": "Teachers List",
+  "teachersList": "Lecturers List",
   "courseList": "Course List",
   "courseGroupList": "Course Group List",
   "examList": "Exam List",
@@ -245,5 +245,12 @@
   "cyclicScheduleList": "Cyclic schedule list",
   "notCyclicScheduleList": "Not cyclic schedule list",
   "weekDay": "Weekday",
-  "period": "Period"
+  "period": "Period",
+  "details": "Details",
+  "seeDetails": "See details",
+  "academicYear": "Academic year",
+  "addClassDay": "Add Class Day",
+  "thematicPlans": "Thematic plans",
+  "thematicPlanType": "Thematic plan type",
+  "referencesUsed": "References used for materials"
 }

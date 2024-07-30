@@ -75,10 +75,6 @@ export class CreateEditNonCylicScheduleValidation {
 
   @IsString()
   @IsNotEmpty()
-  period: string;
-
-  @IsString()
-  @IsNotEmpty()
   subjectId: string;
 
   @IsString()
