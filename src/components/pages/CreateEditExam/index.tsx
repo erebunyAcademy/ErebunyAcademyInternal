@@ -184,7 +184,7 @@ const CreateEditExam: FC<CreateEditExamProps> = ({
 
       <Box my="50px">
         <Button colorScheme="teal" type="submit" width="50%">
-          {t('submitExam')}
+          {t('createExam')}
         </Button>
       </Box>
     </form>

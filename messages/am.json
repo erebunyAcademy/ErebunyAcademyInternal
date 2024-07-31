@@ -241,8 +241,8 @@
   "examType": "Քննության տեսակը",
   "cyclic": "Ցիկլային",
   "notCyclic": "Ոչ ցիկլային",
-  "cyclicScheduleList": "Ցիկլային գրաֆիկի ցուցակ",
-  "notCyclicScheduleList": "Ոչ ցիկլային գրաֆիկի ցուցակ",
+  "cyclicScheduleList": "Ցիկլային գրաֆիկի դասացուցակ",
+  "notCyclicScheduleList": "Ոչ ցիկլային գրաֆիկի դասացուցակ",
   "weekDay": "Շաբաթվա օր",
   "period": "Ժամանակաշրջան",
   "details": "Մանրամասներ",
@@ -251,5 +251,6 @@
   "addClassDay": "Ավելացնել դասընթացի օր",
   "thematicPlans": "Թեմատիկ պլաններ",
   "thematicPlanType": "Թեմատիկ պլանի տեսակ",
-  "referencesUsed": "Նյութերի համար օգտագործված հղումներ"
+  "referencesUsed": "Նյութերի համար օգտագործված հղումներ",
+  "generalInfo": "Ընդհանուր տեղեկություններ"
 }
