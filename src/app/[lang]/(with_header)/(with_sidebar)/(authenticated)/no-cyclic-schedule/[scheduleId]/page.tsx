@@ -23,55 +23,61 @@ const ScheduleDetails = async ({ params }: { params: { scheduleId: string } }) =
 
   return (
     <Box m={{ base: '16px', lg: '40px' }} width="100%">
-      <Box fontSize={{ base: '16px', lg: '18px' }}>
-        <Text>
-          <Text as="span" fontWeight={500} mr="10px">
-            {t('title')}:
-          </Text>
-          {scheduleData.title}
-        </Text>
-        <Text>
-          <Text as="span" fontWeight={500} mr="10px">
-            {t('description')}:
-          </Text>
-          {scheduleData.description}{' '}
-        </Text>
-        <Text>
-          <Text as="span" fontWeight={500} mr="10px">
-            {t('examType')}:
-          </Text>
-          {scheduleData.examType}{' '}
-        </Text>
-        <Text>
-          <Text as="span" fontWeight={500} mr="10px">
-            {t('totalHours')}:
-          </Text>
-          {scheduleData.totalHours}
-        </Text>
-        <Text>
-          <Text as="span" fontWeight={500} mr="10px">
-            {t('subject')}:
-          </Text>
-          {scheduleData.subject.title}
-        </Text>
-        <Text>
-          <Text as="span" fontWeight={500} mr="10px">
-            {t('courseGroup')}:
-          </Text>
-          {scheduleData.courseGroup.title}
-        </Text>
-        <Text>
-          <Text as="span" fontWeight={500} mr="10px">
-            {t('lecturer')}:
-          </Text>
-          {scheduleData.scheduleTeachers[0].teacher.user.firstName}{' '}
-          {scheduleData.scheduleTeachers[0].teacher.user.lastName}{' '}
-        </Text>
+      <Box fontSize={{ base: '16px', lg: '18px' }} width="100%" color="#1A202C" p="10px">
+        <Heading
+          fontSize={{ base: '25px', lg: '30px' }}
+          fontWeight={500}
+          textAlign="center"
+          mb="20px">
+          {t('generalInfo')}
+        </Heading>
+        <Table
+          variant="simple"
+          mt="10px"
+          width="100%"
+          display="flex"
+          gap={{ base: '10px', lg: '100px' }}
+          flexDirection={{ base: 'column', lg: 'row' }}>
+          <Tbody>
+            <Tr>
+              <Th>{t('title')}:</Th>
+              <Td>{scheduleData.title}</Td>
+            </Tr>
+            <Tr>
+              <Th>{t('description')}:</Th>
+              <Td>{scheduleData.description}</Td>
+            </Tr>
+            <Tr>
+              <Th>{t('examType')}:</Th>
+              <Td>{scheduleData.examType}</Td>
+            </Tr>
+            <Tr>
+              <Th>{t('totalHours')}:</Th>
+              <Td>{scheduleData.totalHours}</Td>
+            </Tr>
+          </Tbody>
+          <Tbody>
+            <Tr>
+              <Th>{t('subject')}:</Th>
+              <Td>{scheduleData.subject.title}</Td>
+            </Tr>
+            <Tr>
+              <Th>{t('courseGroup')}:</Th>
+              <Td>{scheduleData.courseGroup.title}</Td>
+            </Tr>
+            <Tr>
+              <Th>{t('lecturer')}:</Th>
+              <Td>
+                {scheduleData.scheduleTeachers[0].teacher.user.firstName}{' '}
+                {scheduleData.scheduleTeachers[0].teacher.user.lastName}
+              </Td>
+            </Tr>
+          </Tbody>
+        </Table>
       </Box>
-      <Divider mt="20px" />
 
       <Flex
-        my={{ base: '15px', lg: '30px' }}
+        my={{ base: '15px', lg: '40px' }}
         flexDirection="column"
         gap={{ base: '15px', lg: '30px' }}>
         <Heading fontSize={{ base: '25px', lg: '30px' }} fontWeight={500} textAlign="center">
@@ -81,12 +87,17 @@ const ScheduleDetails = async ({ params }: { params: { scheduleId: string } }) =
           <Box
             key={tPlan.id}
             border="1px solid #ccc"
+            borderRadius="15px"
             p={{ base: '10px', lg: '20px' }}
-            fontSize="17px">
-            <Text>
+            fontSize="17px"
+            boxShadow="0 4px 8px rgba(0, 0, 0, 0.1)"
+            bg="white"
+            width="100%"
+            mt="20px">
+            <Text fontWeight={600} mb="10px">
               {t('totalHours')}: {tPlan.totalHours}
             </Text>
-            <Text>
+            <Text fontWeight={600} mb="10px">
               {t('thematicPlanType')}: {tPlan.type}
             </Text>
             <Table mt="15px">

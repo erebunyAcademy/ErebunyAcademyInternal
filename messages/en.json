@@ -252,5 +252,6 @@
   "addClassDay": "Add Class Day",
   "thematicPlans": "Thematic plans",
   "thematicPlanType": "Thematic plan type",
-  "referencesUsed": "References used for materials"
+  "referencesUsed": "References used for materials",
+  "generalInfo":"General information"
 }
