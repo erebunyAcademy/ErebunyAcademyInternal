@@ -323,12 +323,14 @@ export default function ExamsList({
         fetchPreviousPage={useCallback(() => setPage(prev => --prev), [])}
         addNew={openCreateEditModal}
       />
+
       <CreateExamModal
         isOpen={isCreateEditExamModalIsOpen}
         onClose={closeCreateEditExamModal}
         exam={selectedExam}
         params={params}
       />
+
       <Modal
         isOpen={isDeleteModalOpen}
         onClose={closeDeleteModal}
