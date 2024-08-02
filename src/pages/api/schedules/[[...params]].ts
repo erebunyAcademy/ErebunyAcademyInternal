@@ -67,6 +67,11 @@ class ScheduleHandler {
     return ScheduleResolver.updateThematicPlan(scheduleId, input);
   }
 
+  @Get('/cyclic/:scheduleId')
+  _getCyclicScheduleDetails(@Param('scheduleId') scheduleId: string) {
+    return ScheduleResolver.getCyclicSchedule(scheduleId);
+  }
+
   //NON-CYCLIC
   @Get('/none-cyclic/list')
   _nonCyclicList(
@@ -112,12 +117,10 @@ class ScheduleHandler {
     return ScheduleResolver.updateNonCyclicThematicPlan(scheduleId, input);
   }
 
-  //!
-  @Get('/cyclic/:scheduleId')
-  _getCyclicScheduleDetails(@Param('scheduleId') scheduleId: string) {
-    return ScheduleResolver.getCyclicSchedule(scheduleId);
+  @Get('/none-cyclic/:scheduleId')
+  _getNoCyclicScheduleDetails(@Param('scheduleId') scheduleId: string) {
+    return ScheduleResolver.getNoCyclicSchedule(scheduleId);
   }
-  
 }
 
 export default createHandler(ScheduleHandler);

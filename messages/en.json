@@ -237,7 +237,6 @@
   "examDay": "Exam day",
   "totalHours": "Total hours",
   "lecturer": "Lecturer",
-  "deleteScheduleQuestion": "Are you sure you want to delete this schedule?",
   "addThematicPlan": " Add Thematic plan",
   "examType": "Exam type",
   "cyclic": "Cyclic",
@@ -253,5 +252,5 @@
   "thematicPlans": "Thematic plans",
   "thematicPlanType": "Thematic plan type",
   "referencesUsed": "References used for materials",
-  "generalInfo":"General information"
+  "generalInfo": "General information"
 }

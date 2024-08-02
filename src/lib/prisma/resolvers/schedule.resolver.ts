@@ -194,6 +194,7 @@ export class ScheduleResolver {
         endDayDate: new Date(endDayDate),
         isAssessment: data.isAssessment,
         subjectId: data.subjectId,
+        academicYear: data.academicYear,
         links: links.map(({ link }) => link),
         scheduleTeachers: {
           create: {
@@ -268,6 +269,7 @@ export class ScheduleResolver {
           endDayDate: new Date(endDayDate),
           isAssessment: data.isAssessment,
           subjectId: data.subjectId,
+          academicYear: data.academicYear,
           links: {
             set: links.map(({ link }) => link),
           },

@@ -175,6 +175,13 @@ export default function Schedule() {
         `${info.getValue()[0].teacher?.user.firstName} ${info.getValue()[0].teacher?.user.lastName}`,
       header: t('lecturer'),
     }),
+
+    columnHelper.accessor('academicYear', {
+      id: uuidv4(),
+      cell: info => info.getValue(),
+      header: t('academicYear'),
+    }),
+
     columnHelper.accessor('startDayDate', {
       id: uuidv4(),
       cell: info => {

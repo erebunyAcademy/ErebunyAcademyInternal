@@ -15,7 +15,7 @@ import { TeacherService } from '@/api/services/teacher.service';
 import { UploadService } from '@/api/services/upload.service';
 import { FormInput, SelectLabel } from '@/components/atoms';
 import Modal from '@/components/molecules/Modal';
-import { scheduleExamType } from '@/utils/constants/common';
+import { academicYearListData, scheduleExamType } from '@/utils/constants/common';
 import { Maybe } from '@/utils/models/common';
 import { GetCourseGroupsBySubjectId } from '@/utils/models/courseGroup';
 import { ScheduleSingleModel } from '@/utils/models/schedule';
@@ -66,6 +66,7 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
       courseGroupId: '',
       attachments: [],
       links: [],
+      academicYear: '2024-2025',
     },
   });
 
@@ -97,6 +98,7 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
         teacherId: selectedSchedule.scheduleTeachers[0].teacherId,
         courseGroupId: selectedSchedule.courseGroupId,
         examType: selectedSchedule.examType,
+        academicYear: selectedSchedule.academicYear,
         attachments: selectedSchedule.attachment.map(attachment => ({
           key: attachment.key,
           mimetype: attachment.mimetype,
@@ -411,6 +413,24 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
               isRequired
               options={courseGroupQueryData?.course?.groups || []}
               labelName="courseGroup"
+              valueLabel="id"
+              nameLabel="title"
+              onChange={onChange}
+              value={value}
+              isInvalid={!!errors[name]?.message}
+              formErrorMessage={errors[name]?.message}
+            />
+          )}
+        />
+        <Controller
+          name="academicYear"
+          control={control}
+          render={({ field: { onChange, value, name } }) => (
+            <SelectLabel
+              name={name}
+              isRequired
+              options={academicYearListData}
+              labelName="academicYear"
               valueLabel="id"
               nameLabel="title"
               onChange={onChange}
