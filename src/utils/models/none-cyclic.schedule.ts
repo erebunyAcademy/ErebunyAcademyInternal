@@ -12,3 +12,7 @@ export type NoneCyclicScheduleListModel = Awaited<
 export type NoneCyclicScheduleSingleModel = NoneCyclicScheduleListModel extends (infer SingleType)[]
   ? SingleType
   : never;
+
+export type GetNoCyclicDetailsType = Prisma.PromiseReturnType<
+  typeof ScheduleResolver.getNoCyclicSchedule
+>;

@@ -397,7 +397,7 @@ export class ScheduleResolver {
               mimetype: true,
             },
           },
-          
+
           availableDays: {
             select: {
               availableDay: true,

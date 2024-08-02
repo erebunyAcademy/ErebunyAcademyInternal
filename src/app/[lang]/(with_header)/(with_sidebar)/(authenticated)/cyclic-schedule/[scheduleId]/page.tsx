@@ -1,3 +1,4 @@
+'use client';
 import React from 'react';
 import {
   Box,
@@ -13,14 +14,19 @@ import {
   Thead,
   Tr,
 } from '@chakra-ui/react';
+import { useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
-import { getTranslations } from 'next-intl/server';
-import { ScheduleResolver } from '@/lib/prisma/resolvers/schedule.resolver';
+import { useTranslations } from 'next-intl';
+import { ScheduleService } from '@/api/services/schedule.service';
+import { GetCyclicDetailsType } from '@/utils/models/schedule';
 
-const ScheduleDetails = async ({ params }: { params: { scheduleId: string } }) => {
-  const scheduleData = await ScheduleResolver.getCyclicSchedule(params.scheduleId);
+const ScheduleDetails = ({ params }: { params: { scheduleId: string } }) => {
+  const t = useTranslations();
 
-  const t = await getTranslations();
+  const { data: scheduleData } = useQuery<GetCyclicDetailsType>({
+    queryKey: ['cyclic-schedule'],
+    queryFn: () => ScheduleService.getCyclicScheduleDetails(params.scheduleId),
+  });
 
   return (
     <Box m={{ base: '16px', lg: '40px' }} width="100%">
@@ -42,47 +48,47 @@ const ScheduleDetails = async ({ params }: { params: { scheduleId: string } }) =
           <Tbody>
             <Tr>
               <Th>{t('title')}:</Th>
-              <Td>{scheduleData.title}</Td>
+              <Td>{scheduleData?.title}</Td>
             </Tr>
             <Tr>
               <Th>{t('description')}:</Th>
-              <Td>{scheduleData.description}</Td>
+              <Td>{scheduleData?.description}</Td>
             </Tr>
             <Tr>
               <Th>{t('examType')}:</Th>
-              <Td>{scheduleData.examType}</Td>
+              <Td>{scheduleData?.examType}</Td>
             </Tr>
             <Tr>
               <Th>{t('examDay')}:</Th>
-              <Td>{dayjs(scheduleData.examDate).format('DD/MM/YYYY')}</Td>
+              <Td>{dayjs(scheduleData?.examDate).format('DD/MM/YYYY')}</Td>
             </Tr>
             <Tr>
               <Th>{t('startDay')}:</Th>
-              <Td>{dayjs(scheduleData.startDayDate).format('DD/MM/YYYY')}</Td>
+              <Td>{dayjs(scheduleData?.startDayDate).format('DD/MM/YYYY')}</Td>
             </Tr>
           </Tbody>
           <Tbody>
             <Tr>
               <Th>{t('endDay')}:</Th>
-              <Td>{dayjs(scheduleData.endDayDate).format('DD/MM/YYYY')}</Td>
+              <Td>{dayjs(scheduleData?.endDayDate).format('DD/MM/YYYY')}</Td>
             </Tr>
             <Tr>
               <Th>{t('totalHours')}:</Th>
-              <Td>{scheduleData.totalHours}</Td>
+              <Td>{scheduleData?.totalHours}</Td>
             </Tr>
             <Tr>
               <Th>{t('subject')}:</Th>
-              <Td>{scheduleData.subject.title}</Td>
+              <Td>{scheduleData?.subject.title}</Td>
             </Tr>
             <Tr>
               <Th>{t('courseGroup')}:</Th>
-              <Td>{scheduleData.courseGroup.title}</Td>
+              <Td>{scheduleData?.courseGroup.title}</Td>
             </Tr>
             <Tr>
               <Th>{t('lecturer')}:</Th>
               <Td>
-                {scheduleData.scheduleTeachers[0].teacher.user.firstName}{' '}
-                {scheduleData.scheduleTeachers[0].teacher.user.lastName}
+                {scheduleData?.scheduleTeachers[0].teacher.user.firstName}{' '}
+                {scheduleData?.scheduleTeachers[0].teacher.user.lastName}
               </Td>
             </Tr>
           </Tbody>
@@ -96,7 +102,7 @@ const ScheduleDetails = async ({ params }: { params: { scheduleId: string } }) =
         <Heading fontSize={{ base: '25px', lg: '30px' }} fontWeight={500} textAlign="center">
           {t('thematicPlans')}
         </Heading>
-        {scheduleData.thematicPlan.map(tPlan => (
+        {scheduleData?.thematicPlan.map(tPlan => (
           <Box
             key={tPlan.id}
             border="1px solid #ccc"
@@ -144,14 +150,14 @@ const ScheduleDetails = async ({ params }: { params: { scheduleId: string } }) =
         </Text>
         <Flex gap={{ base: '30px', md: '80px' }} flexDirection={{ base: 'column', md: 'row' }}>
           <Flex gap="30px" flexDirection="column" alignItems="flex-start">
-            {scheduleData.links?.map((link: string, index: number) => (
+            {scheduleData?.links?.map((link: string, index: number) => (
               <Button variant="link" as="a" href={link} key={index} fontSize="16px">
                 {link}
               </Button>
             ))}
           </Flex>
           <Flex gap="30px" flexDirection="column" alignItems="flex-start">
-            {scheduleData.attachment.map((attachment, index: number) => (
+            {scheduleData?.attachment.map((attachment, index: number) => (
               <Button
                 fontSize="16px"
                 variant="link"

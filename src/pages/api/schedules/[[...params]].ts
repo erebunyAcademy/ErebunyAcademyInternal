@@ -111,6 +111,13 @@ class ScheduleHandler {
   ) {
     return ScheduleResolver.updateNonCyclicThematicPlan(scheduleId, input);
   }
+
+  //!
+  @Get('/cyclic/:scheduleId')
+  _getCyclicScheduleDetails(@Param('scheduleId') scheduleId: string) {
+    return ScheduleResolver.getCyclicSchedule(scheduleId);
+  }
+  
 }
 
 export default createHandler(ScheduleHandler);
