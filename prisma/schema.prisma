@@ -144,6 +144,7 @@ model Schedule {
   isAssessment     Boolean              @default(false)
   examDate         DateTime
   links            String[]
+  academicYear     String
   thematicPlan     ThematicPlan[]
   scheduleTeachers ScheduleTeacher[]
   attachment       Attachment[]
