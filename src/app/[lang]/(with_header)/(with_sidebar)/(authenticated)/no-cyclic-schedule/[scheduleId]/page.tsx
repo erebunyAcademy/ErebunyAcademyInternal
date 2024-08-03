@@ -17,6 +17,7 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { useTranslations } from 'next-intl';
 import { ScheduleService } from '@/api/services/schedule.service';
+import NoDataFound from '@/components/molecules/NoDataFound';
 import { GetNoCyclicDetailsType } from '@/utils/models/none-cyclic.schedule';
 
 const ScheduleDetails = ({ params }: { params: { scheduleId: string } }) => {
@@ -90,44 +91,48 @@ const ScheduleDetails = ({ params }: { params: { scheduleId: string } }) => {
         my={{ base: '15px', lg: '40px' }}
         flexDirection="column"
         gap={{ base: '15px', lg: '30px' }}>
-        <Heading fontSize={{ base: '25px', lg: '30px' }} fontWeight={500} textAlign="center">
+        <Heading fontSize={{ base: '25px', lg: '30px' }} fontWeight={500}>
           {t('thematicPlans')}
         </Heading>
-        {scheduleData?.thematicPlan.map(tPlan => (
-          <Box
-            key={tPlan.id}
-            border="1px solid #ccc"
-            borderRadius="15px"
-            p={{ base: '10px', lg: '20px' }}
-            fontSize="17px"
-            boxShadow="0 4px 8px rgba(0, 0, 0, 0.1)"
-            bg="white"
-            width="100%"
-            mt="20px">
-            <Text fontWeight={600} mb="10px">
-              {t('totalHours')}: {tPlan.totalHours}
-            </Text>
-            <Text fontWeight={600} mb="10px">
-              {t('thematicPlanType')}: {tPlan.type}
-            </Text>
-            <Table mt="15px">
-              <Thead>
-                <Tr>
-                  <Th>{t('description')}</Th>
-                  <Th>{t('hours')}</Th>
-                </Tr>
-              </Thead>
-              <Tbody>
-                {tPlan.thematicPlanDescription.map(desc => (
-                  <Tr key={desc.id}>
-                    <Td>{desc.title}</Td>
-                    <Td>{desc.hour}</Td>
+        {scheduleData?.thematicPlan?.length !== 0 ? (
+          scheduleData?.thematicPlan.map(tPlan => (
+            <Box
+              key={tPlan.id}
+              border="1px solid #ccc"
+              borderRadius="15px"
+              p={{ base: '10px', lg: '20px' }}
+              fontSize="17px"
+              boxShadow="0 4px 8px rgba(0, 0, 0, 0.1)"
+              bg="white"
+              width="100%"
+              mt="20px">
+              <Text fontWeight={600} mb="10px">
+                {t('totalHours')}: {tPlan.totalHours}
+              </Text>
+              <Text fontWeight={600} mb="10px">
+                {t('thematicPlanType')}: {tPlan.type}
+              </Text>
+              <Table mt="15px">
+                <Thead>
+                  <Tr>
+                    <Th>{t('description')}</Th>
+                    <Th>{t('hours')}</Th>
                   </Tr>
-                ))}
-              </Tbody>
-            </Table>
-          </Box>
-        ))}
+                </Thead>
+                <Tbody>
+                  {tPlan.thematicPlanDescription.map(desc => (
+                    <Tr key={desc.id}>
+                      <Td>{desc.title}</Td>
+                      <Td>{desc.hour}</Td>
+                    </Tr>
+                  ))}
+                </Tbody>
+              </Table>
+            </Box>
+          ))
+        ) : (
+          <NoDataFound />
+        )}
       </Flex>
 
       <Divider />
@@ -139,27 +144,31 @@ const ScheduleDetails = ({ params }: { params: { scheduleId: string } }) => {
           my={{ base: '15px', lg: '30px' }}>
           {t('referencesUsed')}
         </Text>
-        <Flex gap={{ base: '30px', md: '80px' }} flexDirection={{ base: 'column', md: 'row' }}>
-          <Flex gap="30px" flexDirection="column" alignItems="flex-start">
-            {scheduleData?.links?.map((link: string, index: number) => (
-              <Button variant="link" as="a" href={link} key={index} fontSize="16px">
-                {link}
-              </Button>
-            ))}
+        {scheduleData?.attachment.length !== 0 ? (
+          <Flex gap={{ base: '30px', md: '80px' }} flexDirection={{ base: 'column', md: 'row' }}>
+            <Flex gap="30px" flexDirection="column" alignItems="flex-start">
+              {scheduleData?.links?.map((link: string, index: number) => (
+                <Button variant="link" as="a" href={link} key={index} fontSize="16px">
+                  {link}
+                </Button>
+              ))}
+            </Flex>
+            <Flex gap="30px" flexDirection="column" alignItems="flex-start">
+              {scheduleData?.attachment.map((attachment, index: number) => (
+                <Button
+                  variant="link"
+                  as="a"
+                  fontSize="16px"
+                  href={`/api/download?path=uploads/${attachment.key}`}
+                  key={index}>
+                  {attachment.title}
+                </Button>
+              ))}
+            </Flex>
           </Flex>
-          <Flex gap="30px" flexDirection="column" alignItems="flex-start">
-            {scheduleData?.attachment.map((attachment, index: number) => (
-              <Button
-                variant="link"
-                as="a"
-                fontSize="16px"
-                href={`/api/download?path=uploads/${attachment.key}`}
-                key={index}>
-                {attachment.title}
-              </Button>
-            ))}
-          </Flex>
-        </Flex>
+        ) : (
+          <NoDataFound />
+        )}
       </Box>
     </Box>
   );
