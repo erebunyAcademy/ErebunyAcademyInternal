@@ -14,6 +14,7 @@ import StudentIcon from '@/icons/student_icon.svg';
 import SubjectsIcon from '@/icons/subjects_icon.svg';
 import TeacherIcon from '@/icons/teacher_icon.svg';
 import {
+  ROUTE_ACADEMIC_REGISTER,
   ROUTE_COURSE,
   ROUTE_COURSE_GROUP,
   ROUTE_DASHBOARD,
@@ -73,7 +74,12 @@ export const linkItems: LinkItemsFunction = (user: Maybe<User>) => {
           isExpandable: true,
           href: '',
           children: [
-            { id: 111, name: 'cyclic', icon: <ScheduleChildrenIcon />, href: `${ROUTE_SCHEDULES}/cyclic` },
+            {
+              id: 111,
+              name: 'cyclic',
+              icon: <ScheduleChildrenIcon />,
+              href: `${ROUTE_SCHEDULES}/cyclic`,
+            },
             {
               id: 122,
               name: 'notCyclic',
@@ -96,10 +102,9 @@ export const linkItems: LinkItemsFunction = (user: Maybe<User>) => {
       return [
         ...commonLinks.slice(0, 2),
         { id: 34, name: 'schedule', icon: <ScheduleIcon />, href: ROUTE_TEACHER_SCHEDULE },
+        { id: 35, name: 'academicRegister', icon: <ScheduleIcon />, href: ROUTE_ACADEMIC_REGISTER },
         commonLinks[2],
       ];
-
-
 
     default:
       return commonLinks;
