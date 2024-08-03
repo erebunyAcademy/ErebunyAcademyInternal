@@ -86,11 +86,6 @@ const StudentSchedule = () => {
       cell: info => info.getValue(),
       header: t('totalHours'),
     }),
-    cyclicColumnHelper.accessor('isAssessment', {
-      id: uuidv4(),
-      cell: info => (info.getValue() ? t('yes') : t('no')),
-      header: t('assessment'),
-    }),
     cyclicColumnHelper.accessor('createdAt', {
       id: uuidv4(),
       cell: info => dayjs(info.getValue()).format('YYYY-MM-DD'),
@@ -150,11 +145,11 @@ const StudentSchedule = () => {
   return (
     <Fragment>
       <Flex flexDirection="column" gap="100px" width="100%" mt="50px">
-        {cyclicData.length && (
+        {cyclicData.length > 0 && (
           <SimpleTable columns={cyclicScheduleColumns as any} data={cyclicData} title="schedule" />
         )}
 
-        {noCyclicData.length && (
+        {noCyclicData.length > 0 && (
           <SimpleTable
             columns={notCyclicScheduleColumns as any}
             data={noCyclicData}
