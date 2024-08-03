@@ -59,16 +59,33 @@ model Admin {
 }
 
 model Student {
-  id            String        @id @default(uuid())
-  course        Course        @relation(fields: [courseId], references: [id])
-  courseId      String
-  faculty       Faculty       @relation(fields: [facultyId], references: [id])
-  facultyId     String
-  courseGroup   CourseGroup?  @relation(fields: [courseGroupId], references: [id])
-  courseGroupId String?
-  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId        String        @unique
-  studentExams  StudentExam[]
+  id               String             @id @default(uuid())
+  courseId         String
+  facultyId        String
+  courseGroupId    String?
+  userId           String             @unique
+  user             User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course           Course             @relation(fields: [courseId], references: [id])
+  faculty          Faculty            @relation(fields: [facultyId], references: [id])
+  courseGroup      CourseGroup?       @relation(fields: [courseGroupId], references: [id])
+  studentExams     StudentExam[]
+  attendanceRecord AttendanceRecord[]
+
+  createdAt DateTime @default(now()) @db.Timestamp(0)
+  updatedAt DateTime @updatedAt @db.Timestamp(0)
+}
+
+model AttendanceRecord {
+  id                 String           @id @default(uuid())
+  student            Student          @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  studentId          String
+  academicRegister   AcademicRegister @relation(fields: [academicRegisterId], references: [id], onDelete: Cascade)
+  academicRegisterId String
+  date               DateTime
+  mark               Int?
+  isAbsent           Boolean          @default(false)
+  subject            Subject?         @relation(fields: [subjectId], references: [id])
+  subjectId          String?
 
   createdAt DateTime @default(now()) @db.Timestamp(0)
   updatedAt DateTime @updatedAt @db.Timestamp(0)
@@ -111,6 +128,7 @@ model CourseGroup {
   exams              Exam[]
   schedules          Schedule[]
   nonCyclicSchedules NonCyclicSchedule[]
+  academicRegisters  AcademicRegister[]
 
   createdAt DateTime @default(now()) @db.Timestamp(0)
   updatedAt DateTime @updatedAt @db.Timestamp(0)
@@ -128,6 +146,8 @@ model Subject {
   course             Course?             @relation(fields: [courseId], references: [id])
   courseId           String?
   nonCyclicSchedules NonCyclicSchedule[]
+  attentanceRecords  AttendanceRecord[]
+  academicRegisters  AcademicRegister[]
 
   createdAt DateTime @default(now()) @db.Timestamp(0)
   updatedAt DateTime @updatedAt @db.Timestamp(0)
@@ -377,6 +397,18 @@ model Option {
 
   createdAt DateTime @default(now()) @db.Timestamp(0)
   updatedAt DateTime @updatedAt @db.Timestamp(0)
+}
+
+model AcademicRegister {
+  id          String       @id @default(uuid())
+  courseGroup CourseGroup? @relation(fields: [courseId], references: [id])
+  courseId    String?
+  subject     Subject?     @relation(fields: [subjectId], references: [id])
+  subjectId   String?
+
+  createdAt        DateTime           @default(now()) @db.Timestamp(0)
+  updatedAt        DateTime           @updatedAt @db.Timestamp(0)
+  AttendanceRecord AttendanceRecord[]
 }
 
 enum UserRoleEnum {
