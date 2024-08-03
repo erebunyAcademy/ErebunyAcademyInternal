@@ -112,6 +112,10 @@ export class CreateEditScheduleValidation {
   @IsArray()
   @IsOptional()
   attachments?: AttachmentValidation[];
+
+  @IsString()
+  @IsNotEmpty()
+  academicYear: string;
 }
 
 export class AddEditThematicPlanValidation {

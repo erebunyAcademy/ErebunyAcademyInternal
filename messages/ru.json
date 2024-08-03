@@ -236,7 +236,7 @@
   "examDay": "День экзамена",
   "totalHours": "Общее количество часов",
   "lecturer": "Лектор",
-  "deleteScheduleQuestion": "Вы уверены, что хотите удалить это расписание?",
+
   "addThematicPlan": "Добавить тематический план",
   "examType": "Тип экзамена",
   "cyclic": "Циклический",
@@ -252,5 +252,11 @@
   "thematicPlans": "Тематические планы",
   "thematicPlanType": "Тип тематического плана",
   "referencesUsed": "Использованные источники для материалов",
- "generalInfo":"Общая информация"
+  "generalInfo": "Общая информация",
+
+  "cyclicSchedule": "цикличное расписание",
+  "notCyclicSchedule": "нецикличное расписание",
+  "deleteCyclicScheduleQuestion": "Вы уверены, что хотите удалить это цикличное расписание?",
+  "deleteNotCyclicScheduleQuestion": "Вы уверены, что хотите удалить это нецикличное расписание?",
+  "thematicPlan": "тематические план"
 }

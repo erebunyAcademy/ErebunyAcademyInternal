@@ -1,5 +1,8 @@
-import { NoneCyclicScheduleListDataModel } from '@/utils/models/none-cyclic.schedule';
-import { ScheduleListDataModel } from '@/utils/models/schedule';
+import {
+  GetNoCyclicDetailsType,
+  NoneCyclicScheduleListDataModel,
+} from '@/utils/models/none-cyclic.schedule';
+import { GetCyclicDetailsType, ScheduleListDataModel } from '@/utils/models/schedule';
 import { CreateEditNonCylicScheduleValidation } from '@/utils/validation/non-cyclic';
 import {
   AddEditThematicPlanValidation,
@@ -33,6 +36,10 @@ export class ScheduleService {
     return $apiClient.patch(`/schedules/${scheduleId}/thematic-plan`, input);
   }
 
+  static getCyclicScheduleDetails(scheduleId: string): Promise<GetCyclicDetailsType> {
+    return $apiClient.get<GetCyclicDetailsType>(`/schedules/cyclic/${scheduleId}`);
+  }
+
   // NONE-CYCLIC
   static noneCyclicList(params?: QueryParams): Promise<NoneCyclicScheduleListDataModel> {
     return $apiClient.get<NoneCyclicScheduleListDataModel>('/schedules/none-cyclic/list', {
@@ -58,5 +65,9 @@ export class ScheduleService {
 
   static editNoneCyclicThematicPlan(scheduleId: string, input: AddEditThematicPlanValidation) {
     return $apiClient.patch(`/schedules/none-cyclic/${scheduleId}/thematic-plan`, input);
+  }
+
+  static getNoCyclicScheduleDetails(scheduleId: string): Promise<GetNoCyclicDetailsType> {
+    return $apiClient.get<GetNoCyclicDetailsType>(`/schedules/none-cyclic/${scheduleId}`);
   }
 }
