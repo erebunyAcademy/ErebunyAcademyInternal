@@ -252,5 +252,11 @@
   "thematicPlans": "Thematic plans",
   "thematicPlanType": "Thematic plan type",
   "referencesUsed": "References used for materials",
-  "generalInfo": "General information"
+  "generalInfo": "General information",
+
+  "cyclicSchedule": "cyclic schedule",
+  "notCyclicSchedule": " not cyclic schedule",
+  "deleteCyclicScheduleQuestion": "Are you sure you want to delete this cyclic schedule?",
+  "deleteNotCyclicScheduleQuestion": "Are you sure you want to delete this not cyclic schedule?",
+  "thematicPlan": "thematic plan"
 }

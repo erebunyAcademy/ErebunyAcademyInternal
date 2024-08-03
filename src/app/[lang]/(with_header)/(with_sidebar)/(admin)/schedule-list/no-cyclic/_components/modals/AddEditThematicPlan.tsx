@@ -120,10 +120,16 @@ const AddEditThematicPlan: FC<AddEditThematicPlanProps> = ({
       isOpen={isModalOpen}
       onClose={closeModal}
       isDisabled={!isValid}
-      title="schedule"
+      title="thematicPlan"
       size="4xl"
       primaryAction={handleSubmit(onSubmitHandler)}
-      actionText={selectedSchedule ? 'edit' : 'create'}>
+      actionText={
+        selectedSchedule.thematicPlan.length === 0 ||
+        (selectedSchedule?.thematicPlan[0]?.thematicPlanDescription.length === 0 &&
+          selectedSchedule?.thematicPlan[1]?.thematicPlanDescription.length === 0)
+          ? 'create'
+          : 'edit'
+      }>
       <Box mt={5}>
         <Text fontSize="lg" fontWeight="bold" mb="10px">
           {t('theoreticalClasses')}

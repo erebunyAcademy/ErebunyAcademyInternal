@@ -236,7 +236,6 @@
   "examDay": "Քննության օր",
   "totalHours": "Ընդհանուր ժամեր",
   "lecturer": "Դասախոս",
-  "deleteScheduleQuestion": "Վստա՞հ եք, որ ցանկանում եք հեռացնել այս դասացուցակը:",
   "addThematicPlan": "Ավելացնել թեմատիկ պլան",
   "examType": "Քննության տեսակը",
   "cyclic": "Ցիկլային",
@@ -252,5 +251,11 @@
   "thematicPlans": "Թեմատիկ պլաններ",
   "thematicPlanType": "Թեմատիկ պլանի տեսակ",
   "referencesUsed": "Նյութերի համար օգտագործված հղումներ",
-  "generalInfo": "Ընդհանուր տեղեկություններ"
+  "generalInfo": "Ընդհանուր տեղեկություններ",
+
+  "cyclicSchedule": "ցիկլային դասացուցակ",
+  "notCyclicSchedule": " ոչ ցիկլային դասացուցակ",
+  "deleteCyclicScheduleQuestion": "Վստա՞հ եք, որ ցանկանում եք հեռացնել այս ցիկլային դասացուցակը:",
+  "deleteNotCyclicScheduleQuestion": "Վստա՞հ եք, որ ցանկանում եք հեռացնել այս ոչ ցիկլային դասացուցակը:",
+  "thematicPlan": "թեմատիկ պլան"
 }

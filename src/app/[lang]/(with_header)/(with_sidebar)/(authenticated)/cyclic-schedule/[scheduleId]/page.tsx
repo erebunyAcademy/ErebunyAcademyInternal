@@ -66,11 +66,15 @@ const ScheduleDetails = ({ params }: { params: { scheduleId: string } }) => {
               <Th>{t('startDay')}:</Th>
               <Td>{dayjs(scheduleData?.startDayDate).format('DD/MM/YYYY')}</Td>
             </Tr>
-          </Tbody>
-          <Tbody>
             <Tr>
               <Th>{t('endDay')}:</Th>
               <Td>{dayjs(scheduleData?.endDayDate).format('DD/MM/YYYY')}</Td>
+            </Tr>
+          </Tbody>
+          <Tbody>
+            <Tr>
+              <Th>{t('academicYear')}:</Th>
+              <Td>{scheduleData?.academicYear}</Td>
             </Tr>
             <Tr>
               <Th>{t('totalHours')}:</Th>

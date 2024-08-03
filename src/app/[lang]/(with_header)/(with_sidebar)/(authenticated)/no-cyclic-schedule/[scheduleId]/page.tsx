@@ -64,6 +64,10 @@ const ScheduleDetails = ({ params }: { params: { scheduleId: string } }) => {
           </Tbody>
           <Tbody>
             <Tr>
+              <Th>{t('academicYear')}:</Th>
+              <Td>{scheduleData?.academicYear}</Td>
+            </Tr>
+            <Tr>
               <Th>{t('subject')}:</Th>
               <Td>{scheduleData?.subject.title}</Td>
             </Tr>

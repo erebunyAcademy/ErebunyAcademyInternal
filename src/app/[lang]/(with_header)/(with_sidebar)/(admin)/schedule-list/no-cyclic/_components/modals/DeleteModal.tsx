@@ -24,14 +24,14 @@ const DeleteModal: FC<DeleteModalProps> = ({
       isOpen={isDeleteModalOpen}
       onClose={closeDeleteModal}
       isDeleteVariant
-      title="schedule"
+      title="notCyclicSchedule"
       primaryAction={() => {
         if (selectedSchedule) {
           actionHandler(selectedSchedule.id);
         }
       }}
       actionText="delete">
-      {t('deleteScheduleQuestion')}
+      {t('deleteNotCyclicScheduleQuestion')}
     </Modal>
   );
 };
