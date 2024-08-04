@@ -28,6 +28,8 @@ const ScheduleDetails = ({ params }: { params: { scheduleId: string } }) => {
     queryFn: () => ScheduleService.getNoCyclicScheduleDetails(params.scheduleId),
   });
 
+  console.log(scheduleData?.thematicPlan);
+
   return (
     <Box m={{ base: '16px', lg: '40px' }} width="100%">
       <Box fontSize={{ base: '16px', lg: '18px' }} width="100%" color="#1A202C" p="10px">
@@ -144,7 +146,7 @@ const ScheduleDetails = ({ params }: { params: { scheduleId: string } }) => {
           my={{ base: '15px', lg: '30px' }}>
           {t('referencesUsed')}
         </Text>
-        {scheduleData?.attachment.length !== 0 ? (
+        {scheduleData?.attachment.length !== 0 || scheduleData?.links.length !== 0 ? (
           <Flex gap={{ base: '30px', md: '80px' }} flexDirection={{ base: 'column', md: 'row' }}>
             <Flex gap="30px" flexDirection="column" alignItems="flex-start">
               {scheduleData?.links?.map((link: string, index: number) => (
