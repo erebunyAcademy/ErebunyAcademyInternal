@@ -12,7 +12,7 @@ import { ScheduleService } from '@/api/services/schedule.service';
 import ActionButtons from '@/components/molecules/ActionButtons';
 import SearchTable from '@/components/organisms/SearchTable';
 import useDebounce from '@/hooks/useDebounce';
-import { ITEMS_PER_PAGE } from '@/utils/constants/common';
+import { academicYearListData, ITEMS_PER_PAGE } from '@/utils/constants/common';
 import { QUERY_KEY } from '@/utils/helpers/queryClient';
 import { Maybe } from '@/utils/models/common';
 import { ScheduleSingleModel } from '@/utils/models/schedule';
@@ -178,7 +178,10 @@ export default function Schedule() {
 
     columnHelper.accessor('academicYear', {
       id: uuidv4(),
-      cell: info => info.getValue(),
+      cell: info => {
+        const academicYear = academicYearListData.find(year => year.id === info.getValue());
+        return academicYear?.title;
+      },
       header: t('academicYear'),
     }),
 

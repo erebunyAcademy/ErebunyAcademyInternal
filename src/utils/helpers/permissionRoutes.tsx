@@ -8,6 +8,7 @@ import ExamsIcon from '@/icons/exam_icon.svg';
 import FacultiesIcon from '@/icons/faculty_icon.svg';
 import LogoutIcon from '@/icons/log-out.svg';
 import ProfileIcon from '@/icons/profile.svg';
+import RegisterIcon from '@/icons/register.svg';
 import ScheduleIcon from '@/icons/schedule.svg';
 import ScheduleChildrenIcon from '@/icons/schedule_.svg';
 import StudentIcon from '@/icons/student_icon.svg';
@@ -102,7 +103,12 @@ export const linkItems: LinkItemsFunction = (user: Maybe<User>) => {
       return [
         ...commonLinks.slice(0, 2),
         { id: 34, name: 'schedule', icon: <ScheduleIcon />, href: ROUTE_TEACHER_SCHEDULE },
-        { id: 35, name: 'academicRegister', icon: <ScheduleIcon />, href: ROUTE_ACADEMIC_REGISTER },
+        {
+          id: 35,
+          name: 'academicRegister',
+          icon: <RegisterIcon />,
+          href: ROUTE_ACADEMIC_REGISTER,
+        },
         commonLinks[2],
       ];
 
