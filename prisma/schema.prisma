@@ -81,11 +81,11 @@ model AttendanceRecord {
   studentId          String
   academicRegister   AcademicRegister @relation(fields: [academicRegisterId], references: [id], onDelete: Cascade)
   academicRegisterId String
-  date               DateTime
+  lessonOfTheDay     String
   mark               Int?
   isAbsent           Boolean          @default(false)
-  subject            Subject?         @relation(fields: [subjectId], references: [id])
-  subjectId          String?
+  subject            Subject          @relation(fields: [subjectId], references: [id])
+  subjectId          String
 
   createdAt DateTime @default(now()) @db.Timestamp(0)
   updatedAt DateTime @updatedAt @db.Timestamp(0)
@@ -400,15 +400,17 @@ model Option {
 }
 
 model AcademicRegister {
-  id          String       @id @default(uuid())
-  courseGroup CourseGroup? @relation(fields: [courseId], references: [id])
-  courseId    String?
-  subject     Subject?     @relation(fields: [subjectId], references: [id])
-  subjectId   String?
+  id                String             @id @default(uuid())
+  courseGroup       CourseGroup        @relation(fields: [courseGroupId], references: [id])
+  courseGroupId     String
+  subject           Subject            @relation(fields: [subjectId], references: [id])
+  subjectId         String
+  attendanceRecords AttendanceRecord[]
 
-  createdAt        DateTime           @default(now()) @db.Timestamp(0)
-  updatedAt        DateTime           @updatedAt @db.Timestamp(0)
-  AttendanceRecord AttendanceRecord[]
+  createdAt DateTime @default(now()) @db.Timestamp(0)
+  updatedAt DateTime @updatedAt @db.Timestamp(0)
+
+  @@unique([courseGroupId, subjectId], name: "academicRegisterSubjectCourseGroupId")
 }
 
 enum UserRoleEnum {

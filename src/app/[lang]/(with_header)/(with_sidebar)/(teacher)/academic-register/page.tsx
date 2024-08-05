@@ -9,18 +9,18 @@ import { v4 as uuidv4 } from 'uuid';
 import { AcademicRegisterService } from '@/api/services/academic-register.service';
 import SimpleTable from '@/components/organisms/SimpleTable';
 import { ROUTE_ACADEMIC_REGISTER } from '@/utils/constants/routes';
-import { CyclicAcademicRegisterList } from '@/utils/models/academic-register';
+import { GetScheduleDataType } from '@/utils/models/academic-register';
 
 const AcademicRegister = () => {
   const t = useTranslations();
 
   const { data: academicRegisterList } = useQuery({
-    queryFn: AcademicRegisterService.getCyclicRegisterList,
+    queryFn: AcademicRegisterService.list,
     queryKey: ['academic-register-cyclic-list'],
     initialData: [],
   });
 
-  const cyclicyclicColumnHelper = createColumnHelper<CyclicAcademicRegisterList>();
+  const cyclicyclicColumnHelper = createColumnHelper<GetScheduleDataType>();
 
   const notCyclicScheduleColumns = [
     cyclicyclicColumnHelper.accessor('id', {

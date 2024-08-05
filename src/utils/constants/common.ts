@@ -29,11 +29,16 @@ export const weekendDayList = Object.values(WeekDayEnum).map((weekendDay: WeekDa
 }));
 
 export const periodListData = Array.from({ length: 10 }, (_, i) => ({
-  id: `${i + 1}-${i + 2}`,
+  id: (i + 1).toString(),
   title: `${i + 1}-${i + 2}`,
 }));
 
 export const academicYearListData = Array.from({ length: 5 }, (_, i) => ({
-  id: `${new Date().getFullYear() + i}-${new Date().getFullYear() + 1 + i}`,
+  id: `${i + 1}`,
   title: `${new Date().getFullYear() + i}-${new Date().getFullYear() + 1 + i}`,
+}));
+
+export const markAttentandOptionData = Array.from({ length: 20 }, (_, i) => ({
+  id: `${i + 1}`,
+  title: `${i + 1}`,
 }));

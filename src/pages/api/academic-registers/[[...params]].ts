@@ -1,38 +1,39 @@
-import { Catch, createHandler, Get, Param } from 'next-api-decorators';
+import {
+  Body,
+  Catch,
+  createHandler,
+  Get,
+  Param,
+  Post,
+  Query,
+  ValidationPipe,
+} from 'next-api-decorators';
 import { User } from 'next-auth';
 import { CurrentUser } from '@/lib/prisma/decorators/current-user.decorator';
 import { exceptionHandler } from '@/lib/prisma/error';
-import { AdminGuard } from '@/lib/prisma/guards/admin';
 import { AcademicRegisterResolver } from '@/lib/prisma/resolvers/academic-register.resolver';
+import { CreateStudentAttentdanceRecordValidation } from '@/utils/validation/academic-register';
 
 @Catch(exceptionHandler)
 class AcademicRegisterHandler {
-  @Get('/cyclic-list')
+  @Get('/list')
   getCyclicList(@CurrentUser() user: NonNullable<User>) {
-    return AcademicRegisterResolver.cycliclist(user);
+    return AcademicRegisterResolver.list(user);
   }
 
-  @AdminGuard()
-  @Get('/not-cyclic-list')
-  getNotCyclicList(@CurrentUser() user: NonNullable<User>) {
-    return AcademicRegisterResolver.notCycliclist(user);
-  }
-
-  @AdminGuard()
-  @Get('/cyclic-list/:scheduleId')
-  getCyclicRegisterById(
-    @Param('scheduleId') scheduleId: string,
+  @Post('/:courseGroupId')
+  createStudentAddentanceRecord(
+    @Param('courseGroupId') courseGroupId: string,
+    @Query('lessonOfTheDay') lessonOfTheDay: string,
+    @Body(ValidationPipe) input: CreateStudentAttentdanceRecordValidation,
     @CurrentUser() user: NonNullable<User>,
   ) {
-    return AcademicRegisterResolver.getCyclicRegisterById(scheduleId, user);
-  }
-
-  @Get('/not-cyclic-list/:scheduleId')
-  getNotCyclicRegisterById(
-    @Param('scheduleId') scheduleId: string,
-    @CurrentUser() user: NonNullable<User>,
-  ) {
-    return AcademicRegisterResolver.getNonCyclicRegisterById(scheduleId, user);
+    return AcademicRegisterResolver.createStudentAddentanceRecord(
+      courseGroupId,
+      input,
+      user,
+      lessonOfTheDay,
+    );
   }
 }
 
