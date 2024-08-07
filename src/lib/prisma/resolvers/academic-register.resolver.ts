@@ -65,8 +65,8 @@ export class AcademicRegisterResolver {
     data: CreateStudentAttentdanceRecordValidation,
     user: NonNullable<User>,
     lessonOfTheDay: string,
+    academicRegisterId?: string,
   ) {
-    console.log({ lessonOfTheDay });
     if (!user.teacher?.id) {
       throw new ForbiddenException();
     }

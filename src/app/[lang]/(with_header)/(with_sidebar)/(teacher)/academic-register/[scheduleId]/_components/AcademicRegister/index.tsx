@@ -71,7 +71,12 @@ const AcademicRegister: FC<AcademicRegisterProps> = ({
 
   const { mutate: createStudentMark } = useMutation({
     mutationFn: (data: CreateStudentAttentdanceRecordValidation) =>
-      AcademicRegisterService.createStudentMark(data, schedule.courseGroupId, lessonOfTheDay),
+      AcademicRegisterService.createStudentMark(
+        data,
+        schedule.courseGroupId,
+        lessonOfTheDay,
+        academicRegister?.id,
+      ),
   });
 
   const { fields } = useFieldArray({

@@ -76,16 +76,18 @@ model Student {
 }
 
 model AttendanceRecord {
-  id                 String           @id @default(uuid())
-  student            Student          @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  studentId          String
-  academicRegister   AcademicRegister @relation(fields: [academicRegisterId], references: [id], onDelete: Cascade)
-  academicRegisterId String
-  lessonOfTheDay     String
-  mark               Int?
-  isAbsent           Boolean          @default(false)
-  subject            Subject          @relation(fields: [subjectId], references: [id])
-  subjectId          String
+  id                       String  @id @default(uuid())
+  studentId                String
+  academicRegisterId       String
+  mark                     Int?
+  isPresent                Boolean @default(true)
+  subjectId                String
+  academicRegisterLessonId String
+
+  academicRegister       AcademicRegister       @relation(fields: [academicRegisterId], references: [id], onDelete: Cascade)
+  subject                Subject                @relation(fields: [subjectId], references: [id])
+  student                Student                @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  academicRegisterLesson AcademicRegisterLesson @relation(fields: [academicRegisterLessonId], references: [id])
 
   createdAt DateTime @default(now()) @db.Timestamp(0)
   updatedAt DateTime @updatedAt @db.Timestamp(0)
@@ -104,15 +106,16 @@ model Faculty {
 }
 
 model Course {
-  id          String        @id @default(uuid())
-  title       String        @db.VarChar(60)
-  description String?       @db.VarChar(60)
-  groups      CourseGroup[]
-  subjects    Subject[]
-  faculty     Faculty?      @relation(fields: [facultyId], references: [id], onDelete: Cascade)
+  id          String  @id @default(uuid())
+  title       String  @db.VarChar(60)
+  description String? @db.VarChar(60)
   facultyId   String?
-  students    Student[]
-  exams       Exam[]
+
+  groups   CourseGroup[]
+  subjects Subject[]
+  faculty  Faculty?      @relation(fields: [facultyId], references: [id], onDelete: Cascade)
+  students Student[]
+  exams    Exam[]
 
   createdAt DateTime @default(now()) @db.Timestamp(0)
   updatedAt DateTime @updatedAt @db.Timestamp(0)
@@ -400,17 +403,44 @@ model Option {
 }
 
 model AcademicRegister {
-  id                String             @id @default(uuid())
-  courseGroup       CourseGroup        @relation(fields: [courseGroupId], references: [id])
-  courseGroupId     String
-  subject           Subject            @relation(fields: [subjectId], references: [id])
-  subjectId         String
-  attendanceRecords AttendanceRecord[]
+  id            String @id @default(uuid())
+  courseGroupId String
+  subjectId     String
+
+  courseGroup            CourseGroup              @relation(fields: [courseGroupId], references: [id])
+  subject                Subject                  @relation(fields: [subjectId], references: [id])
+  attendanceRecords      AttendanceRecord[]
+  academicRegisterDay    AcademicRegisterDay[]
+  academicRegisterLesson AcademicRegisterLesson[]
 
   createdAt DateTime @default(now()) @db.Timestamp(0)
   updatedAt DateTime @updatedAt @db.Timestamp(0)
 
   @@unique([courseGroupId, subjectId], name: "academicRegisterSubjectCourseGroupId")
+}
+
+model AcademicRegisterDay {
+  id                 String @id @default(uuid())
+  academicRegisterId String
+
+  academicRegister        AcademicRegister         @relation(fields: [academicRegisterId], references: [id])
+  academicRegisterLessons AcademicRegisterLesson[]
+
+  createdAt DateTime @default(now()) @db.Timestamp(0)
+  updatedAt DateTime @updatedAt @db.Timestamp(0)
+}
+
+model AcademicRegisterLesson {
+  id                    String @id @default(uuid())
+  academicRegisterId    String
+  academicRegisterDayId String
+
+  attendanceRecord    AttendanceRecord[]
+  academicRegister    AcademicRegister    @relation(fields: [academicRegisterId], references: [id])
+  academicRegisterDay AcademicRegisterDay @relation(fields: [academicRegisterDayId], references: [id])
+
+  createdAt DateTime @default(now()) @db.Timestamp(0)
+  updatedAt DateTime @updatedAt @db.Timestamp(0)
 }
 
 enum UserRoleEnum {

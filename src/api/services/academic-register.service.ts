@@ -14,10 +14,12 @@ export class AcademicRegisterService {
     input: CreateStudentAttentdanceRecordValidation,
     courseGroupId: string,
     lessonOfTheDay: string,
+    academicRegisterId?: string,
   ) {
     return $apiClient.post(`/academic-registers/${courseGroupId}`, input, {
       params: {
         lessonOfTheDay,
+        academicRegisterId,
       },
     });
   }
