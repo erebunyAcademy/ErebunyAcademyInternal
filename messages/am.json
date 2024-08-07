@@ -253,9 +253,21 @@
   "referencesUsed": "Նյութերի համար օգտագործված հղումներ",
   "generalInfo": "Ընդհանուր տեղեկություններ",
 
-  "cyclicSchedule": "ցիկլային դասացուցակ",
-  "notCyclicSchedule": " ոչ ցիկլային դասացուցակ",
+  "cyclicSchedule": "Ցիկլային դասացուցակ",
+  "notCyclicSchedule": " Ոչ ցիկլային դասացուցակ",
   "deleteCyclicScheduleQuestion": "Վստա՞հ եք, որ ցանկանում եք հեռացնել այս ցիկլային դասացուցակը:",
   "deleteNotCyclicScheduleQuestion": "Վստա՞հ եք, որ ցանկանում եք հեռացնել այս ոչ ցիկլային դասացուցակը:",
-  "thematicPlan": "թեմատիկ պլան"
+  "thematicPlan": "թեմատիկ պլան",
+  "academicRegister": "Ակադեմիական գրանցամատյան",
+  "register": "Գրանցամատյաններ",
+  "openRegister": "Բացել մատյանը",
+  "start": "Սկսել",
+  "lesson": "դասը",
+  "student": "Ուսանող",
+  "presentTitle": "Ներկայություն",
+  "marks": "Միավորներ",
+  "present": "Ներկա",
+  "endClass": "Ավարտել դասը",
+  "forLessonTitleStart": "Օրվա",
+  "forLessonTitleEnd": "դասերը"
 }

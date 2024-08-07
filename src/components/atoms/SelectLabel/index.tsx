@@ -5,15 +5,16 @@ import {
   FormHelperText,
   FormLabel,
   Select,
+  SelectFieldProps,
   Text,
 } from '@chakra-ui/react';
 import { useTranslations } from 'use-intl';
 
-type SelectLabelProps = {
+interface SelectLabelProps extends SelectFieldProps {
   options: { [key: string]: string }[] | [];
   valueLabel: string;
   nameLabel: string;
-  labelName: string;
+  labelName?: string;
   onChange?: React.ChangeEventHandler<HTMLSelectElement>;
   value: string;
   name?: string;
@@ -23,7 +24,7 @@ type SelectLabelProps = {
   formErrorMessage?: string;
   isInvalid?: boolean;
   isDisabled?: boolean;
-};
+}
 
 const SelectLabel: FC<SelectLabelProps> = ({
   name,
@@ -44,15 +45,17 @@ const SelectLabel: FC<SelectLabelProps> = ({
 
   return (
     <FormControl isInvalid={isInvalid}>
-      <FormLabel fontWeight="bold" mb={4} lineHeight="20px" fontSize="14px" color="#222">
-        {t(labelName)}
-        {isRequired && (
-          <Text as="span" color="#222">
-            {' '}
-            *
-          </Text>
-        )}
-      </FormLabel>
+      {labelName && (
+        <FormLabel fontWeight="bold" mb={4} lineHeight="20px" fontSize="14px" color="#222">
+          {t(labelName)}
+          {isRequired && (
+            <Text as="span" color="#222">
+              {' '}
+              *
+            </Text>
+          )}
+        </FormLabel>
+      )}
       <Select
         onChange={onChange}
         value={value}

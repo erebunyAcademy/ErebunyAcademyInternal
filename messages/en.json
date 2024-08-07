@@ -254,9 +254,21 @@
   "referencesUsed": "References used for materials",
   "generalInfo": "General information",
 
-  "cyclicSchedule": "cyclic schedule",
-  "notCyclicSchedule": " not cyclic schedule",
+  "cyclicSchedule": "Cyclic Schedule",
+  "notCyclicSchedule": " Not Cyclic Schedule",
   "deleteCyclicScheduleQuestion": "Are you sure you want to delete this cyclic schedule?",
   "deleteNotCyclicScheduleQuestion": "Are you sure you want to delete this not cyclic schedule?",
-  "thematicPlan": "thematic plan"
+  "thematicPlan": "thematic plan",
+  "academicRegister": "Academic Register",
+  "register": "Registers",
+  "openRegister": "Open Register",
+  "start": "Start",
+  "lesson": "lesson",
+  "student": "Student",
+  "presentTitle": "Present",
+  "marks": "Marks",
+  "present": "Present",
+  "endClass": "End class",
+  "forLessonTitleStart": "Lesson",
+  "forLessonTitleEnd": "of the day"
 }

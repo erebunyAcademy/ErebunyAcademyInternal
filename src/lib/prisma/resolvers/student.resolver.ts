@@ -234,7 +234,7 @@ export class StudentResolver {
           },
         },
         attachment: true,
-        subject:true,
+        subject: true,
       },
     });
   }
@@ -255,7 +255,7 @@ export class StudentResolver {
           },
         },
         attachment: true,
-        subject:true,
+        subject: true,
       },
     });
   }

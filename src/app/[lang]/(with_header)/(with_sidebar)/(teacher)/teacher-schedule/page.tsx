@@ -36,15 +36,35 @@ const StudentSchedule = () => {
       id: uuidv4(),
       header: t('seeDetails'),
       cell: info => (
-        <Button as={Link} href={`/no-cyclic-schedule/${info.getValue()}`} variant="link">
+        <Button as={Link} href={`/cyclic-schedule/${info.getValue()}`} variant="link">
           {t('seeDetails')}
         </Button>
       ),
+    }),
+    cyclicColumnHelper.accessor('courseGroup.title', {
+      id: uuidv4(),
+      cell: info => info.getValue(),
+      header: t('courseGroup'),
+    }),
+    cyclicColumnHelper.accessor('courseGroup.course.title', {
+      id: uuidv4(),
+      cell: info => info.getValue(),
+      header: t('course'),
+    }),
+    cyclicColumnHelper.accessor('subject.title', {
+      id: uuidv4(),
+      cell: info => info.getValue(),
+      header: t('subject'),
     }),
     cyclicColumnHelper.accessor('title', {
       id: uuidv4(),
       cell: info => info.getValue(),
       header: t('title'),
+    }),
+    cyclicColumnHelper.accessor('description', {
+      id: uuidv4(),
+      cell: info => info.getValue(),
+      header: t('description'),
     }),
     cyclicColumnHelper.accessor('examType', {
       id: uuidv4(),
@@ -54,33 +74,14 @@ const StudentSchedule = () => {
     cyclicColumnHelper.accessor('startDayDate', {
       id: uuidv4(),
       cell: info => dayjs(info.getValue()).format('YYYY-MM-DD'),
-      header: t('start'),
+      header: t('startDay'),
     }),
     cyclicColumnHelper.accessor('endDayDate', {
       id: uuidv4(),
       cell: info => dayjs(info.getValue()).format('YYYY-MM-DD'),
-      header: t('end'),
+      header: t('endDay'),
     }),
-    cyclicColumnHelper.accessor('subject.title', {
-      id: uuidv4(),
-      cell: info => info.getValue(),
-      header: t('subject'),
-    }),
-    cyclicColumnHelper.accessor('courseGroup.course.title', {
-      id: uuidv4(),
-      cell: info => info.getValue(),
-      header: t('course'),
-    }),
-    cyclicColumnHelper.accessor('courseGroup.title', {
-      id: uuidv4(),
-      cell: info => info.getValue(),
-      header: t('courseGroup'),
-    }),
-    cyclicColumnHelper.accessor('description', {
-      id: uuidv4(),
-      cell: info => info.getValue(),
-      header: t('description'),
-    }),
+
     cyclicColumnHelper.accessor('totalHours', {
       id: uuidv4(),
       cell: info => info.getValue(),
@@ -115,20 +116,25 @@ const StudentSchedule = () => {
       cell: info => info.getValue(),
       header: t('course'),
     }),
-    notCyclicyclicColumnHelper.accessor('title', {
-      id: uuidv4(),
-      cell: info => info.getValue(),
-      header: t('title'),
-    }),
     notCyclicyclicColumnHelper.accessor('subject.title', {
       id: uuidv4(),
       cell: info => info.getValue(),
       header: t('subject'),
     }),
+    notCyclicyclicColumnHelper.accessor('title', {
+      id: uuidv4(),
+      cell: info => info.getValue(),
+      header: t('title'),
+    }),
     notCyclicyclicColumnHelper.accessor('description', {
       id: uuidv4(),
       cell: info => info.getValue(),
       header: t('description'),
+    }),
+    notCyclicyclicColumnHelper.accessor('examType', {
+      id: uuidv4(),
+      cell: info => info.getValue(),
+      header: t('examType'),
     }),
     notCyclicyclicColumnHelper.accessor('totalHours', {
       id: uuidv4(),
@@ -137,23 +143,27 @@ const StudentSchedule = () => {
     }),
     notCyclicyclicColumnHelper.accessor('createdAt', {
       id: uuidv4(),
-      cell: info => info.getValue(),
+      cell: info => dayjs(info.getValue()).format('YYYY-MM-DD'),
       header: t('createdAt'),
     }),
   ];
 
   return (
     <Fragment>
-      <Flex flexDirection="column" gap="100px" width="100%" mt="50px">
+      <Flex flexDirection="column" gap={{ base: '50px', lg: '100px' }} width="100%" my="50px">
         {cyclicData.length > 0 && (
-          <SimpleTable columns={cyclicScheduleColumns as any} data={cyclicData} title="schedule" />
+          <SimpleTable
+            columns={cyclicScheduleColumns as any}
+            data={cyclicData}
+            title="cyclicSchedule"
+          />
         )}
 
         {noCyclicData.length > 0 && (
           <SimpleTable
             columns={notCyclicScheduleColumns as any}
             data={noCyclicData}
-            title="schedule"
+            title="notCyclicSchedule"
           />
         )}
       </Flex>
