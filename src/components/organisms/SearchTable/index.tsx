@@ -128,7 +128,7 @@ function SearchTable<T>({
           {t(title)}
         </Text>
         {addNew && (
-          <Button px="12px" py="8px" onClick={addNew}>
+          <Button px="12px" py="8px" onClick={addNew} overflowWrap="break-word" whiteSpace="normal">
             {t('addNew')}
           </Button>
         )}
