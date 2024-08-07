@@ -19,6 +19,7 @@ import dayjs from 'dayjs';
 import { useTranslations } from 'next-intl';
 import { ScheduleService } from '@/api/services/schedule.service';
 import NoDataFound from '@/components/molecules/NoDataFound';
+import { academicYearListData } from '@/utils/constants/common';
 import { GetCyclicDetailsType } from '@/utils/models/schedule';
 
 const ScheduleDetails = ({ params }: { params: { scheduleId: string } }) => {
@@ -28,7 +29,7 @@ const ScheduleDetails = ({ params }: { params: { scheduleId: string } }) => {
     queryKey: ['cyclic-schedule'],
     queryFn: () => ScheduleService.getCyclicScheduleDetails(params.scheduleId),
   });
-  console.log(scheduleData?.thematicPlan);
+  const academicYear = academicYearListData.find(year => year.id === scheduleData?.academicYear);
 
   return (
     <Box m={{ base: '16px', lg: '40px' }} width="100%">
@@ -76,7 +77,7 @@ const ScheduleDetails = ({ params }: { params: { scheduleId: string } }) => {
           <Tbody>
             <Tr>
               <Th>{t('academicYear')}:</Th>
-              <Td>{scheduleData?.academicYear}</Td>
+              <Td>{academicYear?.title}</Td>
             </Tr>
             <Tr>
               <Th>{t('totalHours')}:</Th>

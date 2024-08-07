@@ -254,9 +254,21 @@
   "referencesUsed": "Использованные источники для материалов",
   "generalInfo": "Общая информация",
 
-  "cyclicSchedule": "цикличное расписание",
-  "notCyclicSchedule": "нецикличное расписание",
+  "cyclicSchedule": "Цикличное расписание",
+  "notCyclicSchedule": "Нецикличное расписание",
   "deleteCyclicScheduleQuestion": "Вы уверены, что хотите удалить это цикличное расписание?",
   "deleteNotCyclicScheduleQuestion": "Вы уверены, что хотите удалить это нецикличное расписание?",
-  "thematicPlan": "тематические план"
+  "thematicPlan": "тематические план",
+  "academicRegister": "Академический регистр",
+  "register": "Регистры",
+  "openRegister": "Открыть реестр",
+  "start": "Начать",
+  "lesson": "урок",
+  "student": "Студент",
+  "presentTitle": "Присутствие",
+  "marks": "Оценки",
+  "present": "Присутствует",
+  "endClass": "Завершить занятие",
+  "forLessonTitleStart": "Уроки",
+  "forLessonTitleEnd": "дня"
 }

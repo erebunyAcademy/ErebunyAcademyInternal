@@ -20,45 +20,50 @@ const AcademicRegister = () => {
     initialData: [],
   });
 
-  const cyclicyclicColumnHelper = createColumnHelper<GetScheduleDataType>();
+  const cyclicColumnHelper = createColumnHelper<GetScheduleDataType>();
 
   const notCyclicScheduleColumns = [
-    cyclicyclicColumnHelper.accessor('id', {
+    cyclicColumnHelper.accessor('id', {
       id: uuidv4(),
-      header: t('seeDetails'),
+      header: t('openRegister'),
       cell: info => (
         <Button as={Link} href={`${ROUTE_ACADEMIC_REGISTER}/${info.getValue()}`} variant="link">
-          {t('seeDetails')}
+          {t('openRegister')}
         </Button>
       ),
     }),
-    cyclicyclicColumnHelper.accessor('courseGroup.title', {
+    cyclicColumnHelper.accessor('courseGroup.title', {
       id: uuidv4(),
       cell: info => info.getValue(),
       header: t('courseGroup'),
     }),
-    cyclicyclicColumnHelper.accessor('subject.title', {
+    cyclicColumnHelper.accessor('courseGroup.course.title', {
+      id: uuidv4(),
+      cell: info => info.getValue(),
+      header: t('course'),
+    }),
+    cyclicColumnHelper.accessor('subject.title', {
       id: uuidv4(),
       cell: info => info.getValue(),
       header: t('subject'),
     }),
-    cyclicyclicColumnHelper.accessor('startDayDate', {
+    cyclicColumnHelper.accessor('title', {
       id: uuidv4(),
       cell: info => info.getValue(),
-      header: t('courseGroup'),
+      header: t('title'),
     }),
-    cyclicyclicColumnHelper.accessor('endDayDate', {
+    cyclicColumnHelper.accessor('description', {
       id: uuidv4(),
       cell: info => info.getValue(),
-      header: t('courseGroup'),
+      header: t('description'),
     }),
   ];
 
   return (
-    <Box>
+    <Box width="100%" m="40px auto 0 auto">
       <SimpleTable
         columns={notCyclicScheduleColumns as any}
-        title="students"
+        title="register"
         data={academicRegisterList}
       />
     </Box>

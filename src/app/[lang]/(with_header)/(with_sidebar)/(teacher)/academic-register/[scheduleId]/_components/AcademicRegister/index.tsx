@@ -8,6 +8,7 @@ import {
   Table,
   Tbody,
   Td,
+  Text,
   Th,
   Thead,
   Tr,
@@ -16,6 +17,7 @@ import {
 import { classValidatorResolver } from '@hookform/resolvers/class-validator';
 import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import { AcademicRegisterService } from '@/api/services/academic-register.service';
 import { SelectLabel } from '@/components/atoms';
@@ -43,6 +45,7 @@ const AcademicRegister: FC<AcademicRegisterProps> = ({
 }) => {
   const router = useRouter();
   const [lessonOfTheDay, setLessonOfTheDay] = useState(dayLesson || '');
+  const t = useTranslations();
 
   const {
     control,
@@ -106,89 +109,97 @@ const AcademicRegister: FC<AcademicRegisterProps> = ({
   };
 
   return (
-    <Box width="100%">
-      Lesson {selectedPeriodData?.title} of the day
-      <Table width="100%">
-        <Thead>
-          <Tr>
-            <Th>Student</Th>
-            <Th>Present</Th>
-            <Th>Marks</Th>
-          </Tr>
-        </Thead>
-        <Tbody>
-          {fields.map((field, index) => {
-            const isPresent = watch(`students.${index}.isPresent`);
-            return (
-              <Tr key={field.id} height="32px">
-                <Td>
-                  {students[index].user.firstName} {students[index].user.lastName}
-                </Td>
-                <Td border="1px solid #eee">
-                  <Controller
-                    control={control}
-                    name={`students.${index}.isPresent`}
-                    render={({ field }) => (
-                      <Checkbox
-                        isChecked={field.value}
-                        onChange={e => {
-                          field.onChange(e);
-                          if (!e.target.checked) {
-                            setValue(`students.${index}.mark`, '');
-                          }
-                        }}
-                        defaultChecked>
-                        Present
-                      </Checkbox>
-                    )}
-                  />
-                </Td>
-                <Td border="1px solid #eee" width="200px">
-                  <Controller
-                    control={control}
-                    name={`students.${index}.mark`}
-                    render={({ field }) => (
-                      <SelectLabel
-                        isRequired
-                        options={markAttentandOptionData}
-                        valueLabel="id"
-                        nameLabel="title"
-                        onChange={e => {
-                          field.onChange(e);
-                          if (e.target.value) {
-                            setValue(`students.${index}.isPresent`, true);
-                          }
-                        }}
-                        value={field.value}
-                        isDisabled={!lessonOfTheDay || !isPresent}
-                      />
-                    )}
-                  />
-                </Td>
-              </Tr>
-            );
-          })}
-        </Tbody>
-      </Table>
-      <Flex justifyContent="space-between">
-        <Button onClick={handleSubmit(onSubmit)}>End class</Button>
+    <Box width="100%" mt="50px" mx="20px">
+      <Text fontSize={{ base: '18px', sm: '24px' }} fontWeight={700} mb="15px">
+        {t('forLessonTitleStart')}{' '}
+        <Text as="span" color="#319795">
+          {selectedPeriodData?.title}
+        </Text>{' '}
+        {t('forLessonTitleEnd')}
+      </Text>
+      <Box overflowY="auto" maxWidth={{ base: '340px', sm: '670px', lg: '700px', xl: '100%' }}>
+        <Table>
+          <Thead>
+            <Tr>
+              <Th>{t('student')}</Th>
+              <Th>{t('presentTitle')}</Th>
+              <Th>{t('marks')}</Th>
+            </Tr>
+          </Thead>
+          <Tbody>
+            {fields.map((field, index) => {
+              const isPresent = watch(`students.${index}.isPresent`);
+              return (
+                <Tr key={field.id} height="32px">
+                  <Td minWidth="200px">
+                    {students[index].user.firstName} {students[index].user.lastName}
+                  </Td>
+                  <Td border="1px solid #eee" minWidth="200px">
+                    <Controller
+                      control={control}
+                      name={`students.${index}.isPresent`}
+                      render={({ field }) => (
+                        <Checkbox
+                          isChecked={field.value}
+                          onChange={e => {
+                            field.onChange(e);
+                            if (!e.target.checked) {
+                              setValue(`students.${index}.mark`, '');
+                            }
+                          }}
+                          defaultChecked>
+                          {t('present')}
+                        </Checkbox>
+                      )}
+                    />
+                  </Td>
+                  <Td border="1px solid #eee" minWidth="200px">
+                    <Controller
+                      control={control}
+                      name={`students.${index}.mark`}
+                      render={({ field }) => (
+                        <SelectLabel
+                          isRequired
+                          options={markAttentandOptionData}
+                          valueLabel="id"
+                          nameLabel="title"
+                          onChange={e => {
+                            field.onChange(e);
+                            if (e.target.value) {
+                              setValue(`students.${index}.isPresent`, true);
+                            }
+                          }}
+                          value={field.value}
+                          isDisabled={!lessonOfTheDay || !isPresent}
+                        />
+                      )}
+                    />
+                  </Td>
+                </Tr>
+              );
+            })}
+          </Tbody>
+        </Table>
+      </Box>
+      <Flex justifyContent="space-between" mt="20px">
+        <Button onClick={handleSubmit(onSubmit)}>{t('endClass')}</Button>
       </Flex>
       <Modal
         isOpen={chooseLessonModalOpen}
         onClose={closeChooseLessonModal}
         isDisabled={!lessonOfTheDay}
-        title="Schedule"
+        title="lesson"
         size="4xl"
         primaryAction={() => {
           router.push(`?lessonOfTheDay=${lessonOfTheDay}`);
           closeChooseLessonModal();
         }}
-        actionText="Start Lesson"
+        actionText="start"
         withoutCancelBtn>
         <SelectLabel
           isRequired
           options={periodListData}
-          labelName="examType"
+          labelName="period"
           valueLabel="id"
           nameLabel="title"
           onChange={e => setLessonOfTheDay(e.target.value)}
