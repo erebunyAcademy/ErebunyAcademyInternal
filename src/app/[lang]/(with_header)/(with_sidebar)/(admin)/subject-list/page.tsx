@@ -89,6 +89,11 @@ const Subject = ({ params }: { params: { lang: Locale } }) => {
       cell: info => info.getValue(),
       header: t('description'),
     }),
+    columnHelper.accessor('course.title', {
+      id: uuidv4(),
+      cell: info => info.getValue(),
+      header: t('course'),
+    }),
     columnHelper.accessor('description', {
       id: uuidv4(),
       cell: ({ row }) => (
