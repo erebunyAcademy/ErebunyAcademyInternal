@@ -20,16 +20,16 @@ import { useTranslations } from 'next-intl';
 import { ScheduleService } from '@/api/services/schedule.service';
 import NoDataFound from '@/components/molecules/NoDataFound';
 import { academicYearListData } from '@/utils/constants/common';
-import { GetCyclicDetailsType } from '@/utils/models/schedule';
+import { GetScheduleByIdModel } from '@/utils/models/schedule';
 
 const ScheduleDetails = ({ params }: { params: { scheduleId: string } }) => {
   const t = useTranslations();
 
-  const { data: scheduleData } = useQuery<GetCyclicDetailsType>({
+  const { data: scheduleData } = useQuery<GetScheduleByIdModel>({
     queryKey: ['cyclic-schedule'],
-    queryFn: () => ScheduleService.getCyclicScheduleDetails(params.scheduleId),
+    queryFn: () => ScheduleService.getScheduleById(params.scheduleId),
   });
-  
+
   const academicYear = academicYearListData.find(year => year.id === scheduleData?.academicYear);
 
   return (

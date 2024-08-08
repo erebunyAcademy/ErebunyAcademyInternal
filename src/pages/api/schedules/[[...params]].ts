@@ -76,7 +76,7 @@ class ScheduleHandler {
 
   @Get('/:scheduleId')
   _getCyclicScheduleDetails(@Param('scheduleId') scheduleId: string) {
-    return ScheduleResolver.getCyclicSchedule(scheduleId);
+    return ScheduleResolver.getScheduleById(scheduleId);
   }
 }
 

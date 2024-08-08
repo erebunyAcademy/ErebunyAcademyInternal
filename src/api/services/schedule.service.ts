@@ -1,5 +1,5 @@
 import { ScheduleTypeEnum } from '@prisma/client';
-import { GetCyclicDetailsType, ScheduleListDataModel } from '@/utils/models/schedule';
+import { GetScheduleByIdModel, ScheduleListDataModel } from '@/utils/models/schedule';
 import { CreateEditNonCylicScheduleValidation } from '@/utils/validation/non-cyclic';
 import {
   AddEditThematicPlanValidation,
@@ -52,7 +52,7 @@ export class ScheduleService {
     return $apiClient.patch(`/schedules/${scheduleId}/thematic-plan`, input);
   }
 
-  static getCyclicScheduleDetails(scheduleId: string): Promise<GetCyclicDetailsType> {
-    return $apiClient.get<GetCyclicDetailsType>(`/schedules/${scheduleId}`);
+  static getScheduleById(scheduleId: string): Promise<GetScheduleByIdModel> {
+    return $apiClient.get<GetScheduleByIdModel>(`/schedules/${scheduleId}`);
   }
 }
