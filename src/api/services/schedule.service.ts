@@ -1,5 +1,4 @@
 import { ScheduleTypeEnum } from '@prisma/client';
-import { NoneCyclicScheduleListDataModel } from '@/utils/models/none-cyclic.schedule';
 import { GetCyclicDetailsType, ScheduleListDataModel } from '@/utils/models/schedule';
 import { CreateEditNonCylicScheduleValidation } from '@/utils/validation/non-cyclic';
 import {
@@ -55,12 +54,5 @@ export class ScheduleService {
 
   static getCyclicScheduleDetails(scheduleId: string): Promise<GetCyclicDetailsType> {
     return $apiClient.get<GetCyclicDetailsType>(`/schedules/${scheduleId}`);
-  }
-
-  // NONE-CYCLIC
-  static noneCyclicList(params?: QueryParams): Promise<NoneCyclicScheduleListDataModel> {
-    return $apiClient.get<NoneCyclicScheduleListDataModel>('/schedules/none-cyclic/list', {
-      params,
-    });
   }
 }

@@ -15,8 +15,8 @@ import SearchTable from '@/components/organisms/SearchTable';
 import useDebounce from '@/hooks/useDebounce';
 import { academicYearListData, ITEMS_PER_PAGE } from '@/utils/constants/common';
 import { QUERY_KEY } from '@/utils/helpers/queryClient';
-import { ScheduleSingleModel } from '@/utils/models/schedule';
 import { Maybe } from '@/utils/models/common';
+import { ScheduleSingleModel } from '@/utils/models/schedule';
 import AddEditThematicPlan from './_components/modals/AddEditThematicPlan';
 
 const DeleteModal = dynamic(() => import('./_components/modals/DeleteModal'));

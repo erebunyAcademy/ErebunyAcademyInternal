@@ -110,8 +110,8 @@ const ScheduleDetails = ({ params }: { params: { scheduleId: string } }) => {
           {t('thematicPlans')}
         </Heading>
 
-        {scheduleData?.thematicPlan?.length !== 0 ? (
-          scheduleData?.thematicPlan.map(tPlan => (
+        {scheduleData?.thematicPlans?.length !== 0 ? (
+          scheduleData?.thematicPlans.map(tPlan => (
             <Box
               key={tPlan.id}
               border="1px solid #ccc"

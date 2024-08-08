@@ -27,15 +27,9 @@ class TeachersHandler {
   }
 
   @TeacherGuard()
-  @Get('/schedules/cyclic')
+  @Get('/schedules')
   getStudentCyclicSchedule(@CurrentUser() user: NonNullable<User>) {
-    return TeacherResolver.getTeacherCyclicSchedule(user);
-  }
-
-  @TeacherGuard()
-  @Get('/schedules/no-cyclic')
-  getStudentNoneCyclicSchedule(@CurrentUser() user: NonNullable<User>) {
-    return TeacherResolver.getTeacherNonCyclicSchedule(user);
+    return TeacherResolver.getTeacherSchedules(user);
   }
 }
 

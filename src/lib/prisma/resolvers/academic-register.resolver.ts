@@ -72,6 +72,8 @@ export class AcademicRegisterResolver {
     }
     const { students } = data;
 
+    console.log({ students, academicRegisterId });
+
     const scheduleTeacher = await prisma.scheduleTeacher.findMany({
       where: {
         teacherId: user.teacher.id,
@@ -130,16 +132,16 @@ export class AcademicRegisterResolver {
       });
     }
 
-    return prisma.attendanceRecord.createMany({
-      data: students.map(student => ({
-        studentId: student.id,
-        academicRegisterId: academicRegister.id,
-        lessonOfTheDay,
-        mark: +student.mark,
-        isAbsent: !student.isPresent,
-        subjectId: courseGroup.schedules[0].subjectId,
-      })),
-    });
+    // return prisma.attendanceRecord.createMany({
+    //   data: students.map(student => ({
+    //     studentId: student.id,
+    //     academicRegisterId: academicRegister.id,
+    //     lessonOfTheDay,
+    //     mark: +student.mark,
+    //     isPresent: !student.isPresent,
+    //     subjectId: courseGroup.schedules[0].subjectId,
+    //   })),
+    // });
   }
 
   static async getAcademicRegister(

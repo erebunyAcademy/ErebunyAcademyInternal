@@ -89,11 +89,11 @@ const AcademicRegister: FC<AcademicRegisterProps> = ({
       reset({
         students: academicRegister.attendanceRecords.map(attendant => ({
           id: attendant.studentId,
-          isPresent: !attendant.isAbsent,
+          isPresent: !attendant.isPresent,
           mark: attendant.mark ? attendant.mark.toString() : '',
         })),
       });
-      setLessonOfTheDay(academicRegister.attendanceRecords[0]?.lessonOfTheDay || '');
+      // setLessonOfTheDay(academicRegister.attendanceRecords[0]?.lessonOfTheDay || '');
     }
   }, [academicRegister, reset]);
 
@@ -104,9 +104,9 @@ const AcademicRegister: FC<AcademicRegisterProps> = ({
   } = useDisclosure();
 
   useLayoutEffect(() => {
-    if (!lessonOfTheDay && !academicRegister?.attendanceRecords[0]?.lessonOfTheDay) {
-      onOpen();
-    }
+    // if (!lessonOfTheDay && !academicRegister?.attendanceRecords[0]?.lessonOfTheDay) {
+    //   onOpen();
+    // }
   }, [academicRegister?.attendanceRecords, lessonOfTheDay, onOpen]);
 
   const onSubmit = (data: CreateStudentAttentdanceRecordValidation) => {

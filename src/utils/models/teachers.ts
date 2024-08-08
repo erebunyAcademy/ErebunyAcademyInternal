@@ -8,22 +8,9 @@ export interface TeacherModel extends User {
   teacher: Teacher;
 }
 
-
 export type TeacherCyclicScheduleListType = Prisma.PromiseReturnType<
-  typeof TeacherResolver.getTeacherCyclicSchedule
+  typeof TeacherResolver.getTeacherSchedules
 >;
 
-export type TeacherScheduleListSingleType = TeacherCyclicScheduleListType extends (infer SingleType)[]
-  ? SingleType
-  : never;
-
-
-export type TeacherNoCyclicScheduleListType = Prisma.PromiseReturnType<
-  typeof TeacherResolver.getTeacherNonCyclicSchedule
->;
-
-export type TeacherNoCyclicScheduleListSingleType = TeacherNoCyclicScheduleListType extends (infer SingleType)[]
-  ? SingleType
-  : never;
-
-
+export type TeacherScheduleListSingleType =
+  TeacherCyclicScheduleListType extends (infer SingleType)[] ? SingleType : never;

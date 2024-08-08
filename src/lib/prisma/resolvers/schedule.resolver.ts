@@ -113,24 +113,17 @@ export class ScheduleResolver {
   }
 
   static async updateThematicPlan(scheduleId: string, data: AddEditThematicPlanValidation) {
-    const thematicPlan = await prisma.thematicPlan.findFirst({
+    const schedule = await prisma.schedule.findUniqueOrThrow({
       where: {
-        scheduleId,
-      },
-      select: {
-        scheduleId: true,
+        id: scheduleId,
       },
     });
 
     await prisma.thematicPlan.deleteMany({
-      where: { scheduleId },
+      where: { scheduleId: schedule.id },
     });
 
-    if (thematicPlan?.scheduleId) {
-      return ScheduleResolver.createCyclicThematicPlan(scheduleId, data);
-    }
-
-    return ScheduleResolver.createNoCyclicThematicPlan(scheduleId, data);
+    return ScheduleResolver.createCyclicThematicPlan(schedule.id, data);
   }
 
   static async createSchedule(

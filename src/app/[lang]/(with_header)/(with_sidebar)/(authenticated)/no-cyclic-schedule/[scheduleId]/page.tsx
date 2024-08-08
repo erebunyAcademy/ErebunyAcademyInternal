@@ -19,14 +19,14 @@ import { useTranslations } from 'next-intl';
 import { ScheduleService } from '@/api/services/schedule.service';
 import NoDataFound from '@/components/molecules/NoDataFound';
 import { academicYearListData } from '@/utils/constants/common';
-import { GetNoCyclicDetailsType } from '@/utils/models/none-cyclic.schedule';
+import { GetCyclicDetailsType } from '@/utils/models/schedule';
 
 const ScheduleDetails = ({ params }: { params: { scheduleId: string } }) => {
   const t = useTranslations();
 
-  const { data: scheduleData } = useQuery<GetNoCyclicDetailsType>({
+  const { data: scheduleData } = useQuery<GetCyclicDetailsType>({
     queryKey: ['no-cyclic-schedule'],
-    queryFn: () => ScheduleService.getNoCyclicScheduleDetails(params.scheduleId),
+    queryFn: () => ScheduleService.getCyclicScheduleDetails(params.scheduleId),
   });
 
   const academicYear = academicYearListData.find(year => year.id === scheduleData?.academicYear);
@@ -97,8 +97,8 @@ const ScheduleDetails = ({ params }: { params: { scheduleId: string } }) => {
         <Heading fontSize={{ base: '25px', lg: '30px' }} fontWeight={500}>
           {t('thematicPlans')}
         </Heading>
-        {scheduleData?.thematicPlan?.length !== 0 ? (
-          scheduleData?.thematicPlan.map(tPlan => (
+        {scheduleData?.thematicPlans?.length !== 0 ? (
+          scheduleData?.thematicPlans.map(tPlan => (
             <Box
               key={tPlan.id}
               border="1px solid #ccc"
