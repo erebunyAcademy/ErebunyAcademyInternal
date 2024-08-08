@@ -3,6 +3,7 @@ import React, { ChangeEvent, FC, useCallback, useMemo, useState } from 'react';
 import { AddIcon, DeleteIcon } from '@chakra-ui/icons';
 import { Box, Button, Divider, Flex, IconButton, Input, Stack, Text } from '@chakra-ui/react';
 import { classValidatorResolver } from '@hookform/resolvers/class-validator';
+import { ScheduleTypeEnum } from '@prisma/client';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useTranslations } from 'next-intl';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
@@ -22,7 +23,7 @@ import {
 } from '@/utils/constants/common';
 import { Maybe } from '@/utils/models/common';
 import { GetCourseGroupsBySubjectId } from '@/utils/models/courseGroup';
-import { NoneCyclicScheduleSingleModel } from '@/utils/models/none-cyclic.schedule';
+import { ScheduleSingleModel } from '@/utils/models/schedule';
 import { TeacherDataModel } from '@/utils/models/teachers';
 import { AttachmentValidation } from '@/utils/validation';
 import { CreateEditNonCylicScheduleValidation } from '@/utils/validation/non-cyclic';
@@ -30,7 +31,7 @@ import { CreateEditNonCylicScheduleValidation } from '@/utils/validation/non-cyc
 type CreateEditModalProps = {
   isModalOpen: boolean;
   closeModal: () => void;
-  selectedSchedule: Maybe<NoneCyclicScheduleSingleModel>;
+  selectedSchedule: Maybe<ScheduleSingleModel>;
 };
 
 const resolver = classValidatorResolver(CreateEditNonCylicScheduleValidation);
@@ -79,10 +80,11 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
 
   const { mutate: createEditSchedule } = useMutation({
     mutationFn: (data: CreateEditNonCylicScheduleValidation) =>
-      ScheduleService[selectedSchedule ? 'updateNoneCyclicSchedule' : 'createNoneCyclicSchedule'](
+      ScheduleService[selectedSchedule ? 'updateSchedule' : 'createSchedule'](
         data,
+        ScheduleTypeEnum.NON_CYCLIC,
       ),
-    mutationKey: ['create-none-cyclic-schedule'],
+    mutationKey: ['create-schedule'],
     onSuccess() {
       reset();
       closeModal();

@@ -1,3 +1,4 @@
+import { ScheduleTypeEnum } from '@prisma/client';
 import {
   Body,
   Catch,
@@ -25,22 +26,28 @@ class ScheduleHandler {
   @AdminGuard()
   @Get('/list')
   _list(
+    @Query('type') type: ScheduleTypeEnum,
     @Query('offset') skip: string,
     @Query('limit') take: string,
     @Query('search') search: string,
     @Query('sorting') sorting: SortingType[],
   ) {
-    return ScheduleResolver.list(+skip, +take, search, sorting);
+    return ScheduleResolver.list(type, +skip, +take, search, sorting);
   }
 
   @Post()
-  _createSchedule(@Body(ValidationPipe) input: CreateEditScheduleValidation) {
-    return ScheduleResolver.createSchedule(input);
+  _createSchedule(
+    @Query('type') type: ScheduleTypeEnum,
+    @Body(ValidationPipe)
+    input: CreateEditScheduleValidation | CreateEditNonCylicScheduleValidation,
+  ) {
+    return ScheduleResolver.createSchedule(input, type);
   }
 
   @Patch('/:scheduleId')
   _updateSchedule(
     @Param('scheduleId') scheduleId: string,
+    @Query('type') type: ScheduleTypeEnum,
     @Body(ValidationPipe) input: CreateEditScheduleValidation,
   ) {
     return ScheduleResolver.updateSchedule(scheduleId, input);
@@ -67,59 +74,9 @@ class ScheduleHandler {
     return ScheduleResolver.updateThematicPlan(scheduleId, input);
   }
 
-  @Get('/cyclic/:scheduleId')
+  @Get('/:scheduleId')
   _getCyclicScheduleDetails(@Param('scheduleId') scheduleId: string) {
     return ScheduleResolver.getCyclicSchedule(scheduleId);
-  }
-
-  //NON-CYCLIC
-  @Get('/none-cyclic/list')
-  _nonCyclicList(
-    @Query('offset') skip: string,
-    @Query('limit') take: string,
-    @Query('search') search: string,
-    @Query('sorting') sorting: SortingType[],
-  ) {
-    return ScheduleResolver.nonCycleScheduleList(+skip, +take, search, sorting);
-  }
-
-  @Post('/none-cyclic')
-  _createNoneCyclicSchedule(@Body(ValidationPipe) input: CreateEditNonCylicScheduleValidation) {
-    return ScheduleResolver.createNonCyclicSchedule(input);
-  }
-
-  @Patch('/none-cyclic/:scheduleId')
-  _updateNoneCyclicSchedule(
-    @Param('scheduleId') scheduleId: string,
-    @Body(ValidationPipe) input: CreateEditNonCylicScheduleValidation,
-  ) {
-    return ScheduleResolver.updateNonCycleSchedule(scheduleId, input);
-  }
-
-  @Delete('/none-cyclic/:scheduleId')
-  _deleteNoneCyclicSchedule(@Param('scheduleId') scheduleId: string) {
-    return ScheduleResolver.deleteNonCyclicSchedule(scheduleId);
-  }
-
-  @Post('/:scheduleId/no-cyclic/thematic-plan')
-  _createNoCyclicThematicPlan(
-    @Param('scheduleId') scheduleId: string,
-    @Body(ValidationPipe) input: AddEditThematicPlanValidation,
-  ) {
-    return ScheduleResolver.createNoCyclicThematicPlan(scheduleId, input);
-  }
-
-  @Patch('/none-cyclic/:scheduleId/thematic-plan')
-  _updateNonCyclicThematicPlan(
-    @Param('scheduleId') scheduleId: string,
-    @Body(ValidationPipe) input: AddEditThematicPlanValidation,
-  ) {
-    return ScheduleResolver.updateNonCyclicThematicPlan(scheduleId, input);
-  }
-
-  @Get('/none-cyclic/:scheduleId')
-  _getNoCyclicScheduleDetails(@Param('scheduleId') scheduleId: string) {
-    return ScheduleResolver.getNoCyclicSchedule(scheduleId);
   }
 }
 

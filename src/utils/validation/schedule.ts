@@ -3,7 +3,6 @@ import { ScheduleExamTypeEnum } from '@prisma/client';
 import { Type } from 'class-transformer';
 import {
   IsArray,
-  IsBoolean,
   IsEnum,
   IsNotEmpty,
   IsOptional,
@@ -95,10 +94,6 @@ export class CreateEditScheduleValidation {
   @IsString()
   @IsOptional()
   endDayDate: string;
-
-  @IsBoolean()
-  @IsNotEmpty()
-  isAssessment: boolean;
 
   @IsString()
   @IsNotEmpty()

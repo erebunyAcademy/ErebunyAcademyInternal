@@ -1,6 +1,7 @@
 'use client';
 import React, { useCallback, useMemo, useState } from 'react';
 import { Button, MenuItem, useDisclosure } from '@chakra-ui/react';
+import { ScheduleTypeEnum } from '@prisma/client';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { createColumnHelper, SortingState } from '@tanstack/react-table';
 import dayjs from 'dayjs';
@@ -32,7 +33,7 @@ export default function Schedule() {
   const { data, isLoading, isPlaceholderData, refetch } = useQuery({
     queryKey: QUERY_KEY.allTeachers(debouncedSearch, page),
     queryFn: () =>
-      ScheduleService.list({
+      ScheduleService.list(ScheduleTypeEnum.CYCLIC, {
         offset: page === 1 ? 0 : (page - 1) * ITEMS_PER_PAGE,
         limit: ITEMS_PER_PAGE,
         search: debouncedSearch,

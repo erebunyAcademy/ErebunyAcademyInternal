@@ -55,20 +55,10 @@ const StudentSchedule = () => {
       cell: info => info.getValue(),
       header: t('totalHours'),
     }),
-    cyclicColumnHelper.accessor('isAssessment', {
-      id: uuidv4(),
-      cell: info => (info.getValue() ? t('yes') : t('no')),
-      header: t('assessment'),
-    }),
     cyclicColumnHelper.accessor('createdAt', {
       id: uuidv4(),
       cell: info => (info.getValue() ? t('yes') : t('no')),
       header: t('createdAt'),
-    }),
-    cyclicColumnHelper.accessor('subject.title', {
-      id: uuidv4(),
-      cell: info => info.getValue(),
-      header: t('subject'),
     }),
   ];
 
@@ -99,20 +89,10 @@ const StudentSchedule = () => {
       cell: info => info.getValue(),
       header: t('totalHours'),
     }),
-    notCyclicyclicColumnHelper.accessor('isAssessment', {
-      id: uuidv4(),
-      cell: info => (info.getValue() ? t('yes') : t('no')),
-      header: t('assessment'),
-    }),
     notCyclicyclicColumnHelper.accessor('createdAt', {
       id: uuidv4(),
       cell: info => (info.getValue() ? t('yes') : t('no')),
       header: t('createdAt'),
-    }),
-    notCyclicyclicColumnHelper.accessor('subject.title', {
-      id: uuidv4(),
-      cell: info => info.getValue(),
-      header: t('subject'),
     }),
   ];
 

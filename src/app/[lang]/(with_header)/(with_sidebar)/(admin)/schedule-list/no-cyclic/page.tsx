@@ -1,6 +1,7 @@
 'use client';
 import React, { useCallback, useMemo, useState } from 'react';
 import { Button, MenuItem, useDisclosure } from '@chakra-ui/react';
+import { ScheduleTypeEnum } from '@prisma/client';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { createColumnHelper, SortingState } from '@tanstack/react-table';
 import dayjs from 'dayjs';
@@ -14,8 +15,8 @@ import SearchTable from '@/components/organisms/SearchTable';
 import useDebounce from '@/hooks/useDebounce';
 import { academicYearListData, ITEMS_PER_PAGE } from '@/utils/constants/common';
 import { QUERY_KEY } from '@/utils/helpers/queryClient';
+import { ScheduleSingleModel } from '@/utils/models/schedule';
 import { Maybe } from '@/utils/models/common';
-import { NoneCyclicScheduleSingleModel } from '@/utils/models/none-cyclic.schedule';
 import AddEditThematicPlan from './_components/modals/AddEditThematicPlan';
 
 const DeleteModal = dynamic(() => import('./_components/modals/DeleteModal'));
@@ -25,15 +26,14 @@ export default function Schedule() {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
-  const [selectedSchedule, setSelectedSchedule] =
-    useState<Maybe<NoneCyclicScheduleSingleModel>>(null);
+  const [selectedSchedule, setSelectedSchedule] = useState<Maybe<ScheduleSingleModel>>(null);
   const debouncedSearch = useDebounce(search);
   const t = useTranslations();
 
   const { data, isLoading, isPlaceholderData, refetch } = useQuery({
     queryKey: QUERY_KEY.allTeachers(debouncedSearch, page),
     queryFn: () =>
-      ScheduleService.noneCyclicList({
+      ScheduleService.list(ScheduleTypeEnum.NON_CYCLIC, {
         offset: page === 1 ? 0 : (page - 1) * ITEMS_PER_PAGE,
         limit: ITEMS_PER_PAGE,
         search: debouncedSearch,
@@ -74,7 +74,7 @@ export default function Schedule() {
   });
 
   const { mutate: deleteScheduleMutation } = useMutation({
-    mutationFn: ScheduleService.deleteNoneCyclicScheduleById,
+    mutationFn: ScheduleService.deleteScheduleById,
     onSuccess() {
       closeDeleteModal();
     },
@@ -96,7 +96,7 @@ export default function Schedule() {
     [page],
   );
 
-  const columnHelper = createColumnHelper<NoneCyclicScheduleSingleModel>();
+  const columnHelper = createColumnHelper<ScheduleSingleModel>();
 
   const columns = [
     columnHelper.accessor('id', {
