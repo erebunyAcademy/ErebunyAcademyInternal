@@ -12,7 +12,9 @@ import { ScheduleService } from '@/api/services/schedule.service';
 import ActionButtons from '@/components/molecules/ActionButtons';
 import SearchTable from '@/components/organisms/SearchTable';
 import useDebounce from '@/hooks/useDebounce';
+import { Locale } from '@/i18n';
 import { academicYearListData, ITEMS_PER_PAGE } from '@/utils/constants/common';
+import { languagePathHelper } from '@/utils/helpers/language';
 import { QUERY_KEY } from '@/utils/helpers/queryClient';
 import { Maybe } from '@/utils/models/common';
 import { NoneCyclicScheduleSingleModel } from '@/utils/models/none-cyclic.schedule';
@@ -21,7 +23,7 @@ import AddEditThematicPlan from './_components/modals/AddEditThematicPlan';
 const DeleteModal = dynamic(() => import('./_components/modals/DeleteModal'));
 const CreateEditModal = dynamic(() => import('./_components/modals/CreateEditModal'));
 
-export default function Schedule() {
+export default function Schedule({ params }: { params: { lang: Locale } }) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
@@ -135,7 +137,10 @@ export default function Schedule() {
       id: uuidv4(),
       header: t('seeDetails'),
       cell: info => (
-        <Button as={Link} href={`/no-cyclic-schedule/${info.getValue()}`} variant="link">
+        <Button
+          as={Link}
+          href={`${languagePathHelper(params.lang || 'en', `/no-cyclic-schedule/${info.getValue()}`)}`}
+          variant="link">
           {t('seeDetails')}
         </Button>
       ),
