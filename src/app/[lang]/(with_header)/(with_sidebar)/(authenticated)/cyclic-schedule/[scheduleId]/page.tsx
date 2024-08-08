@@ -29,6 +29,7 @@ const ScheduleDetails = ({ params }: { params: { scheduleId: string } }) => {
     queryKey: ['cyclic-schedule'],
     queryFn: () => ScheduleService.getCyclicScheduleDetails(params.scheduleId),
   });
+  
   const academicYear = academicYearListData.find(year => year.id === scheduleData?.academicYear);
 
   return (
