@@ -51,6 +51,7 @@ const SimpleTable = <T,>({ columns, data, title }: SimpleTableProps<T>): JSX.Ele
                   const meta: any = header.column.columnDef.meta;
                   return (
                     <Th
+                      textAlign="center"
                       key={header.id}
                       onClick={header.column.getToggleSortingHandler()}
                       isNumeric={meta?.isNumeric}>
@@ -70,7 +71,7 @@ const SimpleTable = <T,>({ columns, data, title }: SimpleTableProps<T>): JSX.Ele
                     {row.getVisibleCells().map(cell => {
                       const meta: any = cell.column.columnDef.meta;
                       return (
-                        <Td key={cell.id} isNumeric={meta?.isNumeric} py="12px">
+                        <Td key={cell.id} isNumeric={meta?.isNumeric} py="12px" textAlign="center">
                           {flexRender(cell.column.columnDef.cell, cell.getContext())}
                         </Td>
                       );
