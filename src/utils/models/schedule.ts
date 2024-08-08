@@ -24,6 +24,6 @@ export type StudentNoCyclicScheduleListType = Prisma.PromiseReturnType<
 export type StudentNoCyclicScheduleListSingleType =
   StudentNoCyclicScheduleListType extends (infer SingleType)[] ? SingleType : never;
 
-export type GetCyclicDetailsType = Prisma.PromiseReturnType<typeof ScheduleResolver.getCyclicSchedule>;
-
-
+export type GetScheduleByIdModel = Prisma.PromiseReturnType<
+  typeof ScheduleResolver.getScheduleById
+>;
