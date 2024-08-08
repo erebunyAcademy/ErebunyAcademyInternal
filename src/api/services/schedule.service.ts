@@ -52,7 +52,7 @@ export class ScheduleService {
     return $apiClient.patch(`/schedules/${scheduleId}/thematic-plan`, input);
   }
 
-  static getCyclicScheduleDetails(scheduleId: string): Promise<GetCyclicDetailsType> {
+  static getScheduleById(scheduleId: string): Promise<GetCyclicDetailsType> {
     return $apiClient.get<GetCyclicDetailsType>(`/schedules/${scheduleId}`);
   }
 }

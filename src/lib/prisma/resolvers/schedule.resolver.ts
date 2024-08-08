@@ -497,7 +497,7 @@ export class ScheduleResolver {
     });
   }
 
-  static getCyclicSchedule(id: string) {
+  static getScheduleById(id: string) {
     return prisma.schedule.findUniqueOrThrow({
       where: {
         id,
