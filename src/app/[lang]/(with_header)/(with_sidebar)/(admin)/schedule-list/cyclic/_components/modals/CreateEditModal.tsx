@@ -28,6 +28,7 @@ type CreateEditModalProps = {
   isModalOpen: boolean;
   closeModal: () => void;
   selectedSchedule: Maybe<ScheduleSingleModel>;
+  refetch: () => void;
 };
 
 const resolver = classValidatorResolver(CreateEditScheduleValidation);
@@ -41,6 +42,7 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
   isModalOpen,
   closeModal,
   selectedSchedule,
+  refetch,
 }) => {
   const t = useTranslations();
   const [files, setFiles] = useState<Maybe<FileWithLocalUrl[]>>(null);
@@ -126,6 +128,7 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
     onSuccess() {
       reset();
       closeModal();
+      refetch();
     },
   });
 

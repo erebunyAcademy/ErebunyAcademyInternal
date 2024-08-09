@@ -11,7 +11,7 @@ import {
 import { useTranslations } from 'use-intl';
 
 interface SelectLabelProps extends SelectFieldProps {
-  options: { [key: string]: string }[] | [];
+  options: { [key: string]: string | number }[] | [];
   valueLabel: string;
   nameLabel: string;
   labelName?: string;

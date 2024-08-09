@@ -61,87 +61,145 @@ export class AcademicRegisterResolver {
   }
 
   static async createStudentAddentanceRecord(
-    courseGroupId: string,
+    scheduleId: string,
     data: CreateStudentAttentdanceRecordValidation,
     user: NonNullable<User>,
     lessonOfTheDay: string,
-    academicRegisterId?: string,
   ) {
     if (!user.teacher?.id) {
       throw new ForbiddenException();
     }
-    const { students } = data;
+    const { students, thematicPlanIds } = data;
 
-    console.log({ students, academicRegisterId });
+    const today = new Date().toISOString().split('T')[0];
 
-    const scheduleTeacher = await prisma.scheduleTeacher.findMany({
+    const schedule = await prisma.schedule.findUniqueOrThrow({
       where: {
-        teacherId: user.teacher.id,
+        id: scheduleId,
       },
-      select: {
-        id: true,
-      },
-    });
-
-    const courseGroup = await prisma.courseGroup.findUniqueOrThrow({
-      where: {
-        id: courseGroupId,
-        schedules: {
-          some: {
-            scheduleTeachers: {
-              some: {
-                id: {
-                  in: scheduleTeacher.map(({ id }) => id),
+      include: {
+        academicRegister: {
+          include: {
+            academicRegisterDay: {
+              where: {
+                createdAt: {
+                  gte: new Date(today + 'T00:00:00.000Z'),
+                  lt: new Date(today + 'T23:59:59.999Z'),
+                },
+              },
+              include: {
+                academicRegisterLessons: {
+                  where: {
+                    lessonOfTheDay: +lessonOfTheDay,
+                  },
+                  include: {
+                    attendanceRecord: true, // Ensure attendanceRecord is included
+                  },
                 },
               },
             },
           },
         },
       },
-      select: {
-        id: true,
-        schedules: {
-          select: {
-            subjectId: true,
+    });
+
+    if (thematicPlanIds.length) {
+      await prisma.thematicPlanDescription.updateMany({
+        where: {
+          id: {
+            in: thematicPlanIds,
           },
         },
-      },
-    });
-
-    let academicRegister = await prisma.academicRegister.findUnique({
-      where: {
-        academicRegisterSubjectCourseGroupId: {
-          courseGroupId: courseGroup.id,
-          subjectId: courseGroup.schedules[0].subjectId,
-        },
-      },
-      select: {
-        id: true,
-      },
-    });
-
-    if (!academicRegister) {
-      academicRegister = await prisma.academicRegister.create({
         data: {
-          courseGroupId: courseGroup.id,
-          subjectId: courseGroup.schedules[0].subjectId,
-        },
-        select: {
-          id: true,
+          isCompleted: true,
         },
       });
     }
 
-    // return prisma.attendanceRecord.createMany({
-    //   data: students.map(student => ({
-    //     studentId: student.id,
-    //     academicRegisterId: academicRegister.id,
-    //     lessonOfTheDay,
-    //     mark: +student.mark,
-    //     isPresent: !student.isPresent,
-    //     subjectId: courseGroup.schedules[0].subjectId,
-    //   })),
-    // });
+    let academicRegister = schedule.academicRegister;
+
+    if (!academicRegister) {
+      academicRegister = await prisma.academicRegister.create({
+        data: {
+          courseGroupId: schedule.courseGroupId,
+          subjectId: schedule.subjectId,
+          scheduleId: schedule.id,
+        },
+        include: {
+          academicRegisterDay: {
+            include: {
+              academicRegisterLessons: {
+                include: {
+                  attendanceRecord: true, // Ensure attendanceRecord is included
+                },
+              },
+            },
+          },
+        },
+      });
+    }
+
+    // Get today's AcademicRegisterDay or create it if it doesn't exist
+    let academicRegisterDay = academicRegister.academicRegisterDay.length
+      ? academicRegister.academicRegisterDay[0]
+      : await prisma.academicRegisterDay.create({
+          data: {
+            academicRegisterId: academicRegister.id,
+          },
+          include: {
+            academicRegisterLessons: {
+              include: {
+                attendanceRecord: true, // Ensure attendanceRecord is included
+              },
+            },
+          },
+        });
+
+    // Get today's AcademicRegisterLesson or create it if it doesn't exist
+    let academicRegisterLesson = academicRegisterDay.academicRegisterLessons.length
+      ? academicRegisterDay.academicRegisterLessons[0]
+      : await prisma.academicRegisterLesson.create({
+          data: {
+            academicRegisterId: academicRegister.id,
+            academicRegisterDayId: academicRegisterDay.id,
+            lessonOfTheDay: +lessonOfTheDay,
+          },
+          include: {
+            attendanceRecord: true, // Ensure attendanceRecord is included
+          },
+        });
+
+    // Process attendance records: update existing or create new ones
+    for (const student of students) {
+      const existingRecord = academicRegisterLesson.attendanceRecord.find(
+        record => record.studentId === student.id,
+      );
+
+      if (existingRecord) {
+        // Update the existing attendance record
+        await prisma.attendanceRecord.update({
+          where: { id: existingRecord.id },
+          data: {
+            isPresent: student.isPresent,
+            mark: student.mark ? parseInt(student.mark) : null,
+          },
+        });
+      } else {
+        // Create a new attendance record
+        await prisma.attendanceRecord.create({
+          data: {
+            studentId: student.id,
+            academicRegisterId: academicRegister.id,
+            academicRegisterLessonId: academicRegisterLesson.id,
+            isPresent: student.isPresent,
+            mark: student.mark ? parseInt(student.mark) : null,
+            subjectId: schedule.subjectId,
+          },
+        });
+      }
+    }
+
+    return true;
   }
 
   static async getAcademicRegister(

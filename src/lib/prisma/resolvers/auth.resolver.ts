@@ -27,11 +27,13 @@ const createUser = async (
   const { email, firstName, lastName, password } = input;
   const existingUser = await prisma.user.findUnique({ where: { email } });
   const uniqueUserId = generateRandomNumber(8);
+
   if (existingUser) {
     throw new BadRequestException(ERROR_MESSAGES.userAlreadyExists);
   }
 
   const hashedPassword = await bcrypt.hash(password, 10);
+
   const confirmationCode = generateRandomNumber(6);
 
   const user = await prisma.user.create({
@@ -42,7 +44,6 @@ const createUser = async (
       password: hashedPassword,
       uniqueUserId,
       confirmationCode,
-      ...(role === UserRoleEnum.TEACHER ? { isAdminVerified: true } : {}),
       role,
       ...((input as StudentSignUpValidation).attachment?.attachmentKey
         ? {

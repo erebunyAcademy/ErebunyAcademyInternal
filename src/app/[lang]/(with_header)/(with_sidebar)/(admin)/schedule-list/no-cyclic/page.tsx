@@ -139,7 +139,7 @@ export default function Schedule({ params }: { params: { lang: Locale } }) {
       cell: info => (
         <Button
           as={Link}
-          href={`${languagePathHelper(params.lang || 'en', `/no-cyclic-schedule/${info.getValue()}`)}`}
+          href={`${languagePathHelper(params.lang, `/schedules/${info.getValue()}`)}`}
           variant="link">
           {t('seeDetails')}
         </Button>

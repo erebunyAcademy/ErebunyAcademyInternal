@@ -14,9 +14,14 @@ type SimpleTableProps<T> = {
   data: T[];
   columns: ColumnDef<T, any>[];
   title: string;
+  withCheckbox?: boolean;
 };
 
-const SimpleTable = <T,>({ columns, data, title }: SimpleTableProps<T>): JSX.Element => {
+const SimpleTable = <T extends { id: string }>({
+  columns,
+  data,
+  title,
+}: SimpleTableProps<T>): JSX.Element => {
   const t = useTranslations();
   const { getHeaderGroups, getRowModel } = useReactTable({
     columns,

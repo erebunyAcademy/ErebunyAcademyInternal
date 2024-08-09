@@ -48,7 +48,6 @@ export default function Schedule({ params }: { params: { lang: Locale } }) {
     onClose: closeDeleteModal,
   } = useDisclosure({
     onClose() {
-      refetch();
       setSelectedSchedule(null);
     },
   });
@@ -59,7 +58,6 @@ export default function Schedule({ params }: { params: { lang: Locale } }) {
     onClose: closeCreateEditModal,
   } = useDisclosure({
     onClose() {
-      refetch();
       setSelectedSchedule(null);
     },
   });
@@ -70,7 +68,6 @@ export default function Schedule({ params }: { params: { lang: Locale } }) {
     onClose: closeCreateEditThematicPlanModal,
   } = useDisclosure({
     onClose() {
-      refetch();
       setSelectedSchedule(null);
     },
   });
@@ -78,6 +75,7 @@ export default function Schedule({ params }: { params: { lang: Locale } }) {
   const { mutate: deleteScheduleMutation } = useMutation({
     mutationFn: ScheduleService.deleteScheduleById,
     onSuccess() {
+      refetch();
       closeDeleteModal();
     },
   });
@@ -139,7 +137,7 @@ export default function Schedule({ params }: { params: { lang: Locale } }) {
       cell: info => (
         <Button
           as={Link}
-          href={`${languagePathHelper(params.lang || 'en', `/cyclic-schedule/${info.getValue()}`)}`}
+          href={`${languagePathHelper(params.lang, `/schedules/${info.getValue()}`)}`}
           variant="link">
           {t('seeDetails')}
         </Button>
@@ -250,6 +248,7 @@ export default function Schedule({ params }: { params: { lang: Locale } }) {
 
       {isCreateEditModalOpen && (
         <CreateEditModal
+          refetch={refetch}
           isModalOpen={isCreateEditModalOpen}
           closeModal={closeCreateEditModal}
           selectedSchedule={selectedSchedule}

@@ -165,7 +165,13 @@ const ScheduleDetails = ({ params }: { params: { scheduleId: string } }) => {
           <Flex gap={{ base: '30px', md: '80px' }} flexDirection={{ base: 'column', md: 'row' }}>
             <Flex gap="30px" flexDirection="column" alignItems="flex-start">
               {scheduleData?.links?.map((link: string, index: number) => (
-                <Button variant="link" as="a" href={link} key={index} fontSize="16px">
+                <Button
+                  variant="link"
+                  as="a"
+                  href={link}
+                  key={index}
+                  fontSize="16px"
+                  target="_blank">
                   {link}
                 </Button>
               ))}
@@ -176,6 +182,7 @@ const ScheduleDetails = ({ params }: { params: { scheduleId: string } }) => {
                   fontSize="16px"
                   variant="link"
                   as="a"
+                  target="_blank"
                   href={`/api/download?path=uploads/${attachment.key}`}
                   key={index}>
                   {attachment.title}

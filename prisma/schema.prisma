@@ -84,10 +84,10 @@ model AttendanceRecord {
   subjectId                String
   academicRegisterLessonId String
 
-  academicRegister       AcademicRegister       @relation(fields: [academicRegisterId], references: [id], onDelete: Cascade)
+  academicRegister       AcademicRegister       @relation(fields: [academicRegisterId], references: [id])
   subject                Subject                @relation(fields: [subjectId], references: [id])
   student                Student                @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  academicRegisterLesson AcademicRegisterLesson @relation(fields: [academicRegisterLessonId], references: [id])
+  academicRegisterLesson AcademicRegisterLesson @relation(fields: [academicRegisterLessonId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now()) @db.Timestamp(0)
   updatedAt DateTime @updatedAt @db.Timestamp(0)
@@ -173,8 +173,9 @@ model Schedule {
   scheduleTeachers ScheduleTeacher[]
   attachment       Attachment[]
   subject          Subject           @relation(fields: [subjectId], references: [id], onDelete: Cascade)
-  courseGroup      CourseGroup       @relation(fields: [courseGroupId], references: [id])
+  courseGroup      CourseGroup       @relation(fields: [courseGroupId], references: [id], onDelete: Cascade)
   availableDays    ScheduleTime[]
+  academicRegister AcademicRegister?
 
   createdAt DateTime @default(now()) @db.Timestamp(0)
   updatedAt DateTime @updatedAt @db.Timestamp(0)
@@ -208,6 +209,8 @@ model ThematicPlan {
   title                   String?
   totalHours              Float
   scheduleId              String
+  academicRegisterId      String?
+  academicRegister        AcademicRegister?         @relation(fields: [academicRegisterId], references: [id])
   schedule                Schedule                  @relation(fields: [scheduleId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   type                    ThematicSubPlanTypeEnum
   thematicPlanDescription ThematicPlanDescription[]
@@ -222,6 +225,7 @@ model ThematicPlanDescription {
   hour           String
   thematicPlanId String
   thematicPlan   ThematicPlan @relation(fields: [thematicPlanId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  isCompleted    Boolean      @default(false)
 
   createdAt DateTime @default(now()) @db.Timestamp(0)
   updatedAt DateTime @updatedAt @db.Timestamp(0)
@@ -377,12 +381,15 @@ model AcademicRegister {
   id            String @id @default(uuid())
   courseGroupId String
   subjectId     String
+  scheduleId    String @unique
 
+  schedule               Schedule                 @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
   courseGroup            CourseGroup              @relation(fields: [courseGroupId], references: [id])
   subject                Subject                  @relation(fields: [subjectId], references: [id])
   attendanceRecords      AttendanceRecord[]
   academicRegisterDay    AcademicRegisterDay[]
   academicRegisterLesson AcademicRegisterLesson[]
+  thematicPlans          ThematicPlan[]
 
   createdAt DateTime @default(now()) @db.Timestamp(0)
   updatedAt DateTime @updatedAt @db.Timestamp(0)
@@ -394,7 +401,7 @@ model AcademicRegisterDay {
   id                 String @id @default(uuid())
   academicRegisterId String
 
-  academicRegister        AcademicRegister         @relation(fields: [academicRegisterId], references: [id])
+  academicRegister        AcademicRegister         @relation(fields: [academicRegisterId], references: [id], onDelete: Cascade)
   academicRegisterLessons AcademicRegisterLesson[]
 
   createdAt DateTime @default(now()) @db.Timestamp(0)
@@ -405,13 +412,16 @@ model AcademicRegisterLesson {
   id                    String @id @default(uuid())
   academicRegisterId    String
   academicRegisterDayId String
+  lessonOfTheDay        Int
 
   attendanceRecord    AttendanceRecord[]
   academicRegister    AcademicRegister    @relation(fields: [academicRegisterId], references: [id])
-  academicRegisterDay AcademicRegisterDay @relation(fields: [academicRegisterDayId], references: [id])
+  academicRegisterDay AcademicRegisterDay @relation(fields: [academicRegisterDayId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now()) @db.Timestamp(0)
   updatedAt DateTime @updatedAt @db.Timestamp(0)
+
+  @@unique([lessonOfTheDay, academicRegisterDayId], name: "academicRegisterDayUniqueLessonId")
 }
 
 enum UserRoleEnum {

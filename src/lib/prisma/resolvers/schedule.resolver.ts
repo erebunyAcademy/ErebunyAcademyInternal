@@ -273,10 +273,6 @@ export class ScheduleResolver {
       } = data as CreateEditScheduleValidation;
 
       return prisma.$transaction(async prisma => {
-        await prisma.thematicPlan.deleteMany({
-          where: { scheduleId: schedule.id },
-        });
-
         await prisma.scheduleTeacher.deleteMany({
           where: { scheduleId: schedule.id },
         });
@@ -372,10 +368,6 @@ export class ScheduleResolver {
         academicYear,
       } = data as CreateEditNonCylicScheduleValidation;
       return prisma.$transaction(async prisma => {
-        await prisma.thematicPlan.deleteMany({
-          where: { scheduleId: schedule.id },
-        });
-
         await prisma.scheduleTeacher.deleteMany({
           where: { scheduleId: schedule.id },
         });
@@ -524,7 +516,21 @@ export class ScheduleResolver {
           },
         },
         subject: true,
-        courseGroup: true,
+        courseGroup: {
+          include: {
+            students: {
+              include: {
+                user: {
+                  select: {
+                    firstName: true,
+                    lastName: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+        availableDays: true,
       },
     });
   }
