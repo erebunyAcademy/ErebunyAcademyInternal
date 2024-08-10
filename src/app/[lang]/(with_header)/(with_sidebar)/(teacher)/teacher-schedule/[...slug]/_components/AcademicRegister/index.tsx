@@ -26,24 +26,26 @@ import { AcademicRegisterService } from '@/api/services/academic-register.servic
 import { SelectLabel } from '@/components/atoms';
 import Modal from '@/components/molecules/Modal';
 import SimpleTable from '@/components/organisms/SimpleTable';
+import { Locale } from '@/i18n';
 import { markAttentandOptionData, periodListData } from '@/utils/constants/common';
+import { ROUTE_TEACHER_SCHEDULE } from '@/utils/constants/routes';
+import { languagePathHelper } from '@/utils/helpers/language';
 import { GetScheduleByIdModel } from '@/utils/models/schedule';
 import { CreateStudentAttentdanceRecordValidation } from '@/utils/validation/academic-register';
 
 type AcademicRegisterProps = {
   schedule: GetScheduleByIdModel;
+  lang: Locale;
 };
 
 const resolver = classValidatorResolver(CreateStudentAttentdanceRecordValidation);
 
-const AcademicRegister: FC<AcademicRegisterProps> = ({ schedule }) => {
+const AcademicRegister: FC<AcademicRegisterProps> = ({ schedule, lang }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const selectedLessonOfTheDay = searchParams?.get('lessonOfTheDay');
   const [lessonOfTheDay, setLessonOfTheDay] = useState('');
   const t = useTranslations();
-
-  console.log({ schedule });
 
   const {
     control,
@@ -83,6 +85,12 @@ const AcademicRegister: FC<AcademicRegisterProps> = ({ schedule }) => {
     defaultIsOpen: schedule.type === 'CYCLIC' && !selectedLessonOfTheDay,
   });
 
+  const {
+    isOpen: endClassModalIsOpen,
+    onClose: closeEndClassModal,
+    onOpen: openEndClassModal,
+  } = useDisclosure();
+
   const thematicPlanIds = watch('thematicPlanIds');
 
   const handleCheckboxChange = (id: string) => {
@@ -114,11 +122,6 @@ const AcademicRegister: FC<AcademicRegisterProps> = ({ schedule }) => {
       cell: info => info.getValue(),
       header: t('title'),
     }),
-    columnHelperStudents.accessor('hour', {
-      id: v4(),
-      cell: info => info.getValue(),
-      header: t('totalHours'),
-    }),
   ];
 
   const onSubmit = (data: CreateStudentAttentdanceRecordValidation) => {
@@ -126,7 +129,14 @@ const AcademicRegister: FC<AcademicRegisterProps> = ({ schedule }) => {
   };
 
   const endLessonSubmitHandler = (data: CreateStudentAttentdanceRecordValidation) => {
-    createStudentMark({ ...data, isCompletedLesson: true });
+    createStudentMark(
+      { ...data, isCompletedLesson: true },
+      {
+        onSuccess() {
+          router.push(languagePathHelper(lang, ROUTE_TEACHER_SCHEDULE));
+        },
+      },
+    );
   };
 
   return (
@@ -207,7 +217,7 @@ const AcademicRegister: FC<AcademicRegisterProps> = ({ schedule }) => {
         <Button isDisabled={!isValid} onClick={handleSubmit(onSubmit)}>
           {t('save')}
         </Button>
-        <Button isDisabled={!isValid} onClick={handleSubmit(endLessonSubmitHandler)}>
+        <Button isDisabled={!isValid} onClick={openEndClassModal}>
           {t('endClass')}
         </Button>
       </Flex>
@@ -251,6 +261,16 @@ const AcademicRegister: FC<AcademicRegisterProps> = ({ schedule }) => {
           value={lessonOfTheDay}
         />
       </Modal>
+
+      <Modal
+        isOpen={endClassModalIsOpen}
+        onClose={closeEndClassModal}
+        title="lesson"
+        size="2xl"
+        primaryAction={handleSubmit(endLessonSubmitHandler)}
+        actionText="end"
+        withoutCancelBtn
+      />
     </Box>
   );
 };
