@@ -69,7 +69,7 @@ export class AcademicRegisterResolver {
     if (!user.teacher?.id) {
       throw new ForbiddenException();
     }
-    const { students, thematicPlanIds } = data;
+    const { students, thematicPlanIds, isCompletedLesson } = data;
 
     const today = new Date().toISOString().split('T')[0];
 
@@ -168,6 +168,21 @@ export class AcademicRegisterResolver {
             attendanceRecord: true, // Ensure attendanceRecord is included
           },
         });
+
+    if (academicRegisterLesson.isCompletedLesson) {
+      throw new ForbiddenException();
+    }
+
+    if (isCompletedLesson) {
+      await prisma.academicRegisterLesson.update({
+        where: {
+          id: academicRegisterLesson.id,
+        },
+        data: {
+          isCompletedLesson: true,
+        },
+      });
+    }
 
     // Process attendance records: update existing or create new ones
     for (const student of students) {

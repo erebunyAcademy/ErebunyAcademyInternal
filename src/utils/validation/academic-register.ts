@@ -32,4 +32,8 @@ export class CreateStudentAttentdanceRecordValidation {
   @IsArray()
   @Type(() => String)
   thematicPlanIds: string[];
+
+  @IsBoolean()
+  @IsOptional()
+  isCompletedLesson: boolean;
 }

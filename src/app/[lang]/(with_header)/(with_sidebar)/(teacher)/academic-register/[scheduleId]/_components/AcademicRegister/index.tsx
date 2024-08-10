@@ -67,7 +67,7 @@ const AcademicRegister: FC<AcademicRegisterProps> = ({
 
   console.log({ errors });
 
-  const selectedPeriodData = periodListData.find(p => p.id === lessonOfTheDay);
+  const selectedPeriodData = periodListData.find(p => p.id === +lessonOfTheDay);
 
   const { mutate: createStudentMark } = useMutation({
     mutationFn: (data: CreateStudentAttentdanceRecordValidation) =>
@@ -111,6 +111,10 @@ const AcademicRegister: FC<AcademicRegisterProps> = ({
 
   const onSubmit = (data: CreateStudentAttentdanceRecordValidation) => {
     createStudentMark(data);
+  };
+
+  const endLessonSubmitHandler = (data: CreateStudentAttentdanceRecordValidation) => {
+    createStudentMark({ ...data, isCompletedLesson: true });
   };
 
   return (
@@ -187,7 +191,8 @@ const AcademicRegister: FC<AcademicRegisterProps> = ({
         </Table>
       </Box>
       <Flex justifyContent="space-between" mt="20px">
-        <Button onClick={handleSubmit(onSubmit)}>{t('endClass')}</Button>
+        <Button onClick={handleSubmit(endLessonSubmitHandler)}>{t('endClass')}</Button>
+        <Button onClick={handleSubmit(onSubmit)}>{t('save')}</Button>
       </Flex>
       <Modal
         isOpen={chooseLessonModalOpen}

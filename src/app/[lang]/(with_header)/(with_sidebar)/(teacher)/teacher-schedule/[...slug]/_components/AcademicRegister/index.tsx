@@ -83,10 +83,6 @@ const AcademicRegister: FC<AcademicRegisterProps> = ({ schedule }) => {
     defaultIsOpen: schedule.type === 'CYCLIC' && !selectedLessonOfTheDay,
   });
 
-  const onSubmit = (data: CreateStudentAttentdanceRecordValidation) => {
-    createStudentMark(data);
-  };
-
   const thematicPlanIds = watch('thematicPlanIds');
 
   const handleCheckboxChange = (id: string) => {
@@ -124,6 +120,14 @@ const AcademicRegister: FC<AcademicRegisterProps> = ({ schedule }) => {
       header: t('totalHours'),
     }),
   ];
+
+  const onSubmit = (data: CreateStudentAttentdanceRecordValidation) => {
+    createStudentMark(data);
+  };
+
+  const endLessonSubmitHandler = (data: CreateStudentAttentdanceRecordValidation) => {
+    createStudentMark({ ...data, isCompletedLesson: true });
+  };
 
   return (
     <Box width="100%" mt="50px" mx="20px">
@@ -201,6 +205,9 @@ const AcademicRegister: FC<AcademicRegisterProps> = ({ schedule }) => {
       </Box>
       <Flex justifyContent="space-between" mt="20px">
         <Button isDisabled={!isValid} onClick={handleSubmit(onSubmit)}>
+          {t('save')}
+        </Button>
+        <Button isDisabled={!isValid} onClick={handleSubmit(endLessonSubmitHandler)}>
           {t('endClass')}
         </Button>
       </Flex>
