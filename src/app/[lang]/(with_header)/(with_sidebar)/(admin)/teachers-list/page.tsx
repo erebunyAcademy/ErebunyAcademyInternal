@@ -1,25 +1,31 @@
 'use client';
 import React, { useCallback, useMemo, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { Box, MenuItem, useDisclosure } from '@chakra-ui/react';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { createColumnHelper, SortingState } from '@tanstack/react-table';
 import dayjs from 'dayjs';
 import { useTranslations } from 'next-intl';
 import { v4 as uuidv4 } from 'uuid';
 import { TeacherService } from '@/api/services/teacher.service';
+import { UserService } from '@/api/services/user.service';
+import ActionButtons from '@/components/molecules/ActionButtons';
 import SearchTable from '@/components/organisms/SearchTable';
 import useDebounce from '@/hooks/useDebounce';
 import { ITEMS_PER_PAGE } from '@/utils/constants/common';
 import { QUERY_KEY } from '@/utils/helpers/queryClient';
-import { TeacherModel } from '@/utils/models/teachers';
+import { Maybe } from '@/utils/models/common';
+import { TeacherModelSingle } from '@/utils/models/teachers';
+import RejectMessageModal from './_components/modals/RejectMessageModal';
 
 export default function Users() {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const debouncedSearch = useDebounce(search);
+  const [selectedTeacher, setSelectedTeacher] = useState<Maybe<TeacherModelSingle>>(null);
   const t = useTranslations();
 
-  const { data, isLoading, isPlaceholderData } = useQuery({
+  const { data, isLoading, isPlaceholderData, refetch } = useQuery({
     queryKey: QUERY_KEY.allTeachers(debouncedSearch, page),
     queryFn: () =>
       TeacherService.list({
@@ -28,6 +34,19 @@ export default function Users() {
         search: debouncedSearch,
       }),
   });
+  const { mutate: confirmUserById } = useMutation({
+    mutationFn: UserService.confirmUserVerificationById,
+    onSuccess() {
+      selectedTeacher;
+      refetch();
+    },
+  });
+
+  const {
+    isOpen: isRejectTeacherModalOpen,
+    onOpen: openTeacherRejectModal,
+    onClose: closeTeacherRejectModal,
+  } = useDisclosure();
 
   const pageCount = useMemo(() => {
     if (data?.count) {
@@ -45,9 +64,37 @@ export default function Users() {
     [page],
   );
 
-  const columnHelper = createColumnHelper<TeacherModel>();
+  const columnHelper = createColumnHelper<TeacherModelSingle>();
 
   const columns = [
+    columnHelper.accessor('id', {
+      id: uuidv4(),
+      cell: ({ row }) => (
+        <Box display={row.original.isAdminVerified ? 'none' : 'block'}>
+          <ActionButtons>
+            <>
+              <MenuItem
+                color="green"
+                disabled={row.original.isAdminVerified}
+                onClick={() => {
+                  confirmUserById(row.original.id);
+                }}>
+                {t('confirm')}
+              </MenuItem>
+              <MenuItem
+                color="red"
+                onClick={() => {
+                  openTeacherRejectModal();
+                  setSelectedTeacher(row.original);
+                }}>
+                {t('reject')}
+              </MenuItem>
+            </>
+          </ActionButtons>
+        </Box>
+      ),
+      header: t('actions'),
+    }),
     columnHelper.accessor('firstName', {
       id: uuidv4(),
       cell: info => info.getValue(),
@@ -103,7 +150,17 @@ export default function Users() {
         )}
         fetchNextPage={useCallback(() => setPage(prev => ++prev), [])}
         fetchPreviousPage={useCallback(() => setPage(prev => --prev), [])}
+        rowCondition="isAdminVerified"
       />
+
+      {isRejectTeacherModalOpen && (
+        <RejectMessageModal
+          closeTeacherRejectModal={closeTeacherRejectModal}
+          isRejectTeacherModalOpen={isRejectTeacherModalOpen}
+          selectedTeacher={selectedTeacher}
+          refetch={refetch}
+        />
+      )}
     </>
   );
 }

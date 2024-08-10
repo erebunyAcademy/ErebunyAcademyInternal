@@ -10,6 +10,7 @@ export class TeacherResolver {
     return Promise.all([
       prisma.user.count({
         where: {
+          isVerified: true,
           role: UserRoleEnum.TEACHER,
           OR: [
             { firstName: { contains: search, mode: 'insensitive' } },
@@ -20,6 +21,7 @@ export class TeacherResolver {
       }),
       prisma.user.findMany({
         where: {
+          isVerified: true,
           role: UserRoleEnum.TEACHER,
           OR: [
             { firstName: { contains: search, mode: 'insensitive' } },
@@ -33,6 +35,7 @@ export class TeacherResolver {
           firstName: true,
           lastName: true,
           createdAt: true,
+          isAdminVerified: true,
           teacher: {
             select: {
               workPlace: true,

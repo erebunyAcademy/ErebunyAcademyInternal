@@ -41,7 +41,7 @@ const StudentExamList = ({ user, lang }: { user: User; lang: Locale }) => {
     columnHelper.accessor('studentExamResult', {
       id: uuidv4(),
       cell: info => info.getValue() || '-',
-      header: t('result'),
+      header: t('results'),
     }),
     columnHelper.accessor('exam.duration', {
       id: uuidv4(),
