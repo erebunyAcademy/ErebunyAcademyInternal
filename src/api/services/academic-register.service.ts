@@ -12,12 +12,14 @@ export class AcademicRegisterService {
   }
   static createStudentMark(
     input: CreateStudentAttentdanceRecordValidation,
-    courseGroupId: string,
+    scheduleId: string,
     lessonOfTheDay: string,
+    academicRegisterId?: string,
   ) {
-    return $apiClient.post(`/academic-registers/${courseGroupId}`, input, {
+    return $apiClient.post(`/academic-registers/schedules/${scheduleId}`, input, {
       params: {
         lessonOfTheDay,
+        academicRegisterId,
       },
     });
   }

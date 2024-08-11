@@ -3,7 +3,6 @@ import { ScheduleExamTypeEnum } from '@prisma/client';
 import { Type } from 'class-transformer';
 import {
   IsArray,
-  IsBoolean,
   IsEnum,
   IsNotEmpty,
   IsOptional,
@@ -96,10 +95,6 @@ export class CreateEditScheduleValidation {
   @IsOptional()
   endDayDate: string;
 
-  @IsBoolean()
-  @IsNotEmpty()
-  isAssessment: boolean;
-
   @IsString()
   @IsNotEmpty()
   teacherId: string;
@@ -126,4 +121,15 @@ export class AddEditThematicPlanValidation {
   @ValidateNested({ each: true })
   @Type(() => CourseClassValidation)
   practicalClass: CourseClassValidation;
+}
+
+export class TeacherAttachmentModalValidation {
+  @IsArray()
+  @IsOptional()
+  attachments?: AttachmentValidation[];
+
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => LinkValidation)
+  links: LinkValidation[];
 }

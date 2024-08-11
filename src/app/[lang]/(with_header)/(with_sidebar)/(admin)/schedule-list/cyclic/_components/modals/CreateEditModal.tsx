@@ -3,6 +3,7 @@ import React, { ChangeEvent, FC, useCallback, useMemo, useState } from 'react';
 import { AddIcon, DeleteIcon } from '@chakra-ui/icons';
 import { Box, Button, Divider, Flex, IconButton, Input, Stack, Text } from '@chakra-ui/react';
 import { classValidatorResolver } from '@hookform/resolvers/class-validator';
+import { ScheduleTypeEnum } from '@prisma/client';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { useTranslations } from 'next-intl';
@@ -27,6 +28,7 @@ type CreateEditModalProps = {
   isModalOpen: boolean;
   closeModal: () => void;
   selectedSchedule: Maybe<ScheduleSingleModel>;
+  refetch: () => void;
 };
 
 const resolver = classValidatorResolver(CreateEditScheduleValidation);
@@ -40,6 +42,7 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
   isModalOpen,
   closeModal,
   selectedSchedule,
+  refetch,
 }) => {
   const t = useTranslations();
   const [files, setFiles] = useState<Maybe<FileWithLocalUrl[]>>(null);
@@ -60,7 +63,6 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
       startDayDate: '',
       examDate: '',
       endDayDate: '',
-      isAssessment: false,
       examType: 'ASSESSMENT',
       teacherId: '',
       courseGroupId: '',
@@ -94,7 +96,6 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
         startDayDate: dayjs(selectedSchedule.startDayDate).format('YYYY-MM-DD'),
         examDate: dayjs(selectedSchedule.examDate).format('YYYY-MM-DD'),
         endDayDate: dayjs(selectedSchedule.endDayDate).format('YYYY-MM-DD'),
-        isAssessment: selectedSchedule.isAssessment,
         teacherId: selectedSchedule.scheduleTeachers[0].teacherId,
         courseGroupId: selectedSchedule.courseGroupId,
         examType: selectedSchedule.examType,
@@ -118,11 +119,16 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
   });
 
   const { mutate: createEditSchedule } = useMutation({
-    mutationFn: ScheduleService[selectedSchedule ? 'updateSchedule' : 'createSchedule'],
+    mutationFn: (data: CreateEditScheduleValidation) =>
+      ScheduleService[selectedSchedule ? 'updateSchedule' : 'createSchedule'](
+        data,
+        ScheduleTypeEnum.CYCLIC,
+      ),
     mutationKey: ['create-schedule'],
     onSuccess() {
       reset();
       closeModal();
+      refetch();
     },
   });
 

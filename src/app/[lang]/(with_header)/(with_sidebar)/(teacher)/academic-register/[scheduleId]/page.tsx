@@ -23,7 +23,6 @@ const AcademicRegisterPage = async ({
     session.user,
   );
 
-  console.log({ academicRegister });
   return (
     <AcademicRegister
       students={students}

@@ -32,7 +32,7 @@ const AddEditThematicPlan: FC<AddEditThematicPlanProps> = ({
   const t = useTranslations();
 
   const thematicPlanIsBeingCreated = useMemo(
-    () => selectedSchedule && selectedSchedule?.thematicPlan?.length > 0,
+    () => selectedSchedule && selectedSchedule?.thematicPlans?.length > 0,
     [selectedSchedule],
   );
 
@@ -52,11 +52,11 @@ const AddEditThematicPlan: FC<AddEditThematicPlanProps> = ({
   useMemo(() => {
     if (thematicPlanIsBeingCreated) {
       const theoreticalThematicPlan: any =
-        selectedSchedule.thematicPlan.find(thematicPlan => thematicPlan.type === 'THEORETICAL') ||
+        selectedSchedule.thematicPlans.find(thematicPlan => thematicPlan.type === 'THEORETICAL') ||
         thematicInitialClass;
 
       const practicalThematicPlan: any =
-        selectedSchedule.thematicPlan.find(thematicPlan => thematicPlan.type === 'PRACTICAL') ||
+        selectedSchedule.thematicPlans.find(thematicPlan => thematicPlan.type === 'PRACTICAL') ||
         thematicInitialClass;
 
       reset({
@@ -76,7 +76,7 @@ const AddEditThematicPlan: FC<AddEditThematicPlanProps> = ({
         },
       });
     }
-  }, [reset, selectedSchedule.thematicPlan, thematicPlanIsBeingCreated]);
+  }, [reset, selectedSchedule.thematicPlans, thematicPlanIsBeingCreated]);
 
   const {
     fields: theoreticalClassFields,
@@ -123,9 +123,9 @@ const AddEditThematicPlan: FC<AddEditThematicPlanProps> = ({
       size="4xl"
       primaryAction={handleSubmit(onSubmitHandler)}
       actionText={
-        selectedSchedule.thematicPlan.length === 0 ||
-        (selectedSchedule?.thematicPlan[0]?.thematicPlanDescription.length === 0 &&
-          selectedSchedule?.thematicPlan[1]?.thematicPlanDescription.length === 0)
+        selectedSchedule.thematicPlans.length === 0 ||
+        (selectedSchedule?.thematicPlans[0]?.thematicPlanDescription.length === 0 &&
+          selectedSchedule?.thematicPlans[1]?.thematicPlanDescription.length === 0)
           ? 'create'
           : 'edit'
       }>

@@ -29,7 +29,7 @@ export const weekendDayList = Object.values(WeekDayEnum).map((weekendDay: WeekDa
 }));
 
 export const periodListData = Array.from({ length: 10 }, (_, i) => ({
-  id: (i + 1).toString(),
+  id: i + 1,
   title: `${i + 1}-${i + 2}`,
 }));
 

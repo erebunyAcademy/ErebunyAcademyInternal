@@ -21,15 +21,15 @@ class AcademicRegisterHandler {
     return AcademicRegisterResolver.list(user);
   }
 
-  @Post('/:courseGroupId')
+  @Post('/schedules/:scheduleId')
   createStudentAddentanceRecord(
-    @Param('courseGroupId') courseGroupId: string,
-    @Query('lessonOfTheDay') lessonOfTheDay: string,
+    @Param('scheduleId') scheduleId: string,
     @Body(ValidationPipe) input: CreateStudentAttentdanceRecordValidation,
     @CurrentUser() user: NonNullable<User>,
+    @Query('lessonOfTheDay') lessonOfTheDay: string,
   ) {
     return AcademicRegisterResolver.createStudentAddentanceRecord(
-      courseGroupId,
+      scheduleId,
       input,
       user,
       lessonOfTheDay,

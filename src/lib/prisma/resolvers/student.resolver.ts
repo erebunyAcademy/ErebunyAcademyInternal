@@ -119,6 +119,7 @@ export class StudentResolver {
         studentId: user?.student?.id,
       },
       select: {
+        id: true,
         studentExamResult: true,
         exam: {
           select: {
@@ -228,28 +229,7 @@ export class StudentResolver {
         courseGroupId: user.student.courseGroup.id,
       },
       include: {
-        thematicPlan: {
-          include: {
-            thematicPlanDescription: true,
-          },
-        },
-        attachment: true,
-        subject: true,
-      },
-    });
-  }
-
-  static async getStudentNoneCyclicSchedule(user: NonNullable<User>) {
-    if (!user.student?.courseGroup?.id) {
-      throw new ForbiddenException('User does not have course group');
-    }
-
-    return prisma.nonCyclicSchedule.findMany({
-      where: {
-        courseGroupId: user.student.courseGroup.id,
-      },
-      include: {
-        thematicPlan: {
+        thematicPlans: {
           include: {
             thematicPlanDescription: true,
           },

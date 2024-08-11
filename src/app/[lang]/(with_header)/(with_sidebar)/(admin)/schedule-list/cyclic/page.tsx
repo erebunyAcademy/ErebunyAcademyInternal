@@ -1,6 +1,7 @@
 'use client';
 import React, { useCallback, useMemo, useState } from 'react';
 import { Button, MenuItem, useDisclosure } from '@chakra-ui/react';
+import { ScheduleTypeEnum } from '@prisma/client';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { createColumnHelper, SortingState } from '@tanstack/react-table';
 import dayjs from 'dayjs';
@@ -34,7 +35,7 @@ export default function Schedule({ params }: { params: { lang: Locale } }) {
   const { data, isLoading, isPlaceholderData, refetch } = useQuery({
     queryKey: QUERY_KEY.allTeachers(debouncedSearch, page),
     queryFn: () =>
-      ScheduleService.list({
+      ScheduleService.list(ScheduleTypeEnum.CYCLIC, {
         offset: page === 1 ? 0 : (page - 1) * ITEMS_PER_PAGE,
         limit: ITEMS_PER_PAGE,
         search: debouncedSearch,
@@ -47,7 +48,6 @@ export default function Schedule({ params }: { params: { lang: Locale } }) {
     onClose: closeDeleteModal,
   } = useDisclosure({
     onClose() {
-      refetch();
       setSelectedSchedule(null);
     },
   });
@@ -58,7 +58,6 @@ export default function Schedule({ params }: { params: { lang: Locale } }) {
     onClose: closeCreateEditModal,
   } = useDisclosure({
     onClose() {
-      refetch();
       setSelectedSchedule(null);
     },
   });
@@ -69,7 +68,6 @@ export default function Schedule({ params }: { params: { lang: Locale } }) {
     onClose: closeCreateEditThematicPlanModal,
   } = useDisclosure({
     onClose() {
-      refetch();
       setSelectedSchedule(null);
     },
   });
@@ -77,6 +75,7 @@ export default function Schedule({ params }: { params: { lang: Locale } }) {
   const { mutate: deleteScheduleMutation } = useMutation({
     mutationFn: ScheduleService.deleteScheduleById,
     onSuccess() {
+      refetch();
       closeDeleteModal();
     },
   });
@@ -138,7 +137,7 @@ export default function Schedule({ params }: { params: { lang: Locale } }) {
       cell: info => (
         <Button
           as={Link}
-          href={`${languagePathHelper(params.lang || 'en', `/cyclic-schedule/${info.getValue()}`)}`}
+          href={`${languagePathHelper(params.lang, `/schedules/${info.getValue()}`)}`}
           variant="link">
           {t('seeDetails')}
         </Button>
@@ -249,6 +248,7 @@ export default function Schedule({ params }: { params: { lang: Locale } }) {
 
       {isCreateEditModalOpen && (
         <CreateEditModal
+          refetch={refetch}
           isModalOpen={isCreateEditModalOpen}
           closeModal={closeCreateEditModal}
           selectedSchedule={selectedSchedule}

@@ -28,4 +28,12 @@ export class CreateStudentAttentdanceRecordValidation {
   @ValidateNested({ each: true })
   @Type(() => StudentMarkDataValidation)
   students: StudentMarkDataValidation[];
+
+  @IsArray()
+  @Type(() => String)
+  thematicPlanIds: string[];
+
+  @IsBoolean()
+  @IsOptional()
+  isCompletedLesson: boolean;
 }

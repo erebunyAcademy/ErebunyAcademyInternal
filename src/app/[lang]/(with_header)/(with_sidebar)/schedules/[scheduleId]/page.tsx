@@ -15,18 +15,19 @@ import {
   Tr,
 } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
+import dayjs from 'dayjs';
 import { useTranslations } from 'next-intl';
 import { ScheduleService } from '@/api/services/schedule.service';
 import NoDataFound from '@/components/molecules/NoDataFound';
 import { academicYearListData } from '@/utils/constants/common';
-import { GetNoCyclicDetailsType } from '@/utils/models/none-cyclic.schedule';
+import { GetScheduleByIdModel } from '@/utils/models/schedule';
 
 const ScheduleDetails = ({ params }: { params: { scheduleId: string } }) => {
   const t = useTranslations();
 
-  const { data: scheduleData } = useQuery<GetNoCyclicDetailsType>({
-    queryKey: ['no-cyclic-schedule'],
-    queryFn: () => ScheduleService.getNoCyclicScheduleDetails(params.scheduleId),
+  const { data: scheduleData } = useQuery<GetScheduleByIdModel>({
+    queryKey: ['cyclic-schedule'],
+    queryFn: () => ScheduleService.getScheduleById(params.scheduleId),
   });
 
   const academicYear = academicYearListData.find(year => year.id === scheduleData?.academicYear);
@@ -62,14 +63,26 @@ const ScheduleDetails = ({ params }: { params: { scheduleId: string } }) => {
               <Td>{scheduleData?.examType}</Td>
             </Tr>
             <Tr>
-              <Th>{t('totalHours')}:</Th>
-              <Td>{scheduleData?.totalHours}</Td>
+              <Th>{t('examDay')}:</Th>
+              <Td>{dayjs(scheduleData?.examDate).format('DD/MM/YYYY')}</Td>
+            </Tr>
+            <Tr>
+              <Th>{t('startDay')}:</Th>
+              <Td>{dayjs(scheduleData?.startDayDate).format('DD/MM/YYYY')}</Td>
+            </Tr>
+            <Tr>
+              <Th>{t('endDay')}:</Th>
+              <Td>{dayjs(scheduleData?.endDayDate).format('DD/MM/YYYY')}</Td>
             </Tr>
           </Tbody>
           <Tbody>
             <Tr>
               <Th>{t('academicYear')}:</Th>
               <Td>{academicYear?.title}</Td>
+            </Tr>
+            <Tr>
+              <Th>{t('totalHours')}:</Th>
+              <Td>{scheduleData?.totalHours}</Td>
             </Tr>
             <Tr>
               <Th>{t('subject')}:</Th>
@@ -97,8 +110,9 @@ const ScheduleDetails = ({ params }: { params: { scheduleId: string } }) => {
         <Heading fontSize={{ base: '25px', lg: '30px' }} fontWeight={500}>
           {t('thematicPlans')}
         </Heading>
-        {scheduleData?.thematicPlan?.length !== 0 ? (
-          scheduleData?.thematicPlan.map(tPlan => (
+
+        {scheduleData?.thematicPlans?.length !== 0 ? (
+          scheduleData?.thematicPlans.map(tPlan => (
             <Box
               key={tPlan.id}
               border="1px solid #ccc"
@@ -151,7 +165,13 @@ const ScheduleDetails = ({ params }: { params: { scheduleId: string } }) => {
           <Flex gap={{ base: '30px', md: '80px' }} flexDirection={{ base: 'column', md: 'row' }}>
             <Flex gap="30px" flexDirection="column" alignItems="flex-start">
               {scheduleData?.links?.map((link: string, index: number) => (
-                <Button variant="link" as="a" href={link} key={index} fontSize="16px">
+                <Button
+                  variant="link"
+                  as="a"
+                  href={link}
+                  key={index}
+                  fontSize="16px"
+                  target="_blank">
                   {link}
                 </Button>
               ))}
@@ -159,9 +179,10 @@ const ScheduleDetails = ({ params }: { params: { scheduleId: string } }) => {
             <Flex gap="30px" flexDirection="column" alignItems="flex-start">
               {scheduleData?.attachment.map((attachment, index: number) => (
                 <Button
+                  fontSize="16px"
                   variant="link"
                   as="a"
-                  fontSize="16px"
+                  target="_blank"
                   href={`/api/download?path=uploads/${attachment.key}`}
                   key={index}>
                   {attachment.title}

@@ -67,11 +67,16 @@ const AcademicRegister: FC<AcademicRegisterProps> = ({
 
   console.log({ errors });
 
-  const selectedPeriodData = periodListData.find(p => p.id === lessonOfTheDay);
+  const selectedPeriodData = periodListData.find(p => p.id === +lessonOfTheDay);
 
   const { mutate: createStudentMark } = useMutation({
     mutationFn: (data: CreateStudentAttentdanceRecordValidation) =>
-      AcademicRegisterService.createStudentMark(data, schedule.courseGroupId, lessonOfTheDay),
+      AcademicRegisterService.createStudentMark(
+        data,
+        schedule.courseGroupId,
+        lessonOfTheDay,
+        academicRegister?.id,
+      ),
   });
 
   const { fields } = useFieldArray({
@@ -84,11 +89,11 @@ const AcademicRegister: FC<AcademicRegisterProps> = ({
       reset({
         students: academicRegister.attendanceRecords.map(attendant => ({
           id: attendant.studentId,
-          isPresent: !attendant.isAbsent,
+          isPresent: !attendant.isPresent,
           mark: attendant.mark ? attendant.mark.toString() : '',
         })),
       });
-      setLessonOfTheDay(academicRegister.attendanceRecords[0]?.lessonOfTheDay || '');
+      // setLessonOfTheDay(academicRegister.attendanceRecords[0]?.lessonOfTheDay || '');
     }
   }, [academicRegister, reset]);
 
@@ -99,13 +104,17 @@ const AcademicRegister: FC<AcademicRegisterProps> = ({
   } = useDisclosure();
 
   useLayoutEffect(() => {
-    if (!lessonOfTheDay && !academicRegister?.attendanceRecords[0]?.lessonOfTheDay) {
-      onOpen();
-    }
+    // if (!lessonOfTheDay && !academicRegister?.attendanceRecords[0]?.lessonOfTheDay) {
+    //   onOpen();
+    // }
   }, [academicRegister?.attendanceRecords, lessonOfTheDay, onOpen]);
 
   const onSubmit = (data: CreateStudentAttentdanceRecordValidation) => {
     createStudentMark(data);
+  };
+
+  const endLessonSubmitHandler = (data: CreateStudentAttentdanceRecordValidation) => {
+    createStudentMark({ ...data, isCompletedLesson: true });
   };
 
   return (
@@ -182,7 +191,8 @@ const AcademicRegister: FC<AcademicRegisterProps> = ({
         </Table>
       </Box>
       <Flex justifyContent="space-between" mt="20px">
-        <Button onClick={handleSubmit(onSubmit)}>{t('endClass')}</Button>
+        <Button onClick={handleSubmit(endLessonSubmitHandler)}>{t('endClass')}</Button>
+        <Button onClick={handleSubmit(onSubmit)}>{t('save')}</Button>
       </Flex>
       <Modal
         isOpen={chooseLessonModalOpen}

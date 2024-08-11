@@ -10,6 +10,7 @@ export class TeacherResolver {
     return Promise.all([
       prisma.user.count({
         where: {
+          isVerified: true,
           role: UserRoleEnum.TEACHER,
           OR: [
             { firstName: { contains: search, mode: 'insensitive' } },
@@ -20,6 +21,7 @@ export class TeacherResolver {
       }),
       prisma.user.findMany({
         where: {
+          isVerified: true,
           role: UserRoleEnum.TEACHER,
           OR: [
             { firstName: { contains: search, mode: 'insensitive' } },
@@ -33,6 +35,7 @@ export class TeacherResolver {
           firstName: true,
           lastName: true,
           createdAt: true,
+          isAdminVerified: true,
           teacher: {
             select: {
               workPlace: true,
@@ -79,7 +82,7 @@ export class TeacherResolver {
       });
   }
 
-  static async getTeacherCyclicSchedule(user: NonNullable<User>) {
+  static async getTeacherSchedules(user: NonNullable<User>) {
     if (!user.teacher?.id) {
       throw new ForbiddenException();
     }
@@ -107,49 +110,7 @@ export class TeacherResolver {
       include: {
         subject: true,
         attachment: true,
-        thematicPlan: {
-          include: {
-            thematicPlanDescription: true,
-          },
-        },
-        courseGroup: {
-          include: {
-            course: true,
-          },
-        },
-      },
-    });
-  }
-
-  static async getTeacherNonCyclicSchedule(user: NonNullable<User>) {
-    if (!user.teacher?.id) {
-      throw new ForbiddenException();
-    }
-
-    const scheduleIds = (
-      await prisma.scheduleTeacher.findMany({
-        where: { teacherId: user.teacher.id },
-        select: {
-          nonCyclicScheduleId: true,
-        },
-      })
-    ).reduce((acc: string[], schedule) => {
-      if (schedule.nonCyclicScheduleId) {
-        acc.push(schedule.nonCyclicScheduleId);
-      }
-      return acc;
-    }, [] as string[]);
-
-    return prisma.nonCyclicSchedule.findMany({
-      where: {
-        id: {
-          in: scheduleIds,
-        },
-      },
-      include: {
-        subject: true,
-        attachment: true,
-        thematicPlan: {
+        thematicPlans: {
           include: {
             thematicPlanDescription: true,
           },

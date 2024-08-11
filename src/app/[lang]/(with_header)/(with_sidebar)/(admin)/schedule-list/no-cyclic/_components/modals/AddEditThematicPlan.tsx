@@ -8,7 +8,7 @@ import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import { ScheduleService } from '@/api/services/schedule.service';
 import { FormInput } from '@/components/atoms';
 import Modal from '@/components/molecules/Modal';
-import { NoneCyclicScheduleSingleModel } from '@/utils/models/none-cyclic.schedule';
+import { ScheduleSingleModel } from '@/utils/models/schedule';
 import { AddEditThematicPlanValidation } from '@/utils/validation/schedule';
 
 const resolver = classValidatorResolver(AddEditThematicPlanValidation);
@@ -21,7 +21,7 @@ const thematicInitialClass = {
 type AddEditThematicPlanProps = {
   isModalOpen: boolean;
   closeModal: () => void;
-  selectedSchedule: NoneCyclicScheduleSingleModel;
+  selectedSchedule: ScheduleSingleModel;
 };
 
 const AddEditThematicPlan: FC<AddEditThematicPlanProps> = ({
@@ -32,7 +32,7 @@ const AddEditThematicPlan: FC<AddEditThematicPlanProps> = ({
   const t = useTranslations();
 
   const thematicPlanisBeingCreated = useMemo(
-    () => selectedSchedule && selectedSchedule?.thematicPlan?.length > 0,
+    () => selectedSchedule && selectedSchedule?.thematicPlans?.length > 0,
     [selectedSchedule],
   );
 
@@ -52,12 +52,12 @@ const AddEditThematicPlan: FC<AddEditThematicPlanProps> = ({
   useMemo(() => {
     if (thematicPlanisBeingCreated) {
       const thereoticalThematicPlan: any =
-        selectedSchedule.thematicPlan.find(
+        selectedSchedule.thematicPlans.find(
           (thematicPlan: { type: string }) => thematicPlan.type === 'THEORETICAL',
         ) || thematicInitialClass;
 
       const practicalThematicPlan: any =
-        selectedSchedule.thematicPlan.find(
+        selectedSchedule.thematicPlans.find(
           (thematicPlan: { type: string }) => thematicPlan.type === 'PRACTICAL',
         ) || thematicInitialClass;
 
@@ -78,7 +78,7 @@ const AddEditThematicPlan: FC<AddEditThematicPlanProps> = ({
         },
       });
     }
-  }, [reset, selectedSchedule.thematicPlan, thematicPlanisBeingCreated]);
+  }, [reset, selectedSchedule.thematicPlans, thematicPlanisBeingCreated]);
 
   const {
     fields: theoreticalClassFields,
@@ -98,16 +98,21 @@ const AddEditThematicPlan: FC<AddEditThematicPlanProps> = ({
     name: 'practicalClass.classDescriptionRow',
   });
 
+  const thematicPlanIsBeingCreated = useMemo(
+    () => selectedSchedule && selectedSchedule?.thematicPlans?.length > 0,
+    [selectedSchedule],
+  );
+
   const { mutate } = useMutation({
     mutationFn: (data: AddEditThematicPlanValidation) =>
-      ScheduleService[
-        thematicPlanisBeingCreated ? 'editNoneCyclicThematicPlan' : 'createNoCyclicThematicPlan'
-      ](selectedSchedule.id, data),
+      ScheduleService[thematicPlanIsBeingCreated ? 'editThematicPlan' : 'createThematicPlan'](
+        selectedSchedule.id,
+        data,
+      ),
     onSuccess() {
       closeModal();
     },
   });
-
   const onSubmitHandler = useCallback(
     (data: AddEditThematicPlanValidation) => {
       mutate(data);
@@ -124,9 +129,9 @@ const AddEditThematicPlan: FC<AddEditThematicPlanProps> = ({
       size="4xl"
       primaryAction={handleSubmit(onSubmitHandler)}
       actionText={
-        selectedSchedule.thematicPlan.length === 0 ||
-        (selectedSchedule?.thematicPlan[0]?.thematicPlanDescription.length === 0 &&
-          selectedSchedule?.thematicPlan[1]?.thematicPlanDescription.length === 0)
+        selectedSchedule.thematicPlans.length === 0 ||
+        (selectedSchedule?.thematicPlans[0]?.thematicPlanDescription.length === 0 &&
+          selectedSchedule?.thematicPlans[1]?.thematicPlanDescription.length === 0)
           ? 'create'
           : 'edit'
       }>

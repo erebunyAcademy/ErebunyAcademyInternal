@@ -12,7 +12,6 @@ import { User } from 'next-auth';
 import { CurrentUser } from '@/lib/prisma/decorators/current-user.decorator';
 import { exceptionHandler } from '@/lib/prisma/error';
 import { AdminGuard } from '@/lib/prisma/guards/admin';
-import { AuthGuard } from '@/lib/prisma/guards/auth';
 import { StudentGuard } from '@/lib/prisma/guards/student';
 import { StudentResolver } from '@/lib/prisma/resolvers/student.resolver';
 import { UpdateStudentValidation } from '@/utils/validation/student';
@@ -59,15 +58,9 @@ class StudentsHandler {
   }
 
   @StudentGuard()
-  @Get('/schedules/cyclic')
+  @Get('/schedules')
   getStudentCyclicSchedule(@CurrentUser() user: NonNullable<User>) {
     return StudentResolver.getStudentCyclicSchedule(user);
-  }
-
-  @AuthGuard()
-  @Get('/schedules/no-cyclic')
-  getStudentNoneCyclicSchedule(@CurrentUser() user: NonNullable<User>) {
-    return StudentResolver.getStudentNoneCyclicSchedule(user);
   }
 }
 

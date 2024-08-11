@@ -76,16 +76,18 @@ model Student {
 }
 
 model AttendanceRecord {
-  id                 String           @id @default(uuid())
-  student            Student          @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  studentId          String
-  academicRegister   AcademicRegister @relation(fields: [academicRegisterId], references: [id], onDelete: Cascade)
-  academicRegisterId String
-  lessonOfTheDay     String
-  mark               Int?
-  isAbsent           Boolean          @default(false)
-  subject            Subject          @relation(fields: [subjectId], references: [id])
-  subjectId          String
+  id                       String  @id @default(uuid())
+  studentId                String
+  academicRegisterId       String
+  mark                     Int?
+  isPresent                Boolean @default(true)
+  subjectId                String
+  academicRegisterLessonId String
+
+  academicRegister       AcademicRegister       @relation(fields: [academicRegisterId], references: [id])
+  subject                Subject                @relation(fields: [subjectId], references: [id])
+  student                Student                @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  academicRegisterLesson AcademicRegisterLesson @relation(fields: [academicRegisterLessonId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now()) @db.Timestamp(0)
   updatedAt DateTime @updatedAt @db.Timestamp(0)
@@ -104,122 +106,99 @@ model Faculty {
 }
 
 model Course {
-  id          String        @id @default(uuid())
-  title       String        @db.VarChar(60)
-  description String?       @db.VarChar(60)
-  groups      CourseGroup[]
-  subjects    Subject[]
-  faculty     Faculty?      @relation(fields: [facultyId], references: [id], onDelete: Cascade)
+  id          String  @id @default(uuid())
+  title       String  @db.VarChar(60)
+  description String? @db.VarChar(60)
   facultyId   String?
-  students    Student[]
-  exams       Exam[]
+
+  groups   CourseGroup[]
+  subjects Subject[]
+  faculty  Faculty?      @relation(fields: [facultyId], references: [id], onDelete: Cascade)
+  students Student[]
+  exams    Exam[]
 
   createdAt DateTime @default(now()) @db.Timestamp(0)
   updatedAt DateTime @updatedAt @db.Timestamp(0)
 }
 
 model CourseGroup {
-  id                 String              @id @default(uuid())
-  title              String              @db.VarChar(60)
-  description        String?             @db.VarChar(60)
-  courseId           String?
-  course             Course?             @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  students           Student[]
-  exams              Exam[]
-  schedules          Schedule[]
-  nonCyclicSchedules NonCyclicSchedule[]
-  academicRegisters  AcademicRegister[]
+  id                String             @id @default(uuid())
+  title             String             @db.VarChar(60)
+  description       String?            @db.VarChar(60)
+  courseId          String?
+  course            Course?            @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  students          Student[]
+  exams             Exam[]
+  schedules         Schedule[]
+  academicRegisters AcademicRegister[]
 
   createdAt DateTime @default(now()) @db.Timestamp(0)
   updatedAt DateTime @updatedAt @db.Timestamp(0)
 }
 
 model Subject {
-  id                 String              @id @default(uuid())
-  title              String              @db.VarChar(60)
-  description        String?             @db.VarChar(60)
-  subjectTeacher     SubjectTeacher[]
-  attachments        Attachment[]
-  testQuestions      TestQuestion[]
-  exam               Exam[]
-  schedules          Schedule[]
-  course             Course?             @relation(fields: [courseId], references: [id])
-  courseId           String?
-  nonCyclicSchedules NonCyclicSchedule[]
-  attentanceRecords  AttendanceRecord[]
-  academicRegisters  AcademicRegister[]
+  id                String             @id @default(uuid())
+  title             String             @db.VarChar(60)
+  description       String?            @db.VarChar(60)
+  subjectTeacher    SubjectTeacher[]
+  attachments       Attachment[]
+  testQuestions     TestQuestion[]
+  exam              Exam[]
+  schedules         Schedule[]
+  course            Course?            @relation(fields: [courseId], references: [id])
+  courseId          String?
+  attentanceRecords AttendanceRecord[]
+  academicRegisters AcademicRegister[]
 
   createdAt DateTime @default(now()) @db.Timestamp(0)
   updatedAt DateTime @updatedAt @db.Timestamp(0)
 }
 
 model Schedule {
-  id               String               @id @default(uuid())
-  examType         ScheduleExamTypeEnum
-  title            String
-  description      String?
-  totalHours       Float
-  startDayDate     DateTime
-  endDayDate       DateTime
-  isAssessment     Boolean              @default(false)
-  examDate         DateTime
-  links            String[]
-  academicYear     String
-  thematicPlan     ThematicPlan[]
-  scheduleTeachers ScheduleTeacher[]
-  attachment       Attachment[]
-
-  subject       Subject     @relation(fields: [subjectId], references: [id], onDelete: Cascade)
-  subjectId     String
-  courseGroup   CourseGroup @relation(fields: [courseGroupId], references: [id])
-  courseGroupId String
-
-  createdAt DateTime @default(now()) @db.Timestamp(0)
-  updatedAt DateTime @updatedAt @db.Timestamp(0)
-}
-
-model NonCyclicSchedule {
   id            String               @id @default(uuid())
-  academicYear  String
-  subject       Subject              @relation(fields: [subjectId], references: [id], onDelete: Cascade)
-  subjectId     String
-  totalHours    Float
-  courseGroupId String
-  links         String[]
   title         String
   description   String?
+  totalHours    Float
+  startDayDate  DateTime?
+  endDayDate    DateTime?
+  examDate      DateTime?
+  links         String[]
+  academicYear  String
+  courseGroupId String
+  subjectId     String
   examType      ScheduleExamTypeEnum
+  type          ScheduleTypeEnum
 
-  availableDays    ScheduleTime[]
-  thematicPlan     ThematicPlan[]
+  thematicPlans    ThematicPlan[]
   scheduleTeachers ScheduleTeacher[]
   attachment       Attachment[]
-  courseGroup      CourseGroup       @relation(fields: [courseGroupId], references: [id])
+  subject          Subject           @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  courseGroup      CourseGroup       @relation(fields: [courseGroupId], references: [id], onDelete: Cascade)
+  availableDays    ScheduleTime[]
+  academicRegister AcademicRegister?
 
   createdAt DateTime @default(now()) @db.Timestamp(0)
   updatedAt DateTime @updatedAt @db.Timestamp(0)
 }
 
 model ScheduleTime {
-  id                  String             @id @default(uuid())
-  availableDay        WeekDayEnum
-  period              String
-  nonCyclicSchedule   NonCyclicSchedule? @relation(fields: [nonCyclicScheduleId], references: [id], onDelete: Cascade)
-  nonCyclicScheduleId String?
+  id           String      @id @default(uuid())
+  availableDay WeekDayEnum
+  period       String
+  schedule     Schedule    @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
+  scheduleId   String
 
   createdAt DateTime @default(now()) @db.Timestamp(0)
   updatedAt DateTime @updatedAt @db.Timestamp(0)
 }
 
 model ScheduleTeacher {
-  id                  String             @id @default(uuid())
-  teacherId           String
-  subjectId           String
-  teacher             Teacher            @relation(fields: [teacherId], references: [id], onDelete: Cascade)
-  schedule            Schedule?          @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
-  scheduleId          String?
-  nonCyclicSchedule   NonCyclicSchedule? @relation(fields: [nonCyclicScheduleId], references: [id])
-  nonCyclicScheduleId String?
+  id         String    @id @default(uuid())
+  teacherId  String
+  subjectId  String
+  teacher    Teacher   @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  schedule   Schedule? @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
+  scheduleId String?
 
   createdAt DateTime @default(now()) @db.Timestamp(0)
   updatedAt DateTime @updatedAt @db.Timestamp(0)
@@ -229,12 +208,12 @@ model ThematicPlan {
   id                      String                    @id @default(uuid())
   title                   String?
   totalHours              Float
-  scheduleId              String?
-  schedule                Schedule?                 @relation(fields: [scheduleId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  scheduleId              String
+  academicRegisterId      String?
+  academicRegister        AcademicRegister?         @relation(fields: [academicRegisterId], references: [id])
+  schedule                Schedule                  @relation(fields: [scheduleId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   type                    ThematicSubPlanTypeEnum
   thematicPlanDescription ThematicPlanDescription[]
-  nonCyclicSchedule       NonCyclicSchedule?        @relation(fields: [nonCyclicScheduleId], references: [id], onDelete: Cascade)
-  nonCyclicScheduleId     String?
 
   createdAt DateTime @default(now()) @db.Timestamp(0)
   updatedAt DateTime @updatedAt @db.Timestamp(0)
@@ -246,6 +225,7 @@ model ThematicPlanDescription {
   hour           String
   thematicPlanId String
   thematicPlan   ThematicPlan @relation(fields: [thematicPlanId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  isCompleted    Boolean      @default(false)
 
   createdAt DateTime @default(now()) @db.Timestamp(0)
   updatedAt DateTime @updatedAt @db.Timestamp(0)
@@ -265,20 +245,18 @@ model SubjectTeacher {
 }
 
 model Attachment {
-  id                  String             @id @default(uuid())
-  title               String?            @db.Text
-  description         String?            @db.VarChar(60)
-  key                 String             @db.Text
-  subjectId           String?
-  subject             Subject?           @relation(fields: [subjectId], references: [id], onDelete: Cascade)
-  user                User?              @relation(fields: [userId], references: [id], onDelete: Cascade)
-  mimetype            String             @db.Text
-  userId              String?
-  type                AttachmentTypeEnum
-  schedule            Schedule?          @relation(fields: [scheduleId], references: [id])
-  scheduleId          String?
-  nonCyclicSchedule   NonCyclicSchedule? @relation(fields: [nonCyclicScheduleId], references: [id])
-  nonCyclicScheduleId String?
+  id          String             @id @default(uuid())
+  title       String?            @db.Text
+  description String?            @db.VarChar(60)
+  key         String             @db.Text
+  subjectId   String?
+  subject     Subject?           @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  user        User?              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  mimetype    String             @db.Text
+  userId      String?
+  type        AttachmentTypeEnum
+  schedule    Schedule?          @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
+  scheduleId  String?
 
   createdAt DateTime @default(now()) @db.Timestamp(0)
   updatedAt DateTime @updatedAt @db.Timestamp(0)
@@ -400,17 +378,51 @@ model Option {
 }
 
 model AcademicRegister {
-  id                String             @id @default(uuid())
-  courseGroup       CourseGroup        @relation(fields: [courseGroupId], references: [id])
-  courseGroupId     String
-  subject           Subject            @relation(fields: [subjectId], references: [id])
-  subjectId         String
-  attendanceRecords AttendanceRecord[]
+  id            String @id @default(uuid())
+  courseGroupId String
+  subjectId     String
+  scheduleId    String @unique
+
+  schedule               Schedule                 @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
+  courseGroup            CourseGroup              @relation(fields: [courseGroupId], references: [id])
+  subject                Subject                  @relation(fields: [subjectId], references: [id])
+  attendanceRecords      AttendanceRecord[]
+  academicRegisterDay    AcademicRegisterDay[]
+  academicRegisterLesson AcademicRegisterLesson[]
+  thematicPlans          ThematicPlan[]
 
   createdAt DateTime @default(now()) @db.Timestamp(0)
   updatedAt DateTime @updatedAt @db.Timestamp(0)
 
   @@unique([courseGroupId, subjectId], name: "academicRegisterSubjectCourseGroupId")
+}
+
+model AcademicRegisterDay {
+  id                 String @id @default(uuid())
+  academicRegisterId String
+
+  academicRegister        AcademicRegister         @relation(fields: [academicRegisterId], references: [id], onDelete: Cascade)
+  academicRegisterLessons AcademicRegisterLesson[]
+
+  createdAt DateTime @default(now()) @db.Timestamp(0)
+  updatedAt DateTime @updatedAt @db.Timestamp(0)
+}
+
+model AcademicRegisterLesson {
+  id                    String  @id @default(uuid())
+  academicRegisterId    String
+  academicRegisterDayId String
+  lessonOfTheDay        Int
+  isCompletedLesson     Boolean @default(false)
+
+  attendanceRecord    AttendanceRecord[]
+  academicRegister    AcademicRegister    @relation(fields: [academicRegisterId], references: [id], onDelete: Cascade)
+  academicRegisterDay AcademicRegisterDay @relation(fields: [academicRegisterDayId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @db.Timestamp(0)
+  updatedAt DateTime @updatedAt @db.Timestamp(0)
+
+  @@unique([lessonOfTheDay, academicRegisterDayId], name: "academicRegisterDayUniqueLessonId")
 }
 
 enum UserRoleEnum {
