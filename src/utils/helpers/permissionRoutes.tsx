@@ -15,7 +15,6 @@ import StudentIcon from '@/icons/student_icon.svg';
 import SubjectsIcon from '@/icons/subjects_icon.svg';
 import TeacherIcon from '@/icons/teacher_icon.svg';
 import {
-  ROUTE_ACADEMIC_REGISTER,
   ROUTE_COURSE,
   ROUTE_COURSE_GROUP,
   ROUTE_DASHBOARD,
@@ -23,6 +22,7 @@ import {
   ROUTE_FACULTIES,
   ROUTE_PROFILE,
   ROUTE_SCHEDULES,
+  ROUTE_STUDENT_ACADEMIC_REGISTER,
   ROUTE_STUDENT_EXAM_LIST,
   ROUTE_STUDENT_SCHEDULE,
   ROUTE_STUDENTS,
@@ -100,7 +100,7 @@ export const linkItems: LinkItemsFunction = (user: Maybe<User>) => {
           id: 35,
           name: 'academicRegister',
           icon: <RegisterIcon />,
-          href: ROUTE_ACADEMIC_REGISTER,
+          href: ROUTE_STUDENT_ACADEMIC_REGISTER,
         },
         commonLinks[2],
       ];

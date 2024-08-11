@@ -122,3 +122,14 @@ export class AddEditThematicPlanValidation {
   @Type(() => CourseClassValidation)
   practicalClass: CourseClassValidation;
 }
+
+export class TeacherAttachmentModalValidation {
+  @IsArray()
+  @IsOptional()
+  attachments?: AttachmentValidation[];
+
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => LinkValidation)
+  links: LinkValidation[];
+}

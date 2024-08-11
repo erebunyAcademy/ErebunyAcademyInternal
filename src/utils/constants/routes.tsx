@@ -18,3 +18,4 @@ export const ROUTE_STUDENT_SCHEDULE = '/student-schedule';
 export const ROUTE_TEACHER_SCHEDULE = '/teacher-schedule';
 
 export const ROUTE_ACADEMIC_REGISTER = '/academic-register';
+export const ROUTE_STUDENT_ACADEMIC_REGISTER = '/student-academic-register';

@@ -1,7 +1,11 @@
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
 import { ForbiddenException } from 'next-api-decorators';
 import { User } from 'next-auth';
 import { CreateStudentAttentdanceRecordValidation } from '@/utils/validation/academic-register';
 import prisma from '..';
+
+dayjs.extend(utc);
 
 export class AcademicRegisterResolver {
   static async list(user: NonNullable<User>) {
@@ -270,6 +274,48 @@ export class AcademicRegisterResolver {
       },
       include: {
         attendanceRecords: true,
+      },
+    });
+  }
+
+  static async getStudentAcademicRegisterData(user: NonNullable<User>) {
+    if (!user.student?.courseGroup?.id) {
+      throw new ForbiddenException();
+    }
+
+    const courseGroup = await prisma.courseGroup.findUniqueOrThrow({
+      where: {
+        id: user.student?.courseGroup?.id,
+      },
+    });
+
+    const todayStart = dayjs().utc().startOf('day').toDate();
+    const todayEnd = dayjs().utc().endOf('day').toDate();
+
+    console.log({ todayEnd, todayStart });
+
+    return prisma.schedule.findMany({
+      where: {
+        courseGroupId: courseGroup.id,
+      },
+      include: {
+        academicRegister: {
+          include: {
+            academicRegisterDay: {
+              include: {
+                academicRegisterLessons: {
+                  include: {
+                    attendanceRecord: {
+                      where: {
+                        studentId: user.student.id,
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
       },
     });
   }
