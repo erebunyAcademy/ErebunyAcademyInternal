@@ -19,6 +19,7 @@ import { CreateEditNonCylicScheduleValidation } from '@/utils/validation/non-cyc
 import {
   AddEditThematicPlanValidation,
   CreateEditScheduleValidation,
+  TeacherAttachmentModalValidation,
 } from '@/utils/validation/schedule';
 
 @Catch(exceptionHandler)
@@ -77,6 +78,14 @@ class ScheduleHandler {
   @Get('/:scheduleId')
   _getCyclicScheduleDetails(@Param('scheduleId') scheduleId: string) {
     return ScheduleResolver.getScheduleById(scheduleId);
+  }
+
+  @Patch('/:scheduleId/attachments')
+  _updateScheduleAttachments(
+    @Param('scheduleId') scheduleId: string,
+    @Body(ValidationPipe) input: TeacherAttachmentModalValidation,
+  ) {
+    return ScheduleResolver.createUpdateScheduleAttachment(scheduleId, input);
   }
 }
 

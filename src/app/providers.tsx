@@ -27,24 +27,20 @@ const theme: ThemeConfig = extendTheme({
 const Providers = ({ children }: { children: ReactNode }) => {
   const toast = useToast();
   const t = useTranslations();
+  const config = {
+    onError: (err: { message: string }) => {
+      toast({ title: t(err.message), status: 'error', position: 'bottom-right' });
+    },
+  };
   const gqlGlobalOptions: QueryClientConfig = {
-    queryCache: new QueryCache({
-      onError: err => {
-        console.log({ err });
-        toast({ title: t(err.message), status: 'error', position: 'bottom-right' });
-      },
-    }),
     defaultOptions: {
       queries: {
         retry: 1,
         refetchOnWindowFocus: false,
       },
     },
-    mutationCache: new MutationCache({
-      onError: err => {
-        toast({ title: t(err.message), status: 'error', position: 'bottom-right' });
-      },
-    }),
+    queryCache: new QueryCache(config),
+    mutationCache: new MutationCache(config),
   };
 
   return (

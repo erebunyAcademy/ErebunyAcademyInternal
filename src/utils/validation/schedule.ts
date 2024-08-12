@@ -129,6 +129,7 @@ export class TeacherAttachmentModalValidation {
   attachments?: AttachmentValidation[];
 
   @IsArray()
+  @IsOptional()
   @ValidateNested({ each: true })
   @Type(() => LinkValidation)
   links: LinkValidation[];

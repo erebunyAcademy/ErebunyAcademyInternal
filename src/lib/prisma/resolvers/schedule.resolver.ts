@@ -6,6 +6,7 @@ import { CreateEditNonCylicScheduleValidation } from '@/utils/validation/non-cyc
 import {
   AddEditThematicPlanValidation,
   CreateEditScheduleValidation,
+  TeacherAttachmentModalValidation,
 } from '@/utils/validation/schedule';
 import { orderBy } from './utils/common';
 import prisma from '..';
@@ -244,6 +245,68 @@ export class ScheduleResolver {
 
       return createdSchedule;
     }
+  }
+
+  static async createUpdateScheduleAttachment(
+    scheduleId: string,
+    { links, attachments }: TeacherAttachmentModalValidation,
+  ) {
+    const schedule = await prisma.schedule.findUniqueOrThrow({
+      where: {
+        id: scheduleId,
+      },
+    });
+
+    await prisma.schedule.update({
+      where: {
+        id: schedule.id,
+      },
+      data: {
+        links: links.map(({ link }) => link),
+      },
+    });
+
+    const existingAttachments = await prisma.attachment.findMany({
+      where: {
+        scheduleId: schedule.id,
+      },
+    });
+
+    const existingAttachmentKeys = new Set(existingAttachments.map(att => att.key));
+    const newAttachmentKeys = new Set(attachments?.map(att => att.key) || []);
+
+    const attachmentsToDelete = existingAttachments.filter(att => !newAttachmentKeys.has(att.key));
+
+    for (const attachment of attachmentsToDelete) {
+      const filePath = path.join(process.cwd(), 'uploads', attachment.key);
+      if (filePath) {
+        await fs.promises.unlink(filePath);
+      }
+    }
+
+    await prisma.attachment.deleteMany({
+      where: {
+        key: {
+          in: attachmentsToDelete.map(att => att.key),
+        },
+      },
+    });
+
+    const attachmentsToCreate = attachments?.filter(att => !existingAttachmentKeys.has(att.key));
+
+    if (attachmentsToCreate?.length) {
+      await prisma.attachment.createMany({
+        data: attachmentsToCreate.map(attachment => ({
+          title: attachment.title,
+          key: attachment.key,
+          scheduleId: schedule.id,
+          type: AttachmentTypeEnum.FILE,
+          mimetype: attachment.mimetype,
+        })),
+      });
+    }
+
+    return true;
   }
 
   static async updateSchedule(
