@@ -4,6 +4,7 @@ import { CreateEditNonCylicScheduleValidation } from '@/utils/validation/non-cyc
 import {
   AddEditThematicPlanValidation,
   CreateEditScheduleValidation,
+  TeacherAttachmentModalValidation,
 } from '@/utils/validation/schedule';
 import $apiClient from '../axiosClient';
 import { QueryParams } from '../types/common';
@@ -54,5 +55,9 @@ export class ScheduleService {
 
   static getScheduleById(scheduleId: string): Promise<GetScheduleByIdModel> {
     return $apiClient.get<GetScheduleByIdModel>(`/schedules/${scheduleId}`);
+  }
+
+  static updateScheduleAttachments(scheduleId: string, input: TeacherAttachmentModalValidation) {
+    return $apiClient.patch(`/schedules/${scheduleId}/attachments`, input);
   }
 }

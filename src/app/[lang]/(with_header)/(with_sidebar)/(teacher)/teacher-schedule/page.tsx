@@ -26,7 +26,7 @@ const StudentSchedule = ({ params }: { params: { lang: Locale } }) => {
     null,
   );
 
-  const { data: cyclicData } = useQuery({
+  const { data: cyclicData, refetch } = useQuery({
     queryFn: TeacherService.getTeacherSchedules,
     queryKey: ['teacher-cyclic-schedule-list'],
     initialData: [],
@@ -37,8 +37,6 @@ const StudentSchedule = ({ params }: { params: { lang: Locale } }) => {
     onOpen: openAttachmentModal,
     onClose: closeAttachmentModal,
   } = useDisclosure();
-
-  console.log(cyclicData, '-----------');
 
   const cyclicColumnHelper = createColumnHelper<TeacherScheduleListSingleType>();
 
@@ -164,6 +162,7 @@ const StudentSchedule = ({ params }: { params: { lang: Locale } }) => {
           isModalOpen={isAttachmentModalOpen}
           closeModal={closeAttachmentModal}
           selectedSchedule={selectedSchedule}
+          refetch={refetch}
         />
       )}
     </Fragment>
