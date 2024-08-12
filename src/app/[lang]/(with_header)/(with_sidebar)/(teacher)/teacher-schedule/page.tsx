@@ -1,6 +1,6 @@
 'use client';
-import React, { Fragment } from 'react';
-import { Button, Flex, MenuItem } from '@chakra-ui/react';
+import React, { Fragment, useState } from 'react';
+import { Button, Flex, MenuItem, useDisclosure } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import { createColumnHelper } from '@tanstack/react-table';
 import dayjs from 'dayjs';
@@ -16,16 +16,29 @@ import { academicYearListData } from '@/utils/constants/common';
 import { ROUTE_TEACHER_SCHEDULE } from '@/utils/constants/routes';
 import { languagePathHelper } from '@/utils/helpers/language';
 import { TeacherScheduleListSingleType } from '@/utils/models/teachers';
+import CreateEditAttachment from './[...slug]/_components/AttachmentModal';
 
 const StudentSchedule = ({ params }: { params: { lang: Locale } }) => {
   const router = useRouter();
   const t = useTranslations();
+
+  const [selectedSchedule, setSelectedSchedule] = useState<TeacherScheduleListSingleType | null>(
+    null,
+  );
 
   const { data: cyclicData } = useQuery({
     queryFn: TeacherService.getTeacherSchedules,
     queryKey: ['teacher-cyclic-schedule-list'],
     initialData: [],
   });
+
+  const {
+    isOpen: isAttachmentModalOpen,
+    onOpen: openAttachmentModal,
+    onClose: closeAttachmentModal,
+  } = useDisclosure();
+
+  console.log(cyclicData, '-----------');
 
   const cyclicColumnHelper = createColumnHelper<TeacherScheduleListSingleType>();
 
@@ -37,9 +50,22 @@ const StudentSchedule = ({ params }: { params: { lang: Locale } }) => {
           <MenuItem
             color="green"
             onClick={() => {
-              router.push(`${ROUTE_TEACHER_SCHEDULE}/${getValue()}`);
+              router.push(
+                `${languagePathHelper(params.lang || 'en', `${ROUTE_TEACHER_SCHEDULE}/${getValue()}`)}`,
+              );
             }}>
             {t('startLesson')}
+          </MenuItem>
+          <MenuItem
+            color="green"
+            onClick={() => {
+              const schedule = cyclicData.find(schedule => schedule.id === getValue());
+              if (schedule) {
+                setSelectedSchedule(schedule);
+                openAttachmentModal();
+              }
+            }}>
+            {t('addLinks')}
           </MenuItem>
         </ActionButtons>
       ),
@@ -133,6 +159,13 @@ const StudentSchedule = ({ params }: { params: { lang: Locale } }) => {
           <SimpleTable columns={scheduleColumns as any} data={cyclicData} title="schedules" />
         )}
       </Flex>
+      {selectedSchedule && (
+        <CreateEditAttachment
+          isModalOpen={isAttachmentModalOpen}
+          closeModal={closeAttachmentModal}
+          selectedSchedule={selectedSchedule}
+        />
+      )}
     </Fragment>
   );
 };

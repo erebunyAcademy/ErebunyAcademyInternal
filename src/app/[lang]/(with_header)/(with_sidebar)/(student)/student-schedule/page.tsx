@@ -8,9 +8,11 @@ import { useTranslations } from 'next-intl';
 import { v4 as uuidv4 } from 'uuid';
 import { StudentService } from '@/api/services/student.service';
 import SimpleTable from '@/components/organisms/SimpleTable';
+import { Locale } from '@/i18n';
+import { languagePathHelper } from '@/utils/helpers/language';
 import { StudentScheduleListSingleType } from '@/utils/models/schedule';
 
-const StudentSchedule = () => {
+const StudentSchedule = ({ params }: { params: { lang: Locale } }) => {
   const t = useTranslations();
 
   const { data: cyclicData } = useQuery({
@@ -26,7 +28,10 @@ const StudentSchedule = () => {
       id: uuidv4(),
       header: t('seeDetails'),
       cell: info => (
-        <Button as={Link} href={`/cyclic-schedule/${info.getValue()}`} variant="link">
+        <Button
+          as={Link}
+          href={`${languagePathHelper(params.lang || 'en', `/schedules/${info.getValue()}`)}`}
+          variant="link">
           {t('seeDetails')}
         </Button>
       ),

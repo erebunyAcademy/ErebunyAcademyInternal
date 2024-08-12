@@ -270,5 +270,17 @@
   "present": "Present",
   "endClass": "End class",
   "forLessonTitleStart": "Lesson",
-  "forLessonTitleEnd": "of the day"
+  "forLessonTitleEnd": "of the day",
+  "startLesson": "Start lesson",
+  "save": "Save",
+  "end": "End",
+  "THEORETICAL": "THEORETICAL",
+  "PRACTICAL": "PRACTICAL",
+  "addLinks": "Add links",
+  "lessonOfTheDay": "Lesson of the day",
+  "attendanceStatus": "Attendance status",
+  "absent": "Absent",
+  "noRecord": "No Record",
+  "noMark": "No Mark",
+  "lessonDay": "Lesson day"
 }

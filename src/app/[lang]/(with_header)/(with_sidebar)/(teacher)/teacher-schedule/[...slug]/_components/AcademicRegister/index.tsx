@@ -185,7 +185,7 @@ const AcademicRegister: FC<AcademicRegisterProps> = ({ schedule, lang }) => {
                       )}
                     />
                   </Td>
-                  <Td border="1px solid #eee" minWidth="200px">
+                  <Td border="1px solid #eee" minWidth="230px">
                     <Controller
                       control={control}
                       name={`students.${index}.mark`}
@@ -213,7 +213,7 @@ const AcademicRegister: FC<AcademicRegisterProps> = ({ schedule, lang }) => {
           </Tbody>
         </Table>
       </Box>
-      <Flex justifyContent="space-between" mt="20px">
+      <Flex justifyContent="space-between" mt="20px" mb="20px">
         <Button isDisabled={!isValid} onClick={handleSubmit(onSubmit)}>
           {t('save')}
         </Button>

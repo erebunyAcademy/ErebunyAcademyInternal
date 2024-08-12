@@ -270,5 +270,17 @@
   "present": "Присутствует",
   "endClass": "Завершить занятие",
   "forLessonTitleStart": "Уроки",
-  "forLessonTitleEnd": "дня"
+  "forLessonTitleEnd": "дня",
+  "startLesson": "Начать урок",
+  "save": "Сохранить",
+  "end": "Завершить",
+  "THEORETICAL": "THEORETICAL",
+  "PRACTICAL": "PRACTICAL",
+  "addLinks": " Добавить ссылки",
+  "lessonOfTheDay": "Урок дня",
+  "attendanceStatus": "Статус посещаемости",
+  "absent": "Отсутствует",
+  "noRecord": "Нет записи",
+  "noMark": "Нет оценки",
+  "lessonDay": "День занятия"
 }

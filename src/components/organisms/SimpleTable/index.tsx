@@ -37,6 +37,7 @@ const SimpleTable = <T extends { id: string }>({
         fontSize={{ base: '18px', sm: '24px' }}
         textAlign="center"
         fontWeight={700}
+        mt="20px"
         mb="15px">
         {t(title)}
       </Text>
