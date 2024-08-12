@@ -3,6 +3,7 @@ import { Type } from 'class-transformer';
 import {
   IsArray,
   IsBoolean,
+  IsDate,
   IsNotEmpty,
   IsOptional,
   IsString,
@@ -36,4 +37,14 @@ export class CreateStudentAttentdanceRecordValidation {
   @IsBoolean()
   @IsOptional()
   isCompletedLesson: boolean;
+}
+
+export class GetStudentAcademicRegisterDataValidation {
+  @IsDate()
+  @IsOptional()
+  startDate: Date;
+
+  @IsDate()
+  @IsOptional()
+  endDate: Date;
 }

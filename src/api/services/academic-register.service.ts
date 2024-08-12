@@ -1,4 +1,7 @@
-import { GetScheduleDataType } from '@/utils/models/academic-register';
+import {
+  GetScheduleDataType,
+  GetStudentAcademicRegisterModel,
+} from '@/utils/models/academic-register';
 import { CourseGroupAdminListModel } from '@/utils/models/courseGroup';
 import { CreateStudentAttentdanceRecordValidation } from '@/utils/validation/academic-register';
 import $apiClient from '../axiosClient';
@@ -10,6 +13,7 @@ export class AcademicRegisterService {
   static getNonCyclicRegisterList() {
     return $apiClient.get<CourseGroupAdminListModel>('/academic-registers/cyclic-list');
   }
+
   static createStudentMark(
     input: CreateStudentAttentdanceRecordValidation,
     scheduleId: string,
@@ -21,6 +25,17 @@ export class AcademicRegisterService {
         lessonOfTheDay,
         academicRegisterId,
       },
+    });
+  }
+
+  static getAcademicRegisterData(
+    params: {
+      startDate: Date;
+      endDate: Date;
+    } | null,
+  ): Promise<GetStudentAcademicRegisterModel> {
+    return $apiClient.get<GetStudentAcademicRegisterModel>(`/academic-registers`, {
+      params: params ?? {},
     });
   }
 }

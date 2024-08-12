@@ -278,38 +278,41 @@ export class AcademicRegisterResolver {
     });
   }
 
-  static async getStudentAcademicRegisterData(user: NonNullable<User>) {
-    if (!user.student?.courseGroup?.id) {
+  static async getAcademicRegisterdata(
+    user: NonNullable<User>,
+    startDate?: string,
+    endDate?: string,
+  ) {
+    if (!user.student?.id) {
       throw new ForbiddenException();
     }
 
-    const courseGroup = await prisma.courseGroup.findUniqueOrThrow({
+    const todayStart = dayjs(startDate).utc().startOf('day').toDate();
+    const todayEnd = dayjs(endDate).utc().endOf('day').toDate();
+
+    return prisma.academicRegisterDay.findMany({
       where: {
-        id: user.student?.courseGroup?.id,
-      },
-    });
-
-    const todayStart = dayjs().utc().startOf('day').toDate();
-    const todayEnd = dayjs().utc().endOf('day').toDate();
-
-    console.log({ todayEnd, todayStart });
-
-    return prisma.schedule.findMany({
-      where: {
-        courseGroupId: courseGroup.id,
+        createdAt: {
+          gt: todayStart,
+          lt: todayEnd,
+        },
       },
       include: {
-        academicRegister: {
+        academicRegisterLessons: {
+          orderBy: {
+            lessonOfTheDay: 'asc',
+          },
           include: {
-            academicRegisterDay: {
+            attendanceRecord: {
+              where: {
+                studentId: user.student.id,
+              },
+            },
+            academicRegister: {
               include: {
-                academicRegisterLessons: {
+                schedule: {
                   include: {
-                    attendanceRecord: {
-                      where: {
-                        studentId: user.student.id,
-                      },
-                    },
+                    subject: true,
                   },
                 },
               },

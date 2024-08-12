@@ -35,6 +35,15 @@ class AcademicRegisterHandler {
       lessonOfTheDay,
     );
   }
+
+  @Get()
+  getAcademicRegisterData(
+    @CurrentUser() user: NonNullable<User>,
+    @Query('startDate') startDate?: string,
+    @Query('endDate') endDate?: string,
+  ) {
+    return AcademicRegisterResolver.getAcademicRegisterdata(user, startDate, endDate);
+  }
 }
 
 export default createHandler(AcademicRegisterHandler);
