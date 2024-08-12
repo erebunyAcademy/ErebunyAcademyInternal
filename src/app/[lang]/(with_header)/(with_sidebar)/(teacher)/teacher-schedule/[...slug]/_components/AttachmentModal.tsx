@@ -7,6 +7,7 @@ import { useMutation } from '@tanstack/react-query';
 import { useTranslations } from 'next-intl';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import { v4 as uuidv4 } from 'uuid';
+import { ScheduleService } from '@/api/services/schedule.service';
 import { UploadService } from '@/api/services/upload.service';
 import { FormInput } from '@/components/atoms';
 import Modal from '@/components/molecules/Modal';
@@ -19,7 +20,7 @@ type CreateEditAttachmentProps = {
   isModalOpen: boolean;
   closeModal: () => void;
   selectedSchedule: TeacherScheduleListSingleType;
-  // refetch: () => void;
+  refetch: () => void;
 };
 
 const resolver = classValidatorResolver(TeacherAttachmentModalValidation);
@@ -33,6 +34,7 @@ const CreateEditAttachment: FC<CreateEditAttachmentProps> = ({
   isModalOpen,
   closeModal,
   selectedSchedule,
+  refetch,
 }) => {
   const t = useTranslations();
   const [files, setFiles] = useState<Maybe<FileWithLocalUrl[]>>(null);
@@ -108,6 +110,15 @@ const CreateEditAttachment: FC<CreateEditAttachmentProps> = ({
     mutationFn: (data: { file: FormData; key: string }) => UploadService.uploadFile(data),
   });
 
+  const { mutate: updateAttachment } = useMutation({
+    mutationFn: (data: TeacherAttachmentModalValidation) =>
+      ScheduleService.updateScheduleAttachments(selectedSchedule.id, data),
+    onSuccess: () => {
+      closeModal();
+      refetch();
+    },
+  });
+
   const onSubmitHandler = useCallback(
     (data: TeacherAttachmentModalValidation) => {
       const attachmentKeys: AttachmentValidation[] = [];
@@ -145,8 +156,10 @@ const CreateEditAttachment: FC<CreateEditAttachmentProps> = ({
       } else if ((files || [])?.length > 0) {
         data.attachments = attachmentKeys;
       }
+
+      updateAttachment(data);
     },
-    [files, selectedSchedule, uploadAttachment],
+    [files, selectedSchedule, uploadAttachment, updateAttachment],
   );
 
   const removeFile = (localUrl: string) => {
