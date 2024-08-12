@@ -1,6 +1,7 @@
 'use client';
 import React, { FC } from 'react';
 import { Box, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
+import { useTranslations } from 'next-intl';
 import { periodListData } from '@/utils/constants/common';
 import { GetStudentAcademicRegisterModel } from '@/utils/models/academic-register';
 
@@ -9,16 +10,18 @@ type AcademicRegisterProps = {
 };
 
 const AcademicRegister: FC<AcademicRegisterProps> = ({ academicRegisterData }) => {
+  const t = useTranslations();
+
   return (
-    <Box>
-      <Table variant="simple">
+    <Box width="100%">
+      <Table variant="simple" width="100%" mt="50px">
         <Thead>
           <Tr>
-            <Th>Subject</Th>
-            <Th>Lesson</Th>
-            <Th>Lesson of the day</Th>
-            <Th>Attendance Status</Th>
-            <Th>Mark</Th>
+            <Th>{t('subject')}</Th>
+            <Th>{t('lessonDay')}</Th>
+            <Th>{t('lessonOfTheDay')}</Th>
+            <Th>{t('attendanceStatus')}</Th>
+            <Th>{t('marks')}</Th>
           </Tr>
         </Thead>
         <Tbody>
@@ -49,15 +52,15 @@ const AcademicRegister: FC<AcademicRegisterProps> = ({ academicRegisterData }) =
                       <Td>
                         {lesson.attendanceRecord.length > 0
                           ? lesson.attendanceRecord[0].isPresent
-                            ? 'Present'
-                            : 'Absent'
-                          : 'No Record'}
+                            ? t('present')
+                            : t('absent')
+                          : t('noRecord')}
                       </Td>
                       <Td>
                         {lesson.attendanceRecord.length > 0 &&
                         lesson.attendanceRecord[0].mark !== null
                           ? lesson.attendanceRecord[0].mark
-                          : 'No Mark'}
+                          : t('noMark')}
                       </Td>
                     </Tr>
                   ))}

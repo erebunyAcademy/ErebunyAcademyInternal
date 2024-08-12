@@ -11,15 +11,15 @@ import { UploadService } from '@/api/services/upload.service';
 import { FormInput } from '@/components/atoms';
 import Modal from '@/components/molecules/Modal';
 import { Maybe } from '@/utils/models/common';
-import { ScheduleSingleModel } from '@/utils/models/schedule';
+import { TeacherScheduleListSingleType } from '@/utils/models/teachers';
 import { AttachmentValidation } from '@/utils/validation';
 import { TeacherAttachmentModalValidation } from '@/utils/validation/schedule';
 
 type CreateEditAttachmentProps = {
   isModalOpen: boolean;
   closeModal: () => void;
-  selectedSchedule: ScheduleSingleModel;
-  refetch: () => void;
+  selectedSchedule: TeacherScheduleListSingleType;
+  // refetch: () => void;
 };
 
 const resolver = classValidatorResolver(TeacherAttachmentModalValidation);
@@ -158,7 +158,7 @@ const CreateEditAttachment: FC<CreateEditAttachmentProps> = ({
       isOpen={isModalOpen}
       onClose={closeModal}
       isDisabled={!isValid}
-      title="cyclicSchedule"
+      title="links"
       size="6xl"
       primaryAction={handleSubmit(onSubmitHandler)}
       actionText={selectedSchedule ? 'edit' : 'create'}>
