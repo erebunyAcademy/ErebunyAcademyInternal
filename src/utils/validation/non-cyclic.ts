@@ -5,6 +5,7 @@ import {
   IsArray,
   IsEnum,
   IsNotEmpty,
+  IsNumber,
   IsOptional,
   IsString,
   IsUrl,
@@ -56,11 +57,11 @@ export class AttachmentValidation {
 export class AvailableDaysValidation {
   @IsEnum(WeekDayEnum)
   @IsNotEmpty()
-  availableDay: WeekDayEnum;
+  dayOfWeek: WeekDayEnum;
 
-  @IsString()
+  @IsNumber()
   @IsNotEmpty()
-  period: string;
+  lessonOfTheDay: number;
 }
 
 export class CreateEditNonCylicScheduleValidation {

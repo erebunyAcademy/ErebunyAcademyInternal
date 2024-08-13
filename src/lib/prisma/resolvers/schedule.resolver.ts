@@ -225,8 +225,8 @@ export class ScheduleResolver {
 
       await prisma.scheduleTime.createMany({
         data: availableDays.map(day => ({
-          availableDay: day.availableDay,
-          period: day.period,
+          dayOfWeek: day.dayOfWeek,
+          lessonOfTheDay: day.lessonOfTheDay,
           scheduleId: createdSchedule.id,
         })),
       });
@@ -443,8 +443,8 @@ export class ScheduleResolver {
 
         await prisma.scheduleTime.createMany({
           data: availableDays.map(day => ({
-            availableDay: day.availableDay,
-            period: day.period,
+            dayOfWeek: day.dayOfWeek,
+            lessonOfTheDay: +day.lessonOfTheDay,
             scheduleId: schedule.id,
           })),
         });
@@ -579,6 +579,7 @@ export class ScheduleResolver {
           },
         },
         subject: true,
+        availableDays: true,
         courseGroup: {
           include: {
             students: {
@@ -593,7 +594,6 @@ export class ScheduleResolver {
             },
           },
         },
-        availableDays: true,
       },
     });
   }

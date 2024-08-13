@@ -19,7 +19,6 @@ import dayjs from 'dayjs';
 import { useTranslations } from 'next-intl';
 import { ScheduleService } from '@/api/services/schedule.service';
 import NoDataFound from '@/components/molecules/NoDataFound';
-import { academicYearListData } from '@/utils/constants/common';
 import { GetScheduleByIdModel } from '@/utils/models/schedule';
 
 const ScheduleDetails = ({ params }: { params: { scheduleId: string } }) => {
@@ -30,7 +29,7 @@ const ScheduleDetails = ({ params }: { params: { scheduleId: string } }) => {
     queryFn: () => ScheduleService.getScheduleById(params.scheduleId),
   });
 
-  const academicYear = academicYearListData.find(year => year.id === scheduleData?.academicYear);
+  console.log({ scheduleData });
 
   return (
     <Box m={{ base: '16px', lg: '40px' }} width="100%">
@@ -78,7 +77,7 @@ const ScheduleDetails = ({ params }: { params: { scheduleId: string } }) => {
           <Tbody>
             <Tr>
               <Th>{t('academicYear')}:</Th>
-              <Td>{academicYear?.title}</Td>
+              <Td>{scheduleData?.academicYear}</Td>
             </Tr>
             <Tr>
               <Th>{t('totalHours')}:</Th>

@@ -182,11 +182,11 @@ model Schedule {
 }
 
 model ScheduleTime {
-  id           String      @id @default(uuid())
-  availableDay WeekDayEnum
-  period       String
-  schedule     Schedule    @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
-  scheduleId   String
+  id             String      @id @default(uuid())
+  dayOfWeek      WeekDayEnum
+  lessonOfTheDay Int
+  schedule       Schedule    @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
+  scheduleId     String
 
   createdAt DateTime @default(now()) @db.Timestamp(0)
   updatedAt DateTime @updatedAt @db.Timestamp(0)

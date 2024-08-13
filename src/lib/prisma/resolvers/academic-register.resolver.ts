@@ -268,6 +268,7 @@ export class AcademicRegisterResolver {
     return prisma.academicRegister.findUnique({
       where: {
         academicRegisterSubjectCourseGroupId: {
+          scheduleId,
           courseGroupId: courseGroup.id,
           subjectId: courseGroup.schedules[0].subjectId,
         },
@@ -324,8 +325,6 @@ export class AcademicRegisterResolver {
   }
 
   static async getTeacherAcademicRegisterLessonList(scheduleId: string, user: NonNullable<User>) {
-    // const session = await serverSession();
-
     if (!user?.teacher?.id) {
       throw new ForbiddenException();
     }

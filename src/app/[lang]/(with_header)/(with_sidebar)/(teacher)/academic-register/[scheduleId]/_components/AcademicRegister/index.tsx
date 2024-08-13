@@ -22,7 +22,7 @@ import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import { AcademicRegisterService } from '@/api/services/academic-register.service';
 import { SelectLabel } from '@/components/atoms';
 import Modal from '@/components/molecules/Modal';
-import { markAttentandOptionData, periodListData } from '@/utils/constants/common';
+import { markAttendantOptionData, periodListData } from '@/utils/constants/common';
 import { GetAcademicRegisterType, GetScheduleByIdType } from '@/utils/models/academic-register';
 import { Maybe } from '@/utils/models/common';
 import { UserStudentModel } from '@/utils/models/student';
@@ -169,7 +169,7 @@ const AcademicRegister: FC<AcademicRegisterProps> = ({
                       render={({ field }) => (
                         <SelectLabel
                           isRequired
-                          options={markAttentandOptionData}
+                          options={markAttendantOptionData}
                           valueLabel="id"
                           nameLabel="title"
                           onChange={e => {

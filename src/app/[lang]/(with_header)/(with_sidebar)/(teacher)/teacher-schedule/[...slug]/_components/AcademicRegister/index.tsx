@@ -27,7 +27,7 @@ import { SelectLabel } from '@/components/atoms';
 import Modal from '@/components/molecules/Modal';
 import SimpleTable from '@/components/organisms/SimpleTable';
 import { Locale } from '@/i18n';
-import { markAttentandOptionData, periodListData } from '@/utils/constants/common';
+import { markAttendantOptionData, periodListData } from '@/utils/constants/common';
 import { ROUTE_TEACHER_SCHEDULE } from '@/utils/constants/routes';
 import { languagePathHelper } from '@/utils/helpers/language';
 import { GetScheduleByIdModel } from '@/utils/models/schedule';
@@ -216,7 +216,7 @@ const AcademicRegister: FC<AcademicRegisterProps> = ({ schedule, lang }) => {
                       render={({ field }) => (
                         <SelectLabel
                           isRequired
-                          options={markAttentandOptionData}
+                          options={markAttendantOptionData}
                           valueLabel="id"
                           nameLabel="title"
                           onChange={e => {

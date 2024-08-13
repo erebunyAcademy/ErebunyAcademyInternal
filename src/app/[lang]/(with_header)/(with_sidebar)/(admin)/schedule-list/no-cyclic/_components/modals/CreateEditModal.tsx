@@ -3,7 +3,7 @@ import React, { ChangeEvent, FC, useCallback, useMemo, useState } from 'react';
 import { AddIcon, DeleteIcon } from '@chakra-ui/icons';
 import { Box, Button, Divider, Flex, IconButton, Input, Stack, Text } from '@chakra-ui/react';
 import { classValidatorResolver } from '@hookform/resolvers/class-validator';
-import { ScheduleTypeEnum } from '@prisma/client';
+import { ScheduleTypeEnum, WeekDayEnum } from '@prisma/client';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useTranslations } from 'next-intl';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
@@ -68,7 +68,7 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
       attachments: [],
       links: [],
       academicYear: '2024-2025',
-      availableDays: [{ availableDay: 'MONDAY', period: '1-2' }],
+      availableDays: [{ dayOfWeek: 'MONDAY', lessonOfTheDay: 1 }],
     },
   });
 
@@ -398,7 +398,7 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
         {availableDayFields.map((field, index: number) => (
           <Flex key={field.id} gap={24}>
             <Controller
-              name={`availableDays.${index}.availableDay`}
+              name={`availableDays.${index}.dayOfWeek`}
               control={control}
               render={({ field: { onChange, value, name } }) => (
                 <SelectLabel
@@ -416,14 +416,14 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
               )}
             />
             <Controller
-              name={`availableDays.${index}.period`}
+              name={`availableDays.${index}.lessonOfTheDay`}
               control={control}
               render={({ field: { onChange, value, name } }) => (
                 <SelectLabel
                   name={name}
                   isRequired
                   options={periodListData}
-                  labelName="period"
+                  labelName="lessonOfTheDay"
                   valueLabel="id"
                   nameLabel="title"
                   onChange={onChange}
@@ -446,7 +446,7 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
         ))}
         <Button
           mt={2}
-          onClick={() => appendAvailableDay({ availableDay: 'MONDAY', period: '' })}
+          onClick={() => appendAvailableDay({ dayOfWeek: WeekDayEnum.MONDAY, lessonOfTheDay: 1 })}
           leftIcon={<AddIcon />}>
           {t('addClassDay')}
         </Button>

@@ -1,4 +1,4 @@
-import React, { FC, memo } from 'react';
+import React, { ChangeEventHandler, FC, memo } from 'react';
 import {
   FormControl,
   FormErrorMessage,
@@ -16,8 +16,8 @@ interface SelectLabelProps extends SelectFieldProps {
   valueLabel: string;
   nameLabel: string;
   labelName?: string;
-  onChange?: React.ChangeEventHandler<HTMLSelectElement>;
-  value: string;
+  onChange?: ChangeEventHandler<HTMLSelectElement>;
+  value: string | number;
   name?: string;
   placeholder?: string;
   isRequired?: boolean;

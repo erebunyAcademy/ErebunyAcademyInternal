@@ -101,11 +101,7 @@ export class CourseGroupResolver {
   }
 
   static async getCourseGroupListBySubjectId(subjectId: string) {
-    const course = await prisma.course.findFirst({
-      where: {},
-    });
-
-    return prisma.subject.findMany({
+    return prisma.subject.findUniqueOrThrow({
       where: {
         id: subjectId,
       },
