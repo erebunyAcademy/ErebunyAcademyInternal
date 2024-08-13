@@ -60,6 +60,11 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
     enabled: isCreateEditModalOpen,
   });
 
+  const courseAndFacultyListDate = (courseQueryData || []).map(course => ({
+    id: course.id,
+    title: `${course.title} (${course.faculty?.title})`,
+  }));
+
   const { mutate: createFaculty } = useMutation({
     mutationFn: SubjectService.createSubject,
     onSuccess() {
@@ -137,7 +142,7 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
           <SelectLabel
             name={name}
             isRequired
-            options={courseQueryData || []}
+            options={courseAndFacultyListDate}
             labelName="course"
             valueLabel="id"
             nameLabel="title"
