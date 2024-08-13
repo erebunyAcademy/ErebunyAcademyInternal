@@ -68,7 +68,7 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
       courseGroupId: '',
       attachments: [],
       links: [],
-      academicYear: '2024-2025',
+      academicYear: '',
     },
   });
 
@@ -132,12 +132,13 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
     },
   });
 
-  const courseId = watch('subjectId');
+  const subjectId = watch('subjectId');
+  console.log(subjectId);
 
   const { data: courseGroupQueryData } = useQuery<GetCourseGroupsBySubjectId>({
     queryKey: ['course-group'],
-    queryFn: () => CourseGroupService.getCourseGroupsBySubjectId(courseId),
-    enabled: !!courseId,
+    queryFn: () => CourseGroupService.getCourseGroupsBySubjectId(subjectId),
+    enabled: !!subjectId,
   });
 
   const { data: subjectList } = useQuery({

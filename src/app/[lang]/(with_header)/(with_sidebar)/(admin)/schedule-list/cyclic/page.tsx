@@ -183,7 +183,7 @@ export default function Schedule({ params }: { params: { lang: Locale } }) {
     columnHelper.accessor('academicYear', {
       id: uuidv4(),
       cell: info => {
-        const academicYear = academicYearListData.find(year => year.id === info.getValue());
+        const academicYear = academicYearListData.find(year => year.id === +info.getValue());
         return academicYear?.title;
       },
       header: t('academicYear'),
