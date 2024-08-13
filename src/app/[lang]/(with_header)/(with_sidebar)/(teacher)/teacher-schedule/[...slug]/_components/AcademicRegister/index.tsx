@@ -91,7 +91,7 @@ const AcademicRegister: FC<AcademicRegisterProps> = ({ schedule, lang }) => {
   });
 
   const { isOpen: chooseLessonModalOpen, onClose: closeChooseLessonModal } = useDisclosure({
-    defaultIsOpen: schedule.type === 'CYCLIC' && !selectedLessonOfTheDay,
+    defaultIsOpen: !selectedLessonOfTheDay,
   });
 
   const {
@@ -276,7 +276,7 @@ const AcademicRegister: FC<AcademicRegisterProps> = ({ schedule, lang }) => {
         <SelectLabel
           isRequired
           options={periodListData}
-          disabledOptions={data?.academicRegisterLesson.map(lesson => lesson.lessonOfTheDay)}
+          disabledOptions={data?.academicRegisterLesson?.map(lesson => lesson.lessonOfTheDay)}
           labelName="period"
           valueLabel="id"
           nameLabel="title"

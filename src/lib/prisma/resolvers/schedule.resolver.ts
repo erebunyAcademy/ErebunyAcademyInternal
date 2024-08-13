@@ -236,7 +236,7 @@ export class ScheduleResolver {
           data: attachments.map(attachment => ({
             title: attachment.title,
             key: attachment.key,
-            nonCyclicScheduleId: createdSchedule.id,
+            scheduleId: createdSchedule.id,
             type: AttachmentTypeEnum.FILE,
             mimetype: attachment.mimetype,
           })),
