@@ -11,5 +11,9 @@ export type GetScheduleByIdType = Prisma.PromiseReturnType<
 >;
 
 export type GetStudentAcademicRegisterModel = Prisma.PromiseReturnType<
-  typeof AcademicRegisterResolver.getAcademicRegisterdata
+  typeof AcademicRegisterResolver.getStudentAcademicRegisterdata
+>;
+
+export type GetAcademicRegisterLessonListType = Prisma.PromiseReturnType<
+  typeof AcademicRegisterResolver.getTeacherAcademicRegisterLessonList
 >;

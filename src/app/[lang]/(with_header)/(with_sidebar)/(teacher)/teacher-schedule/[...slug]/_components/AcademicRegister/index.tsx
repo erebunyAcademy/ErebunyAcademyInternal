@@ -1,5 +1,5 @@
 'use client';
-import React, { FC, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import {
   Box,
   Button,
@@ -16,7 +16,7 @@ import {
 } from '@chakra-ui/react';
 import { classValidatorResolver } from '@hookform/resolvers/class-validator';
 import { ThematicPlanDescription } from '@prisma/client';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { createColumnHelper } from '@tanstack/react-table';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
@@ -34,7 +34,7 @@ import { GetScheduleByIdModel } from '@/utils/models/schedule';
 import { CreateStudentAttentdanceRecordValidation } from '@/utils/validation/academic-register';
 
 type AcademicRegisterProps = {
-  schedule: GetScheduleByIdModel;
+  schedule: NonNullable<GetScheduleByIdModel>;
   lang: Locale;
 };
 
@@ -52,6 +52,7 @@ const AcademicRegister: FC<AcademicRegisterProps> = ({ schedule, lang }) => {
     handleSubmit,
     setValue,
     watch,
+    reset,
     formState: { isValid },
   } = useForm<CreateStudentAttentdanceRecordValidation>({
     resolver,
@@ -74,6 +75,14 @@ const AcademicRegister: FC<AcademicRegisterProps> = ({ schedule, lang }) => {
         schedule.id,
         selectedLessonOfTheDay || lessonOfTheDay,
       ),
+  });
+
+  const { data } = useQuery({
+    queryFn: AcademicRegisterService.getTeacherAcademicRegisterLessonList.bind(null, schedule.id),
+    queryKey: ['lesson-list'],
+    initialData: {
+      academicRegisterLesson: [],
+    },
   });
 
   const { fields } = useFieldArray({
@@ -103,6 +112,21 @@ const AcademicRegister: FC<AcademicRegisterProps> = ({ schedule, lang }) => {
       setValue('thematicPlanIds', [...thematicPlanIds, id]);
     }
   };
+
+  useEffect(() => {
+    const selectedThematicPlans = schedule.thematicPlans
+      .flatMap(plan => plan.thematicPlanDescription)
+      .reduce((acc, cur) => {
+        if (cur.isCompleted) {
+          acc.push(cur.id);
+        }
+        return acc;
+      }, [] as string[]);
+
+    if (selectedThematicPlans.length) {
+      setValue('thematicPlanIds', selectedThematicPlans);
+    }
+  }, [reset, schedule.thematicPlans, setValue]);
 
   const columnHelperStudents = createColumnHelper<ThematicPlanDescription>();
 
@@ -224,14 +248,12 @@ const AcademicRegister: FC<AcademicRegisterProps> = ({ schedule, lang }) => {
 
       <Flex flexDirection="column">
         {schedule.thematicPlans.map(thematicPlan => (
-          <>
-            <SimpleTable
-              key={thematicPlan.id}
-              columns={studentsColumns}
-              title={thematicPlan.type}
-              data={thematicPlan.thematicPlanDescription}
-            />
-          </>
+          <SimpleTable
+            key={thematicPlan.id}
+            columns={studentsColumns}
+            title={thematicPlan.type}
+            data={thematicPlan.thematicPlanDescription}
+          />
         ))}
       </Flex>
 
@@ -254,6 +276,7 @@ const AcademicRegister: FC<AcademicRegisterProps> = ({ schedule, lang }) => {
         <SelectLabel
           isRequired
           options={periodListData}
+          disabledOptions={data?.academicRegisterLesson.map(lesson => lesson.lessonOfTheDay)}
           labelName="period"
           valueLabel="id"
           nameLabel="title"

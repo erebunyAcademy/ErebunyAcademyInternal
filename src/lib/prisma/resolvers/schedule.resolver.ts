@@ -553,7 +553,7 @@ export class ScheduleResolver {
   }
 
   static getScheduleById(id: string) {
-    return prisma.schedule.findUniqueOrThrow({
+    return prisma.schedule.findUnique({
       where: {
         id,
       },
