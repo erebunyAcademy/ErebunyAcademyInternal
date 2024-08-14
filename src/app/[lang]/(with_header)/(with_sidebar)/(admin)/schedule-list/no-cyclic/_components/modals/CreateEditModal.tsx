@@ -26,7 +26,7 @@ import { GetCourseGroupsBySubjectId } from '@/utils/models/courseGroup';
 import { ScheduleSingleModel } from '@/utils/models/schedule';
 import { TeacherDataModel } from '@/utils/models/teachers';
 import { AttachmentValidation } from '@/utils/validation';
-import { CreateEditNonCylicScheduleValidation } from '@/utils/validation/non-cyclic';
+import { CreateEditNonCyclicScheduleValidation } from '@/utils/validation/non-cyclic';
 
 type CreateEditModalProps = {
   isModalOpen: boolean;
@@ -34,7 +34,7 @@ type CreateEditModalProps = {
   selectedSchedule: Maybe<ScheduleSingleModel>;
 };
 
-const resolver = classValidatorResolver(CreateEditNonCylicScheduleValidation);
+const resolver = classValidatorResolver(CreateEditNonCyclicScheduleValidation);
 
 type FileWithLocalUrl = {
   file: File;
@@ -55,7 +55,7 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
     watch,
     reset,
     formState: { errors, isValid },
-  } = useForm<CreateEditNonCylicScheduleValidation>({
+  } = useForm<CreateEditNonCyclicScheduleValidation>({
     resolver,
     defaultValues: {
       totalHours: '',
@@ -72,6 +72,8 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
     },
   });
 
+  console.log({ errors });
+
   const { data: teachersQueryData } = useQuery<TeacherDataModel>({
     queryKey: ['teachers'],
     queryFn: TeacherService.getTeachers,
@@ -79,7 +81,7 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
   });
 
   const { mutate: createEditSchedule } = useMutation({
-    mutationFn: (data: CreateEditNonCylicScheduleValidation) =>
+    mutationFn: (data: CreateEditNonCyclicScheduleValidation) =>
       ScheduleService[selectedSchedule ? 'updateSchedule' : 'createSchedule'](
         data,
         ScheduleTypeEnum.NON_CYCLIC,
@@ -190,7 +192,7 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
   });
 
   const onSubmitHandler = useCallback(
-    (data: CreateEditNonCylicScheduleValidation) => {
+    (data: CreateEditNonCyclicScheduleValidation) => {
       const attachmentKeys: AttachmentValidation[] = [];
 
       files?.forEach(({ file }) => {
@@ -426,7 +428,7 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
                   labelName="lessonOfTheDay"
                   valueLabel="id"
                   nameLabel="title"
-                  onChange={onChange}
+                  onChange={e => onChange(Number(e.target.value))}
                   value={value}
                   isInvalid={!!errors.availableDays?.[index]?.message}
                   formErrorMessage={errors.availableDays?.[index]?.message}
