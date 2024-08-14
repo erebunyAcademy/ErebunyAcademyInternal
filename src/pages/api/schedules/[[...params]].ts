@@ -15,7 +15,7 @@ import { SortingType } from '@/api/types/common';
 import { exceptionHandler } from '@/lib/prisma/error';
 import { AdminGuard } from '@/lib/prisma/guards/admin';
 import { ScheduleResolver } from '@/lib/prisma/resolvers/schedule.resolver';
-import { CreateEditNonCylicScheduleValidation } from '@/utils/validation/non-cyclic';
+import { CreateEditNonCyclicScheduleValidation } from '@/utils/validation/non-cyclic';
 import {
   AddEditThematicPlanValidation,
   CreateEditScheduleValidation,
@@ -40,7 +40,7 @@ class ScheduleHandler {
   _createSchedule(
     @Query('type') type: ScheduleTypeEnum,
     @Body(ValidationPipe)
-    input: CreateEditScheduleValidation | CreateEditNonCylicScheduleValidation,
+    input: CreateEditScheduleValidation | CreateEditNonCyclicScheduleValidation,
   ) {
     return ScheduleResolver.createSchedule(input, type);
   }

@@ -1,6 +1,6 @@
 import { ScheduleTypeEnum } from '@prisma/client';
 import { GetScheduleByIdModel, ScheduleListDataModel } from '@/utils/models/schedule';
-import { CreateEditNonCylicScheduleValidation } from '@/utils/validation/non-cyclic';
+import { CreateEditNonCyclicScheduleValidation } from '@/utils/validation/non-cyclic';
 import {
   AddEditThematicPlanValidation,
   CreateEditScheduleValidation,
@@ -20,7 +20,7 @@ export class ScheduleService {
   }
 
   static createSchedule(
-    data: CreateEditScheduleValidation | CreateEditNonCylicScheduleValidation,
+    data: CreateEditScheduleValidation | CreateEditNonCyclicScheduleValidation,
     type: ScheduleTypeEnum,
   ) {
     return $apiClient.post('/schedules', data, {
@@ -31,7 +31,7 @@ export class ScheduleService {
   }
 
   static updateSchedule(
-    data: CreateEditScheduleValidation | CreateEditNonCylicScheduleValidation,
+    data: CreateEditScheduleValidation | CreateEditNonCyclicScheduleValidation,
     type: ScheduleTypeEnum,
   ) {
     return $apiClient.patch(`/schedules/${data.id}`, data, {
