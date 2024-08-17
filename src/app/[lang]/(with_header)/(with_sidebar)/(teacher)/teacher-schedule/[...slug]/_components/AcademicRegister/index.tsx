@@ -15,7 +15,7 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import { classValidatorResolver } from '@hookform/resolvers/class-validator';
-import { ThematicPlanDescription } from '@prisma/client';
+import { ScheduleTypeEnum, ThematicPlanDescription } from '@prisma/client';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { createColumnHelper } from '@tanstack/react-table';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -275,7 +275,14 @@ const AcademicRegister: FC<AcademicRegisterProps> = ({ schedule, lang }) => {
         withoutCancelBtn>
         <SelectLabel
           isRequired
-          options={periodListData}
+          options={
+            schedule.type === ScheduleTypeEnum.NON_CYCLIC
+              ? schedule.availableDays.map(availableDay => ({
+                  id: availableDay.lessonOfTheDay,
+                  title: `${availableDay.lessonOfTheDay} - ${availableDay.lessonOfTheDay + 1}`,
+                }))
+              : periodListData
+          }
           disabledOptions={data?.academicRegisterLesson?.map(lesson => lesson.lessonOfTheDay)}
           labelName="period"
           valueLabel="id"

@@ -1,4 +1,6 @@
 import { AttachmentTypeEnum, ScheduleTypeEnum, ThematicSubPlanTypeEnum } from '@prisma/client';
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
 import fs from 'fs';
 import path from 'path';
 import { SortingType } from '@/api/types/common';
@@ -10,6 +12,8 @@ import {
 } from '@/utils/validation/schedule';
 import { orderBy } from './utils/common';
 import prisma from '..';
+
+dayjs.extend(utc);
 
 export class ScheduleResolver {
   static list(
@@ -187,7 +191,7 @@ export class ScheduleResolver {
     } else {
       const {
         academicYear,
-        availableDays,
+        availableDays = [],
         description,
         totalHours,
         examType,
@@ -418,7 +422,7 @@ export class ScheduleResolver {
       });
     } else {
       const {
-        availableDays,
+        availableDays = [],
         description,
         totalHours,
         teacherId,
@@ -553,6 +557,8 @@ export class ScheduleResolver {
   }
 
   static getScheduleById(id: string) {
+    const todayDayOfWeek = dayjs().utc().day();
+
     return prisma.schedule.findUnique({
       where: {
         id,
@@ -579,7 +585,11 @@ export class ScheduleResolver {
           },
         },
         subject: true,
-        availableDays: true,
+        availableDays: {
+          where: {
+            dayOfWeek: todayDayOfWeek - 1,
+          },
+        },
         courseGroup: {
           include: {
             students: {

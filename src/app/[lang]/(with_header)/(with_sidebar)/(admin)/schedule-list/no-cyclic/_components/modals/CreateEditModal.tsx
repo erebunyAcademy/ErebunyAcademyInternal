@@ -3,7 +3,7 @@ import React, { ChangeEvent, FC, useCallback, useMemo, useState } from 'react';
 import { AddIcon, DeleteIcon } from '@chakra-ui/icons';
 import { Box, Button, Divider, Flex, IconButton, Input, Stack, Text } from '@chakra-ui/react';
 import { classValidatorResolver } from '@hookform/resolvers/class-validator';
-import { ScheduleTypeEnum, WeekDayEnum } from '@prisma/client';
+import { ScheduleTypeEnum } from '@prisma/client';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useTranslations } from 'next-intl';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
@@ -54,6 +54,7 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
     handleSubmit,
     watch,
     reset,
+    getValues,
     formState: { errors, isValid },
   } = useForm<CreateEditNonCylicScheduleValidation>({
     resolver,
@@ -68,9 +69,11 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
       attachments: [],
       links: [],
       academicYear: '2024-2025',
-      availableDays: [{ dayOfWeek: 'MONDAY', lessonOfTheDay: 1 }],
+      availableDays: [{ dayOfWeek: 0, lessonOfTheDay: 1 }],
     },
   });
+
+  console.log({ errors });
 
   const { data: teachersQueryData } = useQuery<TeacherDataModel>({
     queryKey: ['teachers'],
@@ -235,6 +238,8 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
   const removeFile = (localUrl: string) => {
     setFiles(prevFiles => prevFiles?.filter(file => file.localUrl !== localUrl) || null);
   };
+
+  console.log(getValues('availableDays'), '******************');
 
   return (
     <Modal
@@ -408,7 +413,7 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
                   labelName="weekDay"
                   valueLabel="id"
                   nameLabel="title"
-                  onChange={onChange}
+                  onChange={e => onChange(+e.target.value)}
                   value={value}
                   isInvalid={!!errors.availableDays?.[index]?.message}
                   formErrorMessage={errors.availableDays?.[index]?.message}
@@ -426,7 +431,7 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
                   labelName="lessonOfTheDay"
                   valueLabel="id"
                   nameLabel="title"
-                  onChange={onChange}
+                  onChange={e => onChange(+e.target.value)}
                   value={value}
                   isInvalid={!!errors.availableDays?.[index]?.message}
                   formErrorMessage={errors.availableDays?.[index]?.message}
@@ -446,7 +451,7 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
         ))}
         <Button
           mt={2}
-          onClick={() => appendAvailableDay({ dayOfWeek: WeekDayEnum.MONDAY, lessonOfTheDay: 1 })}
+          onClick={() => appendAvailableDay({ dayOfWeek: 0, lessonOfTheDay: 1 })}
           leftIcon={<AddIcon />}>
           {t('addClassDay')}
         </Button>
