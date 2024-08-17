@@ -133,7 +133,6 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
   });
 
   const subjectId = watch('subjectId');
-  console.log(subjectId);
 
   const { data: courseGroupQueryData } = useQuery<GetCourseGroupsBySubjectId>({
     queryKey: ['course-group'],
