@@ -64,7 +64,7 @@ export class AvailableDaysValidation {
   lessonOfTheDay: number;
 }
 
-export class CreateEditNonCylicScheduleValidation {
+export class CreateEditNonCyclicScheduleValidation {
   @IsString()
   @IsOptional()
   id?: string;

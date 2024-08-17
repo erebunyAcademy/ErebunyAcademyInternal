@@ -4,7 +4,7 @@ import utc from 'dayjs/plugin/utc';
 import fs from 'fs';
 import path from 'path';
 import { SortingType } from '@/api/types/common';
-import { CreateEditNonCylicScheduleValidation } from '@/utils/validation/non-cyclic';
+import { CreateEditNonCyclicScheduleValidation } from '@/utils/validation/non-cyclic';
 import {
   AddEditThematicPlanValidation,
   CreateEditScheduleValidation,
@@ -132,7 +132,7 @@ export class ScheduleResolver {
   }
 
   static async createSchedule(
-    data: CreateEditScheduleValidation | CreateEditNonCylicScheduleValidation,
+    data: CreateEditScheduleValidation | CreateEditNonCyclicScheduleValidation,
     type: ScheduleTypeEnum,
   ) {
     if (type === ScheduleTypeEnum.CYCLIC) {
@@ -201,7 +201,7 @@ export class ScheduleResolver {
         title,
         attachments,
         courseGroupId,
-      } = data as CreateEditNonCylicScheduleValidation;
+      } = data as CreateEditNonCyclicScheduleValidation;
 
       const createdSchedule = await prisma.schedule.create({
         data: {
@@ -315,7 +315,7 @@ export class ScheduleResolver {
 
   static async updateSchedule(
     id: string,
-    data: CreateEditScheduleValidation | CreateEditNonCylicScheduleValidation,
+    data: CreateEditScheduleValidation | CreateEditNonCyclicScheduleValidation,
   ) {
     const schedule = await prisma.schedule.findUniqueOrThrow({
       where: {
@@ -433,7 +433,7 @@ export class ScheduleResolver {
         courseGroupId,
         examType,
         academicYear,
-      } = data as CreateEditNonCylicScheduleValidation;
+      } = data as CreateEditNonCyclicScheduleValidation;
       return prisma.$transaction(async prisma => {
         await prisma.scheduleTeacher.deleteMany({
           where: { scheduleId: schedule.id },

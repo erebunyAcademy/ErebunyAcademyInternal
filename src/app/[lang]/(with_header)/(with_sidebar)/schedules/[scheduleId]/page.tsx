@@ -19,6 +19,7 @@ import dayjs from 'dayjs';
 import { useTranslations } from 'next-intl';
 import { ScheduleService } from '@/api/services/schedule.service';
 import NoDataFound from '@/components/molecules/NoDataFound';
+import { periodListData } from '@/utils/constants/common';
 import { GetScheduleByIdModel } from '@/utils/models/schedule';
 
 const ScheduleDetails = ({ params }: { params: { scheduleId: string } }) => {
@@ -29,7 +30,6 @@ const ScheduleDetails = ({ params }: { params: { scheduleId: string } }) => {
     queryFn: () => ScheduleService.getScheduleById(params.scheduleId),
   });
 
-  console.log({ scheduleData });
 
   return (
     <Box m={{ base: '16px', lg: '40px' }} width="100%">
@@ -62,23 +62,11 @@ const ScheduleDetails = ({ params }: { params: { scheduleId: string } }) => {
               <Td>{scheduleData?.examType}</Td>
             </Tr>
             <Tr>
-              <Th>{t('examDay')}:</Th>
-              <Td>{dayjs(scheduleData?.examDate).format('DD/MM/YYYY')}</Td>
-            </Tr>
-            <Tr>
-              <Th>{t('startDay')}:</Th>
-              <Td>{dayjs(scheduleData?.startDayDate).format('DD/MM/YYYY')}</Td>
-            </Tr>
-            <Tr>
-              <Th>{t('endDay')}:</Th>
-              <Td>{dayjs(scheduleData?.endDayDate).format('DD/MM/YYYY')}</Td>
-            </Tr>
-          </Tbody>
-          <Tbody>
-            <Tr>
               <Th>{t('academicYear')}:</Th>
               <Td>{scheduleData?.academicYear}</Td>
             </Tr>
+          </Tbody>
+          <Tbody>
             <Tr>
               <Th>{t('totalHours')}:</Th>
               <Td>{scheduleData?.totalHours}</Td>
@@ -99,7 +87,41 @@ const ScheduleDetails = ({ params }: { params: { scheduleId: string } }) => {
               </Td>
             </Tr>
           </Tbody>
+          {scheduleData?.type === 'CYCLIC' && (
+            <Tbody>
+              <Tr>
+                <Th>{t('examDay')}:</Th>
+                <Td>{dayjs(scheduleData?.examDate).format('DD/MM/YYYY')}</Td>
+              </Tr>
+              <Tr>
+                <Th>{t('startDay')}:</Th>
+                <Td>{dayjs(scheduleData?.startDayDate).format('DD/MM/YYYY')}</Td>
+              </Tr>
+              <Tr>
+                <Th>{t('endDay')}:</Th>
+                <Td>{dayjs(scheduleData?.endDayDate).format('DD/MM/YYYY')}</Td>
+              </Tr>
+            </Tbody>
+          )}
         </Table>
+        {scheduleData?.type === 'NON_CYCLIC' && scheduleData.availableDays.length > 0 && (
+          <Table mt="50px" width="500px">
+            <Thead>
+              <Tr>
+                <Th>{t('weekDay')}</Th>
+                <Th>{t('lessonOfTheDay')}</Th>
+              </Tr>
+            </Thead>
+            <Tbody>
+              {scheduleData?.availableDays.map((day, index) => (
+                <Tr key={index}>
+                  <Td>{day.dayOfWeek}</Td>
+                  <Td>{periodListData.find(lesson => lesson.id === day.lessonOfTheDay)?.title}</Td>
+                </Tr>
+              ))}
+            </Tbody>
+          </Table>
+        )}
       </Box>
 
       <Flex
