@@ -1,5 +1,5 @@
 'use client';
-import React, { FC, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import {
   Box,
   Button,
@@ -15,8 +15,8 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import { classValidatorResolver } from '@hookform/resolvers/class-validator';
-import { ThematicPlanDescription } from '@prisma/client';
-import { useMutation } from '@tanstack/react-query';
+import { ScheduleTypeEnum, ThematicPlanDescription } from '@prisma/client';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { createColumnHelper } from '@tanstack/react-table';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
@@ -27,14 +27,14 @@ import { SelectLabel } from '@/components/atoms';
 import Modal from '@/components/molecules/Modal';
 import SimpleTable from '@/components/organisms/SimpleTable';
 import { Locale } from '@/i18n';
-import { markAttentandOptionData, periodListData } from '@/utils/constants/common';
+import { markAttendantOptionData, periodListData } from '@/utils/constants/common';
 import { ROUTE_TEACHER_SCHEDULE } from '@/utils/constants/routes';
 import { languagePathHelper } from '@/utils/helpers/language';
 import { GetScheduleByIdModel } from '@/utils/models/schedule';
 import { CreateStudentAttentdanceRecordValidation } from '@/utils/validation/academic-register';
 
 type AcademicRegisterProps = {
-  schedule: GetScheduleByIdModel;
+  schedule: NonNullable<GetScheduleByIdModel>;
   lang: Locale;
 };
 
@@ -52,6 +52,7 @@ const AcademicRegister: FC<AcademicRegisterProps> = ({ schedule, lang }) => {
     handleSubmit,
     setValue,
     watch,
+    reset,
     formState: { isValid },
   } = useForm<CreateStudentAttentdanceRecordValidation>({
     resolver,
@@ -76,13 +77,21 @@ const AcademicRegister: FC<AcademicRegisterProps> = ({ schedule, lang }) => {
       ),
   });
 
+  const { data } = useQuery({
+    queryFn: AcademicRegisterService.getTeacherAcademicRegisterLessonList.bind(null, schedule.id),
+    queryKey: ['lesson-list'],
+    initialData: {
+      academicRegisterLesson: [],
+    },
+  });
+
   const { fields } = useFieldArray({
     control,
     name: 'students',
   });
 
   const { isOpen: chooseLessonModalOpen, onClose: closeChooseLessonModal } = useDisclosure({
-    defaultIsOpen: schedule.type === 'CYCLIC' && !selectedLessonOfTheDay,
+    defaultIsOpen: !selectedLessonOfTheDay,
   });
 
   const {
@@ -103,6 +112,21 @@ const AcademicRegister: FC<AcademicRegisterProps> = ({ schedule, lang }) => {
       setValue('thematicPlanIds', [...thematicPlanIds, id]);
     }
   };
+
+  useEffect(() => {
+    const selectedThematicPlans = schedule.thematicPlans
+      .flatMap(plan => plan.thematicPlanDescription)
+      .reduce((acc, cur) => {
+        if (cur.isCompleted) {
+          acc.push(cur.id);
+        }
+        return acc;
+      }, [] as string[]);
+
+    if (selectedThematicPlans.length) {
+      setValue('thematicPlanIds', selectedThematicPlans);
+    }
+  }, [reset, schedule.thematicPlans, setValue]);
 
   const columnHelperStudents = createColumnHelper<ThematicPlanDescription>();
 
@@ -192,7 +216,7 @@ const AcademicRegister: FC<AcademicRegisterProps> = ({ schedule, lang }) => {
                       render={({ field }) => (
                         <SelectLabel
                           isRequired
-                          options={markAttentandOptionData}
+                          options={markAttendantOptionData}
                           valueLabel="id"
                           nameLabel="title"
                           onChange={e => {
@@ -224,14 +248,12 @@ const AcademicRegister: FC<AcademicRegisterProps> = ({ schedule, lang }) => {
 
       <Flex flexDirection="column">
         {schedule.thematicPlans.map(thematicPlan => (
-          <>
-            <SimpleTable
-              key={thematicPlan.id}
-              columns={studentsColumns}
-              title={thematicPlan.type}
-              data={thematicPlan.thematicPlanDescription}
-            />
-          </>
+          <SimpleTable
+            key={thematicPlan.id}
+            columns={studentsColumns}
+            title={thematicPlan.type}
+            data={thematicPlan.thematicPlanDescription}
+          />
         ))}
       </Flex>
 
@@ -253,7 +275,15 @@ const AcademicRegister: FC<AcademicRegisterProps> = ({ schedule, lang }) => {
         withoutCancelBtn>
         <SelectLabel
           isRequired
-          options={periodListData}
+          options={
+            schedule.type === ScheduleTypeEnum.NON_CYCLIC
+              ? schedule.availableDays.map(availableDay => ({
+                  id: availableDay.lessonOfTheDay,
+                  title: `${availableDay.lessonOfTheDay} - ${availableDay.lessonOfTheDay + 1}`,
+                }))
+              : periodListData
+          }
+          disabledOptions={data?.academicRegisterLesson?.map(lesson => lesson.lessonOfTheDay)}
           labelName="period"
           valueLabel="id"
           nameLabel="title"

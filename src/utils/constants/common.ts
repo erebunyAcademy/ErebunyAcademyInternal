@@ -1,4 +1,4 @@
-import { ScheduleExamTypeEnum, WeekDayEnum } from '@prisma/client';
+import { ScheduleExamTypeEnum } from '@prisma/client';
 
 export const ERROR_MESSAGES = {
   somethingWentWrong: 'somethingWentWrong',
@@ -23,10 +23,22 @@ export const scheduleExamType = Object.values(ScheduleExamTypeEnum).map(title =>
   title: title,
 }));
 
-export const weekendDayList = Object.values(WeekDayEnum).map((weekendDay: WeekDayEnum) => ({
-  id: weekendDay,
-  title: weekendDay,
-}));
+export enum WeekDayEnum {
+  MONDAY = 'MONDAY',
+  TUESDAY = 'TUESDAY',
+  WEDNESDAY = 'WEDNESDAY',
+  THURSDAY = 'THURSDAY',
+  FRIDAY = 'FRIDAY',
+  SATURDAY = 'SATURDAY',
+  SUNDAY = 'SUNDAY',
+}
+
+export const weekendDayList = Object.values(WeekDayEnum).map(
+  (weekendDay: WeekDayEnum, index: number) => ({
+    id: index,
+    title: weekendDay,
+  }),
+);
 
 export const periodListData = Array.from({ length: 10 }, (_, i) => ({
   id: i + 1,
@@ -34,11 +46,11 @@ export const periodListData = Array.from({ length: 10 }, (_, i) => ({
 }));
 
 export const academicYearListData = Array.from({ length: 5 }, (_, i) => ({
-  id: `${i + 1}`,
+  id: `${new Date().getFullYear() + i}-${new Date().getFullYear() + 1 + i}`,
   title: `${new Date().getFullYear() + i}-${new Date().getFullYear() + 1 + i}`,
 }));
 
-export const markAttentandOptionData = Array.from({ length: 20 }, (_, i) => ({
-  id: `${i + 1}`,
+export const markAttendantOptionData = Array.from({ length: 20 }, (_, i) => ({
+  id: i + 1,
   title: `${i + 1}`,
 }));

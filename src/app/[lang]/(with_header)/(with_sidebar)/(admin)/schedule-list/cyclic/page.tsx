@@ -14,7 +14,7 @@ import ActionButtons from '@/components/molecules/ActionButtons';
 import SearchTable from '@/components/organisms/SearchTable';
 import useDebounce from '@/hooks/useDebounce';
 import { Locale } from '@/i18n';
-import { academicYearListData, ITEMS_PER_PAGE } from '@/utils/constants/common';
+import { ITEMS_PER_PAGE } from '@/utils/constants/common';
 import { languagePathHelper } from '@/utils/helpers/language';
 import { QUERY_KEY } from '@/utils/helpers/queryClient';
 import { Maybe } from '@/utils/models/common';
@@ -182,10 +182,7 @@ export default function Schedule({ params }: { params: { lang: Locale } }) {
 
     columnHelper.accessor('academicYear', {
       id: uuidv4(),
-      cell: info => {
-        const academicYear = academicYearListData.find(year => year.id === info.getValue());
-        return academicYear?.title;
-      },
+      cell: info => info.getValue(),
       header: t('academicYear'),
     }),
 

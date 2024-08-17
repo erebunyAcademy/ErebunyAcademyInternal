@@ -1,4 +1,4 @@
-import React, { FC, memo } from 'react';
+import React, { ChangeEventHandler, FC, memo } from 'react';
 import {
   FormControl,
   FormErrorMessage,
@@ -12,11 +12,12 @@ import { useTranslations } from 'use-intl';
 
 interface SelectLabelProps extends SelectFieldProps {
   options: { [key: string]: string | number }[] | [];
+  disabledOptions?: Array<string | number>;
   valueLabel: string;
   nameLabel: string;
   labelName?: string;
-  onChange?: React.ChangeEventHandler<HTMLSelectElement>;
-  value: string;
+  onChange?: ChangeEventHandler<HTMLSelectElement>;
+  value: string | number;
   name?: string;
   placeholder?: string;
   isRequired?: boolean;
@@ -40,6 +41,7 @@ const SelectLabel: FC<SelectLabelProps> = ({
   formErrorMessage,
   isInvalid,
   isDisabled,
+  disabledOptions,
 }) => {
   const t = useTranslations();
 
@@ -66,7 +68,12 @@ const SelectLabel: FC<SelectLabelProps> = ({
           {t('selectOption')}
         </option>
         {options.map((option, index) => (
-          <option key={index} value={option[valueLabel]}>
+          <option
+            key={index}
+            value={option[valueLabel]}
+            {...(disabledOptions
+              ? { disabled: disabledOptions.includes(option[valueLabel]) }
+              : {})}>
             {option[nameLabel]}
           </option>
         ))}

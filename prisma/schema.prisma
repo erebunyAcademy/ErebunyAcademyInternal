@@ -84,7 +84,7 @@ model AttendanceRecord {
   subjectId                String
   academicRegisterLessonId String
 
-  academicRegister       AcademicRegister       @relation(fields: [academicRegisterId], references: [id])
+  academicRegister       AcademicRegister       @relation(fields: [academicRegisterId], references: [id], onDelete: Cascade)
   subject                Subject                @relation(fields: [subjectId], references: [id])
   student                Student                @relation(fields: [studentId], references: [id], onDelete: Cascade)
   academicRegisterLesson AcademicRegisterLesson @relation(fields: [academicRegisterLessonId], references: [id], onDelete: Cascade)
@@ -182,11 +182,11 @@ model Schedule {
 }
 
 model ScheduleTime {
-  id           String      @id @default(uuid())
-  availableDay WeekDayEnum
-  period       String
-  schedule     Schedule    @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
-  scheduleId   String
+  id             String   @id @default(uuid())
+  dayOfWeek      Int
+  lessonOfTheDay Int
+  schedule       Schedule @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
+  scheduleId     String
 
   createdAt DateTime @default(now()) @db.Timestamp(0)
   updatedAt DateTime @updatedAt @db.Timestamp(0)
@@ -394,7 +394,8 @@ model AcademicRegister {
   createdAt DateTime @default(now()) @db.Timestamp(0)
   updatedAt DateTime @updatedAt @db.Timestamp(0)
 
-  @@unique([courseGroupId, subjectId], name: "academicRegisterSubjectCourseGroupId")
+  @@unique([courseGroupId, subjectId, scheduleId], name: "academicRegisterSubjectCourseGroupId")
+  @@index([scheduleId])
 }
 
 model AcademicRegisterDay {
@@ -486,14 +487,4 @@ enum AdminRoleEnum {
   ACCOUNTANT
   OPERATOR
   HEAD_OF_DEPARTMENT
-}
-
-enum WeekDayEnum {
-  MONDAY
-  TUESDAY
-  WEDNESDAY
-  THURSDAY
-  FRIDAY
-  SATURDAY
-  SUNDAY
 }

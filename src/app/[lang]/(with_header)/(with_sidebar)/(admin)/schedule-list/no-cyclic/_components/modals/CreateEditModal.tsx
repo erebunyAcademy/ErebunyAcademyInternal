@@ -26,7 +26,7 @@ import { GetCourseGroupsBySubjectId } from '@/utils/models/courseGroup';
 import { ScheduleSingleModel } from '@/utils/models/schedule';
 import { TeacherDataModel } from '@/utils/models/teachers';
 import { AttachmentValidation } from '@/utils/validation';
-import { CreateEditNonCylicScheduleValidation } from '@/utils/validation/non-cyclic';
+import { CreateEditNonCyclicScheduleValidation } from '@/utils/validation/non-cyclic';
 
 type CreateEditModalProps = {
   isModalOpen: boolean;
@@ -34,7 +34,7 @@ type CreateEditModalProps = {
   selectedSchedule: Maybe<ScheduleSingleModel>;
 };
 
-const resolver = classValidatorResolver(CreateEditNonCylicScheduleValidation);
+const resolver = classValidatorResolver(CreateEditNonCyclicScheduleValidation);
 
 type FileWithLocalUrl = {
   file: File;
@@ -54,8 +54,9 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
     handleSubmit,
     watch,
     reset,
+    getValues,
     formState: { errors, isValid },
-  } = useForm<CreateEditNonCylicScheduleValidation>({
+  } = useForm<CreateEditNonCyclicScheduleValidation>({
     resolver,
     defaultValues: {
       totalHours: '',
@@ -68,9 +69,11 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
       attachments: [],
       links: [],
       academicYear: '2024-2025',
-      availableDays: [{ availableDay: 'MONDAY', period: '1-2' }],
+      availableDays: [{ dayOfWeek: 0, lessonOfTheDay: 1 }],
     },
   });
+
+  console.log({ errors });
 
   const { data: teachersQueryData } = useQuery<TeacherDataModel>({
     queryKey: ['teachers'],
@@ -79,7 +82,7 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
   });
 
   const { mutate: createEditSchedule } = useMutation({
-    mutationFn: (data: CreateEditNonCylicScheduleValidation) =>
+    mutationFn: (data: CreateEditNonCyclicScheduleValidation) =>
       ScheduleService[selectedSchedule ? 'updateSchedule' : 'createSchedule'](
         data,
         ScheduleTypeEnum.NON_CYCLIC,
@@ -190,7 +193,7 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
   });
 
   const onSubmitHandler = useCallback(
-    (data: CreateEditNonCylicScheduleValidation) => {
+    (data: CreateEditNonCyclicScheduleValidation) => {
       const attachmentKeys: AttachmentValidation[] = [];
 
       files?.forEach(({ file }) => {
@@ -235,6 +238,8 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
   const removeFile = (localUrl: string) => {
     setFiles(prevFiles => prevFiles?.filter(file => file.localUrl !== localUrl) || null);
   };
+
+  console.log(getValues('availableDays'), '******************');
 
   return (
     <Modal
@@ -398,7 +403,7 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
         {availableDayFields.map((field, index: number) => (
           <Flex key={field.id} gap={24}>
             <Controller
-              name={`availableDays.${index}.availableDay`}
+              name={`availableDays.${index}.dayOfWeek`}
               control={control}
               render={({ field: { onChange, value, name } }) => (
                 <SelectLabel
@@ -408,7 +413,7 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
                   labelName="weekDay"
                   valueLabel="id"
                   nameLabel="title"
-                  onChange={onChange}
+                  onChange={e => onChange(+e.target.value)}
                   value={value}
                   isInvalid={!!errors.availableDays?.[index]?.message}
                   formErrorMessage={errors.availableDays?.[index]?.message}
@@ -416,17 +421,17 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
               )}
             />
             <Controller
-              name={`availableDays.${index}.period`}
+              name={`availableDays.${index}.lessonOfTheDay`}
               control={control}
               render={({ field: { onChange, value, name } }) => (
                 <SelectLabel
                   name={name}
                   isRequired
                   options={periodListData}
-                  labelName="period"
+                  labelName="lessonOfTheDay"
                   valueLabel="id"
                   nameLabel="title"
-                  onChange={onChange}
+                  onChange={e => onChange(Number(e.target.value))}
                   value={value}
                   isInvalid={!!errors.availableDays?.[index]?.message}
                   formErrorMessage={errors.availableDays?.[index]?.message}
@@ -446,7 +451,7 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
         ))}
         <Button
           mt={2}
-          onClick={() => appendAvailableDay({ availableDay: 'MONDAY', period: '' })}
+          onClick={() => appendAvailableDay({ dayOfWeek: 0, lessonOfTheDay: 1 })}
           leftIcon={<AddIcon />}>
           {t('addClassDay')}
         </Button>

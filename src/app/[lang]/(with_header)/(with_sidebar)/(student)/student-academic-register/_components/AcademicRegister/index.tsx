@@ -35,45 +35,48 @@ const AcademicRegister: FC<AcademicRegisterProps> = () => {
 
   return (
     <Box width="100%">
-      <Box maxWidth="400px" mt="100px">
+      <Box maxWidth="400px" mt="100px" ml="20px">
         <Calendar selectDateHandler={dateChangeHandler} />
       </Box>
-      <Table variant="simple" width="100%" mt="50px">
-        <Thead>
-          <Tr>
-            <Th>{t('lessonDay')}</Th>
-            <Th>{t('lessonOfTheDay')}</Th>
-            <Th>{t('subject')}</Th>
-            <Th>{t('attendanceStatus')}</Th>
-            <Th>{t('marks')}</Th>
-          </Tr>
-        </Thead>
-        <Tbody>
-          {registerData.map(day => (
-            <React.Fragment key={day.id}>
-              {day.academicRegisterLessons.map((lesson, lessonIndex) => (
-                <Tr key={lesson.id}>
-                  {lessonIndex === 0 && (
-                    <Td rowSpan={day.academicRegisterLessons.length}>
-                      {dayjs(day.createdAt).format('DD/MM/YYYY')}
+      <Box maxWidth={{ base: '340px', sm: '670px', lg: '700px', xl: '100%' }} overflow="auto">
+        <Table variant="simple" mt="50px">
+          <Thead>
+            <Tr>
+              <Th>{t('lessonDay')}</Th>
+              <Th>{t('subject')}</Th>
+              <Th>{t('lessonOfTheDay')}</Th>
+              <Th>{t('attendanceStatus')}</Th>
+              <Th>{t('marks')}</Th>
+            </Tr>
+          </Thead>
+          <Tbody>
+            {registerData.map(day => (
+              <React.Fragment key={day.id}>
+                {day.academicRegisterLessons.map((lesson, lessonIndex) => (
+                  <Tr key={lesson.id}>
+                    {lessonIndex === 0 && (
+                      <Td rowSpan={day.academicRegisterLessons.length}>
+                        {dayjs(day.createdAt).format('DD/MM/YYYY')}
+                      </Td>
+                    )}
+                    <Td>{lesson.academicRegister.schedule.subject.title}</Td>
+                    <Td>
+                      {periodListData.find(period => period.id === lesson.lessonOfTheDay)?.title}
                     </Td>
-                  )}
-                  <Td>
-                    {periodListData.find(period => period.id === lesson.lessonOfTheDay)?.title}
-                  </Td>
-                  <Td>{lesson.academicRegister.schedule.subject.title}</Td>
-                  <Td>{lesson.attendanceRecord[0]?.isPresent ? t('present') : t('absent')}</Td>
-                  <Td>
-                    {lesson.attendanceRecord.length > 0 && lesson.attendanceRecord[0].mark !== null
-                      ? lesson.attendanceRecord[0].mark
-                      : t('noMark')}
-                  </Td>
-                </Tr>
-              ))}
-            </React.Fragment>
-          ))}
-        </Tbody>
-      </Table>
+                    <Td>{lesson.attendanceRecord[0]?.isPresent ? t('present') : t('absent')}</Td>
+                    <Td>
+                      {lesson.attendanceRecord.length > 0 &&
+                      lesson.attendanceRecord[0].mark !== null
+                        ? lesson.attendanceRecord[0].mark
+                        : t('noMark')}
+                    </Td>
+                  </Tr>
+                ))}
+              </React.Fragment>
+            ))}
+          </Tbody>
+        </Table>
+      </Box>
     </Box>
   );
 };

@@ -1,8 +1,10 @@
 import { AttachmentTypeEnum, ScheduleTypeEnum, ThematicSubPlanTypeEnum } from '@prisma/client';
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
 import fs from 'fs';
 import path from 'path';
 import { SortingType } from '@/api/types/common';
-import { CreateEditNonCylicScheduleValidation } from '@/utils/validation/non-cyclic';
+import { CreateEditNonCyclicScheduleValidation } from '@/utils/validation/non-cyclic';
 import {
   AddEditThematicPlanValidation,
   CreateEditScheduleValidation,
@@ -10,6 +12,8 @@ import {
 } from '@/utils/validation/schedule';
 import { orderBy } from './utils/common';
 import prisma from '..';
+
+dayjs.extend(utc);
 
 export class ScheduleResolver {
   static list(
@@ -128,7 +132,7 @@ export class ScheduleResolver {
   }
 
   static async createSchedule(
-    data: CreateEditScheduleValidation | CreateEditNonCylicScheduleValidation,
+    data: CreateEditScheduleValidation | CreateEditNonCyclicScheduleValidation,
     type: ScheduleTypeEnum,
   ) {
     if (type === ScheduleTypeEnum.CYCLIC) {
@@ -187,7 +191,7 @@ export class ScheduleResolver {
     } else {
       const {
         academicYear,
-        availableDays,
+        availableDays = [],
         description,
         totalHours,
         examType,
@@ -197,7 +201,7 @@ export class ScheduleResolver {
         title,
         attachments,
         courseGroupId,
-      } = data as CreateEditNonCylicScheduleValidation;
+      } = data as CreateEditNonCyclicScheduleValidation;
 
       const createdSchedule = await prisma.schedule.create({
         data: {
@@ -225,8 +229,8 @@ export class ScheduleResolver {
 
       await prisma.scheduleTime.createMany({
         data: availableDays.map(day => ({
-          availableDay: day.availableDay,
-          period: day.period,
+          dayOfWeek: day.dayOfWeek,
+          lessonOfTheDay: day.lessonOfTheDay,
           scheduleId: createdSchedule.id,
         })),
       });
@@ -236,7 +240,7 @@ export class ScheduleResolver {
           data: attachments.map(attachment => ({
             title: attachment.title,
             key: attachment.key,
-            nonCyclicScheduleId: createdSchedule.id,
+            scheduleId: createdSchedule.id,
             type: AttachmentTypeEnum.FILE,
             mimetype: attachment.mimetype,
           })),
@@ -311,7 +315,7 @@ export class ScheduleResolver {
 
   static async updateSchedule(
     id: string,
-    data: CreateEditScheduleValidation | CreateEditNonCylicScheduleValidation,
+    data: CreateEditScheduleValidation | CreateEditNonCyclicScheduleValidation,
   ) {
     const schedule = await prisma.schedule.findUniqueOrThrow({
       where: {
@@ -418,7 +422,7 @@ export class ScheduleResolver {
       });
     } else {
       const {
-        availableDays,
+        availableDays = [],
         description,
         totalHours,
         teacherId,
@@ -429,7 +433,7 @@ export class ScheduleResolver {
         courseGroupId,
         examType,
         academicYear,
-      } = data as CreateEditNonCylicScheduleValidation;
+      } = data as CreateEditNonCyclicScheduleValidation;
       return prisma.$transaction(async prisma => {
         await prisma.scheduleTeacher.deleteMany({
           where: { scheduleId: schedule.id },
@@ -443,8 +447,8 @@ export class ScheduleResolver {
 
         await prisma.scheduleTime.createMany({
           data: availableDays.map(day => ({
-            availableDay: day.availableDay,
-            period: day.period,
+            dayOfWeek: day.dayOfWeek,
+            lessonOfTheDay: +day.lessonOfTheDay,
             scheduleId: schedule.id,
           })),
         });
@@ -553,7 +557,9 @@ export class ScheduleResolver {
   }
 
   static getScheduleById(id: string) {
-    return prisma.schedule.findUniqueOrThrow({
+    const todayDayOfWeek = dayjs().utc().day();
+
+    return prisma.schedule.findUnique({
       where: {
         id,
       },
@@ -579,6 +585,11 @@ export class ScheduleResolver {
           },
         },
         subject: true,
+        availableDays: {
+          where: {
+            dayOfWeek: todayDayOfWeek - 1,
+          },
+        },
         courseGroup: {
           include: {
             students: {
@@ -593,7 +604,6 @@ export class ScheduleResolver {
             },
           },
         },
-        availableDays: true,
       },
     });
   }

@@ -42,7 +42,15 @@ class AcademicRegisterHandler {
     @Query('startDate') startDate?: string,
     @Query('endDate') endDate?: string,
   ) {
-    return AcademicRegisterResolver.getAcademicRegisterdata(user, startDate, endDate);
+    return AcademicRegisterResolver.getStudentAcademicRegisterdata(user, startDate, endDate);
+  }
+
+  @Get('/:scheduleId/lessons')
+  getAcademicRegisterLessons(
+    @Param('scheduleId') scheduleId: string,
+    @CurrentUser() user: NonNullable<User>,
+  ) {
+    return AcademicRegisterResolver.getTeacherAcademicRegisterLessonList(scheduleId, user);
   }
 }
 

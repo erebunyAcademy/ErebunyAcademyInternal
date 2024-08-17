@@ -1,4 +1,5 @@
 import {
+  GetAcademicRegisterLessonListType,
   GetScheduleDataType,
   GetStudentAcademicRegisterModel,
 } from '@/utils/models/academic-register';
@@ -37,5 +38,11 @@ export class AcademicRegisterService {
     return $apiClient.get<GetStudentAcademicRegisterModel>(`/academic-registers`, {
       params: params ?? {},
     });
+  }
+
+  static getTeacherAcademicRegisterLessonList(scheduleId: string) {
+    return $apiClient.get<GetAcademicRegisterLessonListType>(
+      `/academic-registers/${scheduleId}/lessons`,
+    );
   }
 }

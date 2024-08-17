@@ -268,6 +268,7 @@ export class AcademicRegisterResolver {
     return prisma.academicRegister.findUnique({
       where: {
         academicRegisterSubjectCourseGroupId: {
+          scheduleId,
           courseGroupId: courseGroup.id,
           subjectId: courseGroup.schedules[0].subjectId,
         },
@@ -278,7 +279,7 @@ export class AcademicRegisterResolver {
     });
   }
 
-  static async getAcademicRegisterdata(
+  static async getStudentAcademicRegisterdata(
     user: NonNullable<User>,
     startDate?: string,
     endDate?: string,
@@ -317,6 +318,34 @@ export class AcademicRegisterResolver {
                 },
               },
             },
+          },
+        },
+      },
+    });
+  }
+
+  static async getTeacherAcademicRegisterLessonList(scheduleId: string, user: NonNullable<User>) {
+    if (!user?.teacher?.id) {
+      throw new ForbiddenException();
+    }
+
+    const todayStart = dayjs().utc().startOf('day').toDate();
+    const todayEnd = dayjs().utc().endOf('day').toDate();
+
+    return prisma.academicRegister.findFirst({
+      where: {
+        scheduleId,
+      },
+      select: {
+        academicRegisterLesson: {
+          where: {
+            createdAt: {
+              gt: todayStart,
+              lt: todayEnd,
+            },
+          },
+          select: {
+            lessonOfTheDay: true,
           },
         },
       },

@@ -1,9 +1,9 @@
-import { Suspense } from 'react';
+import { ReactNode, Suspense } from 'react';
 
 const Template = ({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: ReactNode;
 }>) => <Suspense>{children}</Suspense>;
 
 export default Template;

@@ -153,9 +153,7 @@ const StudentSchedule = ({ params }: { params: { lang: Locale } }) => {
   return (
     <Fragment>
       <Flex flexDirection="column" gap={{ base: '50px', lg: '100px' }} width="100%" my="50px">
-        {cyclicData.length > 0 && (
-          <SimpleTable columns={scheduleColumns as any} data={cyclicData} title="schedules" />
-        )}
+        <SimpleTable columns={scheduleColumns as any} data={cyclicData} title="schedules" />
       </Flex>
       {selectedSchedule && (
         <CreateEditAttachment

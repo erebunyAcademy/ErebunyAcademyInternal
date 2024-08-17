@@ -1,10 +1,11 @@
 import 'reflect-metadata';
-import { ScheduleExamTypeEnum, WeekDayEnum } from '@prisma/client';
+import { ScheduleExamTypeEnum } from '@prisma/client';
 import { Type } from 'class-transformer';
 import {
   IsArray,
   IsEnum,
   IsNotEmpty,
+  IsNumber,
   IsOptional,
   IsString,
   IsUrl,
@@ -54,16 +55,16 @@ export class AttachmentValidation {
 }
 
 export class AvailableDaysValidation {
-  @IsEnum(WeekDayEnum)
   @IsNotEmpty()
-  availableDay: WeekDayEnum;
+  @IsNumber()
+  dayOfWeek: number;
 
-  @IsString()
+  @IsNumber()
   @IsNotEmpty()
-  period: string;
+  lessonOfTheDay: number;
 }
 
-export class CreateEditNonCylicScheduleValidation {
+export class CreateEditNonCyclicScheduleValidation {
   @IsString()
   @IsOptional()
   id?: string;
@@ -103,8 +104,9 @@ export class CreateEditNonCylicScheduleValidation {
 
   @IsArray()
   @ValidateNested({ each: true })
+  @IsOptional()
   @Type(() => AvailableDaysValidation)
-  availableDays: AvailableDaysValidation[];
+  availableDays?: AvailableDaysValidation[];
 
   @IsArray()
   @ValidateNested({ each: true })
