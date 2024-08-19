@@ -5,6 +5,7 @@ import {
   Button,
   Checkbox,
   Flex,
+  Heading,
   Table,
   Tbody,
   Td,
@@ -237,16 +238,9 @@ const AcademicRegister: FC<AcademicRegisterProps> = ({ schedule, lang }) => {
           </Tbody>
         </Table>
       </Box>
-      <Flex justifyContent="space-between" mt="20px" mb="20px">
-        <Button isDisabled={!isValid} onClick={handleSubmit(onSubmit)}>
-          {t('save')}
-        </Button>
-        <Button isDisabled={!isValid} onClick={openEndClassModal}>
-          {t('endClass')}
-        </Button>
-      </Flex>
 
-      <Flex flexDirection="column">
+      <Flex flexDirection="column" m={{ base: '30px 0 20px 0', sm: '60px 0 30px 0' }}>
+        <Heading fontSize={{ base: '22px', sm: '26px' }}>{t('thematicPlans')}</Heading>
         {schedule.thematicPlans.map(thematicPlan => (
           <SimpleTable
             key={thematicPlan.id}
@@ -255,6 +249,15 @@ const AcademicRegister: FC<AcademicRegisterProps> = ({ schedule, lang }) => {
             data={thematicPlan.thematicPlanDescription}
           />
         ))}
+      </Flex>
+
+      <Flex justifyContent="space-between" m="20px 0 20px 0" gap="15px">
+        <Button isDisabled={!isValid} onClick={handleSubmit(onSubmit)}>
+          {t('save')}
+        </Button>
+        <Button isDisabled={!isValid} onClick={openEndClassModal}>
+          {t('endClass')}
+        </Button>
       </Flex>
 
       <Modal

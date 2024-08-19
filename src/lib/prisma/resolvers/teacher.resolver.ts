@@ -61,6 +61,7 @@ export class TeacherResolver {
       select: {
         firstName: true,
         lastName: true,
+        isAdminVerified: true,
         teacher: {
           select: {
             id: true,
