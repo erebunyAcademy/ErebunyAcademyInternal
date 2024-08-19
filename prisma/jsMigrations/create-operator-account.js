@@ -5,18 +5,18 @@ const { PrismaClient } = PClient;
 const prisma = new PrismaClient();
 
 const migration = async () => {
-  const hashedPassword = await bcrypt.hash(process.env.ADMIN_PASS, 10);
+  const hashedPassword = await bcrypt.hash(process.env.OPERATOR_PASS, 10);
 
   try {
     await prisma.$transaction(async transaction => {
       const user = await transaction.user.create({
         data: {
           firstName: 'System',
-          lastName: 'Admin',
-          email: process.env.ADMIN_EMAIL,
+          lastName: 'Operator',
+          email: process.env.OPERATOR_EMAIL,
           isVerified: true,
           password: hashedPassword,
-          uniqueUserId: 77239701,
+          uniqueUserId: 7212441,
           isAdminVerified: true,
           role: PClient.UserRoleEnum.ADMIN,
         },
@@ -24,7 +24,7 @@ const migration = async () => {
 
       await transaction.admin.create({
         data: {
-          role: PClient.AdminRoleEnum.SYS_ADMIN,
+          role: PClient.AdminRoleEnum.OPERATOR,
           userId: user.id,
         },
       });
