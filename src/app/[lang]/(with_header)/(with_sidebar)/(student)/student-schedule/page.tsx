@@ -3,6 +3,7 @@ import React, { Fragment } from 'react';
 import { Button, Flex } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import { createColumnHelper } from '@tanstack/react-table';
+import dayjs from 'dayjs';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { v4 as uuidv4 } from 'uuid';
@@ -53,7 +54,10 @@ const StudentSchedule = ({ params }: { params: { lang: Locale } }) => {
     }),
     cyclicColumnHelper.accessor('createdAt', {
       id: uuidv4(),
-      cell: info => (info.getValue() ? t('yes') : t('no')),
+      cell: info => {
+        const currentDate = dayjs(info.getValue());
+        return currentDate.format('YYYY-MM-DD');
+      },
       header: t('createdAt'),
     }),
   ];
@@ -61,9 +65,7 @@ const StudentSchedule = ({ params }: { params: { lang: Locale } }) => {
   return (
     <Fragment>
       <Flex flexDirection="column" gap="100px" width="100%" mt="50px">
-        {cyclicData.length && (
-          <SimpleTable columns={cyclicScheduleColumns} data={cyclicData} title="schedule" />
-        )}
+        <SimpleTable columns={cyclicScheduleColumns} data={cyclicData} title="schedule" />
       </Flex>
     </Fragment>
   );
