@@ -38,83 +38,87 @@ export interface LinkItemProps {
   id: number;
   href?: string;
   isExpandable?: boolean;
-  children?: any[];
+  children?: LinkItemProps[];
 }
 
 export type LinkItemsFunction = (user: User) => Array<LinkItemProps>;
 
-export const linkItems: LinkItemsFunction = (user: Maybe<User>) => {
-  if (!user) return [];
+const createCommonLinks = (): LinkItemProps[] => [
+  { id: 10, name: 'dashboard', icon: <DashboardIcon />, href: ROUTE_DASHBOARD },
+  { id: 1, name: 'profile', icon: <ProfileIcon />, href: ROUTE_PROFILE },
+];
 
-  const commonLinks = [
-    { id: 10, name: 'dashboard', icon: <DashboardIcon />, href: ROUTE_DASHBOARD },
-    { id: 1, name: 'profile', icon: <ProfileIcon />, href: ROUTE_PROFILE },
-    { id: 9, name: 'logout', icon: <LogoutIcon /> },
-  ];
+const createLogoutLink = (): LinkItemProps => ({
+  id: LOGOUT_ID,
+  name: 'logout',
+  icon: <LogoutIcon />,
+});
 
-  switch (user.role) {
-    case UserRoleEnum.ADMIN:
-      return [
-        ...commonLinks.slice(0, 2),
+const createScheduleLinks = (): LinkItemProps => ({
+  id: 118,
+  name: 'schedules',
+  icon: <ScheduleIcon />,
+  isExpandable: true,
+  href: '',
+  children: [
+    { id: 111, name: 'cyclic', icon: <ScheduleChildrenIcon />, href: `${ROUTE_SCHEDULES}/cyclic` },
+    {
+      id: 122,
+      name: 'notCyclic',
+      icon: <ScheduleChildrenIcon />,
+      href: `${ROUTE_SCHEDULES}/no-cyclic`,
+    },
+  ],
+});
+
+const adminLinks = (isOperator: boolean): LinkItemProps[] => {
+  const links = isOperator
+    ? [createScheduleLinks()]
+    : [
         { id: 2, name: 'faculty', icon: <FacultiesIcon />, href: ROUTE_FACULTIES },
         { id: 3, name: 'students', icon: <StudentIcon />, href: ROUTE_STUDENTS },
         { id: 4, name: 'course', icon: <CourseIcon />, href: ROUTE_COURSE },
-        {
-          id: 5,
-          name: 'courseGroup',
-          icon: <CourseGroupIcon />,
-          href: ROUTE_COURSE_GROUP,
-        },
+        { id: 5, name: 'courseGroup', icon: <CourseGroupIcon />, href: ROUTE_COURSE_GROUP },
         { id: 6, name: 'exams', icon: <ExamsIcon />, href: ROUTE_EXAMS },
         { id: 7, name: 'teachers', icon: <TeacherIcon />, href: ROUTE_TEACHERS },
         { id: 8, name: 'subjects', icon: <SubjectsIcon />, href: ROUTE_SUBJECTS },
-        {
-          id: 118,
-          name: 'schedules',
-          icon: <ScheduleIcon />,
-          isExpandable: true,
-          href: '',
-          children: [
-            {
-              id: 111,
-              name: 'cyclic',
-              icon: <ScheduleChildrenIcon />,
-              href: `${ROUTE_SCHEDULES}/cyclic`,
-            },
-            {
-              id: 122,
-              name: 'notCyclic',
-              icon: <ScheduleChildrenIcon />,
-              href: `${ROUTE_SCHEDULES}/no-cyclic`,
-            },
-          ],
-        },
-        commonLinks[2],
+        createScheduleLinks(),
       ];
+
+  return [...createCommonLinks(), ...links, createLogoutLink()];
+};
+
+const studentLinks = (): LinkItemProps[] => [
+  ...createCommonLinks(),
+  { id: 6, name: 'examination', icon: <ExamsIcon />, href: ROUTE_STUDENT_EXAM_LIST },
+  { id: 33, name: 'schedule', icon: <ScheduleIcon />, href: ROUTE_STUDENT_SCHEDULE },
+  {
+    id: 35,
+    name: 'academicRegister',
+    icon: <RegisterIcon />,
+    href: ROUTE_STUDENT_ACADEMIC_REGISTER,
+  },
+  createLogoutLink(),
+];
+
+const teacherLinks = (): LinkItemProps[] => [
+  ...createCommonLinks(),
+  { id: 34, name: 'schedule', icon: <ScheduleIcon />, href: ROUTE_TEACHER_SCHEDULE },
+  createLogoutLink(),
+];
+
+export const linkItems: LinkItemsFunction = (user: Maybe<User>) => {
+  if (!user) return [];
+
+  switch (user.role) {
+    case UserRoleEnum.ADMIN:
+      return adminLinks(user.admin?.role === 'OPERATOR');
     case UserRoleEnum.STUDENT:
-      return [
-        ...commonLinks.slice(0, 2),
-        { id: 6, name: 'examination', icon: <ExamsIcon />, href: ROUTE_STUDENT_EXAM_LIST },
-        { id: 33, name: 'schedule', icon: <ScheduleIcon />, href: ROUTE_STUDENT_SCHEDULE },
-        {
-          id: 35,
-          name: 'academicRegister',
-          icon: <RegisterIcon />,
-          href: ROUTE_STUDENT_ACADEMIC_REGISTER,
-        },
-        commonLinks[2],
-      ];
-
+      return studentLinks();
     case UserRoleEnum.TEACHER:
-      return [
-        ...commonLinks.slice(0, 2),
-        { id: 34, name: 'schedule', icon: <ScheduleIcon />, href: ROUTE_TEACHER_SCHEDULE },
-
-        commonLinks[2],
-      ];
-
+      return teacherLinks();
     default:
-      return commonLinks;
+      return [...createCommonLinks(), createLogoutLink()];
   }
 };
 
