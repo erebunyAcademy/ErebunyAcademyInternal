@@ -19,7 +19,7 @@ import dayjs from 'dayjs';
 import { useTranslations } from 'next-intl';
 import { ScheduleService } from '@/api/services/schedule.service';
 import NoDataFound from '@/components/molecules/NoDataFound';
-import { periodListData } from '@/utils/constants/common';
+import { periodListData, weekendDayList } from '@/utils/constants/common';
 import { GetScheduleByIdModel } from '@/utils/models/schedule';
 
 const ScheduleDetails = ({ params }: { params: { scheduleId: string } }) => {
@@ -29,7 +29,6 @@ const ScheduleDetails = ({ params }: { params: { scheduleId: string } }) => {
     queryKey: ['cyclic-schedule'],
     queryFn: () => ScheduleService.getScheduleById(params.scheduleId),
   });
-
 
   return (
     <Box m={{ base: '16px', lg: '40px' }} width="100%">
@@ -115,7 +114,7 @@ const ScheduleDetails = ({ params }: { params: { scheduleId: string } }) => {
             <Tbody>
               {scheduleData?.availableDays.map((day, index) => (
                 <Tr key={index}>
-                  <Td>{day.dayOfWeek}</Td>
+                  <Td>{weekendDayList.find(weekDay => weekDay.id === day.dayOfWeek)?.title}</Td>
                   <Td>{periodListData.find(lesson => lesson.id === day.lessonOfTheDay)?.title}</Td>
                 </Tr>
               ))}

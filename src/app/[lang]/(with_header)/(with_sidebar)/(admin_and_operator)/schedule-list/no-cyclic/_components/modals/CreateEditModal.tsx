@@ -114,7 +114,7 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
 
   const teacherListData = useMemo(
     () =>
-      (teachersQueryData || [])?.map(teacher => ({
+      (teachersQueryData || []).map(teacher => ({
         id: teacher.teacher?.id,
         title: `${teacher.firstName} ${teacher.lastName}`,
       })),
