@@ -152,12 +152,10 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
 
   const teacherListData = useMemo(
     () =>
-      (teachersQueryData || [])
-        .filter(teacher => teacher.isAdminVerified)
-        .map(teacher => ({
-          id: teacher.teacher?.id,
-          title: `${teacher.firstName} ${teacher.lastName}`,
-        })),
+      (teachersQueryData || []).map(teacher => ({
+        id: teacher.teacher?.id,
+        title: `${teacher.firstName} ${teacher.lastName}`,
+      })),
     [teachersQueryData],
   );
 

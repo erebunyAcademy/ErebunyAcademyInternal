@@ -57,11 +57,11 @@ export class TeacherResolver {
     return prisma.user.findMany({
       where: {
         role: UserRoleEnum.TEACHER,
+        isAdminVerified: true,
       },
       select: {
         firstName: true,
         lastName: true,
-        isAdminVerified: true,
         teacher: {
           select: {
             id: true,
