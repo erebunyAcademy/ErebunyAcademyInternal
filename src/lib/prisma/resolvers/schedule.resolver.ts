@@ -12,6 +12,7 @@ import {
 } from '@/utils/validation/schedule';
 import { orderBy } from './utils/common';
 import prisma from '..';
+import { AWSService } from '../services/AWS.service';
 
 dayjs.extend(utc);
 
@@ -284,7 +285,8 @@ export class ScheduleResolver {
     for (const attachment of attachmentsToDelete) {
       const filePath = path.join(process.cwd(), 'uploads', attachment.key);
       if (filePath) {
-        await fs.promises.unlink(filePath);
+        const aws = new AWSService();
+        await aws.deleteAttachment(filePath);
       }
     }
 
@@ -390,7 +392,8 @@ export class ScheduleResolver {
         for (const attachment of attachmentsToDelete) {
           const filePath = path.join(process.cwd(), 'uploads', attachment.key);
           if (filePath) {
-            await fs.promises.unlink(filePath);
+            const aws = new AWSService();
+            await aws.deleteAttachment(filePath);
           }
         }
 
@@ -496,7 +499,8 @@ export class ScheduleResolver {
         for (const attachment of attachmentsToDelete) {
           const filePath = path.join(process.cwd(), 'uploads', attachment.key);
           if (filePath) {
-            await fs.promises.unlink(filePath);
+            const aws = new AWSService();
+            await aws.deleteAttachment(filePath);
           }
         }
 
@@ -543,7 +547,8 @@ export class ScheduleResolver {
       const filePath = path.join(process.cwd(), 'uploads', attachment.key);
       try {
         await fs.promises.access(filePath);
-        await fs.promises.unlink(filePath);
+        const aws = new AWSService();
+        await aws.deleteAttachment(filePath);
       } catch (err) {
         console.error(`Error deleting file ${filePath}:`, err);
       }

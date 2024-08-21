@@ -13,24 +13,22 @@ import {
 } from '@chakra-ui/react';
 import { classValidatorResolver } from '@hookform/resolvers/class-validator';
 import { useMutation } from '@tanstack/react-query';
+import axios from 'axios';
 import { Country } from 'country-state-city';
 import { useRouter } from 'next/navigation';
-import { User } from 'next-auth';
-import { useSession } from 'next-auth/react';
+import { Session } from 'next-auth';
 import { useTranslations } from 'next-intl';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
-import { UploadService } from '@/api/services/upload.service';
 import { UserService } from '@/api/services/user.service';
 import { FormInput, SelectLabel } from '@/components/atoms';
-import { generateUserAvatar } from '@/utils/helpers/aws';
+import { generateAWSUrl } from '@/utils/helpers/aws';
 import { ChangePasswordValidation, UserProfileFormValidation } from '@/utils/validation/user';
 
 const resolver = classValidatorResolver(UserProfileFormValidation);
 const changePasswordResolver = classValidatorResolver(ChangePasswordValidation);
 
-const Profile = ({ sessionUser }: { sessionUser: User }) => {
+const Profile = ({ sessionUser }: { sessionUser: NonNullable<Session['user']> }) => {
   const [localImage, setLocalImage] = useState<{ file: File; localUrl: string } | null>(null);
-  const { data } = useSession();
 
   const [isLoading, setIsLoading] = useState(false);
   const toast = useToast();
@@ -80,27 +78,18 @@ const Profile = ({ sessionUser }: { sessionUser: User }) => {
     mutationFn: UserService.changeUserPassword,
   });
 
-  const { mutate: uploadAttachment } = useMutation({
-    mutationFn: (data: { file: FormData; key: string }) => UploadService.uploadFile(data),
-  });
-
   const onSubmit: SubmitHandler<UserProfileFormValidation> = useCallback(
     async payload => {
       setIsLoading(true);
       const reqData = { ...payload };
       try {
         if (localImage) {
-          const key = `academy/users/${data?.user?.id || ''}/${localImage?.file.name}`;
+          const key = `academy/users/${sessionUser.id || ''}/${localImage?.file.name}`;
           reqData.avatarMimetype = localImage?.file.type;
           reqData.avatar = key;
 
-          const formData = new FormData();
-          formData.append('file', localImage.file);
-
-          uploadAttachment({
-            file: formData,
-            key,
-          });
+          const { url } = await UserService.getPreSignedUrl(key);
+          await axios.put(url, localImage.file);
         }
         await updateUserProfileMutation(reqData, {
           onSuccess: () => toast({ title: t('success'), status: 'success' }),
@@ -112,7 +101,7 @@ const Profile = ({ sessionUser }: { sessionUser: User }) => {
         setIsLoading(false);
       }
     },
-    [data?.user?.id, localImage, router, t, toast, updateUserProfileMutation, uploadAttachment],
+    [localImage, router, sessionUser.id, t, toast, updateUserProfileMutation],
   );
 
   const onFileSelect = useCallback(async (e: ChangeEvent<HTMLInputElement>) => {
@@ -141,8 +130,10 @@ const Profile = ({ sessionUser }: { sessionUser: User }) => {
       return localImage.localUrl;
     }
 
-    return generateUserAvatar(data?.user as User);
-  }, [localImage?.localUrl, data?.user]);
+    return generateAWSUrl(
+      sessionUser?.attachment.find(attachment => attachment.type === 'AVATAR')?.key || '',
+    );
+  }, [localImage?.localUrl, sessionUser?.attachment]);
 
   return (
     <Box
@@ -167,7 +158,7 @@ const Profile = ({ sessionUser }: { sessionUser: User }) => {
         alignItems={{ base: 'center', md: 'flex-start' }}>
         <Box borderRadius="50%" overflow="hidden" position="relative" width="101px" height="101px">
           <Avatar
-            name={`${data?.user?.firstName} ${data?.user?.lastName}`}
+            name={`${sessionUser.firstName} ${sessionUser.lastName}`}
             src={avatarSrc}
             bg="#F3F4F6"
             color="#C0C0C0"
@@ -180,7 +171,7 @@ const Profile = ({ sessionUser }: { sessionUser: User }) => {
             fontWeight={700}
             lineHeight="normal"
             m={{ base: '0 0 8px 0', sm: '0 0 16px 0' }}>
-            {`${data?.user?.firstName || ''} ${data?.user?.lastName || ''}`}
+            {`${sessionUser?.firstName || ''} ${sessionUser?.lastName || ''}`}
           </Text>
           <Box
             cursor="pointer"

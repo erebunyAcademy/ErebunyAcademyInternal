@@ -18,3 +18,8 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'Error reading the image' }, { status: 500 });
   }
 }
+
+// for deleting file use
+// const filePath = path.join(process.cwd(), 'uploads', userAttachment.key);
+// console.log({ filePath });
+// await fs.promises.unlink(filePath);

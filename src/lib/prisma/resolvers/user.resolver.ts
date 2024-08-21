@@ -1,9 +1,7 @@
 import { AttachmentTypeEnum } from '@prisma/client';
 import bcrypt from 'bcrypt';
-import fs from 'fs';
 import { ConflictException, NotFoundException } from 'next-api-decorators';
 import { User } from 'next-auth';
-import path from 'path';
 import { ERROR_MESSAGES } from '@/utils/constants/common';
 import {
   ChangePasswordValidation,
@@ -152,7 +150,6 @@ export class UserResolver {
   }
 
   static async deleteUser(id: string) {
-    // todo
     const user = await prisma.user.findUnique({
       where: {
         id,
@@ -224,9 +221,8 @@ export class UserResolver {
     });
 
     if (userAttachment?.key) {
-      const filePath = path.join(process.cwd(), 'uploads', userAttachment.key);
-      console.log({ filePath });
-      await fs.promises.unlink(filePath);
+      const aws = new AWSService();
+      await aws.deleteAttachment(userAttachment?.key);
     }
 
     await prisma.user.delete({

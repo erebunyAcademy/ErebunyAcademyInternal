@@ -1,5 +1,6 @@
 import {
   DeleteObjectCommand,
+  HeadObjectCommand,
   PutObjectCommand,
   S3Client,
   S3ClientConfig,
@@ -41,6 +42,19 @@ export class AWSService {
   }
   async deleteAttachment(path: string) {
     const key = path.substring(path.indexOf('aws.com/') + 8);
+
+    try {
+      await this.s3.send(
+        new HeadObjectCommand({
+          Bucket: process.env.AWS_BUCKET_NAME,
+          Key: key,
+        }),
+      );
+    } catch (err) {
+      console.error('File does not exist:', err);
+      return;
+    }
+
     await this.s3.send(
       new DeleteObjectCommand({
         Bucket: process.env.NEXT_PUBLIC_AWS_BUCKET_NAME!,

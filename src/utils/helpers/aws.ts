@@ -1,6 +1,2 @@
-import { User } from 'next-auth';
-
-export const generateUserAvatar = (user: User) => {
-  const key = user?.attachment.find(({ type }) => type === 'AVATAR')?.key;
-  return key ? `/api/readfile?path=uploads/${key}` : '';
-};
+export const generateAWSUrl = (key: string) =>
+  key ? `${process.env.NEXT_PUBLIC_CLOUD_FRONT_URL}/${key}` : '';

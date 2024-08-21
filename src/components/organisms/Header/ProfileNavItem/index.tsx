@@ -18,7 +18,7 @@ import { signOut } from 'next-auth/react';
 import { useTranslations } from 'next-intl';
 import { Locale } from '@/i18n';
 import { ROUTE_DASHBOARD, ROUTE_PROFILE, ROUTE_SIGN_IN } from '@/utils/constants/routes';
-import { generateUserAvatar } from '@/utils/helpers/aws';
+import { generateAWSUrl } from '@/utils/helpers/aws';
 import { languagePathHelper } from '@/utils/helpers/language';
 import { LinkItemProps } from '@/utils/helpers/permissionRoutes';
 
@@ -46,7 +46,14 @@ const ProfileNavItem: FC<ProfileNavItemProps> = ({ user, onClose, linkItems, lan
     <AccordionItem pl={8}>
       <AccordionButton display="flex">
         <Flex flex={6} textAlign="left" gap="8px" as={Link} href={ROUTE_PROFILE} onClick={onClose}>
-          <Avatar name={name} src={generateUserAvatar(user)} bg="#F3F4F6" color="#C0C0C0" />
+          <Avatar
+            name={name}
+            src={generateAWSUrl(
+              user?.attachment.find(attachment => attachment.type === 'AVATAR')?.key || '',
+            )}
+            bg="#F3F4F6"
+            color="#C0C0C0"
+          />
           <Flex flexDirection="column" gap="4px">
             <Text
               display="flex"
