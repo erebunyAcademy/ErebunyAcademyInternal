@@ -41,6 +41,7 @@ const ScheduleDetails = ({ params }: { params: { scheduleId: string } }) => {
           {t('generalInfo')}
         </Heading>
         <Table
+          overflowX="auto"
           variant="simple"
           mt="10px"
           width="100%"
