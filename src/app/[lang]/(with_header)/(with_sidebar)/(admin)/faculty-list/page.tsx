@@ -1,25 +1,22 @@
 'use client';
 import React, { useCallback, useMemo, useState } from 'react';
 import { MenuItem, useDisclosure } from '@chakra-ui/react';
-import { classValidatorResolver } from '@hookform/resolvers/class-validator';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { createColumnHelper, SortingState } from '@tanstack/react-table';
+import dynamic from 'next/dynamic';
 import { useTranslations } from 'next-intl';
-import { Controller, useForm } from 'react-hook-form';
 import { v4 as uuidv4 } from 'uuid';
 import { FacultyService } from '@/api/services/faculty.service';
-import { FormInput } from '@/components/atoms';
 import ActionButtons from '@/components/molecules/ActionButtons';
-import Modal from '@/components/molecules/Modal';
 import SearchTable from '@/components/organisms/SearchTable';
 import useDebounce from '@/hooks/useDebounce';
 import { ITEMS_PER_PAGE } from '@/utils/constants/common';
 import { QUERY_KEY } from '@/utils/helpers/queryClient';
 import { Maybe } from '@/utils/models/common';
 import { FacultyModel } from '@/utils/models/faculty';
-import { CreateEditFacultyValidation } from '@/utils/validation/faculty';
 
-const resolver = classValidatorResolver(CreateEditFacultyValidation);
+const DeleteModal = dynamic(() => import('./_components/modals/DeleteModal'));
+const CreateEditModal = dynamic(() => import('./_components/modals/CreateEditModal'));
 
 const Faculty = () => {
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -30,26 +27,11 @@ const Faculty = () => {
   const t = useTranslations();
 
   const {
-    control,
-    handleSubmit,
-    reset,
-    setValue,
-    formState: { errors, isValid },
-  } = useForm<CreateEditFacultyValidation>({
-    resolver,
-    defaultValues: {
-      title: '',
-      description: '',
-    },
-  });
-
-  const {
     isOpen: isCreateEditModalOpen,
     onOpen: openCreateEditModal,
     onClose: closeCreateEditModal,
   } = useDisclosure({
     onClose() {
-      reset();
       setSelectedFaculty(null);
     },
   });
@@ -72,32 +54,6 @@ const Faculty = () => {
         limit: ITEMS_PER_PAGE,
         search: debouncedSearch,
       }),
-  });
-
-  const { mutate: createFaculty } = useMutation({
-    mutationFn: FacultyService.createFaculty,
-    onSuccess() {
-      refetch();
-      reset();
-      closeCreateEditModal();
-    },
-  });
-
-  const { mutate: updateFaculty } = useMutation({
-    mutationFn: FacultyService.updateFaculty,
-    onSuccess() {
-      refetch();
-      reset();
-      closeCreateEditModal();
-    },
-  });
-
-  const { mutate } = useMutation({
-    mutationFn: FacultyService.deleteFaculty,
-    onSuccess() {
-      closeDeleteModal();
-      refetch();
-    },
   });
 
   const pageCount = useMemo(() => {
@@ -136,8 +92,6 @@ const Faculty = () => {
             color="green"
             onClick={() => {
               setSelectedFaculty(row.original);
-              setValue('title', row.original.title || '');
-              setValue('description', row.original.description || '');
               openCreateEditModal();
             }}>
             {t('edit')}
@@ -159,17 +113,6 @@ const Faculty = () => {
   const addNewFacultyHandler = useCallback(() => {
     openCreateEditModal();
   }, [openCreateEditModal]);
-
-  const onSubmitHandler = useCallback(
-    (data: CreateEditFacultyValidation) => {
-      if (selectedFaculty) {
-        updateFaculty({ data, id: selectedFaculty.id });
-      } else {
-        createFaculty(data);
-      }
-    },
-    [createFaculty, selectedFaculty, updateFaculty],
-  );
 
   return (
     <>
@@ -196,61 +139,22 @@ const Faculty = () => {
         fetchPreviousPage={useCallback(() => setPage(prev => --prev), [])}
         addNew={addNewFacultyHandler}
       />
-
-      <Modal
-        isOpen={isCreateEditModalOpen}
-        onClose={closeCreateEditModal}
-        title="faculty"
-        primaryAction={handleSubmit(onSubmitHandler)}
-        isDisabled={!isValid}
-        actionText={selectedFaculty ? 'edit' : 'create'}>
-        <Controller
-          name="title"
-          control={control}
-          render={({ field: { onChange, value, name } }) => (
-            <FormInput
-              isRequired
-              name={name}
-              type="text"
-              formLabelName={t('facultyName')}
-              value={value}
-              placeholder="enterTitle"
-              handleInputChange={onChange}
-              isInvalid={!!errors.title?.message}
-              formErrorMessage={errors.title?.message}
-            />
-          )}
+      {isCreateEditModalOpen && (
+        <CreateEditModal
+          selectedFaculty={selectedFaculty}
+          isCreateEditModalOpen={isCreateEditModalOpen}
+          closeCreateEditModal={closeCreateEditModal}
+          refetch={refetch}
         />
-        <Controller
-          name="description"
-          control={control}
-          render={({ field: { onChange, value, name } }) => (
-            <FormInput
-              name={name}
-              type="text"
-              formLabelName={t('facultyDescription')}
-              value={value}
-              placeholder="enterDescription"
-              handleInputChange={onChange}
-              isInvalid={!!errors.description?.message}
-              formErrorMessage={errors.description?.message}
-            />
-          )}
+      )}
+      {isDeleteModalOpen && (
+        <DeleteModal
+          selectedFaculty={selectedFaculty}
+          isDeleteModalOpen={isDeleteModalOpen}
+          closeDeleteModal={closeDeleteModal}
+          refetch={refetch}
         />
-      </Modal>
-      <Modal
-        isOpen={isDeleteModalOpen}
-        onClose={closeDeleteModal}
-        isDeleteVariant
-        title="faculty"
-        primaryAction={() => {
-          if (selectedFaculty) {
-            mutate(selectedFaculty?.id);
-          }
-        }}
-        actionText="delete">
-        {t('deleteFacultyQuestion')}
-      </Modal>
+      )}
     </>
   );
 };

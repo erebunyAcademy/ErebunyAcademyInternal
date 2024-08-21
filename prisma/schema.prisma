@@ -32,16 +32,19 @@ model User {
 
   createdAt DateTime @default(now()) @db.Timestamp(0)
   updatedAt DateTime @updatedAt @db.Timestamp(0)
+
+  @@index([email])
 }
 
 model Teacher {
-  id                 String           @id @default(uuid())
-  profession         String           @db.VarChar(60)
-  workPlace          String           @db.VarChar(60)
-  scientificActivity String?          @db.VarChar(60)
-  userId             String           @unique
-  user               User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                 String            @id @default(uuid())
+  profession         String            @db.VarChar(60)
+  workPlace          String            @db.VarChar(60)
+  scientificActivity String?           @db.VarChar(60)
+  userId             String            @unique
+  user               User              @relation(fields: [userId], references: [id], onDelete: Cascade)
   subjectTeachers    SubjectTeacher[]
+  scheduleTeacher    ScheduleTeacher[]
 
   createdAt DateTime @default(now()) @db.Timestamp(0)
   updatedAt DateTime @updatedAt @db.Timestamp(0)
@@ -58,16 +61,35 @@ model Admin {
 }
 
 model Student {
-  id            String        @id @default(uuid())
-  course        Course        @relation(fields: [courseId], references: [id])
-  courseId      String
-  faculty       Faculty       @relation(fields: [facultyId], references: [id])
-  facultyId     String
-  courseGroup   CourseGroup?  @relation(fields: [courseGroupId], references: [id])
-  courseGroupId String?
-  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId        String        @unique
-  studentExams  StudentExam[]
+  id               String             @id @default(uuid())
+  courseId         String
+  facultyId        String
+  courseGroupId    String?
+  userId           String             @unique
+  user             User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course           Course             @relation(fields: [courseId], references: [id])
+  faculty          Faculty            @relation(fields: [facultyId], references: [id])
+  courseGroup      CourseGroup?       @relation(fields: [courseGroupId], references: [id])
+  studentExams     StudentExam[]
+  attendanceRecord AttendanceRecord[]
+
+  createdAt DateTime @default(now()) @db.Timestamp(0)
+  updatedAt DateTime @updatedAt @db.Timestamp(0)
+}
+
+model AttendanceRecord {
+  id                       String  @id @default(uuid())
+  studentId                String
+  academicRegisterId       String
+  mark                     Int?
+  isPresent                Boolean @default(true)
+  subjectId                String
+  academicRegisterLessonId String
+
+  academicRegister       AcademicRegister       @relation(fields: [academicRegisterId], references: [id], onDelete: Cascade)
+  subject                Subject                @relation(fields: [subjectId], references: [id])
+  student                Student                @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  academicRegisterLesson AcademicRegisterLesson @relation(fields: [academicRegisterLessonId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now()) @db.Timestamp(0)
   updatedAt DateTime @updatedAt @db.Timestamp(0)
@@ -79,62 +101,133 @@ model Faculty {
   description String?   @db.VarChar(60)
   students    Student[]
   courses     Course[]
-
-  createdAt DateTime @default(now()) @db.Timestamp(0)
-  updatedAt DateTime @updatedAt @db.Timestamp(0)
-  Exam      Exam[]
-}
-
-model CourseSubject {
-  id        String  @id @default(uuid())
-  courseId  String
-  subjectId String
-  course    Course  @relation(fields: [courseId], references: [id])
-  subject   Subject @relation(fields: [subjectId], references: [id])
-
-  createdAt DateTime @default(now()) @db.Timestamp(0)
-  updatedAt DateTime @updatedAt @db.Timestamp(0)
-
-  @@unique([courseId, subjectId], name: "courseSubjectId")
-}
-
-model Course {
-  id             String          @id @default(uuid())
-  title          String          @db.VarChar(60)
-  description    String?         @db.VarChar(60)
-  groups         CourseGroup[]
-  courseSubjects CourseSubject[]
-  faculty        Faculty?        @relation(fields: [facultyId], references: [id], onDelete: Cascade)
-  facultyId      String?
-  students       Student[]
-  exams          Exam[]
-
-  createdAt DateTime @default(now()) @db.Timestamp(0)
-  updatedAt DateTime @updatedAt @db.Timestamp(0)
-}
-
-model CourseGroup {
-  id          String    @id @default(uuid())
-  title       String    @db.VarChar(60)
-  description String?   @db.VarChar(60)
-  courseId    String?
-  course      Course?   @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  students    Student[]
   exams       Exam[]
 
   createdAt DateTime @default(now()) @db.Timestamp(0)
   updatedAt DateTime @updatedAt @db.Timestamp(0)
 }
 
+model Course {
+  id          String  @id @default(uuid())
+  title       String  @db.VarChar(60)
+  description String? @db.VarChar(60)
+  facultyId   String?
+
+  groups   CourseGroup[]
+  subjects Subject[]
+  faculty  Faculty?      @relation(fields: [facultyId], references: [id], onDelete: Cascade)
+  students Student[]
+  exams    Exam[]
+
+  createdAt DateTime @default(now()) @db.Timestamp(0)
+  updatedAt DateTime @updatedAt @db.Timestamp(0)
+}
+
+model CourseGroup {
+  id                String             @id @default(uuid())
+  title             String             @db.VarChar(60)
+  description       String?            @db.VarChar(60)
+  courseId          String?
+  course            Course?            @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  students          Student[]
+  exams             Exam[]
+  schedules         Schedule[]
+  academicRegisters AcademicRegister[]
+
+  createdAt DateTime @default(now()) @db.Timestamp(0)
+  updatedAt DateTime @updatedAt @db.Timestamp(0)
+}
+
 model Subject {
-  id             String           @id @default(uuid())
-  title          String           @db.VarChar(60)
-  description    String?          @db.VarChar(60)
-  courseSubjects CourseSubject[]
-  subjectTeacher SubjectTeacher[]
-  attachments    Attachment[]
-  testQuestions  TestQuestion[]
-  exam           Exam[]
+  id                String             @id @default(uuid())
+  title             String             @db.VarChar(60)
+  description       String?            @db.VarChar(60)
+  subjectTeacher    SubjectTeacher[]
+  attachments       Attachment[]
+  testQuestions     TestQuestion[]
+  exam              Exam[]
+  schedules         Schedule[]
+  course            Course?            @relation(fields: [courseId], references: [id])
+  courseId          String?
+  attentanceRecords AttendanceRecord[]
+  academicRegisters AcademicRegister[]
+
+  createdAt DateTime @default(now()) @db.Timestamp(0)
+  updatedAt DateTime @updatedAt @db.Timestamp(0)
+}
+
+model Schedule {
+  id            String               @id @default(uuid())
+  title         String
+  description   String?
+  totalHours    Float
+  startDayDate  DateTime?
+  endDayDate    DateTime?
+  examDate      DateTime?
+  links         String[]
+  academicYear  String
+  courseGroupId String
+  subjectId     String
+  examType      ScheduleExamTypeEnum
+  type          ScheduleTypeEnum
+
+  thematicPlans    ThematicPlan[]
+  scheduleTeachers ScheduleTeacher[]
+  attachment       Attachment[]
+  subject          Subject           @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  courseGroup      CourseGroup       @relation(fields: [courseGroupId], references: [id], onDelete: Cascade)
+  availableDays    ScheduleTime[]
+  academicRegister AcademicRegister?
+
+  createdAt DateTime @default(now()) @db.Timestamp(0)
+  updatedAt DateTime @updatedAt @db.Timestamp(0)
+}
+
+model ScheduleTime {
+  id             String   @id @default(uuid())
+  dayOfWeek      Int
+  lessonOfTheDay Int
+  schedule       Schedule @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
+  scheduleId     String
+
+  createdAt DateTime @default(now()) @db.Timestamp(0)
+  updatedAt DateTime @updatedAt @db.Timestamp(0)
+}
+
+model ScheduleTeacher {
+  id         String    @id @default(uuid())
+  teacherId  String
+  subjectId  String
+  teacher    Teacher   @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  schedule   Schedule? @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
+  scheduleId String?
+
+  createdAt DateTime @default(now()) @db.Timestamp(0)
+  updatedAt DateTime @updatedAt @db.Timestamp(0)
+}
+
+model ThematicPlan {
+  id                      String                    @id @default(uuid())
+  title                   String?
+  totalHours              Float
+  scheduleId              String
+  academicRegisterId      String?
+  academicRegister        AcademicRegister?         @relation(fields: [academicRegisterId], references: [id])
+  schedule                Schedule                  @relation(fields: [scheduleId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  type                    ThematicSubPlanTypeEnum
+  thematicPlanDescription ThematicPlanDescription[]
+
+  createdAt DateTime @default(now()) @db.Timestamp(0)
+  updatedAt DateTime @updatedAt @db.Timestamp(0)
+}
+
+model ThematicPlanDescription {
+  id             String       @id @default(uuid())
+  title          String
+  hour           String
+  thematicPlanId String
+  thematicPlan   ThematicPlan @relation(fields: [thematicPlanId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  isCompleted    Boolean      @default(false)
 
   createdAt DateTime @default(now()) @db.Timestamp(0)
   updatedAt DateTime @updatedAt @db.Timestamp(0)
@@ -161,24 +254,27 @@ model Attachment {
   subjectId   String?
   subject     Subject?           @relation(fields: [subjectId], references: [id], onDelete: Cascade)
   user        User?              @relation(fields: [userId], references: [id], onDelete: Cascade)
-  mimetype    String             @db.VarChar(60)
+  mimetype    String             @db.Text
   userId      String?
   type        AttachmentTypeEnum
+  schedule    Schedule?          @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
+  scheduleId  String?
 
   createdAt DateTime @default(now()) @db.Timestamp(0)
   updatedAt DateTime @updatedAt @db.Timestamp(0)
 }
 
 model StudentExam {
-  id             String                @id @default(uuid())
-  exam           Exam                  @relation(fields: [examId], references: [id])
-  student        Student               @relation(fields: [studentId], references: [id])
-  hasOpened      Boolean               @default(false)
-  hasFinished    Boolean               @default(false)
-  examId         String
-  studentId      String
-  studentUuid    String?
-  studentOptions StudentAnswerOption[]
+  id                String                @id @default(uuid())
+  exam              Exam                  @relation(fields: [examId], references: [id])
+  student           Student               @relation(fields: [studentId], references: [id])
+  hasOpened         Boolean               @default(false)
+  hasFinished       Boolean               @default(false)
+  examId            String
+  studentId         String
+  studentUuid       String?
+  studentOptions    StudentAnswerOption[]
+  studentExamResult String?
 
   updatedAt DateTime @updatedAt @db.Timestamp(0)
   createdAt DateTime @default(now()) @db.Timestamp(0)
@@ -283,6 +379,55 @@ model Option {
   updatedAt DateTime @updatedAt @db.Timestamp(0)
 }
 
+model AcademicRegister {
+  id            String @id @default(uuid())
+  courseGroupId String
+  subjectId     String
+  scheduleId    String @unique
+
+  schedule               Schedule                 @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
+  courseGroup            CourseGroup              @relation(fields: [courseGroupId], references: [id])
+  subject                Subject                  @relation(fields: [subjectId], references: [id])
+  attendanceRecords      AttendanceRecord[]
+  academicRegisterDay    AcademicRegisterDay[]
+  academicRegisterLesson AcademicRegisterLesson[]
+  thematicPlans          ThematicPlan[]
+
+  createdAt DateTime @default(now()) @db.Timestamp(0)
+  updatedAt DateTime @updatedAt @db.Timestamp(0)
+
+  @@unique([courseGroupId, subjectId, scheduleId], name: "academicRegisterSubjectCourseGroupId")
+  @@index([scheduleId])
+}
+
+model AcademicRegisterDay {
+  id                 String @id @default(uuid())
+  academicRegisterId String
+
+  academicRegister        AcademicRegister         @relation(fields: [academicRegisterId], references: [id], onDelete: Cascade)
+  academicRegisterLessons AcademicRegisterLesson[]
+
+  createdAt DateTime @default(now()) @db.Timestamp(0)
+  updatedAt DateTime @updatedAt @db.Timestamp(0)
+}
+
+model AcademicRegisterLesson {
+  id                    String  @id @default(uuid())
+  academicRegisterId    String
+  academicRegisterDayId String
+  lessonOfTheDay        Int
+  isCompletedLesson     Boolean @default(false)
+
+  attendanceRecord    AttendanceRecord[]
+  academicRegister    AcademicRegister    @relation(fields: [academicRegisterId], references: [id], onDelete: Cascade)
+  academicRegisterDay AcademicRegisterDay @relation(fields: [academicRegisterDayId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @db.Timestamp(0)
+  updatedAt DateTime @updatedAt @db.Timestamp(0)
+
+  @@unique([lessonOfTheDay, academicRegisterDayId], name: "academicRegisterDayUniqueLessonId")
+}
+
 enum UserRoleEnum {
   STUDENT
   TEACHER
@@ -312,6 +457,11 @@ enum ExamTypeEnum {
   TEST
 }
 
+enum ScheduleTypeEnum {
+  CYCLIC
+  NON_CYCLIC
+}
+
 enum TestQuestionTypeEnum {
   RADIO
   CHECKBOX
@@ -320,6 +470,17 @@ enum TestQuestionTypeEnum {
 enum AttachmentTypeEnum {
   AVATAR
   FILE
+}
+
+enum ThematicSubPlanTypeEnum {
+  THEORETICAL
+  PRACTICAL
+}
+
+enum ScheduleExamTypeEnum {
+  THEORETICAL
+  VERBAL
+  ASSESSMENT
 }
 
 enum AdminRoleEnum {

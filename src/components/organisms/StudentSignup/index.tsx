@@ -128,6 +128,11 @@ const StudentSignUp = ({ lang }: { lang: Locale }) => {
     queryFn: fetchFormData,
   });
 
+  const courseList = (data?.courseList || []).map(course => ({
+    id: course.id,
+    title: `${course.title}`,
+  }));
+
   const onFileSelect = (e: ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files?.length) {
@@ -228,7 +233,7 @@ const StudentSignUp = ({ lang }: { lang: Locale }) => {
               <SelectLabel
                 isRequired
                 name={name}
-                options={data?.courseList || []}
+                options={courseList}
                 labelName="course"
                 valueLabel="id"
                 nameLabel="title"

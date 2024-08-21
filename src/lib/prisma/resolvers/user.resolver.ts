@@ -71,6 +71,7 @@ export class UserResolver {
             },
             courseGroup: {
               select: {
+                id: true,
                 title: true,
               },
             },
@@ -78,6 +79,7 @@ export class UserResolver {
         },
         teacher: {
           select: {
+            id: true,
             profession: true,
             workPlace: true,
             scientificActivity: true,
@@ -120,7 +122,6 @@ export class UserResolver {
   }
 
   static async confirmuser(id: string) {
-    // todo, need to add email conf
     const user = await prisma.user.findUnique({
       where: {
         id,
@@ -146,8 +147,10 @@ export class UserResolver {
       .catch(err => {
         console.log({ approveUserAccountEmail: err });
       });
+
     return true;
   }
+
   static async deleteUser(id: string) {
     // todo
     const user = await prisma.user.findUnique({

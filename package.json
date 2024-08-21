@@ -4,6 +4,9 @@
   "private": true,
   "scripts": {
     "start:node": "npx ts-node -r tsconfig-paths/register node_app/app.ts",
+    "create:operator": "node ./prisma/jsMigrations/create-admin-account.js",
+    "create:admin": "node ./prisma/jsMigrations/create-admin-account.js",
+    "create:admins": "node ./prisma/jsMigrations/index.js",
     "dev": "concurrently \"next dev\" \"yarn start:node\"",
     "build": "next build",
     "start": "concurrently \"next start\" \"yarn start:node\"",
@@ -37,6 +40,7 @@
     "node-cron": "^3.0.3",
     "path-to-regexp": "^6.2.2",
     "react": "^18",
+    "react-datepicker": "^7.3.0",
     "react-dom": "^18",
     "react-hook-form": "^7.51.4",
     "react-phone-input-2": "^2.15.1",

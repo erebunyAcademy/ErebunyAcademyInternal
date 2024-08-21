@@ -14,9 +14,14 @@ type SimpleTableProps<T> = {
   data: T[];
   columns: ColumnDef<T, any>[];
   title: string;
+  withCheckbox?: boolean;
 };
 
-const SimpleTable = <T,>({ columns, data, title }: SimpleTableProps<T>): JSX.Element => {
+const SimpleTable = <T extends { id: string }>({
+  columns,
+  data,
+  title,
+}: SimpleTableProps<T>): JSX.Element => {
   const t = useTranslations();
   const { getHeaderGroups, getRowModel } = useReactTable({
     columns,
@@ -32,12 +37,13 @@ const SimpleTable = <T,>({ columns, data, title }: SimpleTableProps<T>): JSX.Ele
         fontSize={{ base: '18px', sm: '24px' }}
         textAlign="center"
         fontWeight={700}
+        mt="20px"
         mb="15px">
         {t(title)}
       </Text>
       <Box
         maxWidth={{ base: '340px', sm: '670px', lg: '700px', xl: '100%' }}
-        height="400px"
+        height="max-content"
         overflow="auto">
         <Table
           borderTop="1px solid rgb(226, 232, 240)"
@@ -51,6 +57,7 @@ const SimpleTable = <T,>({ columns, data, title }: SimpleTableProps<T>): JSX.Ele
                   const meta: any = header.column.columnDef.meta;
                   return (
                     <Th
+                      textAlign="center"
                       key={header.id}
                       onClick={header.column.getToggleSortingHandler()}
                       isNumeric={meta?.isNumeric}>
@@ -70,7 +77,7 @@ const SimpleTable = <T,>({ columns, data, title }: SimpleTableProps<T>): JSX.Ele
                     {row.getVisibleCells().map(cell => {
                       const meta: any = cell.column.columnDef.meta;
                       return (
-                        <Td key={cell.id} isNumeric={meta?.isNumeric} py="12px">
+                        <Td key={cell.id} isNumeric={meta?.isNumeric} py="12px" textAlign="center">
                           {flexRender(cell.column.columnDef.cell, cell.getContext())}
                         </Td>
                       );

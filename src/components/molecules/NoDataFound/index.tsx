@@ -8,6 +8,7 @@ const NoDataFound = () => {
       display="flex"
       height="100%"
       width="100%"
+      color="#718096"
       justifyContent={{ base: 'flex-start', sm: 'center' }}
       alignItems="center">
       <Text fontSize={{ base: '24px', sm: '28px' }} m="0" fontWeight="400" as="span">

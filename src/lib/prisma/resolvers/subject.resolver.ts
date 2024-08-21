@@ -1,6 +1,6 @@
-import { Subject } from '@prisma/client';
 import { NotFoundException } from 'next-api-decorators';
 import { SortingType } from '@/api/types/common';
+import { CreateEditSubjectValidation } from '@/utils/validation/subject';
 import { orderBy } from './utils/common';
 import prisma from '..';
 
@@ -16,7 +16,17 @@ export class SubjectResolver {
         where: {
           OR: [{ title: { contains: search, mode: 'insensitive' } }],
         },
-        select: { id: true, title: true, description: true },
+        select: {
+          id: true,
+          title: true,
+          description: true,
+          course: {
+            select: {
+              id: true,
+              title: true,
+            },
+          },
+        },
         orderBy: sorting ? orderBy(sorting) : undefined,
         skip,
         take,
@@ -27,17 +37,36 @@ export class SubjectResolver {
     }));
   }
 
+  
+
   static getSubjects() {
     return prisma.subject.findMany({
       select: {
         id: true,
         title: true,
+        course: {
+          select: {
+            id: true,
+            title: true,
+          },
+        },
       },
     });
   }
 
-  static createSubject(data: Pick<Subject, 'title' | 'description'>) {
-    return prisma.subject.create({ data });
+  static async createSubject(data: CreateEditSubjectValidation) {
+    const createdSubject = await prisma.subject.create({
+      data: {
+        title: data.title,
+        description: data.description,
+        courseId: data.courseId,
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    return createdSubject;
   }
 
   static getSubjectById(id: string) {
@@ -53,20 +82,24 @@ export class SubjectResolver {
       });
   }
 
-  static async updateSubjectById(subjectId: string, data: Partial<Subject>) {
+  static async updateSubjectById(subjectId: string, data: CreateEditSubjectValidation) {
     const { id } = await this.getSubjectById(subjectId);
 
     return prisma.subject.update({
       where: {
         id,
       },
-      data,
+      data: {
+        title: data.title,
+        courseId: data.courseId,
+        description: data.description,
+      },
     });
   }
 
   static async deleteSubjectById(subjectId: string) {
-    // todo
     const { id } = await this.getSubjectById(subjectId);
+
     return prisma.subject.delete({
       where: {
         id,

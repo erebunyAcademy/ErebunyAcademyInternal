@@ -23,7 +23,7 @@ export const StudentGuard = createMiddlewareDecorator(
       throw new UnauthorizedException();
     }
 
-    if (user.role !== UserRoleEnum.STUDENT) {
+    if (user.role !== UserRoleEnum.STUDENT || !user.student) {
       throw new ForbiddenException();
     }
 

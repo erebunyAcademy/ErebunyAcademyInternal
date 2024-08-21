@@ -1,18 +1,15 @@
 'use client';
 import { useCallback, useMemo, useState } from 'react';
 import { Button, MenuItem, useDisclosure } from '@chakra-ui/react';
-import { classValidatorResolver } from '@hookform/resolvers/class-validator';
 import { LanguageTypeEnum } from '@prisma/client';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { createColumnHelper, SortingState } from '@tanstack/react-table';
+import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
-import { Controller, useForm } from 'react-hook-form';
 import { v4 as uuidv4 } from 'uuid';
 import { SubjectService } from '@/api/services/subject.service';
-import { FormInput } from '@/components/atoms';
 import ActionButtons from '@/components/molecules/ActionButtons';
-import Modal from '@/components/molecules/Modal';
 import SearchTable from '@/components/organisms/SearchTable';
 import useDebounce from '@/hooks/useDebounce';
 import { Locale } from '@/i18n';
@@ -22,9 +19,9 @@ import { languagePathHelper } from '@/utils/helpers/language';
 import { QUERY_KEY } from '@/utils/helpers/queryClient';
 import { Maybe } from '@/utils/models/common';
 import { SubjectModel } from '@/utils/models/subject';
-import { CreateEditSubjectValidation } from '@/utils/validation/subject';
 
-const resolver = classValidatorResolver(CreateEditSubjectValidation);
+const DeleteModal = dynamic(() => import('./_components/modals/DeleteModal'));
+const CreateEditModal = dynamic(() => import('./_components/modals/CreateEditModal'));
 
 const Subject = ({ params }: { params: { lang: Locale } }) => {
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -35,26 +32,11 @@ const Subject = ({ params }: { params: { lang: Locale } }) => {
   const t = useTranslations();
 
   const {
-    control,
-    handleSubmit,
-    reset,
-    setValue,
-    formState: { errors, isValid },
-  } = useForm<CreateEditSubjectValidation>({
-    resolver,
-    defaultValues: {
-      title: '',
-      description: '',
-    },
-  });
-
-  const {
     isOpen: isCreateEditModalOpen,
     onOpen: openCreateEditModal,
     onClose: closeCreateEditModal,
   } = useDisclosure({
     onClose() {
-      reset();
       setSelectedSubject(null);
     },
   });
@@ -77,32 +59,6 @@ const Subject = ({ params }: { params: { lang: Locale } }) => {
         limit: ITEMS_PER_PAGE,
         search: debouncedSearch,
       }),
-  });
-
-  const { mutate: createFaculty } = useMutation({
-    mutationFn: SubjectService.createSubject,
-    onSuccess() {
-      refetch();
-      reset();
-      closeCreateEditModal();
-    },
-  });
-
-  const { mutate: updateFaculty } = useMutation({
-    mutationFn: SubjectService.updateSubject,
-    onSuccess() {
-      refetch();
-      reset();
-      closeCreateEditModal();
-    },
-  });
-
-  const { mutate } = useMutation({
-    mutationFn: SubjectService.deleteSubject,
-    onSuccess() {
-      closeDeleteModal();
-      refetch();
-    },
   });
 
   const pageCount = useMemo(() => {
@@ -133,6 +89,11 @@ const Subject = ({ params }: { params: { lang: Locale } }) => {
       cell: info => info.getValue(),
       header: t('description'),
     }),
+    columnHelper.accessor('course.title', {
+      id: uuidv4(),
+      cell: info => info.getValue(),
+      header: t('course'),
+    }),
     columnHelper.accessor('description', {
       id: uuidv4(),
       cell: ({ row }) => (
@@ -153,8 +114,6 @@ const Subject = ({ params }: { params: { lang: Locale } }) => {
             color="green"
             onClick={() => {
               setSelectedSubject(row.original);
-              setValue('title', row.original.title || '');
-              setValue('description', row.original.description || '');
               openCreateEditModal();
             }}>
             {t('edit')}
@@ -176,17 +135,6 @@ const Subject = ({ params }: { params: { lang: Locale } }) => {
   const addNewFacultyHandler = useCallback(() => {
     openCreateEditModal();
   }, [openCreateEditModal]);
-
-  const onSubmitHandler = useCallback(
-    (data: CreateEditSubjectValidation) => {
-      if (selectedSubject) {
-        updateFaculty({ data, id: selectedSubject.id });
-      } else {
-        createFaculty(data);
-      }
-    },
-    [createFaculty, selectedSubject, updateFaculty],
-  );
 
   return (
     <>
@@ -214,60 +162,22 @@ const Subject = ({ params }: { params: { lang: Locale } }) => {
         addNew={addNewFacultyHandler}
       />
 
-      <Modal
-        isOpen={isCreateEditModalOpen}
-        onClose={closeCreateEditModal}
-        title={'subject'}
-        primaryAction={handleSubmit(onSubmitHandler)}
-        isDisabled={!isValid}
-        actionText={selectedSubject ? 'edit' : 'create'}>
-        <Controller
-          name="title"
-          control={control}
-          render={({ field: { onChange, value, name } }) => (
-            <FormInput
-              isRequired
-              name={name}
-              type="text"
-              formLabelName={t('subjectName')}
-              value={value}
-              placeholder="enterTitle"
-              handleInputChange={onChange}
-              isInvalid={!!errors.title?.message}
-              formErrorMessage={errors.title?.message}
-            />
-          )}
+      {isCreateEditModalOpen && (
+        <CreateEditModal
+          isCreateEditModalOpen={isCreateEditModalOpen}
+          closeCreateEditModal={closeCreateEditModal}
+          refetch={refetch}
+          selectedSubject={selectedSubject}
         />
-        <Controller
-          name="description"
-          control={control}
-          render={({ field: { onChange, value, name } }) => (
-            <FormInput
-              name={name}
-              type="text"
-              formLabelName={t('subjectDescription')}
-              value={value}
-              placeholder="enterDescription"
-              handleInputChange={onChange}
-              isInvalid={!!errors.description?.message}
-              formErrorMessage={errors.description?.message}
-            />
-          )}
+      )}
+      {isDeleteModalOpen && (
+        <DeleteModal
+          closeDeleteModal={closeDeleteModal}
+          refetch={refetch}
+          isDeleteModalOpen={isDeleteModalOpen}
+          selectedSubject={selectedSubject}
         />
-      </Modal>
-      <Modal
-        isOpen={isDeleteModalOpen}
-        isDeleteVariant
-        onClose={closeDeleteModal}
-        title={'subject'}
-        primaryAction={() => {
-          if (selectedSubject) {
-            mutate(selectedSubject?.id);
-          }
-        }}
-        actionText={'delete'}>
-        {t('deleteSubjectQuestion')}
-      </Modal>
+      )}
     </>
   );
 };

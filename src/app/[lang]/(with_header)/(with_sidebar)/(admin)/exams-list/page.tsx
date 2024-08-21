@@ -12,6 +12,7 @@ import { LanguageTypeEnum } from '@prisma/client';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { createColumnHelper } from '@tanstack/react-table';
 import dayjs from 'dayjs';
+import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
@@ -19,7 +20,6 @@ import { v4 as uuidv4 } from 'uuid';
 import { ExamService } from '@/api/services/exam.service';
 import { StudentService } from '@/api/services/student.service';
 import ActionButtons from '@/components/molecules/ActionButtons';
-import CreateExamModal from '@/components/molecules/CreateExamModal';
 import Modal from '@/components/molecules/Modal';
 import SearchTable from '@/components/organisms/SearchTable';
 import SimpleTable from '@/components/organisms/SimpleTable';
@@ -33,6 +33,8 @@ import { Maybe } from '@/utils/models/common';
 import { ExamModel } from '@/utils/models/exam';
 import { ExamParticipantsListModel } from '@/utils/models/student';
 import { UpdateExamStatusValidation } from '@/utils/validation/exam';
+
+const CreateExamModal = dynamic(() => import('@/components/molecules/CreateExamModal'));
 
 export default function ExamsList({
   params,
@@ -321,12 +323,14 @@ export default function ExamsList({
         fetchPreviousPage={useCallback(() => setPage(prev => --prev), [])}
         addNew={openCreateEditModal}
       />
+
       <CreateExamModal
         isOpen={isCreateEditExamModalIsOpen}
         onClose={closeCreateEditExamModal}
         exam={selectedExam}
         params={params}
       />
+
       <Modal
         isOpen={isDeleteModalOpen}
         onClose={closeDeleteModal}

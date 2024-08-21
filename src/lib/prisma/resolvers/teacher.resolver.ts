@@ -1,5 +1,6 @@
 import { UserRoleEnum } from '@prisma/client';
-import { NotFoundException } from 'next-api-decorators';
+import { ForbiddenException, NotFoundException } from 'next-api-decorators';
+import { User } from 'next-auth';
 import { SortingType } from '@/api/types/common';
 import { orderBy } from './utils/common';
 import prisma from '..';
@@ -9,6 +10,7 @@ export class TeacherResolver {
     return Promise.all([
       prisma.user.count({
         where: {
+          isVerified: true,
           role: UserRoleEnum.TEACHER,
           OR: [
             { firstName: { contains: search, mode: 'insensitive' } },
@@ -19,6 +21,7 @@ export class TeacherResolver {
       }),
       prisma.user.findMany({
         where: {
+          isVerified: true,
           role: UserRoleEnum.TEACHER,
           OR: [
             { firstName: { contains: search, mode: 'insensitive' } },
@@ -32,6 +35,7 @@ export class TeacherResolver {
           firstName: true,
           lastName: true,
           createdAt: true,
+          isAdminVerified: true,
           teacher: {
             select: {
               workPlace: true,
@@ -48,6 +52,24 @@ export class TeacherResolver {
       users,
     }));
   }
+
+  static getTeachers() {
+    return prisma.user.findMany({
+      where: {
+        role: UserRoleEnum.TEACHER,
+        isAdminVerified: true,
+      },
+      select: {
+        firstName: true,
+        lastName: true,
+        teacher: {
+          select: {
+            id: true,
+          },
+        },
+      },
+    });
+  }
   static getTeacherById(id: string) {
     return prisma.student
       .findUnique({
@@ -59,5 +81,47 @@ export class TeacherResolver {
         }
         return res;
       });
+  }
+
+  static async getTeacherSchedules(user: NonNullable<User>) {
+    if (!user.teacher?.id) {
+      throw new ForbiddenException();
+    }
+
+    const scheduleIds = (
+      await prisma.scheduleTeacher.findMany({
+        where: { teacherId: user.teacher.id },
+        select: {
+          scheduleId: true,
+        },
+      })
+    ).reduce((acc: string[], schedule) => {
+      if (schedule.scheduleId) {
+        acc.push(schedule.scheduleId);
+      }
+      return acc;
+    }, [] as string[]);
+
+    return prisma.schedule.findMany({
+      where: {
+        id: {
+          in: scheduleIds,
+        },
+      },
+      include: {
+        subject: true,
+        attachment: true,
+        thematicPlans: {
+          include: {
+            thematicPlanDescription: true,
+          },
+        },
+        courseGroup: {
+          include: {
+            course: true,
+          },
+        },
+      },
+    });
   }
 }

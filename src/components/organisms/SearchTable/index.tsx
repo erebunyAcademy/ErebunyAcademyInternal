@@ -128,7 +128,7 @@ function SearchTable<T>({
           {t(title)}
         </Text>
         {addNew && (
-          <Button px="12px" py="8px" onClick={addNew}>
+          <Button px="12px" py="8px" onClick={addNew} overflowWrap="break-word" whiteSpace="normal">
             {t('addNew')}
           </Button>
         )}
@@ -216,7 +216,7 @@ function SearchTable<T>({
                 );
               })
             ) : (
-              <Tr height="150px">
+              <Tr height="149px">
                 <Td colSpan={columns.length} border="none" height="100%">
                   <NoDataFound />
                 </Td>

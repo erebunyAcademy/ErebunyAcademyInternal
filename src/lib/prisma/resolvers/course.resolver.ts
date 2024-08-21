@@ -42,6 +42,11 @@ export class CourseResolver {
       select: {
         id: true,
         title: true,
+        faculty: {
+          select: {
+            title: true,
+          },
+        },
       },
     });
   }

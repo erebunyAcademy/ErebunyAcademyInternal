@@ -17,6 +17,7 @@ const NavItem = ({ href, icon, children, lang, ...rest }: NavItemProps) => {
   return (
     <Box
       as={Link}
+      width="100%"
       href={languagePathHelper(lang, href || ROUTE_DASHBOARD) || ''}
       style={{ textDecoration: 'none' }}
       _focus={{ boxShadow: 'none' }}
@@ -28,7 +29,7 @@ const NavItem = ({ href, icon, children, lang, ...rest }: NavItemProps) => {
         color: '#222',
       }}
       height="52px"
-      {...(href
+      {...(href !== undefined
         ? {}
         : { onClick: () => signOut({ callbackUrl: languagePathHelper(lang, ROUTE_SIGN_IN) }) })}>
       <Flex

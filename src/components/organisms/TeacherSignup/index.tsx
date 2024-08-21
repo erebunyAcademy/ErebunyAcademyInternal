@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Button, Stack, useToast, VStack } from '@chakra-ui/react';
 import { classValidatorResolver } from '@hookform/resolvers/class-validator';
 import { useMutation, useQuery } from '@tanstack/react-query';
@@ -38,10 +38,19 @@ const TeacherSignUp = ({ lang }: { lang: Locale }) => {
     },
   });
 
-  const { data } = useQuery({
-    queryKey: [],
+  const { data: subjectList } = useQuery({
+    queryKey: ['subject-list'],
     queryFn: SubjectService.list,
   });
+
+  const subjectData = useMemo(
+    () =>
+      (subjectList || [])?.map(subject => ({
+        id: subject.id,
+        title: subject.title,
+      })),
+    [subjectList],
+  );
 
   const { mutate } = useMutation({
     mutationFn: AuthService.teacherSignUp,
@@ -180,7 +189,7 @@ const TeacherSignUp = ({ lang }: { lang: Locale }) => {
             <SelectLabel
               name={name}
               isRequired
-              options={data || []}
+              options={subjectData || []}
               labelName="teachingSubject"
               valueLabel="id"
               nameLabel="title"

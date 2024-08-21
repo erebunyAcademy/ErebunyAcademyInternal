@@ -21,6 +21,7 @@ const StudentExamList = ({ user, lang }: { user: User; lang: Locale }) => {
   const { data } = useQuery<StudentExams>({
     queryFn: StudentService.getStudentExams,
     queryKey: ['exams'],
+    initialData: [],
   });
 
   useLayoutEffect(() => {
@@ -38,6 +39,11 @@ const StudentExamList = ({ user, lang }: { user: User; lang: Locale }) => {
   );
 
   const columns = [
+    columnHelper.accessor('studentExamResult', {
+      id: uuidv4(),
+      cell: info => info.getValue() || '-',
+      header: t('results'),
+    }),
     columnHelper.accessor('exam.duration', {
       id: uuidv4(),
       cell: info => `${info.getValue()} ${t('minutes')}`,
@@ -79,6 +85,7 @@ const StudentExamList = ({ user, lang }: { user: User; lang: Locale }) => {
       },
       header: t('status'),
     }),
+
     columnHelper.accessor('exam.examLanguages', {
       id: uuidv4(),
       cell: info => (
@@ -102,7 +109,7 @@ const StudentExamList = ({ user, lang }: { user: User; lang: Locale }) => {
 
   return (
     <Flex width="100%" pt={{ base: '30px', md: '100px' }}>
-      <SimpleTable columns={columns as any} data={data || []} title="yourExams" />
+      <SimpleTable columns={columns as any} data={data} title="yourExams" />
     </Flex>
   );
 };

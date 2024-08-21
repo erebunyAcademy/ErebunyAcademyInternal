@@ -12,4 +12,8 @@ export class CreateEditSubjectValidation {
   @IsString()
   @IsOptional()
   id?: string;
+
+  @IsString()
+  @IsNotEmpty()
+  courseId: string;
 }

@@ -15,7 +15,7 @@ export default async function RootLayout({
 }>) {
   const session = await serverSession();
 
-  if (session?.user?.role !== 'ADMIN') {
+  if (session?.user?.admin?.role !== 'SYS_ADMIN') {
     redirect(languagePathHelper(params.lang, ROUTE_DASHBOARD));
   }
 

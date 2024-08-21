@@ -1,3 +1,4 @@
+import { StudentCyclicScheduleListType } from '@/utils/models/schedule';
 import { StudentExams, StudentsListModel, UserStudentModel } from '@/utils/models/student';
 import { UpdateStudentValidation } from '@/utils/validation/student';
 import $apiClient from '../axiosClient';
@@ -19,5 +20,9 @@ export class StudentService {
 
   static getStudentsByExamId(examId: string) {
     return $apiClient.get(`/students/exams/${examId}`);
+  }
+
+  static getStudentSchedules() {
+    return $apiClient.get<StudentCyclicScheduleListType>('/students/schedules');
   }
 }

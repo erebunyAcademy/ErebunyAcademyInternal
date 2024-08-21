@@ -1,4 +1,4 @@
-import React, { FC, useEffect } from 'react';
+import React, { FC, useEffect, useMemo } from 'react';
 import { Avatar, Button, Flex } from '@chakra-ui/react';
 import { classValidatorResolver } from '@hookform/resolvers/class-validator';
 import { Attachment, AttachmentTypeEnum, LanguageTypeEnum } from '@prisma/client';
@@ -133,6 +133,16 @@ const CreateExamModal: FC<CreateExamModalProps> = ({ isOpen, onClose, exam, para
     queryKey: ['subject-list'],
     queryFn: SubjectService.list,
   });
+
+  const subjectData = useMemo(
+    () =>
+      (subjectList || [])?.map(subject => ({
+        id: subject.id,
+        title: subject.title,
+      })),
+    [subjectList],
+  );
+
   const columnHelper = createColumnHelper<UserStudentModel>();
 
   const columns = [
@@ -281,7 +291,7 @@ const CreateExamModal: FC<CreateExamModalProps> = ({ isOpen, onClose, exam, para
                 <SelectLabel
                   isRequired
                   name={name}
-                  options={subjectList || []}
+                  options={subjectData}
                   labelName="selectSubject"
                   valueLabel="id"
                   nameLabel="title"

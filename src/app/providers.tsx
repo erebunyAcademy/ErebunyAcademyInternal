@@ -3,6 +3,7 @@ import { ReactNode } from 'react';
 import { CacheProvider } from '@chakra-ui/next-js';
 import { ChakraProvider, extendTheme, LightMode, ThemeConfig, useToast } from '@chakra-ui/react';
 import {
+  MutationCache,
   QueryCache,
   QueryClient,
   QueryClientConfig,
@@ -26,19 +27,20 @@ const theme: ThemeConfig = extendTheme({
 const Providers = ({ children }: { children: ReactNode }) => {
   const toast = useToast();
   const t = useTranslations();
+  const config = {
+    onError: (err: { message: string }) => {
+      toast({ title: t(err.message), status: 'error', position: 'bottom-right' });
+    },
+  };
   const gqlGlobalOptions: QueryClientConfig = {
-    queryCache: new QueryCache({}),
     defaultOptions: {
       queries: {
         retry: 1,
         refetchOnWindowFocus: false,
       },
-      mutations: {
-        onError: err => {
-          toast({ title: t(err.message), status: 'error', position: 'bottom-right' });
-        },
-      },
     },
+    queryCache: new QueryCache(config),
+    mutationCache: new MutationCache(config),
   };
 
   return (

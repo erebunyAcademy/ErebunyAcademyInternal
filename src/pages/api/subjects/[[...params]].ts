@@ -1,4 +1,3 @@
-import { Subject } from '@prisma/client';
 import {
   Body,
   Catch,
@@ -15,6 +14,7 @@ import { SortingType } from '@/api/types/common';
 import { exceptionHandler } from '@/lib/prisma/error';
 import { AdminGuard } from '@/lib/prisma/guards/admin';
 import { SubjectResolver } from '@/lib/prisma/resolvers/subject.resolver';
+import { CreateEditSubjectValidation } from '@/utils/validation/subject';
 
 @Catch(exceptionHandler)
 class SubjectHandler {
@@ -48,7 +48,7 @@ class SubjectHandler {
 
   @AdminGuard()
   @Post()
-  createSubject(@Body(ValidationPipe) input: Pick<Subject, 'title' | 'description'>) {
+  createSubject(@Body(ValidationPipe) input: CreateEditSubjectValidation) {
     return SubjectResolver.createSubject(input);
   }
 
@@ -56,7 +56,7 @@ class SubjectHandler {
   @Patch('/:subjectId')
   updateSubject(
     @Param('subjectId') subjectId: string,
-    @Body(ValidationPipe) input: Partial<Pick<Subject, 'title' | 'description'>>,
+    @Body(ValidationPipe) input: CreateEditSubjectValidation,
   ) {
     return SubjectResolver.updateSubjectById(subjectId, input);
   }
