@@ -27,13 +27,6 @@
       "@/icons/*": ["./public/icons/*"]
     }
   },
-  "include": [
-    "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx",
-    ".next/types/**/*.ts",
-    "node_app/**/*.ts",
-    "src/lib/prisma/resolvers/schedule.resolverts"
-  ],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "node_app/**/*.ts"],
   "exclude": ["node_modules"]
 }

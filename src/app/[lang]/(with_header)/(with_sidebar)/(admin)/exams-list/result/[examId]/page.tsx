@@ -14,6 +14,7 @@ const ExamResult = ({ params }: { params: { examId: string } }) => {
   const { data } = useQuery({
     queryKey: ['student-exam-result'],
     queryFn: ExamService.getAllStudentsExamResult.bind(null, params.examId),
+    initialData: [],
   });
 
   const columnHelper = createColumnHelper<GetStudentExamResult>();
@@ -34,18 +35,14 @@ const ExamResult = ({ params }: { params: { examId: string } }) => {
       cell: info => info.getValue(),
       header: t('email'),
     }),
-    columnHelper.accessor('studentExamResult', {
+    columnHelper.accessor('rightAnswers', {
       id: uuidv4(),
-      cell: info => info.getValue(),
+      cell: info => `${info.row.original.rightAnswers}/${info.row.original.total}`,
       header: t('result'),
     }),
   ];
 
-  return (
-    <Box>
-      {data && <SimpleTable columns={columns as any} data={data} title="studentsAnswers" />}
-    </Box>
-  );
+  return <Box>{data && <SimpleTable columns={columns} data={data} title="studentsAnswers" />}</Box>;
 };
 
 export default ExamResult;
