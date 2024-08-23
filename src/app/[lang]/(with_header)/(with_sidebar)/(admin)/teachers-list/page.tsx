@@ -33,11 +33,15 @@ export default function Users() {
         limit: ITEMS_PER_PAGE,
         search: debouncedSearch,
       }),
+    initialData: {
+      count: 0,
+      users: [],
+    },
   });
   const { mutate: confirmUserById } = useMutation({
     mutationFn: UserService.confirmUserVerificationById,
     onSuccess() {
-      selectedTeacher;
+      setSelectedTeacher(null);
       refetch();
     },
   });
@@ -132,8 +136,8 @@ export default function Users() {
       <SearchTable
         title="teachersList"
         isLoading={isLoading}
-        data={data?.users || []}
-        count={data?.count || 0}
+        data={data.users}
+        count={data.count}
         // @ts-ignore
         columns={columns}
         sorting={sorting}
