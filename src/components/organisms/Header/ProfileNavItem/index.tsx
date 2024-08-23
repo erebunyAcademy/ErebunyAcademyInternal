@@ -68,7 +68,7 @@ const ProfileNavItem: FC<ProfileNavItemProps> = ({ user, onClose, linkItems, lan
         </Box>
       </AccordionButton>
       <AccordionPanel pb={0} bg="#F9FAFB" pt={0}>
-        <Accordion allowToggle={false} allowMultiple>
+        <Accordion allowMultiple>
           {linkItems.map(({ href, name, icon, id, isExpandable, children }) => (
             <Fragment key={id}>
               {isExpandable ? (

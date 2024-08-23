@@ -9,14 +9,29 @@ import {
 } from '@/utils/validation/exam';
 import prisma from '..';
 
-function checkStudentAnswers(testQuestions: any, studentAnswerGroupedByTestQuestion: any) {
-  return testQuestions.map(({ id, options }: any) => {
-    const studentAnswers = studentAnswerGroupedByTestQuestion.get(id) || [];
-    const correctOptions = options.map((option: { id: string }) => option.id);
+type TestQuestionWithOptions = {
+  id: string;
+  options: {
+    id: string;
+  }[];
+};
 
-    const isCorrect = correctOptions.every((correctOption: any) =>
-      studentAnswers.includes(correctOption),
-    );
+type StudentAnswerMap = Map<string, string[]>;
+
+type StudentAnswerResult = {
+  testQuestionId: string;
+  isCorrect: boolean;
+}[];
+
+function checkStudentAnswers(
+  testQuestions: TestQuestionWithOptions[],
+  studentAnswerGroupedByTestQuestion: StudentAnswerMap,
+): StudentAnswerResult {
+  return testQuestions.map(({ id, options }) => {
+    const studentAnswers = studentAnswerGroupedByTestQuestion.get(id) || [];
+    const correctOptions = options.map(option => option.id);
+
+    const isCorrect = correctOptions.every(correctOption => studentAnswers.includes(correctOption));
 
     return { testQuestionId: id, isCorrect };
   });
@@ -719,7 +734,9 @@ export class ExamsResolver {
     const studentResult = checkStudentAnswers(data, studentAnswerGroupedByTestQuestion);
 
     const examResult = {
-      rightAnswers: studentResult.filter(({ isCorrect }: any) => isCorrect).length,
+      id: Date.now(),
+      rightAnswers: studentResult.filter(({ isCorrect }: { isCorrect: boolean }) => isCorrect)
+        .length,
       total: studentResult.length,
     };
 
@@ -733,31 +750,101 @@ export class ExamsResolver {
     return examResult;
   }
 
+  // Change this
+  // static async getStudentsExamResults(examId: string) {
+  //   const exam = await prisma.exam.findUniqueOrThrow({
+  //     where: {
+  //       id: examId,
+  //     },
+  //   });
+
+  //   return prisma.studentExam.findMany({
+  //     where: {
+  //       examId: exam.id,
+  //       hasFinished: true,
+  //     },
+  //     include: {
+  //       exam: {
+  //         include: {
+  //           examLanguages: true,
+  //         },
+  //       },
+  //       student: {
+  //         include: {
+  //           user: true,
+  //         },
+  //       },
+  //     },
+  //   });
+  // }
+
   static async getStudentsExamResults(examId: string) {
-    const exam = await prisma.exam.findUniqueOrThrow({
+    const studentExams = await prisma.studentExam.findMany({
       where: {
-        id: examId,
+        examId,
+      },
+      select: {
+        student: {
+          select: {
+            id: true,
+            user: {
+              select: {
+                firstName: true,
+                lastName: true,
+                email: true,
+              },
+            },
+          },
+        },
+        id: true,
       },
     });
 
-    return prisma.studentExam.findMany({
+    const testQuestions = await prisma.testQuestion.findMany({
       where: {
-        examId: exam.id,
-        hasFinished: true,
-      },
-      include: {
-        exam: {
-          include: {
-            examLanguages: true,
-          },
+        examTranslation: {
+          examId,
         },
-        student: {
-          include: {
-            user: true,
+      },
+      select: {
+        id: true,
+        options: {
+          where: {
+            isRightAnswer: true,
+          },
+          select: {
+            id: true,
           },
         },
       },
     });
+
+    const results = [];
+
+    for (const { student, id: studentExamId } of studentExams) {
+      const result = await prisma.studentAnswerOption.findMany({
+        where: { studentExamId },
+        select: { options: true, testQuestionId: true },
+      });
+
+      const studentAnswerGroupedByTestQuestion = new Map();
+
+      result.forEach(({ testQuestionId, options }) => {
+        const existingAnswers = studentAnswerGroupedByTestQuestion.get(testQuestionId) || [];
+        studentAnswerGroupedByTestQuestion.set(testQuestionId, [...existingAnswers, options?.id]);
+      });
+
+      const studentResult = checkStudentAnswers(testQuestions, studentAnswerGroupedByTestQuestion);
+
+      results.push({
+        id: student.id,
+        student,
+        rightAnswers: studentResult.filter(({ isCorrect }: any) => isCorrect).length,
+        total: studentResult.length,
+      });
+    }
+
+    return results;
   }
 
   static async getIsFinished(studentId?: string, examId?: string) {

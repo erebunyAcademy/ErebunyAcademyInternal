@@ -87,7 +87,7 @@ export class ExamService {
   static getExamDurationInfo(examId: string) {
     return $apiClient.get<GetExamDurationInfoModel>(`/exams/${examId}/duration`);
   }
-  static getAllStudentsExamResult(examId: string) {
+  static getAllStudentsExamResult(examId: string): Promise<GetAllStudentExamResult> {
     return $apiClient.get<GetAllStudentExamResult>(`/exams/${examId}/results`);
   }
 }
