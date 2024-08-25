@@ -7,7 +7,7 @@
     "create:operator": "node ./prisma/jsMigrations/create-admin-account.js",
     "create:admin": "node ./prisma/jsMigrations/create-admin-account.js",
     "create:admins": "node ./prisma/jsMigrations/index.js",
-    "sync:test": "node ./prisma/jsMigrations/index.js",
+    "sync:test": "node ./prisma/jsMigrations/test-question-update.js",
     "dev": "concurrently \"next dev\" \"yarn start:node\"",
     "build": "next build",
     "start": "concurrently \"next start\" \"yarn start:node\"",
