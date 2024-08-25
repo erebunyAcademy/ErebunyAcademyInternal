@@ -10,27 +10,31 @@ import {
   Input,
   Text,
   useToast,
+  VStack,
 } from '@chakra-ui/react';
 import { classValidatorResolver } from '@hookform/resolvers/class-validator';
 import { useMutation } from '@tanstack/react-query';
+import axios from 'axios';
 import { Country } from 'country-state-city';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { User } from 'next-auth';
-import { useSession } from 'next-auth/react';
+import { Session } from 'next-auth';
 import { useTranslations } from 'next-intl';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
-import { UploadService } from '@/api/services/upload.service';
+import { v4 as uuid } from 'uuid';
 import { UserService } from '@/api/services/user.service';
 import { FormInput, SelectLabel } from '@/components/atoms';
-import { generateUserAvatar } from '@/utils/helpers/aws';
+import { generateAWSUrl } from '@/utils/helpers/aws';
+import { Maybe } from '@/utils/models/common';
 import { ChangePasswordValidation, UserProfileFormValidation } from '@/utils/validation/user';
 
 const resolver = classValidatorResolver(UserProfileFormValidation);
 const changePasswordResolver = classValidatorResolver(ChangePasswordValidation);
 
-const Profile = ({ sessionUser }: { sessionUser: User }) => {
+const Profile = ({ sessionUser }: { sessionUser: NonNullable<Session['user']> }) => {
   const [localImage, setLocalImage] = useState<{ file: File; localUrl: string } | null>(null);
-  const { data } = useSession();
+  const [localAttachmentImage, setAttachmentLocalImage] =
+    useState<Maybe<{ file: File; localUrl: string }>>(null);
 
   const [isLoading, setIsLoading] = useState(false);
   const toast = useToast();
@@ -50,6 +54,9 @@ const Profile = ({ sessionUser }: { sessionUser: User }) => {
       city: sessionUser?.city || '',
       country: sessionUser?.country || 'Armenia',
       address: sessionUser?.address || '',
+      attachmentKey:
+        sessionUser.attachment.find(attachment => attachment.type === 'FILE')?.key || '',
+      avatar: sessionUser.attachment.find(attachment => attachment.type === 'AVATAR')?.key || '',
     },
     resolver,
   });
@@ -80,27 +87,27 @@ const Profile = ({ sessionUser }: { sessionUser: User }) => {
     mutationFn: UserService.changeUserPassword,
   });
 
-  const { mutate: uploadAttachment } = useMutation({
-    mutationFn: (data: { file: FormData; key: string }) => UploadService.uploadFile(data),
-  });
-
   const onSubmit: SubmitHandler<UserProfileFormValidation> = useCallback(
     async payload => {
       setIsLoading(true);
       const reqData = { ...payload };
       try {
         if (localImage) {
-          const key = `academy/users/${data?.user?.id || ''}/${localImage?.file.name}`;
+          const key = `academy/users/${sessionUser.id || ''}/${localImage?.file.name}`;
           reqData.avatarMimetype = localImage?.file.type;
           reqData.avatar = key;
 
-          const formData = new FormData();
-          formData.append('file', localImage.file);
+          const { url } = await UserService.getPreSignedUrl(key);
+          await axios.put(url, localImage.file);
+        }
+        if (localAttachmentImage) {
+          const attachmentId = uuid();
+          const key = `students/${attachmentId}/attachments/${Date.now()}_${localAttachmentImage.file.name}`;
+          reqData.attachmentMimetype = localImage?.file.type;
+          reqData.attachmentKey = key;
 
-          uploadAttachment({
-            file: formData,
-            key,
-          });
+          const { url } = await UserService.getPreSignedUrl(key);
+          await axios.put(url, localAttachmentImage.file);
         }
         await updateUserProfileMutation(reqData, {
           onSuccess: () => toast({ title: t('success'), status: 'success' }),
@@ -112,13 +119,20 @@ const Profile = ({ sessionUser }: { sessionUser: User }) => {
         setIsLoading(false);
       }
     },
-    [data?.user?.id, localImage, router, t, toast, updateUserProfileMutation, uploadAttachment],
+    [localAttachmentImage, localImage, router, sessionUser.id, t, toast, updateUserProfileMutation],
   );
 
   const onFileSelect = useCallback(async (e: ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files?.length) {
       setLocalImage({ file: files[0], localUrl: URL.createObjectURL(files[0]) });
+    }
+  }, []);
+
+  const onAttachmentFileSelect = useCallback(async (e: ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files?.length) {
+      setAttachmentLocalImage({ file: files[0], localUrl: URL.createObjectURL(files[0]) });
     }
   }, []);
 
@@ -141,8 +155,24 @@ const Profile = ({ sessionUser }: { sessionUser: User }) => {
       return localImage.localUrl;
     }
 
-    return generateUserAvatar(data?.user as User);
-  }, [localImage?.localUrl, data?.user]);
+    return generateAWSUrl(
+      sessionUser?.attachment.find(attachment => attachment.type === 'AVATAR')?.key || '',
+    );
+  }, [localImage?.localUrl, sessionUser?.attachment]);
+
+  const attachmentSrc = useMemo(() => {
+    if (localAttachmentImage?.localUrl) {
+      return localAttachmentImage.localUrl;
+    }
+
+    return generateAWSUrl(
+      sessionUser?.attachment.find(attachment => attachment.type === 'AVATAR')?.key || '',
+    );
+  }, [localAttachmentImage?.localUrl, sessionUser?.attachment]);
+
+  const handleRemoveImage = () => {
+    setAttachmentLocalImage(null);
+  };
 
   return (
     <Box
@@ -167,20 +197,21 @@ const Profile = ({ sessionUser }: { sessionUser: User }) => {
         alignItems={{ base: 'center', md: 'flex-start' }}>
         <Box borderRadius="50%" overflow="hidden" position="relative" width="101px" height="101px">
           <Avatar
-            name={`${data?.user?.firstName} ${data?.user?.lastName}`}
+            name={`${sessionUser.firstName} ${sessionUser.lastName}`}
             src={avatarSrc}
             bg="#F3F4F6"
             color="#C0C0C0"
             size="xl"
           />
         </Box>
+
         <Box>
           <Text
             fontSize={{ base: '16px', sm: '24px' }}
             fontWeight={700}
             lineHeight="normal"
             m={{ base: '0 0 8px 0', sm: '0 0 16px 0' }}>
-            {`${data?.user?.firstName || ''} ${data?.user?.lastName || ''}`}
+            {`${sessionUser?.firstName || ''} ${sessionUser?.lastName || ''}`}
           </Text>
           <Box
             cursor="pointer"
@@ -239,6 +270,93 @@ const Profile = ({ sessionUser }: { sessionUser: User }) => {
             </ChakraButton>
           </Box>
         </Box>
+        <VStack alignItems="flex-start" justifyItems="flex-end">
+          <Box
+            cursor="pointer"
+            position="relative"
+            display="flex"
+            justifyContent="flex-start"
+            alignItems="center"
+            height="22px"
+            ml="5px">
+            <ChakraButton
+              fontWeight={500}
+              height="100%"
+              width="auto"
+              cursor="pointer"
+              color="#1F1646"
+              backgroundColor="#fff"
+              _hover={{
+                color: '#1F1646',
+                backgroundColor: '#fff',
+              }}
+              _focus={{
+                color: '#1F1646',
+                backgroundColor: '#fff',
+              }}>
+              <Input
+                as="input"
+                name="attachments"
+                type="file"
+                accept="image/*"
+                width="100%"
+                position="absolute"
+                left={0}
+                right={0}
+                bottom={0}
+                opacity={0}
+                cursor="pointer"
+                onChange={onAttachmentFileSelect}
+                value={localAttachmentImage?.localUrl ? '' : undefined}
+                color="#1F1646"
+                backgroundColor="#fff"
+                _hover={{
+                  color: '#1F1646',
+                  backgroundColor: '#fff',
+                }}
+                _focus={{
+                  color: '#1F1646',
+                  backgroundColor: '#fff',
+                }}
+              />
+              {t('uploadDocument')}*
+            </ChakraButton>
+          </Box>
+          {attachmentSrc && (
+            <Box
+              position="relative"
+              width="200px"
+              height="150px"
+              borderRadius="8px"
+              ml="30px"
+              overflow="hidden">
+              <Image
+                src={attachmentSrc || ''}
+                alt={localAttachmentImage?.file.name || ''}
+                fill
+                style={{
+                  objectFit: 'contain',
+                }}
+              />
+              <Text
+                position="absolute"
+                top="5px"
+                right="5px"
+                backgroundColor="rgba(0, 0, 0, 0.6)"
+                color="white"
+                borderRadius="50%"
+                width="32px"
+                height="32px"
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+                cursor="pointer"
+                onClick={handleRemoveImage}>
+                X
+              </Text>
+            </Box>
+          )}
+        </VStack>
       </Flex>
       <Flex paddingTop={{ base: '36px', md: '40px' }} flexDirection="column" gap={24}>
         <Flex gap="24px" flexDirection={{ base: 'column', lg: 'row' }}>

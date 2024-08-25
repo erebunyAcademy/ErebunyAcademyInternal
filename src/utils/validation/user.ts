@@ -36,6 +36,14 @@ export class UserProfileFormValidation {
   @IsString()
   @IsOptional()
   avatarMimetype?: string;
+
+  @IsString()
+  @IsOptional()
+  attachmentKey?: string;
+
+  @IsString()
+  @IsOptional()
+  attachmentMimetype?: string;
 }
 
 export class VerifyPhoneValidation {

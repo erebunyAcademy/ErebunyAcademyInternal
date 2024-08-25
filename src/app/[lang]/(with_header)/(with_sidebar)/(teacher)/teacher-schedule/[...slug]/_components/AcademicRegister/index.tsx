@@ -215,20 +215,30 @@ const AcademicRegister: FC<AcademicRegisterProps> = ({ schedule, lang }) => {
                       control={control}
                       name={`students.${index}.mark`}
                       render={({ field }) => (
-                        <SelectLabel
-                          isRequired
-                          options={markAttendantOptionData}
-                          valueLabel="id"
-                          nameLabel="title"
-                          onChange={e => {
-                            field.onChange(e);
-                            if (e.target.value) {
-                              setValue(`students.${index}.isPresent`, true);
-                            }
-                          }}
-                          value={field.value}
-                          isDisabled={!selectedLessonOfTheDay || !isPresent}
-                        />
+                        <Flex alignItems="center">
+                          <SelectLabel
+                            isRequired
+                            options={markAttendantOptionData}
+                            valueLabel="id"
+                            nameLabel="title"
+                            onChange={e => {
+                              field.onChange(e);
+                              if (e.target.value) {
+                                setValue(`students.${index}.isPresent`, true);
+                              }
+                            }}
+                            value={field.value}
+                            isDisabled={!selectedLessonOfTheDay || !isPresent}
+                          />
+                          <Button
+                            ml={2}
+                            size="sm"
+                            colorScheme="gray"
+                            onClick={() => setValue(`students.${index}.mark`, '')}
+                            isDisabled={!field.value || field.value === ''}>
+                            Cancel
+                          </Button>
+                        </Flex>
                       )}
                     />
                   </Td>

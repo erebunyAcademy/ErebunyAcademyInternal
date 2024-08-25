@@ -14,6 +14,7 @@ import ActionButtons from '@/components/molecules/ActionButtons';
 import SearchTable from '@/components/organisms/SearchTable';
 import useDebounce from '@/hooks/useDebounce';
 import { ITEMS_PER_PAGE } from '@/utils/constants/common';
+import { generateAWSUrl } from '@/utils/helpers/aws';
 import { QUERY_KEY } from '@/utils/helpers/queryClient';
 import { Maybe } from '@/utils/models/common';
 import { StudentModel } from '@/utils/models/student';
@@ -27,7 +28,7 @@ export default function StudentList() {
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const debouncedSearch = useDebounce(search);
-  const [attachmentKey, setAttachmentKey] = useState('');
+  const [attachmentKey, setAttachmentKey] = useState<Maybe<string>>(null);
   const [selectedStudent, setSelectedStudent] = useState<Maybe<StudentModel>>(null);
   const t = useTranslations();
 
@@ -132,7 +133,7 @@ export default function StudentList() {
             bg="#319795"
             color="#fff"
             name={`${info.row.original.firstName} ${info.row.original.lastName}`}
-            src={existingAvatar?.key ? `/api/readfile?path=uploads/${existingAvatar.key}` : ''}
+            src={generateAWSUrl(existingAvatar?.key || '')}
           />
         );
       },
@@ -227,14 +228,14 @@ export default function StudentList() {
         fetchPreviousPage={useCallback(() => setPage(prev => --prev), [])}
         rowCondition="isAdminVerified"
       />
-      {isRejectStudentModalIsOpen && (
+      {isRejectStudentModalIsOpen && selectedStudent && (
         <RejectMessageModal
           closeStudentRejectModal={closeStudentRejectModal}
           isRejectStudentModalIsOpen={isRejectStudentModalIsOpen}
           selectedStudent={selectedStudent}
         />
       )}
-      {isAttachmentModalOpen && (
+      {isAttachmentModalOpen && attachmentKey && (
         <StudentAttachmentModal
           isAttachmentModalOpen={isAttachmentModalOpen}
           closeAttachmentModal={closeAttachmentModal}

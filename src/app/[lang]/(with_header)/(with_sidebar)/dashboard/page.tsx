@@ -2,7 +2,7 @@ import React from 'react';
 import { Avatar, Box, Container, Flex, ListItem, Text, UnorderedList } from '@chakra-ui/react';
 import { getTranslations } from 'next-intl/server';
 import { serverSession } from '@/pages/api/auth/[...nextauth]';
-import { generateUserAvatar } from '@/utils/helpers/aws';
+import { generateAWSUrl } from '@/utils/helpers/aws';
 import { getUserData } from '@/utils/helpers/user';
 
 const Dashboard = async () => {
@@ -39,7 +39,9 @@ const Dashboard = async () => {
           p="24px">
           <Avatar
             name={`${session?.user.firstName} ${session?.user.lastName}`}
-            src={generateUserAvatar(session.user)}
+            src={generateAWSUrl(
+              session.user.attachment.find(attachment => attachment.type === 'AVATAR')?.key || '',
+            )}
             bg="#F3F4F6"
             color="#C0C0C0"
             size="xl"

@@ -13,10 +13,10 @@ import { CourseGroupService } from '@/api/services/course-group.service';
 import { ScheduleService } from '@/api/services/schedule.service';
 import { SubjectService } from '@/api/services/subject.service';
 import { TeacherService } from '@/api/services/teacher.service';
-import { UploadService } from '@/api/services/upload.service';
 import { FormInput, SelectLabel } from '@/components/atoms';
 import Modal from '@/components/molecules/Modal';
 import { academicYearListData, scheduleExamType } from '@/utils/constants/common';
+import { generateAWSUrl } from '@/utils/helpers/aws';
 import { Maybe } from '@/utils/models/common';
 import { GetCourseGroupsBySubjectId } from '@/utils/models/courseGroup';
 import { ScheduleSingleModel } from '@/utils/models/schedule';
@@ -75,16 +75,15 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
   useMemo(() => {
     if (selectedSchedule) {
       const attachmentWithUrls = selectedSchedule.attachment.map(attachment => ({
-        key: attachment.key,
+        key: generateAWSUrl(attachment.key),
         mimetype: attachment.mimetype,
         title: attachment.title || '',
-        localUrl: attachment.key, // Assuming your files are served from the `/uploads` directory
       }));
 
       setFiles(
         attachmentWithUrls.map(att => ({
           file: new File([], att.title),
-          localUrl: att.localUrl,
+          localUrl: att.key,
         })),
       );
 
@@ -184,10 +183,6 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
     }
   };
 
-  const { mutate: uploadAttachment } = useMutation({
-    mutationFn: (data: { file: FormData; key: string }) => UploadService.uploadFile(data),
-  });
-
   const onSubmitHandler = useCallback(
     (data: CreateEditScheduleValidation) => {
       const attachmentKeys: AttachmentValidation[] = [];
@@ -210,10 +205,10 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
           attachmentKey: '',
         });
 
-        uploadAttachment({
-          file: formData,
-          key,
-        });
+        // uploadAttachment({
+        //   file: formData,
+        //   key,
+        // });
       });
 
       if (
@@ -232,7 +227,7 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
 
       createEditSchedule(data);
     },
-    [createEditSchedule, files, selectedSchedule, uploadAttachment],
+    [createEditSchedule, files, selectedSchedule],
   );
 
   const removeFile = (localUrl: string) => {

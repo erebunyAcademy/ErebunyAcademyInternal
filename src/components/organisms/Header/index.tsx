@@ -16,7 +16,7 @@ import LanguagePicker from '@/components/molecules/LanguagePicker';
 import { Locale } from '@/i18n';
 import LogoIcon from '@/icons/college_main_icon.svg';
 import { ROUTE_DASHBOARD } from '@/utils/constants/routes';
-import { generateUserAvatar } from '@/utils/helpers/aws';
+import { generateAWSUrl } from '@/utils/helpers/aws';
 import { languagePathHelper } from '@/utils/helpers/language';
 import { LinkItemProps } from '@/utils/helpers/permissionRoutes';
 import { Maybe } from '@/utils/models/common';
@@ -85,7 +85,9 @@ const Header: FC<HeaderProps> = ({ user, linkItems, lang }) => {
               {!!user && (
                 <Avatar
                   name={`${user?.firstName} ${user?.lastName}`}
-                  src={generateUserAvatar(user)}
+                  src={generateAWSUrl(
+                    user.attachment.find(attachment => attachment.type === 'AVATAR')?.key || '',
+                  )}
                   bg="#F3F4F6"
                   color="#C0C0C0"
                   cursor="pointer"

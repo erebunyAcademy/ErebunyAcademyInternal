@@ -5,6 +5,7 @@ import { Box, Button, Divider, Flex, IconButton, Input, Stack, Text } from '@cha
 import { classValidatorResolver } from '@hookform/resolvers/class-validator';
 import { ScheduleTypeEnum } from '@prisma/client';
 import { useMutation, useQuery } from '@tanstack/react-query';
+import axios from 'axios';
 import { useTranslations } from 'next-intl';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import { v4 as uuidv4 } from 'uuid';
@@ -12,7 +13,7 @@ import { CourseGroupService } from '@/api/services/course-group.service';
 import { ScheduleService } from '@/api/services/schedule.service';
 import { SubjectService } from '@/api/services/subject.service';
 import { TeacherService } from '@/api/services/teacher.service';
-import { UploadService } from '@/api/services/upload.service';
+import { UserService } from '@/api/services/user.service';
 import { FormInput, SelectLabel } from '@/components/atoms';
 import Modal from '@/components/molecules/Modal';
 import {
@@ -21,6 +22,7 @@ import {
   scheduleExamType,
   weekendDayList,
 } from '@/utils/constants/common';
+import { generateAWSUrl } from '@/utils/helpers/aws';
 import { Maybe } from '@/utils/models/common';
 import { GetCourseGroupsBySubjectId } from '@/utils/models/courseGroup';
 import { ScheduleSingleModel } from '@/utils/models/schedule';
@@ -54,7 +56,6 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
     handleSubmit,
     watch,
     reset,
-    getValues,
     formState: { errors, isValid },
   } = useForm<CreateEditNonCyclicScheduleValidation>({
     resolver,
@@ -124,16 +125,15 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
   useMemo(() => {
     if (selectedSchedule) {
       const attachmentWithUrls = selectedSchedule.attachment.map(attachment => ({
-        key: attachment.key,
+        key: generateAWSUrl(attachment.key),
         mimetype: attachment.mimetype,
         title: attachment.title || '',
-        localUrl: attachment.key, // Assuming your files are served from the `/uploads` directory
       }));
 
       setFiles(
         attachmentWithUrls.map(att => ({
           file: new File([], att.title),
-          localUrl: att.localUrl,
+          localUrl: att.key,
         })),
       );
 
@@ -188,15 +188,11 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
     }
   };
 
-  const { mutate: uploadAttachment } = useMutation({
-    mutationFn: (data: { file: FormData; key: string }) => UploadService.uploadFile(data),
-  });
-
   const onSubmitHandler = useCallback(
     (data: CreateEditNonCyclicScheduleValidation) => {
       const attachmentKeys: AttachmentValidation[] = [];
 
-      files?.forEach(({ file }) => {
+      files?.forEach(async ({ file }) => {
         const attachmentId = uuidv4();
         const key = `attachments/${attachmentId}/subjects/${data.subjectId}/${Date.now()}_${file.name}`;
 
@@ -210,10 +206,8 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
           attachmentKey: '',
         });
 
-        uploadAttachment({
-          file: formData,
-          key,
-        });
+        const { url } = await UserService.getPreSignedUrl(key);
+        await axios.put(url, file);
       });
 
       if (
@@ -232,14 +226,12 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
 
       createEditSchedule(data);
     },
-    [createEditSchedule, files, selectedSchedule, uploadAttachment],
+    [createEditSchedule, files, selectedSchedule],
   );
 
   const removeFile = (localUrl: string) => {
     setFiles(prevFiles => prevFiles?.filter(file => file.localUrl !== localUrl) || null);
   };
-
-  console.log(getValues('availableDays'), '******************');
 
   return (
     <Modal
