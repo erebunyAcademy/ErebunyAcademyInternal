@@ -1,9 +1,7 @@
 import { AttachmentTypeEnum } from '@prisma/client';
 import bcrypt from 'bcrypt';
-import fs from 'fs';
 import { ConflictException, NotFoundException } from 'next-api-decorators';
 import { User } from 'next-auth';
-import path from 'path';
 import { ERROR_MESSAGES } from '@/utils/constants/common';
 import {
   ChangePasswordValidation,
@@ -40,9 +38,6 @@ export class UserResolver {
         lastName: true,
         role: true,
         attachment: {
-          where: {
-            type: AttachmentTypeEnum.AVATAR,
-          },
           select: {
             id: true,
             key: true,
@@ -152,7 +147,6 @@ export class UserResolver {
   }
 
   static async deleteUser(id: string) {
-    // todo
     const user = await prisma.user.findUnique({
       where: {
         id,
@@ -171,28 +165,58 @@ export class UserResolver {
   }
 
   static async updateProfile(input: UserProfileFormValidation, user: NonNullable<User>) {
-    const { avatar, avatarMimetype, ...userData } = input;
+    const { avatar, avatarMimetype, attachmentKey, attachmentMimetype, ...userData } = input;
 
-    const userAvatar = await prisma.attachment.findFirst({
-      where: { userId: user.id, type: AttachmentTypeEnum.AVATAR },
-    });
+    const [userAvatar, userAttachment] = await Promise.all([
+      prisma.attachment.findFirst({
+        where: { userId: user.id, type: AttachmentTypeEnum.AVATAR },
+      }),
+      prisma.attachment.findFirst({
+        where: { userId: user.id, type: AttachmentTypeEnum.FILE },
+      }),
+    ]);
 
-    if (!!userAvatar) {
-      await prisma.attachment.update({
-        where: { id: userAvatar.id },
-        data: { mimetype: avatarMimetype, key: avatar },
-      });
-    } else if (avatar && avatarMimetype) {
-      await prisma.attachment.create({
-        data: {
-          userId: user.id,
-          type: AttachmentTypeEnum.AVATAR,
-          title: `${user.email} avatar`,
-          mimetype: avatarMimetype,
-          key: avatar,
-        },
-      });
-    }
+    const updateOrCreateAttachment = async (
+      existingAttachment: any,
+      mimetype: string | undefined,
+      key: string | undefined,
+      type: AttachmentTypeEnum,
+      title: string,
+    ) => {
+      if (existingAttachment) {
+        await prisma.attachment.update({
+          where: { id: existingAttachment.id },
+          data: { mimetype, key },
+        });
+      } else if (mimetype && key) {
+        await prisma.attachment.create({
+          data: {
+            userId: user.id,
+            type,
+            title,
+            mimetype,
+            key,
+          },
+        });
+      }
+    };
+
+    await Promise.all([
+      updateOrCreateAttachment(
+        userAvatar,
+        avatarMimetype,
+        avatar,
+        AttachmentTypeEnum.AVATAR,
+        `${user.email} avatar`,
+      ),
+      updateOrCreateAttachment(
+        userAttachment,
+        attachmentMimetype,
+        attachmentKey,
+        AttachmentTypeEnum.FILE,
+        `${user.email} file`,
+      ),
+    ]);
 
     return prisma.user.update({
       where: { id: user.id },
@@ -224,9 +248,8 @@ export class UserResolver {
     });
 
     if (userAttachment?.key) {
-      const filePath = path.join(process.cwd(), 'uploads', userAttachment.key);
-      console.log({ filePath });
-      await fs.promises.unlink(filePath);
+      const aws = new AWSService();
+      await aws.deleteAttachment(userAttachment?.key);
     }
 
     await prisma.user.delete({

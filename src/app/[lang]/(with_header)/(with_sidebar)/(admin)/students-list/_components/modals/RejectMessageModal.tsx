@@ -11,7 +11,7 @@ import { StudentModel } from '@/utils/models/student';
 type RejectMessageModalProps = {
   closeStudentRejectModal: () => void;
   isRejectStudentModalIsOpen: boolean;
-  selectedStudent: StudentModel | null;
+  selectedStudent: StudentModel;
 };
 
 const RejectMessageModal: FC<RejectMessageModalProps> = ({
@@ -23,7 +23,10 @@ const RejectMessageModal: FC<RejectMessageModalProps> = ({
   const [rejectionText, setRejectionText] = useState('');
 
   const { mutate: rejectUser, isPending } = useMutation({
-    mutationFn: UserService.rejectUserEmail,
+    mutationFn: UserService.rejectUserEmail.bind(null, {
+      userId: selectedStudent.id,
+      message: rejectionText,
+    }),
     onSuccess() {
       closeStudentRejectModal();
     },
@@ -43,13 +46,7 @@ const RejectMessageModal: FC<RejectMessageModalProps> = ({
         value={rejectionText}
         name="reject-message"
       />
-      <Button
-        isLoading={isPending}
-        onClick={() => {
-          if (selectedStudent) {
-            rejectUser({ userId: selectedStudent.id, message: rejectionText });
-          }
-        }}>
+      <Button isLoading={isPending} onClick={() => rejectUser()}>
         {t('send')}
       </Button>
     </Modal>
