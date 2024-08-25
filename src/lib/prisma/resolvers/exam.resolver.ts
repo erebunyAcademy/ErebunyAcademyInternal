@@ -604,7 +604,7 @@ export class ExamsResolver {
     });
 
     if (!studentExam) {
-      throw new NotFoundException();
+      throw new ForbiddenException();
     }
 
     const examTranslationTest = await prisma.examTranslationTests.findUniqueOrThrow({
@@ -750,7 +750,7 @@ export class ExamsResolver {
     return examResult;
   }
 
-  // Change this
+  // TO BE CHANGED TO THIS IN THE FUTURE
   // static async getStudentsExamResults(examId: string) {
   //   const exam = await prisma.exam.findUniqueOrThrow({
   //     where: {
@@ -800,24 +800,30 @@ export class ExamsResolver {
       },
     });
 
-    const testQuestions = await prisma.testQuestion.findMany({
+    const examTranslation = await prisma.examTranslationTests.findMany({
       where: {
         examTranslation: {
           examId,
         },
       },
       select: {
-        id: true,
-        options: {
-          where: {
-            isRightAnswer: true,
-          },
+        testQuestion: {
           select: {
             id: true,
+            options: {
+              where: {
+                isRightAnswer: true,
+              },
+              select: {
+                id: true,
+              },
+            },
           },
         },
       },
     });
+
+    const testQuestions = examTranslation.map(examTranslation => examTranslation.testQuestion);
 
     const results = [];
 
@@ -839,7 +845,8 @@ export class ExamsResolver {
       results.push({
         id: student.id,
         student,
-        rightAnswers: studentResult.filter(({ isCorrect }: any) => isCorrect).length,
+        rightAnswers: studentResult.filter(({ isCorrect }: { isCorrect: boolean }) => isCorrect)
+          .length,
         total: studentResult.length,
       });
     }

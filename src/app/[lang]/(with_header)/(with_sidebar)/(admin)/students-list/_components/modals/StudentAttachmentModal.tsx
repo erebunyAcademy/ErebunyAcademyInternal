@@ -2,11 +2,12 @@
 import React, { FC } from 'react';
 import Image from 'next/image';
 import Modal from '@/components/molecules/Modal';
+import { generateAWSUrl } from '@/utils/helpers/aws';
 
 type StudentAttachmentModalProps = {
   isAttachmentModalOpen: boolean;
   closeAttachmentModal: () => void;
-  attachmentKey: String;
+  attachmentKey: string;
 };
 
 const StudentAttachmentModal: FC<StudentAttachmentModalProps> = ({
@@ -16,12 +17,7 @@ const StudentAttachmentModal: FC<StudentAttachmentModalProps> = ({
 }) => {
   return (
     <Modal isOpen={isAttachmentModalOpen} onClose={closeAttachmentModal} title="studentAttachment">
-      <Image
-        src={`/api/readfile?path=uploads/${attachmentKey}`}
-        width={400}
-        height={400}
-        alt="student attachment"
-      />
+      <Image src={generateAWSUrl(attachmentKey)} height={400} alt="student attachment" />
     </Modal>
   );
 };

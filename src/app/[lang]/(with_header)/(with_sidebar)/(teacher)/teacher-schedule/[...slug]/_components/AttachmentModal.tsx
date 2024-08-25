@@ -4,11 +4,12 @@ import { AddIcon, DeleteIcon } from '@chakra-ui/icons';
 import { Box, Button, Flex, IconButton, Input, Stack, Text } from '@chakra-ui/react';
 import { classValidatorResolver } from '@hookform/resolvers/class-validator';
 import { useMutation } from '@tanstack/react-query';
+import axios from 'axios';
 import { useTranslations } from 'next-intl';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import { v4 as uuidv4 } from 'uuid';
 import { ScheduleService } from '@/api/services/schedule.service';
-import { UploadService } from '@/api/services/upload.service';
+import { UserService } from '@/api/services/user.service';
 import { FormInput } from '@/components/atoms';
 import Modal from '@/components/molecules/Modal';
 import { Maybe } from '@/utils/models/common';
@@ -106,10 +107,6 @@ const CreateEditAttachment: FC<CreateEditAttachmentProps> = ({
     }
   };
 
-  const { mutate: uploadAttachment } = useMutation({
-    mutationFn: (data: { file: FormData; key: string }) => UploadService.uploadFile(data),
-  });
-
   const { mutate: updateAttachment } = useMutation({
     mutationFn: (data: TeacherAttachmentModalValidation) =>
       ScheduleService.updateScheduleAttachments(selectedSchedule.id, data),
@@ -123,7 +120,7 @@ const CreateEditAttachment: FC<CreateEditAttachmentProps> = ({
     (data: TeacherAttachmentModalValidation) => {
       const attachmentKeys: AttachmentValidation[] = [];
 
-      files?.forEach(({ file }) => {
+      files?.forEach(async ({ file }) => {
         if (!file) {
           return;
         }
@@ -141,10 +138,8 @@ const CreateEditAttachment: FC<CreateEditAttachmentProps> = ({
           attachmentKey: '',
         });
 
-        uploadAttachment({
-          file: formData,
-          key,
-        });
+        const { url } = await UserService.getPreSignedUrl(key);
+        await axios.put(url, file);
       });
 
       if (
@@ -159,7 +154,7 @@ const CreateEditAttachment: FC<CreateEditAttachmentProps> = ({
 
       updateAttachment(data);
     },
-    [files, selectedSchedule, uploadAttachment, updateAttachment],
+    [files, selectedSchedule, updateAttachment],
   );
 
   const removeFile = (localUrl: string) => {

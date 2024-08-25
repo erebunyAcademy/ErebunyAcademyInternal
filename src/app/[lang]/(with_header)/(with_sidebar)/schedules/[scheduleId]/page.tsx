@@ -20,6 +20,7 @@ import { useTranslations } from 'next-intl';
 import { ScheduleService } from '@/api/services/schedule.service';
 import NoDataFound from '@/components/molecules/NoDataFound';
 import { periodListData, weekendDayList } from '@/utils/constants/common';
+import { generateAWSUrl } from '@/utils/helpers/aws';
 import { GetScheduleByIdModel } from '@/utils/models/schedule';
 
 const ScheduleDetails = ({ params }: { params: { scheduleId: string } }) => {
@@ -204,7 +205,8 @@ const ScheduleDetails = ({ params }: { params: { scheduleId: string } }) => {
                   variant="link"
                   as="a"
                   target="_blank"
-                  href={`/api/download?path=uploads/${attachment.key}`}
+                  download={attachment.key}
+                  href={generateAWSUrl(attachment.key)}
                   key={index}>
                   {attachment.title}
                 </Button>
