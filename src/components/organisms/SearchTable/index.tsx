@@ -184,7 +184,7 @@ function SearchTable<T>({
           </Thead>
 
           <Tbody>
-            {getRowModel().rows.length > 0 ? (
+            {getRowModel().rows?.length > 0 ? (
               getRowModel().rows.map(row => {
                 return (
                   <Tr

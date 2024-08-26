@@ -1,4 +1,0 @@
--- AlterTable
-ALTER TABLE "Schedule" ALTER COLUMN "startDayDate" DROP NOT NULL,
-ALTER COLUMN "endDayDate" DROP NOT NULL,
-ALTER COLUMN "examDate" DROP NOT NULL;
