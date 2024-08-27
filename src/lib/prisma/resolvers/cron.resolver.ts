@@ -72,7 +72,7 @@ export class CronResolver {
       });
 
       for (const course of courses) {
-        if (!course.gradeLevel) {
+        if (!course.gradeLevel || course.gradeLevel.level === 6) {
           continue;
         }
         const newLevel = course.gradeLevel.level + 1;
@@ -112,7 +112,7 @@ export class CronResolver {
       });
 
       for (const group of courseGroups) {
-        if (!group.gradeLevel) {
+        if (!group.gradeLevel || group.gradeLevel.level === 8) {
           continue;
         }
         const newLevel = group.gradeLevel.level + 1;
