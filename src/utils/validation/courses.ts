@@ -16,4 +16,8 @@ export class CreateEditCourseValidation {
   @IsString()
   @IsNotEmpty({ message: 'facultyMessage' })
   facultyId: string;
+
+  @IsString()
+  @IsNotEmpty()
+  gradeLevelId: string;
 }

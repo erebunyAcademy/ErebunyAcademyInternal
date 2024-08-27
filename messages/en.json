@@ -282,5 +282,6 @@
   "absent": "Absent",
   "noRecord": "No Record",
   "noMark": "No Mark",
-  "lessonDay": "Lesson day"
+  "lessonDay": "Lesson day",
+  "gradeLevel": "Grade level"
 }

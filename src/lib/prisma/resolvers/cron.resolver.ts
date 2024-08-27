@@ -1,3 +1,4 @@
+import { GradeLevelTypeEnum } from '@prisma/client';
 import prisma from '..';
 
 export class CronResolver {
@@ -54,5 +55,93 @@ export class CronResolver {
     }
 
     console.log('Exam status check completed');
+  }
+
+  static async updateCourseAndGroupGrades() {
+    try {
+      // Fetch all courses that need their grade level incremented
+      const courses = await prisma.course.findMany({
+        where: {
+          gradeLevel: {
+            isNot: null,
+          },
+        },
+        include: {
+          gradeLevel: true,
+        },
+      });
+
+      for (const course of courses) {
+        if (!course.gradeLevel) {
+          continue;
+        }
+        const newLevel = course.gradeLevel.level + 1;
+
+        // Fetch the new grade level
+        const newGradeLevel = await prisma.gradeLevel.findUnique({
+          where: {
+            levelTypeUniqueId: {
+              level: newLevel,
+              type: GradeLevelTypeEnum.COURSE,
+            },
+          },
+        });
+
+        if (newGradeLevel) {
+          // Update course grade level and title
+          await prisma.course.update({
+            where: { id: course.id },
+            data: {
+              gradeLevelId: newGradeLevel.id,
+              title: `Grade ${newGradeLevel.level}`, // Adjust this as needed
+            },
+          });
+        }
+      }
+
+      // Do the same for course groups
+      const courseGroups = await prisma.courseGroup.findMany({
+        where: {
+          gradeLevel: {
+            isNot: null,
+          },
+        },
+        include: {
+          gradeLevel: true,
+        },
+      });
+
+      for (const group of courseGroups) {
+        if (!group.gradeLevel) {
+          continue;
+        }
+        const newLevel = group.gradeLevel.level + 1;
+
+        // Fetch the new grade level for course groups
+        const newGradeLevel = await prisma.gradeLevel.findUnique({
+          where: {
+            levelTypeUniqueId: {
+              level: newLevel,
+              type: GradeLevelTypeEnum.COURSE_GROUP,
+            },
+          },
+        });
+
+        if (newGradeLevel) {
+          // Update course group grade level and title
+          await prisma.courseGroup.update({
+            where: { id: group.id },
+            data: {
+              gradeLevelId: newGradeLevel.id,
+              title: `Group Grade ${newGradeLevel.level}`, // Adjust this as needed
+            },
+          });
+        }
+      }
+
+      console.log('Course and Group grades updated successfully');
+    } catch (error) {
+      console.error('Error updating grades:', error);
+    }
   }
 }

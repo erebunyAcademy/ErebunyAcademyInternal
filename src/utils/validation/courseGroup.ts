@@ -16,6 +16,10 @@ export class CreateEditCourseGroupValidation {
   @IsString()
   @IsNotEmpty({ message: 'courseMessage' })
   courseId: string;
+
+  @IsString()
+  @IsNotEmpty()
+  gradeLevelId: string;
 }
 
 export class SelectStudentCourseGroupValidation {

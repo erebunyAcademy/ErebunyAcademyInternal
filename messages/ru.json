@@ -282,5 +282,6 @@
   "absent": "Отсутствует",
   "noRecord": "Нет записи",
   "noMark": "Нет оценки",
-  "lessonDay": "День занятия"
+  "lessonDay": "День занятия",
+  "gradeLevel": "Grade level"
 }

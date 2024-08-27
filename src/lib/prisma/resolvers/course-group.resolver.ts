@@ -20,6 +20,12 @@ export class CourseGroupResolver {
           id: true,
           title: true,
           description: true,
+          gradeLevel: {
+            select: {
+              id: true,
+              level: true,
+            },
+          },
           course: {
             select: {
               id: true,

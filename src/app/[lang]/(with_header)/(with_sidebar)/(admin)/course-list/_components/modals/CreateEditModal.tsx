@@ -6,6 +6,7 @@ import { useTranslations } from 'next-intl';
 import { Controller, useForm } from 'react-hook-form';
 import { CourseService } from '@/api/services/courses.service';
 import { FacultyService } from '@/api/services/faculty.service';
+import { GradeLevelService } from '@/api/services/grade-level.service';
 import { FormInput, SelectLabel } from '@/components/atoms';
 import Modal from '@/components/molecules/Modal';
 import { CourseModel } from '@/utils/models/course';
@@ -49,6 +50,7 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
         title: selectedCourse.title,
         description: selectedCourse.description || '',
         facultyId: selectedCourse.faculty?.id,
+        gradeLevelId: selectedCourse.gradeLevel?.id,
       });
     }
   }, [selectedCourse, reset]);
@@ -57,6 +59,11 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
     queryKey: ['faculty'],
     queryFn: FacultyService.list,
     enabled: isCreateEditModalOpen,
+  });
+
+  const { data: gradeLevelData } = useQuery({
+    queryFn: () => GradeLevelService.list(),
+    queryKey: ['grade-level'],
   });
 
   const { mutate: createCourse } = useMutation({
@@ -144,6 +151,24 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
             value={value}
             isInvalid={!!errors.facultyId?.message}
             formErrorMessage={errors.facultyId?.message}
+          />
+        )}
+      />
+      <Controller
+        name="gradeLevelId"
+        control={control}
+        render={({ field: { onChange, value, name } }) => (
+          <SelectLabel
+            name={name}
+            isRequired
+            options={gradeLevelData || []}
+            labelName="gradeLevel"
+            valueLabel="id"
+            nameLabel="level"
+            onChange={onChange}
+            value={value}
+            isInvalid={!!errors.gradeLevelId?.message}
+            formErrorMessage={errors.gradeLevelId?.message}
           />
         )}
       />

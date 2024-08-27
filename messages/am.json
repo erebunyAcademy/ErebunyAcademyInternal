@@ -281,5 +281,6 @@
   "absent": "Բացակա",
   "noRecord": "Տվյալներ չկան",
   "noMark": "Գնահատական չկա",
-  "lessonDay": "Դասընթացի օր"
+  "lessonDay": "Դասընթացի օր",
+  "gradeLevel": "Grade level"
 }

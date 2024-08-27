@@ -119,8 +119,22 @@ model Course {
   students Student[]
   exams    Exam[]
 
-  createdAt DateTime @default(now()) @db.Timestamp(0)
-  updatedAt DateTime @updatedAt @db.Timestamp(0)
+  createdAt    DateTime    @default(now()) @db.Timestamp(0)
+  updatedAt    DateTime    @updatedAt @db.Timestamp(0)
+  gradeLevel   GradeLevel? @relation(fields: [gradeLevelId], references: [id])
+  gradeLevelId String?
+}
+
+model GradeLevel {
+  id          String             @id @default(uuid())
+  level       Int                @default(1)
+  type        GradeLevelTypeEnum @default(COURSE)
+  course      Course[]
+  courseGroup CourseGroup[]
+  createdAt   DateTime           @default(now()) @db.Timestamp(0)
+  updatedAt   DateTime           @updatedAt @db.Timestamp(0)
+
+  @@unique([level, type], name: "levelTypeUniqueId")
 }
 
 model CourseGroup {
@@ -128,11 +142,13 @@ model CourseGroup {
   title             String             @db.VarChar(60)
   description       String?            @db.VarChar(60)
   courseId          String?
+  gradeLevelId      String?
   course            Course?            @relation(fields: [courseId], references: [id], onDelete: Cascade)
   students          Student[]
   exams             Exam[]
   schedules         Schedule[]
   academicRegisters AcademicRegister[]
+  gradeLevel        GradeLevel?        @relation(fields: [gradeLevelId], references: [id])
 
   createdAt DateTime @default(now()) @db.Timestamp(0)
   updatedAt DateTime @updatedAt @db.Timestamp(0)
@@ -481,6 +497,11 @@ enum ScheduleExamTypeEnum {
   THEORETICAL
   VERBAL
   ASSESSMENT
+}
+
+enum GradeLevelTypeEnum {
+  COURSE
+  COURSE_GROUP
 }
 
 enum AdminRoleEnum {
