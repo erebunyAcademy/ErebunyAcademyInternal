@@ -1,5 +1,5 @@
 import { GradeLevelTypeEnum } from '@prisma/client';
-import { Catch, createHandler, Get, Query } from 'next-api-decorators';
+import { Catch, createHandler, Get, Post, Query } from 'next-api-decorators';
 import { exceptionHandler } from '@/lib/prisma/error';
 import { GradeLevelResolver } from '@/lib/prisma/resolvers/grade-level.resolver';
 
@@ -8,6 +8,11 @@ class GradeLevelsHandler {
   @Get('/list')
   list(@Query('type') type?: GradeLevelTypeEnum) {
     return GradeLevelResolver.list(type || GradeLevelTypeEnum.COURSE);
+  }
+
+  @Post('/')
+  upGradeCourseAndCourseGroup() {
+    return GradeLevelResolver.updateCourseAndGroupGrades();
   }
 }
 

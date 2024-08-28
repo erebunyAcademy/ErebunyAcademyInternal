@@ -6,4 +6,7 @@ export class GradeLevelService {
   static list(type?: GradeLevelTypeEnum) {
     return $apiClient.get<GradeLevelListType>('/grade-levels/list', { params: { type } });
   }
+  static upgradeCourseAndCourseLevel() {
+    return $apiClient.post('/grade-levels');
+  }
 }
