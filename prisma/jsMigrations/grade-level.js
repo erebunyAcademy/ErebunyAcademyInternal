@@ -10,6 +10,7 @@ const prisma = new PrismaClient();
         level,
       },
     });
+
     if (level === 1) {
       await prisma.course.updateMany({
         data: {
