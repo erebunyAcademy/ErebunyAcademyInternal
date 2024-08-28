@@ -18,7 +18,6 @@ const prisma = new PrismaClient();
       });
     }
   }
-
   for await (const level of Array.from({ length: 8 }, (_, i) => ++i)) {
     const createdGrade = await prisma.gradeLevel.create({
       data: {
