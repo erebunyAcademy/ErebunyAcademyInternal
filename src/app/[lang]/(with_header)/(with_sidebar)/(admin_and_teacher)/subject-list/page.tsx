@@ -6,6 +6,7 @@ import { useQuery } from '@tanstack/react-query';
 import { createColumnHelper, SortingState } from '@tanstack/react-table';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
+import { useSession } from 'next-auth/react';
 import { useTranslations } from 'next-intl';
 import { v4 as uuidv4 } from 'uuid';
 import { SubjectService } from '@/api/services/subject.service';
@@ -24,6 +25,7 @@ const DeleteModal = dynamic(() => import('./_components/modals/DeleteModal'));
 const CreateEditModal = dynamic(() => import('./_components/modals/CreateEditModal'));
 
 const Subject = ({ params }: { params: { lang: Locale } }) => {
+  const session = useSession();
   const [sorting, setSorting] = useState<SortingState>([]);
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
@@ -159,7 +161,7 @@ const Subject = ({ params }: { params: { lang: Locale } }) => {
         )}
         fetchNextPage={useCallback(() => setPage(prev => ++prev), [])}
         fetchPreviousPage={useCallback(() => setPage(prev => --prev), [])}
-        addNew={addNewFacultyHandler}
+        {...(session?.data?.user?.role === 'ADMIN' ? { addNew: addNewFacultyHandler } : {})}
       />
 
       {isCreateEditModalOpen && (

@@ -5,7 +5,14 @@ import { UpdateStudentValidation } from '@/utils/validation/student';
 import prisma from '..';
 
 export class StudentResolver {
-  static async list(skip: number, take: number, search: string, sortBy: string, orderBy: string) {
+  static async list(
+    skip: number,
+    take: number,
+    search: string,
+    sortBy: string,
+    orderBy: string,
+    courseGroupId?: string,
+  ) {
     const OR: Prisma.UserWhereInput[] = [
       { firstName: { contains: search, mode: 'insensitive' } },
       { lastName: { contains: search, mode: 'insensitive' } },
@@ -38,6 +45,15 @@ export class StudentResolver {
         where: {
           role: UserRoleEnum.STUDENT,
           isVerified: true,
+          ...(courseGroupId
+            ? {
+                student: {
+                  courseGroup: {
+                    id: courseGroupId,
+                  },
+                },
+              }
+            : {}),
           OR,
         },
       }),
@@ -45,6 +61,15 @@ export class StudentResolver {
         where: {
           isVerified: true,
           role: UserRoleEnum.STUDENT,
+          ...(courseGroupId
+            ? {
+                student: {
+                  courseGroup: {
+                    id: courseGroupId,
+                  },
+                },
+              }
+            : {}),
           OR,
         },
         select: {
@@ -122,6 +147,7 @@ export class StudentResolver {
       select: {
         id: true,
         studentExamResult: true,
+
         exam: {
           select: {
             status: true,

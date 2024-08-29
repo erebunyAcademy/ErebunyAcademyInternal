@@ -86,7 +86,7 @@ const CourseGroup = ({ params }: { params: { lang: Locale } }) => {
         return (
           <Button
             as={Link}
-            href={`${languagePathHelper(params.lang, `/course-group-list/${courseGroupId}`)}`}
+            href={`${languagePathHelper(params.lang, `/students-list?courseGroupId=${courseGroupId}`)}`}
             variant="link">
             {info.getValue()}
           </Button>

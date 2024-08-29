@@ -26,13 +26,20 @@ class StudentsHandler {
     @Query('search') search: string,
     @Query('sortBy') sortBy: string,
     @Query('orderBy') orderBy: string,
+    @Query('courseGroupId') courseGroupId: string,
   ) {
-    return StudentResolver.list(+skip, +take, search, sortBy, orderBy);
+    return StudentResolver.list(+skip, +take, search, sortBy, orderBy, courseGroupId);
   }
 
   @AdminGuard()
   @Get('/course-group/:courseGroupId')
   getStudentsByCourseId(@Param('courseGroupId') courseGroupId: string) {
+    return StudentResolver.getStudentsByCourseGroupId(courseGroupId);
+  }
+
+  @AdminGuard()
+  @Get('/course-group/:courseGroupId/list')
+  getStudentsListByCourseId(@Param('courseGroupId') courseGroupId: string) {
     return StudentResolver.getStudentsByCourseGroupId(courseGroupId);
   }
 

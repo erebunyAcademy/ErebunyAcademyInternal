@@ -1,20 +1,45 @@
 import { NotFoundException } from 'next-api-decorators';
+import { User } from 'next-auth';
 import { SortingType } from '@/api/types/common';
 import { CreateEditSubjectValidation } from '@/utils/validation/subject';
 import { orderBy } from './utils/common';
 import prisma from '..';
 
 export class SubjectResolver {
-  static async list(skip: number, take: number, search: string, sorting: SortingType[]) {
+  static async list(
+    user: NonNullable<User>,
+    skip: number,
+    take: number,
+    search: string,
+    sorting: SortingType[],
+  ) {
     return Promise.all([
       prisma.subject.count({
         where: {
           OR: [{ title: { contains: search, mode: 'insensitive' } }],
+          ...(user.teacher?.id
+            ? {
+                subjectTeacher: {
+                  some: {
+                    teacherId: user.teacher?.id,
+                  },
+                },
+              }
+            : {}),
         },
       }),
       prisma.subject.findMany({
         where: {
           OR: [{ title: { contains: search, mode: 'insensitive' } }],
+          ...(user.teacher?.id
+            ? {
+                subjectTeacher: {
+                  some: {
+                    teacherId: user.teacher?.id,
+                  },
+                },
+              }
+            : {}),
         },
         select: {
           id: true,
@@ -36,8 +61,6 @@ export class SubjectResolver {
       subjects,
     }));
   }
-
-  
 
   static getSubjects() {
     return prisma.subject.findMany({
