@@ -1,6 +1,6 @@
-import { CourseGroup, Subject } from '@prisma/client';
 import { NotFoundException } from 'next-api-decorators';
 import { SortingType } from '@/api/types/common';
+import { CreateEditCourseGroupValidation } from '@/utils/validation/courseGroup';
 import { orderBy } from './utils/common';
 import prisma from '..';
 
@@ -69,7 +69,7 @@ export class CourseGroupResolver {
     });
   }
 
-  static createCourseGroup(data: Pick<CourseGroup, 'title' | 'description'>) {
+  static createCourseGroup(data: CreateEditCourseGroupValidation) {
     return prisma.courseGroup.create({ data });
   }
 
@@ -86,7 +86,10 @@ export class CourseGroupResolver {
       });
   }
 
-  static async updateCourseById(studentGradeGroupId: string, data: Partial<Subject>) {
+  static async updateCourseGroupById(
+    studentGradeGroupId: string,
+    data: CreateEditCourseGroupValidation,
+  ) {
     const { id } = await this.getCourseGroupById(studentGradeGroupId);
 
     return prisma.courseGroup.update({

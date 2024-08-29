@@ -6,6 +6,7 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { useTranslations } from 'next-intl';
 import { Controller, useForm } from 'react-hook-form';
 import { CourseGroupService } from '@/api/services/course-group.service';
+import { CourseService } from '@/api/services/courses.service';
 import { StudentService } from '@/api/services/student.service';
 import { SelectLabel } from '@/components/atoms';
 import Modal from '@/components/molecules/Modal';
@@ -34,25 +35,38 @@ const EditStudentModal: FC<EditStudentModalProps> = ({
     control,
     handleSubmit,
     reset,
+    watch,
     formState: { errors, isValid },
   } = useForm<SelectStudentCourseGroupValidation>({
     resolver,
     defaultValues: {
       courseGroupId: '',
+      courseId: '',
     },
   });
+
+  const courseId = watch('courseId');
 
   useEffect(() => {
     if (selectedStudent?.student?.courseGroup?.id) {
       reset({
+        courseId: selectedStudent.student.course.id,
         courseGroupId: selectedStudent.student?.courseGroup?.id,
       });
     }
   }, [reset, selectedStudent]);
 
+  const { data: courseQueryData } = useQuery({
+    queryKey: ['course-group'],
+    queryFn: CourseService.list.bind(null),
+    initialData: [],
+  });
+
   const { data: courseGroupData } = useQuery({
-    queryFn: CourseGroupService.list.bind(null),
-    queryKey: [''],
+    queryKey: ['course-group', courseId],
+    queryFn: () => CourseGroupService.getCourseGroupByCourseId(courseId),
+    enabled: !!courseId,
+    initialData: [],
   });
 
   const { mutate: updateStudentData } = useMutation({
@@ -77,13 +91,34 @@ const EditStudentModal: FC<EditStudentModalProps> = ({
         alignItems="center"
         gap="50px">
         <Controller
+          name="courseId"
+          control={control}
+          render={({ field: { onChange, value, name } }) => (
+            <SelectLabel
+              isRequired
+              name={name}
+              options={courseQueryData.map(course => ({
+                id: course.id,
+                title: course.title,
+              }))}
+              labelName="course"
+              valueLabel="id"
+              nameLabel="title"
+              onChange={onChange}
+              value={value}
+              isInvalid={!!errors.courseGroupId?.message}
+              formErrorMessage={errors.courseGroupId?.message}
+            />
+          )}
+        />
+        <Controller
           name="courseGroupId"
           control={control}
           render={({ field: { onChange, value, name } }) => (
             <SelectLabel
               isRequired
               name={name}
-              options={courseGroupData || []}
+              options={courseGroupData}
               labelName="studentCourseGroup"
               valueLabel="id"
               nameLabel="title"

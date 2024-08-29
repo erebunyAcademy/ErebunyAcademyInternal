@@ -1,13 +1,12 @@
 'use client';
 import React, { useCallback, useMemo, useState } from 'react';
-import { Button, MenuItem, useDisclosure } from '@chakra-ui/react';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { MenuItem, useDisclosure } from '@chakra-ui/react';
+import { useQuery } from '@tanstack/react-query';
 import { createColumnHelper, SortingState } from '@tanstack/react-table';
 import dynamic from 'next/dynamic';
 import { useTranslations } from 'next-intl';
 import { v4 as uuidv4 } from 'uuid';
 import { CourseService } from '@/api/services/courses.service';
-import { GradeLevelService } from '@/api/services/grade-level.service';
 import ActionButtons from '@/components/molecules/ActionButtons';
 import SearchTable from '@/components/organisms/SearchTable';
 import useDebounce from '@/hooks/useDebounce';
@@ -45,10 +44,6 @@ const Courses = () => {
     onClose() {
       setSelectedCourse(null);
     },
-  });
-
-  const { mutate: upgradeLevelMutation } = useMutation({
-    mutationFn: GradeLevelService.upgradeCourseAndCourseLevel,
   });
 
   const { data, isLoading, isPlaceholderData, refetch } = useQuery({
@@ -124,7 +119,6 @@ const Courses = () => {
 
   return (
     <>
-      <Button onClick={() => upgradeLevelMutation()}>Upgrade Courses</Button>
       <SearchTable
         title="courseList"
         isLoading={isLoading}

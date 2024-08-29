@@ -70,6 +70,7 @@ export class StudentResolver {
               },
               course: {
                 select: {
+                  id: true,
                   title: true,
                 },
               },
@@ -184,11 +185,24 @@ export class StudentResolver {
       throw new NotFoundException('User was not found');
     }
 
+    const courseGroup = await prisma.courseGroup.findUniqueOrThrow({
+      where: {
+        id: data.courseGroupId,
+      },
+      select: {
+        course: {
+          select: {
+            id: true,
+          },
+        },
+      },
+    });
+
     return prisma.student.update({
       where: {
         id: studentId,
       },
-      data,
+      data: { ...data, courseId: courseGroup.course?.id },
     });
   }
 

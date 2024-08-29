@@ -141,9 +141,9 @@ model CourseGroup {
   id                String             @id @default(uuid())
   title             String             @db.VarChar(60)
   description       String?            @db.VarChar(60)
-  courseId          String?
+  courseId          String
   gradeLevelId      String?
-  course            Course?            @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  course            Course             @relation(fields: [courseId], references: [id], onDelete: Cascade)
   students          Student[]
   exams             Exam[]
   schedules         Schedule[]

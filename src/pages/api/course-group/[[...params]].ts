@@ -1,4 +1,3 @@
-import { CourseGroup } from '@prisma/client';
 import {
   Body,
   Catch,
@@ -15,6 +14,7 @@ import { SortingType } from '@/api/types/common';
 import { exceptionHandler } from '@/lib/prisma/error';
 import { AdminGuard } from '@/lib/prisma/guards/admin';
 import { CourseGroupResolver } from '@/lib/prisma/resolvers/course-group.resolver';
+import { CreateEditCourseGroupValidation } from '@/utils/validation/courseGroup';
 
 @Catch(exceptionHandler)
 class CourseGroupHandler {
@@ -59,7 +59,7 @@ class CourseGroupHandler {
 
   @AdminGuard()
   @Post()
-  createCourseGroup(@Body(ValidationPipe) input: Pick<CourseGroup, 'title' | 'description'>) {
+  createCourseGroup(@Body(ValidationPipe) input: CreateEditCourseGroupValidation) {
     return CourseGroupResolver.createCourseGroup(input);
   }
 
@@ -67,9 +67,9 @@ class CourseGroupHandler {
   @Patch('/:courseGroupId')
   updateCourseGroup(
     @Param('courseGroupId') courseGroupId: string,
-    @Body(ValidationPipe) input: Partial<Pick<CourseGroup, 'title' | 'description'>>,
+    @Body(ValidationPipe) input: CreateEditCourseGroupValidation,
   ) {
-    return CourseGroupResolver.updateCourseById(courseGroupId, input);
+    return CourseGroupResolver.updateCourseGroupById(courseGroupId, input);
   }
 }
 

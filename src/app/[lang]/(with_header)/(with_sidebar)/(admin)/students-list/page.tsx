@@ -19,7 +19,7 @@ import { QUERY_KEY } from '@/utils/helpers/queryClient';
 import { Maybe } from '@/utils/models/common';
 import { StudentModel } from '@/utils/models/student';
 
-const EditStudentModal = dynamic(() => import('./_components/modals/EditStudentModal'));
+const EditStudentModal = dynamic(() => import('./_components/modals/CreateEditStudentsModal'));
 const RejectMessageModal = dynamic(() => import('./_components/modals/RejectMessageModal'));
 const StudentAttachmentModal = dynamic(() => import('./_components/modals/StudentAttachmentModal'));
 
