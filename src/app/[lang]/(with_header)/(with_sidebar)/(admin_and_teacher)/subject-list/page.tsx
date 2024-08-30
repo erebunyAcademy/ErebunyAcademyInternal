@@ -1,6 +1,6 @@
 'use client';
 import { useCallback, useMemo, useState } from 'react';
-import { Button, MenuItem, useDisclosure } from '@chakra-ui/react';
+import { Box, Button, MenuItem, useDisclosure } from '@chakra-ui/react';
 import { LanguageTypeEnum } from '@prisma/client';
 import { useQuery } from '@tanstack/react-query';
 import { createColumnHelper, SortingState } from '@tanstack/react-table';
@@ -140,46 +140,48 @@ const Subject = ({ params }: { params: { lang: Locale } }) => {
 
   return (
     <>
-      <SearchTable
-        title="subjectList"
-        isLoading={isLoading}
-        data={data?.subjects || []}
-        count={data?.count || 0}
-        // @ts-ignore
-        columns={columns}
-        sorting={sorting}
-        search={search}
-        setSorting={setSorting}
-        setSearch={setSearchValue}
-        hasNextPage={useMemo(
-          () => !(!pageCount || page === pageCount || isPlaceholderData),
-          [isPlaceholderData, page, pageCount],
-        )}
-        hasPreviousPage={useMemo(
-          () => !(page === 1 || isPlaceholderData),
-          [isPlaceholderData, page],
-        )}
-        fetchNextPage={useCallback(() => setPage(prev => ++prev), [])}
-        fetchPreviousPage={useCallback(() => setPage(prev => --prev), [])}
-        {...(session?.data?.user?.role === 'ADMIN' ? { addNew: addNewFacultyHandler } : {})}
-      />
+      <Box p={{ base: ' 16px', md: '0' }}>
+        <SearchTable
+          title="subjectList"
+          isLoading={isLoading}
+          data={data?.subjects || []}
+          count={data?.count || 0}
+          // @ts-ignore
+          columns={columns}
+          sorting={sorting}
+          search={search}
+          setSorting={setSorting}
+          setSearch={setSearchValue}
+          hasNextPage={useMemo(
+            () => !(!pageCount || page === pageCount || isPlaceholderData),
+            [isPlaceholderData, page, pageCount],
+          )}
+          hasPreviousPage={useMemo(
+            () => !(page === 1 || isPlaceholderData),
+            [isPlaceholderData, page],
+          )}
+          fetchNextPage={useCallback(() => setPage(prev => ++prev), [])}
+          fetchPreviousPage={useCallback(() => setPage(prev => --prev), [])}
+          {...(session?.data?.user?.role === 'ADMIN' ? { addNew: addNewFacultyHandler } : {})}
+        />
 
-      {isCreateEditModalOpen && (
-        <CreateEditModal
-          isCreateEditModalOpen={isCreateEditModalOpen}
-          closeCreateEditModal={closeCreateEditModal}
-          refetch={refetch}
-          selectedSubject={selectedSubject}
-        />
-      )}
-      {isDeleteModalOpen && (
-        <DeleteModal
-          closeDeleteModal={closeDeleteModal}
-          refetch={refetch}
-          isDeleteModalOpen={isDeleteModalOpen}
-          selectedSubject={selectedSubject}
-        />
-      )}
+        {isCreateEditModalOpen && (
+          <CreateEditModal
+            isCreateEditModalOpen={isCreateEditModalOpen}
+            closeCreateEditModal={closeCreateEditModal}
+            refetch={refetch}
+            selectedSubject={selectedSubject}
+          />
+        )}
+        {isDeleteModalOpen && (
+          <DeleteModal
+            closeDeleteModal={closeDeleteModal}
+            refetch={refetch}
+            isDeleteModalOpen={isDeleteModalOpen}
+            selectedSubject={selectedSubject}
+          />
+        )}
+      </Box>
     </>
   );
 };
