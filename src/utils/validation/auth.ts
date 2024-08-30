@@ -1,4 +1,5 @@
 import {
+  IsArray,
   IsEmail,
   IsNotEmpty,
   IsNumber,
@@ -75,9 +76,10 @@ export class TeacherSignUpValidation extends UserSignupValidation {
   @IsOptional()
   scientificActivity: string;
 
-  @IsString()
+  @IsArray()
+  @IsString({ each: true })
   @IsNotEmpty({ message: 'teachingSubjectMessage' })
-  teachingSubjectId: string;
+  teachingSubjectIds: string[];
 }
 
 export class StudentSignUpValidation extends UserSignupValidation {
