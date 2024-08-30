@@ -79,9 +79,15 @@ const ProfileNavItem: FC<ProfileNavItemProps> = ({ user, onClose, linkItems, lan
           {linkItems.map(({ href, name, icon, id, isExpandable, children }) => (
             <Fragment key={id}>
               {isExpandable ? (
-                <AccordionItem>
-                  <AccordionButton onClick={e => e.stopPropagation()}>
+                <Box>
+                  <Box
+                    borderY="1px"
+                    borderColor="#E2E8F0"
+                    p="8px 4px"
+                    onClick={e => e.stopPropagation()}>
                     <Flex
+                      pointerEvents="none"
+                      cursor="default"
                       as="span"
                       flex="1"
                       textAlign="left"
@@ -91,18 +97,24 @@ const ProfileNavItem: FC<ProfileNavItemProps> = ({ user, onClose, linkItems, lan
                       {icon}
                       {t(name)}
                     </Flex>
-                    <AccordionIcon />
-                  </AccordionButton>
-                  <AccordionPanel>
+                  </Box>
+                  <Box>
                     {children?.map(cl => (
-                      <Box key={cl.id} borderRadius="9px" height="52px" display="flex" width="100%">
-                        <NavItem icon={cl.icon} href={cl.href} lang={lang}>
+                      <Box
+                        key={cl.id}
+                        borderRadius="9px"
+                        height="40px"
+                        display="flex"
+                        width="100%"
+                        pl="30px"
+                        borderBottom="1px solid #E2E8F0">
+                        <NavItem icon={cl.icon} href={cl.href} lang={lang} height="40px">
                           {t(cl.name)}
                         </NavItem>
                       </Box>
                     ))}
-                  </AccordionPanel>
-                </AccordionItem>
+                  </Box>
+                </Box>
               ) : (
                 <AccordionItem>
                   <AccordionButton

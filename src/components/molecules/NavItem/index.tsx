@@ -28,7 +28,7 @@ const NavItem = ({ href, icon, children, lang, ...rest }: NavItemProps) => {
         bg: '#F3F4F6',
         color: '#222',
       }}
-      height="52px"
+      height={rest.height}
       {...(href !== undefined
         ? {}
         : { onClick: () => signOut({ callbackUrl: languagePathHelper(lang, ROUTE_SIGN_IN) }) })}>

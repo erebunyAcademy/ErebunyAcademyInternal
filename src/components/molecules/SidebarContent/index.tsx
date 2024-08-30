@@ -58,7 +58,7 @@ const SidebarContent: FC<SidebarProps> = ({ linkItems, lang, ...props }) => {
                   <AccordionPanel>
                     {link.children?.map(cl => (
                       <Box key={cl.id} borderRadius="9px" height="52px" display="flex" width="100%">
-                        <NavItem icon={cl.icon} href={cl.href} lang={lang}>
+                        <NavItem icon={cl.icon} href={cl.href} lang={lang} height="52px">
                           {t(cl.name)}
                         </NavItem>
                       </Box>
@@ -67,7 +67,7 @@ const SidebarContent: FC<SidebarProps> = ({ linkItems, lang, ...props }) => {
                 </AccordionItem>
               </Accordion>
             ) : (
-              <NavItem icon={link.icon} href={link.href} lang={lang}>
+              <NavItem icon={link.icon} href={link.href} lang={lang} height="52px">
                 {t(link.name)}
               </NavItem>
             )}
