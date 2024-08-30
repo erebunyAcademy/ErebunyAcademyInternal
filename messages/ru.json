@@ -17,7 +17,7 @@
   "profession": "Профессия",
   "workPlace": "Место работы",
   "scientificActivity": "Научная деятельность",
-  "teachingSubject": "Преподаваемый предмет",
+  "teachingSubjects": "Преподаваемые предметы",
   "exams": "Экзамены",
   "exam": "Экзамен",
   "teachers": "Лекторы",
@@ -283,5 +283,5 @@
   "noRecord": "Нет записи",
   "noMark": "Нет оценки",
   "lessonDay": "День занятия",
-  "gradeLevel": "Grade level"
+  "clearAll": "Очистить всё"
 }

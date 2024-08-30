@@ -17,7 +17,7 @@
   "profession": "Մասնագիտություն",
   "workPlace": "Աշխատանքային վայր",
   "scientificActivity": "Գիտական գործունեություն",
-  "teachingSubject": "Դասավանդվող առարկա",
+  "teachingSubjects": "Դասավանդվող առարկաներ",
   "exams": "Քննություններ",
   "exam": "Քննություն",
   "teachers": "Դասախոսներ",
@@ -282,5 +282,5 @@
   "noRecord": "Տվյալներ չկան",
   "noMark": "Գնահատական չկա",
   "lessonDay": "Դասընթացի օր",
-  "gradeLevel": "Grade level"
+  "clearAll": "Ջնջել բոլորը"
 }

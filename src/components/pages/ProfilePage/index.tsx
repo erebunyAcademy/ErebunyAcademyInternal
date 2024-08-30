@@ -435,16 +435,15 @@ const Profile = ({ sessionUser }: { sessionUser: NonNullable<Session['user']> })
             control={control}
             render={({ field: { onChange, value } }) => (
               <MultiSelectMenu
-                label="Teaching Subject"
+                label="teachingSubjects"
                 value={value}
-                options={subjectData.map(subject => subject.title)} // Assuming subjectData is an array of objects with a 'title' field
+                options={subjectData.map(subject => subject.title)}
                 onChange={selectedValues => {
-                  // Transform selected values back to IDs or any format your form needs
                   const selectedIds = selectedValues.map(
                     selectedTitle =>
                       subjectData.find(subject => subject.title === selectedTitle)?.id || '',
                   );
-                  onChange(selectedIds); // Update the form field with the IDs
+                  onChange(selectedIds);
                 }}
               />
             )}
