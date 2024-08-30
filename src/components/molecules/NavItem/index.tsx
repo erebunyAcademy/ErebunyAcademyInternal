@@ -12,9 +12,8 @@ interface NavItemProps extends FlexProps {
   children: React.ReactNode;
   href: string | undefined;
   lang: Locale;
-  height: string;
 }
-const NavItem = ({ height, href, icon, children, lang, ...rest }: NavItemProps) => {
+const NavItem = ({ href, icon, children, lang, ...rest }: NavItemProps) => {
   return (
     <Box
       as={Link}
@@ -29,7 +28,7 @@ const NavItem = ({ height, href, icon, children, lang, ...rest }: NavItemProps) 
         bg: '#F3F4F6',
         color: '#222',
       }}
-      height={height}
+      height={rest.height}
       {...(href !== undefined
         ? {}
         : { onClick: () => signOut({ callbackUrl: languagePathHelper(lang, ROUTE_SIGN_IN) }) })}>
