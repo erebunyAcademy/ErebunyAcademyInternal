@@ -61,12 +61,31 @@ export class AuthResolver {
   static async teacherSignUp(input: TeacherSignUpValidation) {
     const user = await createUser(input, UserRoleEnum.TEACHER);
 
-    await prisma.teacher.create({
+    const subject = await prisma.subject.findUniqueOrThrow({
+      where: {
+        id: input.teachingSubjectId,
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    const createdTeacher = await prisma.teacher.create({
       data: {
         profession: input.profession,
         workPlace: input.workPlace,
         scientificActivity: input.scientificActivity,
         userId: user.id,
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    await prisma.subjectTeacher.create({
+      data: {
+        teacherId: createdTeacher.id,
+        subjectId: subject.id,
       },
     });
 
