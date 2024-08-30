@@ -1,13 +1,11 @@
 'use client';
 import React, { FC, useCallback, useEffect } from 'react';
 import { classValidatorResolver } from '@hookform/resolvers/class-validator';
-import { GradeLevelTypeEnum } from '@prisma/client';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useTranslations } from 'next-intl';
 import { Controller, useForm } from 'react-hook-form';
 import { CourseGroupService } from '@/api/services/course-group.service';
 import { CourseService } from '@/api/services/courses.service';
-import { GradeLevelService } from '@/api/services/grade-level.service';
 import { FormInput, SelectLabel } from '@/components/atoms';
 import Modal from '@/components/molecules/Modal';
 import { GetCoursesListModel } from '@/utils/models/course';
@@ -51,7 +49,6 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
         title: selectedCourseGroup.title,
         description: selectedCourseGroup.description || '',
         courseId: selectedCourseGroup.course?.id,
-        gradeLevelId: selectedCourseGroup.gradeLevel?.id,
       });
     }
   }, [selectedCourseGroup, reset]);
@@ -83,10 +80,6 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
       reset();
       closeCreateEditModal();
     },
-  });
-  const { data: gradeLevelData } = useQuery({
-    queryFn: GradeLevelService.list.bind(null, GradeLevelTypeEnum.COURSE_GROUP),
-    queryKey: ['grade-level'],
   });
 
   const onSubmitHandler = useCallback(
@@ -156,24 +149,6 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
             value={value}
             isInvalid={!!errors.courseId?.message}
             formErrorMessage={errors.courseId?.message}
-          />
-        )}
-      />
-      <Controller
-        name="gradeLevelId"
-        control={control}
-        render={({ field: { onChange, value, name } }) => (
-          <SelectLabel
-            name={name}
-            isRequired
-            options={gradeLevelData || []}
-            labelName="gradeLevel"
-            valueLabel="id"
-            nameLabel="level"
-            onChange={onChange}
-            value={value}
-            isInvalid={!!errors.gradeLevelId?.message}
-            formErrorMessage={errors.gradeLevelId?.message}
           />
         )}
       />
