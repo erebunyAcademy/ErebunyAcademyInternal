@@ -9,6 +9,8 @@ import {
   Avatar,
   Box,
   Flex,
+  PopoverBody,
+  PopoverContent,
   Text,
 } from '@chakra-ui/react';
 import Link from 'next/link';
@@ -41,104 +43,120 @@ const ProfileNavItem: FC<ProfileNavItemProps> = ({ user, onClose, linkItems, lan
   const logout = useCallback(() => {
     signOut({ callbackUrl: languagePathHelper(lang, ROUTE_SIGN_IN) });
     router.refresh();
-  }, [router, lang]);
+    onClose();
+  }, [lang, router, onClose]);
 
   return (
-    <AccordionItem pl={8}>
-      <AccordionButton display="flex">
-        <Flex flex={6} textAlign="left" gap="8px" as={Link} href={ROUTE_PROFILE} onClick={onClose}>
-          <Avatar
-            name={name}
-            src={generateAWSUrl(
-              user?.attachment.find(attachment => attachment.type === 'AVATAR')?.key || '',
-            )}
-            bg="#F3F4F6"
-            color="#C0C0C0"
-          />
-          <Flex flexDirection="column" gap="4px">
-            <Text
-              display="flex"
-              alignItems="center"
-              justifyContent="center"
-              fontSize="14px"
-              fontWeight={600}
-              lineHeight="20px">
-              {name}
-            </Text>
-            <Text color="#5B5B5B" fontSize="14px" fontWeight={400}>
-              {t('myProfile')}
-            </Text>
-          </Flex>
-        </Flex>
-        <Box flex={1}>
-          <AccordionIcon />
-        </Box>
-      </AccordionButton>
-      <AccordionPanel pb={0} bg="#F9FAFB" pt={0}>
-        <Accordion allowMultiple>
-          {linkItems.map(({ href, name, icon, id, isExpandable, children }) => (
-            <Fragment key={id}>
-              {isExpandable ? (
-                <Box>
-                  <Box
-                    borderY="1px"
-                    borderColor="#E2E8F0"
-                    p="8px 4px"
-                    onClick={e => e.stopPropagation()}>
-                    <Flex
-                      pointerEvents="none"
-                      cursor="default"
-                      as="span"
-                      flex="1"
-                      textAlign="left"
-                      pl="24px"
-                      alignItems="center"
-                      gap="8px">
-                      {icon}
-                      {t(name)}
-                    </Flex>
-                  </Box>
-                  <Box>
-                    {children?.map(cl => (
-                      <Box
-                        key={cl.id}
-                        borderRadius="9px"
-                        height="40px"
-                        display="flex"
-                        width="100%"
-                        pl="30px"
-                        borderBottom="1px solid #E2E8F0">
-                        <NavItem icon={cl.icon} href={cl.href} lang={lang} height="40px">
-                          {t(cl.name)}
-                        </NavItem>
-                      </Box>
-                    ))}
-                  </Box>
-                </Box>
-              ) : (
-                <AccordionItem>
-                  <AccordionButton
-                    {...(href
-                      ? { as: Link, href: languagePathHelper(lang, href || ROUTE_DASHBOARD) || '' }
-                      : { onClick: id === 9 ? logout : () => {} })}>
-                    <Flex
-                      as="span"
-                      flex="1"
-                      textAlign="left"
-                      pl="24px"
-                      alignItems="center"
-                      gap="8px">
-                      {icon}
-                      {t(name)}
-                    </Flex>
-                  </AccordionButton>
-                </AccordionItem>
-              )}
-            </Fragment>
-          ))}
+    <PopoverContent
+      w={{ base: '100vw', md: 'auto' }}
+      left={0}
+      right={0}
+      maxHeight={`${innerHeight - 100}px`}
+      overflowY="auto"
+      maxWidth={{ base: '100vw', md: '400px' }}>
+      <PopoverBody border="none" p={0}>
+        <Accordion allowToggle defaultIndex={0}>
+          <AccordionItem>
+            <AccordionButton display="flex">
+              <Flex
+                flex={6}
+                textAlign="left"
+                gap="8px"
+                as={Link}
+                href={ROUTE_PROFILE}
+                onClick={onClose}>
+                <Avatar
+                  name={name}
+                  src={generateAWSUrl(
+                    user?.attachment.find(attachment => attachment.type === 'AVATAR')?.key || '',
+                  )}
+                  bg="#F3F4F6"
+                  color="#C0C0C0"
+                />
+                <Flex flexDirection="column" gap="4px">
+                  <Text
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                    fontSize="14px"
+                    fontWeight={600}
+                    lineHeight="20px">
+                    {name}
+                  </Text>
+                  <Text color="#5B5B5B" fontSize="14px" fontWeight={400}>
+                    {t('myProfile')}
+                  </Text>
+                </Flex>
+              </Flex>
+              <Box flex={1}>
+                <AccordionIcon />
+              </Box>
+            </AccordionButton>
+            <AccordionPanel pb={0} bg="#F9FAFB" pt={0}>
+              <Accordion allowMultiple>
+                {linkItems.map(({ href, name, icon, id, isExpandable, children }) => (
+                  <Fragment key={id}>
+                    {isExpandable ? (
+                      <AccordionItem>
+                        <AccordionButton onClick={e => e.stopPropagation()}>
+                          <Flex
+                            as="span"
+                            flex="1"
+                            textAlign="left"
+                            pl="24px"
+                            alignItems="center"
+                            gap="8px">
+                            {icon}
+                            {t(name)}
+                          </Flex>
+                          <AccordionIcon />
+                        </AccordionButton>
+                        <AccordionPanel>
+                          {children?.map(cl => (
+                            <Box
+                              key={cl.id}
+                              borderRadius="9px"
+                              height="52px"
+                              display="flex"
+                              width="100%">
+                              <NavItem icon={cl.icon} href={cl.href} lang={lang} onClick={onClose}>
+                                {t(cl.name)}
+                              </NavItem>
+                            </Box>
+                          ))}
+                        </AccordionPanel>
+                      </AccordionItem>
+                    ) : (
+                      <AccordionItem>
+                        <AccordionButton
+                          {...(href
+                            ? {
+                                as: Link,
+                                href: languagePathHelper(lang, href || ROUTE_DASHBOARD) || '',
+                                onClick: onClose,
+                              }
+                            : { onClick: id === 9 ? logout : () => {} })}>
+                          <Flex
+                            as="span"
+                            flex="1"
+                            textAlign="left"
+                            pl="24px"
+                            alignItems="center"
+                            gap="8px">
+                            {icon}
+                            {t(name)}
+                          </Flex>
+                        </AccordionButton>
+                      </AccordionItem>
+                    )}
+                  </Fragment>
+                ))}
+              </Accordion>
+            </AccordionPanel>
+          </AccordionItem>
         </Accordion>
-      </AccordionPanel>
-    </AccordionItem>
+      </PopoverBody>
+    </PopoverContent>
   );
 };
 

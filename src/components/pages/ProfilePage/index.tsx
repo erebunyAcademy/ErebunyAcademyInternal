@@ -68,8 +68,6 @@ const Profile = ({ sessionUser }: { sessionUser: NonNullable<Session['user']> })
     resolver,
   });
 
-  console.log({ isDirty });
-
   const {
     control: passwordChangeControl,
     handleSubmit: passwordChangeHandlerSubmit,
