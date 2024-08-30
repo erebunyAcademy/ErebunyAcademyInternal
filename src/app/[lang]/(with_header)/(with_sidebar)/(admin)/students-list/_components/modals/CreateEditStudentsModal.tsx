@@ -35,6 +35,7 @@ const EditStudentModal: FC<EditStudentModalProps> = ({
     control,
     handleSubmit,
     reset,
+    setValue,
     watch,
     formState: { errors, isValid },
   } = useForm<SelectStudentCourseGroupValidation>({
@@ -51,7 +52,7 @@ const EditStudentModal: FC<EditStudentModalProps> = ({
     if (selectedStudent?.student?.courseGroup?.id) {
       reset({
         courseId: selectedStudent.student.course.id,
-        courseGroupId: selectedStudent.student?.courseGroup?.id,
+        courseGroupId: selectedStudent.student.courseGroup.id,
       });
     }
   }, [reset, selectedStudent]);
@@ -104,7 +105,10 @@ const EditStudentModal: FC<EditStudentModalProps> = ({
               labelName="course"
               valueLabel="id"
               nameLabel="title"
-              onChange={onChange}
+              onChange={e => {
+                setValue('courseGroupId', '');
+                onChange(e.target.value);
+              }}
               value={value}
               isInvalid={!!errors.courseGroupId?.message}
               formErrorMessage={errors.courseGroupId?.message}
