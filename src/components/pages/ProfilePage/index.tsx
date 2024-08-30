@@ -401,36 +401,40 @@ const Profile = ({ sessionUser }: { sessionUser: NonNullable<Session['user']> })
           )}
         </VStack>
       </Flex>
-      <Flex my="20px">
-        <Controller
-          name="teachingSubjectIds"
-          control={control}
-          render={({ field: { onChange, value } }) => (
-            <SelectMultiple
-              placeholder="Select subjects"
-              isRequired
-              label="teachingSubjects"
-              value={value}
-              options={subjectData}
-              onChange={onChange}
-              isInvalid={!!errors.teachingSubjectIds?.message}
-              formErrorMessage={errors.teachingSubjectIds?.message}
+      {sessionUser.teacher && (
+        <>
+          <Flex my="20px">
+            <Controller
+              name="teachingSubjectIds"
+              control={control}
+              render={({ field: { onChange, value } }) => (
+                <SelectMultiple
+                  placeholder="Select subjects"
+                  isRequired
+                  label="teachingSubjects"
+                  value={value}
+                  options={subjectData}
+                  onChange={onChange}
+                  isInvalid={!!errors.teachingSubjectIds?.message}
+                  formErrorMessage={errors.teachingSubjectIds?.message}
+                />
+              )}
             />
-          )}
-        />
-      </Flex>
-      <Flex flexDirection="column" gap="10px">
-        {selectedSubjects.map(subject => (
-          <Flex key={subject.id} gap="10px" alignItems="center">
-            <DeleteIcon
-              color="red"
-              onClick={removeSubjectHandler.bind(null, subject.id)}
-              style={{ cursor: 'pointer' }}
-            />
-            <Box>{subject.title} </Box>
           </Flex>
-        ))}
-      </Flex>
+          <Flex flexDirection="column" gap="10px">
+            {selectedSubjects.map(subject => (
+              <Flex key={subject.id} gap="10px" alignItems="center">
+                <DeleteIcon
+                  color="red"
+                  onClick={removeSubjectHandler.bind(null, subject.id)}
+                  style={{ cursor: 'pointer' }}
+                />
+                <Box>{subject.title} </Box>
+              </Flex>
+            ))}
+          </Flex>
+        </>
+      )}
       <Flex paddingTop={{ base: '36px', md: '40px' }} flexDirection="column" gap={24}>
         <Flex gap="24px" flexDirection={{ base: 'column', lg: 'row' }}>
           <Controller
