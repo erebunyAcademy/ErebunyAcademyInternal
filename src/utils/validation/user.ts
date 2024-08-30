@@ -1,4 +1,12 @@
-import { IsEmail, IsNotEmpty, IsNumber, IsOptional, IsString, Length } from 'class-validator';
+import {
+  IsArray,
+  IsEmail,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+  Length,
+} from 'class-validator';
 
 export class UserProfileFormValidation {
   @IsString()
@@ -44,6 +52,11 @@ export class UserProfileFormValidation {
   @IsString()
   @IsOptional()
   attachmentMimetype?: string;
+
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  teachingSubjectIds: string[];
 }
 
 export class VerifyPhoneValidation {

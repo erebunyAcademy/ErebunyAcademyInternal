@@ -7,11 +7,12 @@ import { useTranslations } from 'next-intl';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { AuthService } from '@/api/services/auth.service';
 import { SubjectService } from '@/api/services/subject.service';
+import MultiSelectMenu from '@/components/atoms/SelectMultiple';
 import { Locale } from '@/i18n';
 import { ROUTE_SIGN_IN } from '@/utils/constants/routes';
 import { languagePathHelper } from '@/utils/helpers/language';
 import { TeacherSignUpValidation } from '@/utils/validation';
-import { FormInput, Loading, SelectLabel } from '../../atoms';
+import { FormInput, Loading } from '../../atoms';
 
 const resolver = classValidatorResolver(TeacherSignUpValidation);
 const TeacherSignUp = ({ lang }: { lang: Locale }) => {
@@ -34,7 +35,7 @@ const TeacherSignUp = ({ lang }: { lang: Locale }) => {
       profession: '',
       workPlace: '',
       scientificActivity: '',
-      teachingSubjectId: '',
+      teachingSubjectIds: [],
     },
   });
 
@@ -183,20 +184,23 @@ const TeacherSignUp = ({ lang }: { lang: Locale }) => {
           />
         </Stack>
         <Controller
-          name="teachingSubjectId"
+          name="teachingSubjectIds"
           control={control}
-          render={({ field: { onChange, value, name } }) => (
-            <SelectLabel
-              name={name}
+          render={({ field: { onChange, value } }) => (
+            <MultiSelectMenu
               isRequired
-              options={subjectData || []}
-              labelName="teachingSubject"
-              valueLabel="id"
-              nameLabel="title"
-              onChange={onChange}
+              label="teachingSubjects"
               value={value}
-              isInvalid={!!errors.teachingSubjectId?.message}
-              formErrorMessage={errors.teachingSubjectId?.message}
+              options={subjectData.map(subject => subject.title)}
+              onChange={selectedValues => {
+                const selectedIds = selectedValues.map(
+                  selectedTitle =>
+                    subjectData.find(subject => subject.title === selectedTitle)?.id || '',
+                );
+                onChange(selectedIds);
+              }}
+              isInvalid={!!errors.teachingSubjectIds?.message}
+              formErrorMessage={errors.teachingSubjectIds?.message}
             />
           )}
         />
