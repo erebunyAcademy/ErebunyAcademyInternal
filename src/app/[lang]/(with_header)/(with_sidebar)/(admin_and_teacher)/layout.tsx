@@ -1,4 +1,5 @@
 import { ReactNode } from 'react';
+import { Box } from '@chakra-ui/react';
 import { redirect } from 'next/navigation';
 import { Locale } from '@/i18n';
 import { serverSession } from '@/pages/api/auth/[...nextauth]';
@@ -18,5 +19,9 @@ export default async function RootLayout({
     redirect(languagePathHelper(params.lang, ROUTE_DASHBOARD));
   }
 
-  return children;
+  return (
+    <Box p={{ base: '16px', md: '25px' }} width="100%">
+      {children}
+    </Box>
+  );
 }

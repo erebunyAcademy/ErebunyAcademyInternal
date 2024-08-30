@@ -78,6 +78,11 @@ export class UserResolver {
             profession: true,
             workPlace: true,
             scientificActivity: true,
+            subjectTeachers: {
+              select: {
+                subjectId: true,
+              },
+            },
           },
         },
       },
@@ -165,7 +170,14 @@ export class UserResolver {
   }
 
   static async updateProfile(input: UserProfileFormValidation, user: NonNullable<User>) {
-    const { avatar, avatarMimetype, attachmentKey, attachmentMimetype, ...userData } = input;
+    const {
+      avatar,
+      avatarMimetype,
+      attachmentKey,
+      attachmentMimetype,
+      teachingSubjectIds,
+      ...userData
+    } = input;
 
     const [userAvatar, userAttachment] = await Promise.all([
       prisma.attachment.findFirst({
@@ -218,6 +230,65 @@ export class UserResolver {
       ),
     ]);
 
+    if (user.teacher) {
+      // Step 1: Fetch current SubjectTeacher records for the user
+      const existingSubjectTeachers = await prisma.subjectTeacher.findMany({
+        where: {
+          teacher: {
+            userId: user.id,
+          },
+        },
+        select: {
+          subjectId: true,
+        },
+      });
+
+      const existingSubjectIds = existingSubjectTeachers.map(st => st.subjectId);
+
+      // Step 2: Determine which subjects to delete
+      const subjectsToDelete = existingSubjectIds.filter(
+        subjectId => !teachingSubjectIds.includes(subjectId),
+      );
+
+      // Step 3: Determine which subjects to add
+      const subjectsToAdd = teachingSubjectIds.filter(
+        subjectId => !existingSubjectIds.includes(subjectId),
+      );
+
+      // Step 4: Perform deletions and additions
+      if (subjectsToDelete.length > 0) {
+        await prisma.subjectTeacher.deleteMany({
+          where: {
+            teacher: {
+              userId: user.id,
+            },
+            subjectId: {
+              in: subjectsToDelete,
+            },
+          },
+        });
+      }
+
+      if (subjectsToAdd.length > 0) {
+        const teacher = await prisma.teacher.findUnique({
+          where: { userId: user.id },
+          select: { id: true },
+        });
+
+        if (!teacher) {
+          throw new NotFoundException('Teacher not found');
+        }
+
+        await prisma.subjectTeacher.createMany({
+          data: subjectsToAdd.map(subjectId => ({
+            teacherId: teacher.id,
+            subjectId,
+          })),
+        });
+      }
+    }
+
+    // Update the user profile data
     return prisma.user.update({
       where: { id: user.id },
       data: userData,
