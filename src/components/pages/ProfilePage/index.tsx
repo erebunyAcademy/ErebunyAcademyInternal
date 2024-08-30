@@ -13,7 +13,7 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { classValidatorResolver } from '@hookform/resolvers/class-validator';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { Country } from 'country-state-city';
 import Image from 'next/image';
@@ -22,8 +22,10 @@ import { Session } from 'next-auth';
 import { useTranslations } from 'next-intl';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { v4 as uuid } from 'uuid';
+import { SubjectService } from '@/api/services/subject.service';
 import { UserService } from '@/api/services/user.service';
 import { FormInput, SelectLabel } from '@/components/atoms';
+import MultiSelectMenu from '@/components/atoms/SelectMultiple';
 import { generateAWSUrl } from '@/utils/helpers/aws';
 import { Maybe } from '@/utils/models/common';
 import { ChangePasswordValidation, UserProfileFormValidation } from '@/utils/validation/user';
@@ -57,6 +59,7 @@ const Profile = ({ sessionUser }: { sessionUser: NonNullable<Session['user']> })
       attachmentKey:
         sessionUser.attachment.find(attachment => attachment.type === 'FILE')?.key || '',
       avatar: sessionUser.attachment.find(attachment => attachment.type === 'AVATAR')?.key || '',
+      teachingSubjectIds: [],
     },
     resolver,
   });
@@ -173,6 +176,20 @@ const Profile = ({ sessionUser }: { sessionUser: NonNullable<Session['user']> })
   const handleRemoveImage = () => {
     setAttachmentLocalImage(null);
   };
+
+  const { data: subjectList } = useQuery({
+    queryKey: ['subject-list'],
+    queryFn: SubjectService.list,
+  });
+
+  const subjectData = useMemo(
+    () =>
+      (subjectList || [])?.map(subject => ({
+        id: subject.id,
+        title: subject.title,
+      })),
+    [subjectList],
+  );
 
   return (
     <Box
@@ -410,6 +427,25 @@ const Profile = ({ sessionUser }: { sessionUser: NonNullable<Session['user']> })
                 handleInputChange={onChange}
                 isInvalid={!!errors[name]?.message}
                 formErrorMessage={errors[name]?.message}
+              />
+            )}
+          />
+          <Controller
+            name="teachingSubjectIds"
+            control={control}
+            render={({ field: { onChange, value } }) => (
+              <MultiSelectMenu
+                label="Teaching Subject"
+                value={value}
+                options={subjectData.map(subject => subject.title)} // Assuming subjectData is an array of objects with a 'title' field
+                onChange={selectedValues => {
+                  // Transform selected values back to IDs or any format your form needs
+                  const selectedIds = selectedValues.map(
+                    selectedTitle =>
+                      subjectData.find(subject => subject.title === selectedTitle)?.id || '',
+                  );
+                  onChange(selectedIds); // Update the form field with the IDs
+                }}
               />
             )}
           />
