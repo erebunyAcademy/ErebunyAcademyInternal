@@ -48,6 +48,8 @@ const AcademicRegister: FC<AcademicRegisterProps> = ({ schedule, lang }) => {
   const [lessonOfTheDay, setLessonOfTheDay] = useState('');
   const t = useTranslations();
 
+  console.log(schedule);
+
   const {
     control,
     handleSubmit,

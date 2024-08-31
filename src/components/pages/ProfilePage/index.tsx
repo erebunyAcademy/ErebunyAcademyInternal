@@ -68,6 +68,8 @@ const Profile = ({ sessionUser }: { sessionUser: NonNullable<Session['user']> })
     resolver,
   });
 
+  console.log(sessionUser.attachment);
+
   const {
     control: passwordChangeControl,
     handleSubmit: passwordChangeHandlerSubmit,
@@ -177,7 +179,7 @@ const Profile = ({ sessionUser }: { sessionUser: NonNullable<Session['user']> })
     }
 
     return generateAWSUrl(
-      sessionUser?.attachment.find(attachment => attachment.type === 'AVATAR')?.key || '',
+      sessionUser?.attachment.find(attachment => attachment.type === 'FILE')?.key || '',
     );
   }, [localAttachmentImage?.localUrl, sessionUser?.attachment]);
 

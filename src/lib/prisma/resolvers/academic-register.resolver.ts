@@ -97,7 +97,7 @@ export class AcademicRegisterResolver {
                     lessonOfTheDay: +lessonOfTheDay,
                   },
                   include: {
-                    attendanceRecord: true, // Ensure attendanceRecord is included
+                    attendanceRecord: true,
                   },
                 },
               },
@@ -107,18 +107,52 @@ export class AcademicRegisterResolver {
       },
     });
 
-    if (thematicPlanIds.length) {
-      await prisma.thematicPlanDescription.updateMany({
-        where: {
-          id: {
-            in: thematicPlanIds,
+    const thematicPlans = await prisma.thematicPlan.findMany({
+      where: {
+        scheduleId: schedule.id,
+      },
+      select: {
+        thematicPlanDescription: {
+          select: {
+            id: true,
           },
         },
-        data: {
-          isCompleted: true,
+      },
+    });
+
+    const thematicPlanDescriptionIds = thematicPlans
+      .flatMap(themplan => themplan.thematicPlanDescription)
+      .map(({ id }) => id);
+
+    const thematicPlansToSetCompleted = thematicPlanDescriptionIds.filter(thematicPlanid =>
+      thematicPlanIds.includes(thematicPlanid),
+    );
+    const thematicPlansToSetNotCompleted = thematicPlanDescriptionIds.filter(
+      thematicPlanid => !thematicPlanIds.includes(thematicPlanid),
+    );
+    console.log({ thematicPlansToSetCompleted });
+    console.log({ thematicPlansToSetNotCompleted });
+
+    await prisma.thematicPlanDescription.updateMany({
+      where: {
+        id: {
+          in: thematicPlansToSetCompleted,
         },
-      });
-    }
+      },
+      data: {
+        isCompleted: true,
+      },
+    });
+    await prisma.thematicPlanDescription.updateMany({
+      where: {
+        id: {
+          in: thematicPlansToSetNotCompleted,
+        },
+      },
+      data: {
+        isCompleted: false,
+      },
+    });
 
     let academicRegister = schedule.academicRegister;
 
