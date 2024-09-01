@@ -561,8 +561,9 @@ export class ScheduleResolver {
     });
   }
 
-  static getScheduleById(id: string) {
+  static getScheduleById(id: string, lessonOfTheDay?: string) {
     const todayDayOfWeek = dayjs().utc().day();
+    const today = new Date().toISOString().split('T')[0];
 
     return prisma.schedule.findUnique({
       where: {
@@ -603,6 +604,20 @@ export class ScheduleResolver {
                   select: {
                     firstName: true,
                     lastName: true,
+                  },
+                },
+                attendanceRecord: {
+                  where: {
+                    academicRegisterDay: {
+                      createdAt: {
+                        gte: new Date(today + 'T00:00:00.000Z'),
+                        lt: new Date(today + 'T23:59:59.999Z'),
+                      },
+                    },
+                    academicRegisterLesson: {
+                      isCompletedLesson: false,
+                      lessonOfTheDay: lessonOfTheDay ? +lessonOfTheDay : undefined,
+                    },
                   },
                 },
               },

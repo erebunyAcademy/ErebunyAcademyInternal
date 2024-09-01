@@ -85,14 +85,15 @@ model AttendanceRecord {
   isPresent                Boolean @default(true)
   subjectId                String
   academicRegisterLessonId String
+  academicRegisterDayId    String?
 
   academicRegister       AcademicRegister       @relation(fields: [academicRegisterId], references: [id], onDelete: Cascade)
   subject                Subject                @relation(fields: [subjectId], references: [id])
   student                Student                @relation(fields: [studentId], references: [id], onDelete: Cascade)
   academicRegisterLesson AcademicRegisterLesson @relation(fields: [academicRegisterLessonId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now()) @db.Timestamp(0)
-  updatedAt DateTime @updatedAt @db.Timestamp(0)
+  academicRegisterDay    AcademicRegisterDay?   @relation(fields: [academicRegisterDayId], references: [id])
+  createdAt              DateTime               @default(now()) @db.Timestamp(0)
+  updatedAt              DateTime               @updatedAt @db.Timestamp(0)
 }
 
 model Faculty {
@@ -417,9 +418,9 @@ model AcademicRegister {
 }
 
 model AcademicRegisterDay {
-  id                 String @id @default(uuid())
-  academicRegisterId String
-
+  id                      String                   @id @default(uuid())
+  academicRegisterId      String
+  attendanceRecords       AttendanceRecord[]
   academicRegister        AcademicRegister         @relation(fields: [academicRegisterId], references: [id], onDelete: Cascade)
   academicRegisterLessons AcademicRegisterLesson[]
 

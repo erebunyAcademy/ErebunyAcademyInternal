@@ -130,8 +130,6 @@ export class AcademicRegisterResolver {
     const thematicPlansToSetNotCompleted = thematicPlanDescriptionIds.filter(
       thematicPlanid => !thematicPlanIds.includes(thematicPlanid),
     );
-    console.log({ thematicPlansToSetCompleted });
-    console.log({ thematicPlansToSetNotCompleted });
 
     await prisma.thematicPlanDescription.updateMany({
       where: {
@@ -168,7 +166,7 @@ export class AcademicRegisterResolver {
             include: {
               academicRegisterLessons: {
                 include: {
-                  attendanceRecord: true, // Ensure attendanceRecord is included
+                  attendanceRecord: true,
                 },
               },
             },
@@ -233,6 +231,7 @@ export class AcademicRegisterResolver {
         await prisma.attendanceRecord.update({
           where: { id: existingRecord.id },
           data: {
+            academicRegisterDayId: academicRegisterDay.id,
             isPresent: student.isPresent,
             mark: student.mark ? parseInt(student.mark) : null,
           },
@@ -242,6 +241,7 @@ export class AcademicRegisterResolver {
         await prisma.attendanceRecord.create({
           data: {
             studentId: student.id,
+            academicRegisterDayId: academicRegisterDay.id,
             academicRegisterId: academicRegister.id,
             academicRegisterLessonId: academicRegisterLesson.id,
             isPresent: student.isPresent,
