@@ -73,12 +73,10 @@ export class ScheduleResolver {
         skip,
         take,
       }),
-    ])
-      .then(([count, schedules]) => ({
-        count,
-        schedules,
-      }))
-      .catch(console.error);
+    ]).then(([count, schedules]) => ({
+      count,
+      schedules,
+    }));
   }
 
   static async createCyclicThematicPlan(scheduleId: string, data: AddEditThematicPlanValidation) {
