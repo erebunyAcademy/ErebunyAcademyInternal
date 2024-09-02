@@ -11,13 +11,12 @@ import {
   ForgotPasswordStep1Validation,
   ForgotPasswordStep2Validation,
   ForgotPasswordStep3Validation,
-  ResendEmailValidation,
   StudentSignUpValidation,
   TeacherSignUpValidation,
 } from '@/utils/validation';
 import { UserResolver } from './user.resolver';
 import prisma from '..';
-import { Email } from '../services/Sendgrid.service';
+import { mailService } from '../services/email/mailer.service';
 import { generateRandomNumber } from '../utils/common';
 
 const createUser = async (
@@ -92,9 +91,10 @@ export class AuthResolver {
     });
 
     if (user.confirmationCode) {
-      Email.sendConfirmationCodeEmail(user.email, user.confirmationCode, user.firstName)
-        .then(res => console.log({ res }))
-        .catch(err => console.log({ err }));
+      await mailService.sendVerificationEmail(user.email, user.confirmationCode, user.firstName);
+      // Email.sendConfirmationCodeEmail(user.email, user.confirmationCode, user.firstName)
+      //   .then(res => console.log({ res }))
+      //   .catch(err => console.log({ err }));
     }
 
     return user;
@@ -125,9 +125,10 @@ export class AuthResolver {
     });
 
     if (user.confirmationCode) {
-      Email.sendConfirmationCodeEmail(user.email, user.confirmationCode, user.firstName)
-        .then(res => console.log({ res }))
-        .catch(err => console.log({ err }));
+      // Email.sendConfirmationCodeEmail(user.email, user.confirmationCode, user.firstName)
+      //   .then(res => console.log({ res }))
+      //   .catch(err => console.log({ err }));
+      await mailService.sendVerificationEmail(user.email, user.confirmationCode, user.firstName);
     }
 
     return user;
@@ -170,9 +171,7 @@ export class AuthResolver {
 
     const confirmationCode = generateRandomNumber(4);
 
-    await Email.sendForgotPasswordEmail(user.email, confirmationCode, user.firstName)
-      .then(res => console.log({ res }))
-      .catch(err => console.log({ err }));
+    await mailService.sendForgotPasswordEmail(user.email, confirmationCode, user.firstName);
 
     return prisma.user.update({ where: { email }, data: { confirmationCode } });
   }
@@ -227,33 +226,5 @@ export class AuthResolver {
     });
 
     return !!updatedUser;
-  }
-
-  static async resendEmail(data: ResendEmailValidation) {
-    const { email, firstName } = data;
-    const confirmationCode = generateRandomNumber(6);
-
-    const user = await prisma.user.findUnique({
-      where: {
-        email,
-      },
-    });
-
-    if (!user) {
-      throw new NotFoundException('User with provided email does not exist');
-    }
-
-    await prisma.user.update({
-      where: {
-        email,
-      },
-      data: {
-        confirmationCode,
-      },
-    });
-
-    await Email.sendConfirmationCodeEmail(email, confirmationCode, firstName);
-
-    return true;
   }
 }
