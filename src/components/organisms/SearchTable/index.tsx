@@ -157,7 +157,7 @@ function SearchTable<T>({
           minWidth="100%"
           width="max-content">
           <Thead>
-            {getHeaderGroups().map(headerGroup => (
+            {(getHeaderGroups() || [])?.map(headerGroup => (
               <Tr key={headerGroup.id}>
                 {headerGroup.headers.map(header => {
                   const meta: any = header.column.columnDef.meta;
@@ -184,7 +184,7 @@ function SearchTable<T>({
           </Thead>
 
           <Tbody>
-            {getRowModel().rows.length > 0 ? (
+            {(getRowModel().rows || [])?.length > 0 ? (
               getRowModel().rows.map(row => {
                 return (
                   <Tr
@@ -204,7 +204,7 @@ function SearchTable<T>({
                         />
                       </Td>
                     )}
-                    {row.getVisibleCells().map(cell => {
+                    {(row.getVisibleCells() || []).map(cell => {
                       const meta: any = cell.column.columnDef.meta;
                       return (
                         <Td key={cell.id} isNumeric={meta?.isNumeric} height="65px">
@@ -217,7 +217,7 @@ function SearchTable<T>({
               })
             ) : (
               <Tr height="149px">
-                <Td colSpan={columns.length} border="none" height="100%">
+                <Td colSpan={(columns || []).length || 1} border="none" height="100%">
                   <NoDataFound />
                 </Td>
               </Tr>
@@ -231,7 +231,10 @@ function SearchTable<T>({
                   {t('count')} - {count}
                 </Text>
               </Td>
-              <Td border="none" colSpan={getHeaderGroups()[0].headers.length} textAlign="right">
+              <Td
+                border="none"
+                colSpan={getHeaderGroups()[0].headers?.length || 1}
+                textAlign="right">
                 <IconButton
                   className="border rounded p-1"
                   aria-label="chevron-left"

@@ -1,5 +1,5 @@
 'use client';
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect, useMemo, useState } from 'react';
 import {
   Box,
   Button,
@@ -48,6 +48,15 @@ const AcademicRegister: FC<AcademicRegisterProps> = ({ schedule, lang }) => {
   const [lessonOfTheDay, setLessonOfTheDay] = useState('');
   const t = useTranslations();
 
+  const { data } = useQuery({
+    queryFn: AcademicRegisterService.getTeacherAcademicRegisterLessonList.bind(null, schedule.id),
+    queryKey: ['lesson-list'],
+    initialData: {
+      academicRegisterLesson: [],
+    },
+    enabled: !selectedLessonOfTheDay,
+  });
+
   const {
     control,
     handleSubmit,
@@ -60,8 +69,8 @@ const AcademicRegister: FC<AcademicRegisterProps> = ({ schedule, lang }) => {
     defaultValues: {
       students: schedule.courseGroup.students.map(student => ({
         id: student.id,
-        isPresent: true,
-        mark: '',
+        isPresent: student.attendanceRecord[0]?.isPresent || true,
+        mark: student.attendanceRecord[0]?.mark ? student.attendanceRecord[0]?.mark.toString() : '',
       })),
       thematicPlanIds: [],
     },
@@ -76,14 +85,6 @@ const AcademicRegister: FC<AcademicRegisterProps> = ({ schedule, lang }) => {
         schedule.id,
         selectedLessonOfTheDay || lessonOfTheDay,
       ),
-  });
-
-  const { data } = useQuery({
-    queryFn: AcademicRegisterService.getTeacherAcademicRegisterLessonList.bind(null, schedule.id),
-    queryKey: ['lesson-list'],
-    initialData: {
-      academicRegisterLesson: [],
-    },
   });
 
   const { fields } = useFieldArray({
@@ -128,6 +129,21 @@ const AcademicRegister: FC<AcademicRegisterProps> = ({ schedule, lang }) => {
       setValue('thematicPlanIds', selectedThematicPlans);
     }
   }, [reset, schedule.thematicPlans, setValue]);
+
+  useMemo(() => {
+    if (schedule.courseGroup.students && selectedLessonOfTheDay) {
+      setValue(
+        'students',
+        schedule.courseGroup.students.map(student => ({
+          id: student.id,
+          isPresent: student.attendanceRecord[0]?.isPresent ?? true,
+          mark: student.attendanceRecord[0]?.mark
+            ? student.attendanceRecord[0]?.mark.toString()
+            : '',
+        })),
+      );
+    }
+  }, [schedule.courseGroup.students, selectedLessonOfTheDay, setValue]);
 
   const columnHelperStudents = createColumnHelper<ThematicPlanDescription>();
 

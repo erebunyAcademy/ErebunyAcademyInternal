@@ -15,6 +15,7 @@ import { SortingType } from '@/api/types/common';
 import { exceptionHandler } from '@/lib/prisma/error';
 import { AdminGuard } from '@/lib/prisma/guards/admin';
 import { CourseResolver } from '@/lib/prisma/resolvers/course.resolver';
+import { CreateEditCourseValidation } from '@/utils/validation/courses';
 
 @Catch(exceptionHandler)
 class CourseHandler {
@@ -54,8 +55,8 @@ class CourseHandler {
 
   @AdminGuard()
   @Post()
-  createCourse(@Body(ValidationPipe) input: Pick<Course, 'title' | 'description'>) {
-    return CourseResolver.createCourses(input);
+  createCourse(@Body(ValidationPipe) input: CreateEditCourseValidation) {
+    return CourseResolver.createCourse(input);
   }
 
   @AdminGuard()

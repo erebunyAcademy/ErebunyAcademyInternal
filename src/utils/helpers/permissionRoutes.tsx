@@ -103,6 +103,7 @@ const studentLinks = (): LinkItemProps[] => [
 
 const teacherLinks = (): LinkItemProps[] => [
   ...createCommonLinks(),
+  { id: 8, name: 'subjects', icon: <SubjectsIcon />, href: ROUTE_SUBJECTS },
   { id: 34, name: 'schedule', icon: <ScheduleIcon />, href: ROUTE_TEACHER_SCHEDULE },
   createLogoutLink(),
 ];

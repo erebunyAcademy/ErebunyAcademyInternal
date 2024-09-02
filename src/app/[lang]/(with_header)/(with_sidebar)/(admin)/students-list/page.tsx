@@ -19,11 +19,11 @@ import { QUERY_KEY } from '@/utils/helpers/queryClient';
 import { Maybe } from '@/utils/models/common';
 import { StudentModel } from '@/utils/models/student';
 
-const EditStudentModal = dynamic(() => import('./_components/modals/EditStudentModal'));
+const EditStudentModal = dynamic(() => import('./_components/modals/CreateEditStudentsModal'));
 const RejectMessageModal = dynamic(() => import('./_components/modals/RejectMessageModal'));
 const StudentAttachmentModal = dynamic(() => import('./_components/modals/StudentAttachmentModal'));
 
-export default function StudentList() {
+export default function StudentList({ searchParams }: { searchParams: { courseGroupId: string } }) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
@@ -33,11 +33,12 @@ export default function StudentList() {
   const t = useTranslations();
 
   const { data, isLoading, isPlaceholderData, refetch } = useQuery({
-    queryKey: QUERY_KEY.allStudents(debouncedSearch, page),
+    queryKey: [...QUERY_KEY.allStudents(debouncedSearch, page), searchParams.courseGroupId],
     queryFn: () =>
       StudentService.list({
         offset: page === 1 ? 0 : (page - 1) * ITEMS_PER_PAGE,
         limit: ITEMS_PER_PAGE,
+        courseGroupId: searchParams.courseGroupId,
         search: debouncedSearch,
       }),
   });

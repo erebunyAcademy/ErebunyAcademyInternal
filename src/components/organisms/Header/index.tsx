@@ -1,15 +1,7 @@
 'use client';
-import { FC, useCallback, useRef } from 'react';
-import {
-  Accordion,
-  Avatar,
-  Box,
-  Collapse,
-  Flex,
-  Stack,
-  useDisclosure,
-  useOutsideClick,
-} from '@chakra-ui/react';
+import { FC } from 'react';
+import { Avatar, Box, Flex, Popover, PopoverTrigger, Stack, useDisclosure } from '@chakra-ui/react';
+import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { User } from 'next-auth';
 import LanguagePicker from '@/components/molecules/LanguagePicker';
@@ -20,7 +12,8 @@ import { generateAWSUrl } from '@/utils/helpers/aws';
 import { languagePathHelper } from '@/utils/helpers/language';
 import { LinkItemProps } from '@/utils/helpers/permissionRoutes';
 import { Maybe } from '@/utils/models/common';
-import ProfileNavItem from './ProfileNavItem';
+
+const ProfileNavItem = dynamic(() => import('./ProfileNavItem'), { ssr: false });
 
 type HeaderProps = {
   user: Maybe<User>;
@@ -29,24 +22,7 @@ type HeaderProps = {
 };
 
 const Header: FC<HeaderProps> = ({ user, linkItems, lang }) => {
-  const {
-    isOpen: isUserProfileOpen,
-    onToggle: toggleUserDropdown,
-    onClose: closeUserProfile,
-  } = useDisclosure();
-  const userCollapseRef = useRef<HTMLDivElement>(null);
-  useOutsideClick({
-    ref: userCollapseRef,
-    handler: () => {
-      if (isUserProfileOpen) {
-        closeUserProfile();
-      }
-    },
-  });
-
-  const toggleUserProfile = useCallback(() => {
-    toggleUserDropdown();
-  }, [toggleUserDropdown]);
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
     <Box
@@ -83,20 +59,30 @@ const Header: FC<HeaderProps> = ({ user, linkItems, lang }) => {
               justifyContent="center"
               alignSelf="center">
               {!!user && (
-                <Avatar
-                  name={`${user?.firstName} ${user?.lastName}`}
-                  src={generateAWSUrl(
-                    user.attachment.find(attachment => attachment.type === 'AVATAR')?.key || '',
-                  )}
-                  bg="#F3F4F6"
-                  color="#C0C0C0"
-                  cursor="pointer"
-                  size="sm"
-                  display="flex"
-                  justifyContent="center"
-                  alignItems="center"
-                  onClick={toggleUserProfile}
-                />
+                <Popover isOpen={isOpen} onClose={onClose}>
+                  <PopoverTrigger>
+                    <Avatar
+                      name={`${user?.firstName} ${user?.lastName}`}
+                      src={generateAWSUrl(
+                        user.attachment.find(attachment => attachment.type === 'AVATAR')?.key || '',
+                      )}
+                      bg="#F3F4F6"
+                      color="#C0C0C0"
+                      cursor="pointer"
+                      size="sm"
+                      display="flex"
+                      justifyContent="center"
+                      alignItems="center"
+                      onClick={onOpen}
+                    />
+                  </PopoverTrigger>
+                  <ProfileNavItem
+                    lang={lang}
+                    user={user || null}
+                    linkItems={linkItems!}
+                    onClose={onClose}
+                  />
+                </Popover>
               )}
             </Flex>
             <Stack width="115px">
@@ -105,17 +91,8 @@ const Header: FC<HeaderProps> = ({ user, linkItems, lang }) => {
           </Flex>
         </Flex>
       </Flex>
-      <Collapse in={isUserProfileOpen} animateOpacity>
-        <Accordion allowToggle defaultIndex={0}>
-          <ProfileNavItem
-            lang={lang}
-            user={user || null}
-            onClose={closeUserProfile}
-            linkItems={linkItems!}
-          />
-        </Accordion>
-      </Collapse>
     </Box>
   );
 };
+
 export default Header;

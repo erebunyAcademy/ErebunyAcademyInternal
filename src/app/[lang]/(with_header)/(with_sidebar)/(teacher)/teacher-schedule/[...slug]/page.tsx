@@ -6,12 +6,14 @@ import AcademicRegister from './_components/AcademicRegister';
 
 export default async function HeaderLayout({
   params,
+  searchParams,
 }: Readonly<{
   params: { slug: string[]; lang: Locale };
+  searchParams: { lessonOfTheDay: string };
 }>) {
   const [scheduleId] = params.slug;
 
-  const schedule = await ScheduleResolver.getScheduleById(scheduleId);
+  const schedule = await ScheduleResolver.getScheduleById(scheduleId, searchParams.lessonOfTheDay);
 
   if (!schedule) {
     return redirect(ROUTE_TEACHER_SCHEDULE);

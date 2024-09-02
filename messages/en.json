@@ -17,7 +17,7 @@
   "profession": "Profession",
   "workPlace": "Working place",
   "scientificActivity": "Scientific activity",
-  "teachingSubject": "Teaching subject",
+  "teachingSubjects": "Teaching subjects",
   "exams": "Exams",
   "exam": "Exam",
   "teachers": "Lecturers",
@@ -282,5 +282,6 @@
   "absent": "Absent",
   "noRecord": "No Record",
   "noMark": "No Mark",
-  "lessonDay": "Lesson day"
+  "lessonDay": "Lesson day",
+  "clearAll": "Clear all"
 }

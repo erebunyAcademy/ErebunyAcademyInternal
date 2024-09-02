@@ -61,13 +61,34 @@ export class AuthResolver {
   static async teacherSignUp(input: TeacherSignUpValidation) {
     const user = await createUser(input, UserRoleEnum.TEACHER);
 
-    await prisma.teacher.create({
+    const subjects = await prisma.subject.findMany({
+      where: {
+        id: { in: input.teachingSubjectIds },
+      },
+      select: { id: true },
+    });
+
+    if (subjects.length !== input.teachingSubjectIds.length) {
+      throw new NotFoundException('Some of the provided subjects do not exist');
+    }
+
+    const createdTeacher = await prisma.teacher.create({
       data: {
         profession: input.profession,
         workPlace: input.workPlace,
         scientificActivity: input.scientificActivity,
         userId: user.id,
       },
+      select: {
+        id: true,
+      },
+    });
+
+    await prisma.subjectTeacher.createMany({
+      data: subjects.map(subject => ({
+        teacherId: createdTeacher.id,
+        subjectId: subject.id,
+      })),
     });
 
     if (user.confirmationCode) {
@@ -111,6 +132,7 @@ export class AuthResolver {
 
     return user;
   }
+
   static async signin(email: string, password: string) {
     try {
       const user = await UserResolver.findUserWithEmail(email);
@@ -138,6 +160,7 @@ export class AuthResolver {
       throw new Error(e as string);
     }
   }
+
   static async forgotPasswordStep1({ email }: ForgotPasswordStep1Validation) {
     const user = await UserResolver.findUserWithEmail(email);
 

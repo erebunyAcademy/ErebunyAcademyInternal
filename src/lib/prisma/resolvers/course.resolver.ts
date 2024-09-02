@@ -1,6 +1,7 @@
 import { Course } from '@prisma/client';
 import { NotFoundException } from 'next-api-decorators';
 import { SortingType } from '@/api/types/common';
+import { CreateEditCourseValidation } from '@/utils/validation/courses';
 import { orderBy } from './utils/common';
 import prisma from '..';
 
@@ -20,6 +21,12 @@ export class CourseResolver {
           id: true,
           title: true,
           description: true,
+          gradeLevel: {
+            select: {
+              id: true,
+              level: true,
+            },
+          },
           faculty: {
             select: {
               id: true,
@@ -63,7 +70,7 @@ export class CourseResolver {
     });
   }
 
-  static createCourses(data: Pick<Course, 'title' | 'description'>) {
+  static createCourse(data: CreateEditCourseValidation) {
     return prisma.course.create({ data });
   }
 

@@ -1,5 +1,6 @@
-import React, { useMemo } from 'react';
-import { Button, Stack, useToast, VStack } from '@chakra-ui/react';
+import React, { Fragment, useCallback, useMemo } from 'react';
+import { DeleteIcon } from '@chakra-ui/icons';
+import { Box, Button, Flex, Stack, useToast, VStack } from '@chakra-ui/react';
 import { classValidatorResolver } from '@hookform/resolvers/class-validator';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
@@ -7,11 +8,12 @@ import { useTranslations } from 'next-intl';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { AuthService } from '@/api/services/auth.service';
 import { SubjectService } from '@/api/services/subject.service';
+import SelectMultiple from '@/components/atoms/SelectMultiple';
 import { Locale } from '@/i18n';
 import { ROUTE_SIGN_IN } from '@/utils/constants/routes';
 import { languagePathHelper } from '@/utils/helpers/language';
 import { TeacherSignUpValidation } from '@/utils/validation';
-import { FormInput, Loading, SelectLabel } from '../../atoms';
+import { FormInput, Loading } from '../../atoms';
 
 const resolver = classValidatorResolver(TeacherSignUpValidation);
 const TeacherSignUp = ({ lang }: { lang: Locale }) => {
@@ -22,6 +24,8 @@ const TeacherSignUp = ({ lang }: { lang: Locale }) => {
   const {
     control,
     handleSubmit,
+    watch,
+    setValue,
     formState: { errors, isValid, isSubmitting },
   } = useForm<TeacherSignUpValidation>({
     resolver,
@@ -34,7 +38,7 @@ const TeacherSignUp = ({ lang }: { lang: Locale }) => {
       profession: '',
       workPlace: '',
       scientificActivity: '',
-      teachingSubjectId: '',
+      teachingSubjectIds: [],
     },
   });
 
@@ -50,6 +54,12 @@ const TeacherSignUp = ({ lang }: { lang: Locale }) => {
         title: subject.title,
       })),
     [subjectList],
+  );
+  const selectedSubjectIds = watch('teachingSubjectIds');
+
+  const selectedSubjects = useMemo(
+    () => subjectData.filter(subject => selectedSubjectIds.includes(subject.id)),
+    [subjectData, selectedSubjectIds],
   );
 
   const { mutate } = useMutation({
@@ -69,6 +79,15 @@ const TeacherSignUp = ({ lang }: { lang: Locale }) => {
   const onTeacherSubmit: SubmitHandler<TeacherSignUpValidation> = data => {
     mutate(data);
   };
+
+  const removeSubjectHandler = useCallback(
+    (id: string) => {
+      const updatedValues = selectedSubjectIds.filter(subjectId => subjectId !== id);
+
+      setValue('teachingSubjectIds', updatedValues);
+    },
+    [selectedSubjectIds, setValue],
+  );
 
   return (
     <>
@@ -183,23 +202,33 @@ const TeacherSignUp = ({ lang }: { lang: Locale }) => {
           />
         </Stack>
         <Controller
-          name="teachingSubjectId"
+          name="teachingSubjectIds"
           control={control}
-          render={({ field: { onChange, value, name } }) => (
-            <SelectLabel
-              name={name}
+          render={({ field: { onChange, value } }) => (
+            <SelectMultiple
+              placeholder="Select subjects"
               isRequired
-              options={subjectData || []}
-              labelName="teachingSubject"
-              valueLabel="id"
-              nameLabel="title"
-              onChange={onChange}
+              label="teachingSubjects"
               value={value}
-              isInvalid={!!errors.teachingSubjectId?.message}
-              formErrorMessage={errors.teachingSubjectId?.message}
+              options={subjectData}
+              onChange={onChange}
+              isInvalid={!!errors.teachingSubjectIds?.message}
+              formErrorMessage={errors.teachingSubjectIds?.message}
             />
           )}
         />
+        <Flex flexDirection="column" gap="10px">
+          {selectedSubjects.map(subject => (
+            <Flex key={subject.id} gap="10px" alignItems="center">
+              <DeleteIcon
+                onClick={removeSubjectHandler.bind(null, subject.id)}
+                style={{ cursor: 'pointer' }}
+              />
+              <Box>{subject.title} </Box>
+            </Flex>
+          ))}
+        </Flex>
+
         <Stack direction={{ base: 'column', md: 'row' }} gap={{ base: '16px', sm: '8px' }}>
           <Controller
             name="password"

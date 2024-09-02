@@ -1,16 +1,19 @@
 'use client';
 import React, { useCallback, useMemo, useState } from 'react';
-import { MenuItem, useDisclosure } from '@chakra-ui/react';
+import { Button, MenuItem, useDisclosure } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import { createColumnHelper, SortingState } from '@tanstack/react-table';
 import dynamic from 'next/dynamic';
+import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { v4 as uuidv4 } from 'uuid';
 import { CourseGroupService } from '@/api/services/course-group.service';
 import ActionButtons from '@/components/molecules/ActionButtons';
 import SearchTable from '@/components/organisms/SearchTable';
 import useDebounce from '@/hooks/useDebounce';
+import { Locale } from '@/i18n';
 import { ITEMS_PER_PAGE } from '@/utils/constants/common';
+import { languagePathHelper } from '@/utils/helpers/language';
 import { QUERY_KEY } from '@/utils/helpers/queryClient';
 import { Maybe } from '@/utils/models/common';
 import { CourseGroupSingleModel } from '@/utils/models/courseGroup';
@@ -18,7 +21,7 @@ import { CourseGroupSingleModel } from '@/utils/models/courseGroup';
 const DeleteModal = dynamic(() => import('./_components/modals/DeleteModal'));
 const CreateEditModal = dynamic(() => import('./_components/modals/CreateEditModal'));
 
-const CourseGroup = () => {
+const CourseGroup = ({ params }: { params: { lang: Locale } }) => {
   const t = useTranslations();
   const [sorting, setSorting] = useState<SortingState>([]);
   const [search, setSearch] = useState('');
@@ -78,7 +81,17 @@ const CourseGroup = () => {
   const columns = [
     columnHelper.accessor('title', {
       id: uuidv4(),
-      cell: info => info.getValue(),
+      cell: info => {
+        const courseGroupId = info.row.original.id;
+        return (
+          <Button
+            as={Link}
+            href={`${languagePathHelper(params.lang, `/students-list?courseGroupId=${courseGroupId}`)}`}
+            variant="link">
+            {info.getValue()}
+          </Button>
+        );
+      },
       header: t('title'),
     }),
     columnHelper.accessor('description', {

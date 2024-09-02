@@ -10,23 +10,27 @@ import {
   Query,
   ValidationPipe,
 } from 'next-api-decorators';
+import { User } from 'next-auth';
 import { SortingType } from '@/api/types/common';
+import { CurrentUser } from '@/lib/prisma/decorators/current-user.decorator';
 import { exceptionHandler } from '@/lib/prisma/error';
 import { AdminGuard } from '@/lib/prisma/guards/admin';
+import { AuthGuard } from '@/lib/prisma/guards/auth';
 import { SubjectResolver } from '@/lib/prisma/resolvers/subject.resolver';
 import { CreateEditSubjectValidation } from '@/utils/validation/subject';
 
 @Catch(exceptionHandler)
 class SubjectHandler {
-  @AdminGuard()
+  @AuthGuard()
   @Get('/list')
   _list(
     @Query('offset') skip: string,
     @Query('limit') take: string,
     @Query('search') search: string,
     @Query('sorting') sorting: SortingType[],
+    @CurrentUser() user: NonNullable<User>,
   ) {
-    return SubjectResolver.list(+skip, +take, search, sorting);
+    return SubjectResolver.list(user, +skip, +take, search, sorting);
   }
 
   @Get()
@@ -34,13 +38,13 @@ class SubjectHandler {
     return SubjectResolver.getSubjects();
   }
 
-  @AdminGuard()
+  @AuthGuard()
   @Get('/:id')
   getSubjectById(@Param('id') id: string) {
     return SubjectResolver.getSubjectById(id);
   }
 
-  @AdminGuard()
+  @AuthGuard()
   @Delete('/:id')
   deleteSubject(@Param('id') id: string) {
     return SubjectResolver.deleteSubjectById(id);
@@ -52,7 +56,7 @@ class SubjectHandler {
     return SubjectResolver.createSubject(input);
   }
 
-  @AdminGuard()
+  @AuthGuard()
   @Patch('/:subjectId')
   updateSubject(
     @Param('subjectId') subjectId: string,

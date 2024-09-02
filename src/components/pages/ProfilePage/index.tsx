@@ -1,5 +1,6 @@
 'use client';
 import React, { ChangeEvent, useCallback, useMemo, useState } from 'react';
+import { DeleteIcon } from '@chakra-ui/icons';
 import {
   Avatar,
   Box,
@@ -13,7 +14,7 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { classValidatorResolver } from '@hookform/resolvers/class-validator';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { Country } from 'country-state-city';
 import Image from 'next/image';
@@ -22,8 +23,10 @@ import { Session } from 'next-auth';
 import { useTranslations } from 'next-intl';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { v4 as uuid } from 'uuid';
+import { SubjectService } from '@/api/services/subject.service';
 import { UserService } from '@/api/services/user.service';
 import { FormInput, SelectLabel } from '@/components/atoms';
+import SelectMultiple from '@/components/atoms/SelectMultiple';
 import { generateAWSUrl } from '@/utils/helpers/aws';
 import { Maybe } from '@/utils/models/common';
 import { ChangePasswordValidation, UserProfileFormValidation } from '@/utils/validation/user';
@@ -44,7 +47,9 @@ const Profile = ({ sessionUser }: { sessionUser: NonNullable<Session['user']> })
   const {
     control,
     handleSubmit,
-    formState: { errors, isDirty, isSubmitting },
+    watch,
+    setValue,
+    formState: { errors, isSubmitting, isValid, isDirty },
   } = useForm<UserProfileFormValidation>({
     defaultValues: {
       firstName: sessionUser?.firstName || '',
@@ -57,15 +62,23 @@ const Profile = ({ sessionUser }: { sessionUser: NonNullable<Session['user']> })
       attachmentKey:
         sessionUser.attachment.find(attachment => attachment.type === 'FILE')?.key || '',
       avatar: sessionUser.attachment.find(attachment => attachment.type === 'AVATAR')?.key || '',
+      teachingSubjectIds:
+        sessionUser.teacher?.subjectTeachers.map(subjectTeacher => subjectTeacher.subjectId) || [],
     },
     resolver,
   });
+
+  console.log(sessionUser.attachment);
 
   const {
     control: passwordChangeControl,
     handleSubmit: passwordChangeHandlerSubmit,
     reset,
-    formState: { errors: changePasswordErrors, isSubmitting: passwordSubmitting },
+    formState: {
+      errors: changePasswordErrors,
+      isSubmitting: passwordSubmitting,
+      isDirty: isPaswordDirty,
+    },
   } = useForm<ChangePasswordValidation>({
     defaultValues: { confirmPassword: '', currentPassword: '', newPassword: '' },
     resolver: changePasswordResolver,
@@ -166,13 +179,43 @@ const Profile = ({ sessionUser }: { sessionUser: NonNullable<Session['user']> })
     }
 
     return generateAWSUrl(
-      sessionUser?.attachment.find(attachment => attachment.type === 'AVATAR')?.key || '',
+      sessionUser?.attachment.find(attachment => attachment.type === 'FILE')?.key || '',
     );
   }, [localAttachmentImage?.localUrl, sessionUser?.attachment]);
 
   const handleRemoveImage = () => {
     setAttachmentLocalImage(null);
   };
+
+  const { data: subjectList } = useQuery({
+    queryKey: ['subject-list'],
+    queryFn: SubjectService.list,
+  });
+
+  const subjectData = useMemo(
+    () =>
+      (subjectList || [])?.map(subject => ({
+        id: subject.id,
+        title: subject.title,
+      })),
+    [subjectList],
+  );
+  const selectedSubjectIds = watch('teachingSubjectIds');
+
+  const selectedSubjects = useMemo(
+    () => subjectData.filter(subject => selectedSubjectIds.includes(subject.id)),
+    [subjectData, selectedSubjectIds],
+  );
+
+  const removeSubjectHandler = useCallback(
+    (id: string) => {
+      const updatedValues = selectedSubjectIds.filter(subjectId => subjectId !== id);
+      setValue('teachingSubjectIds', updatedValues);
+    },
+    [selectedSubjectIds, setValue],
+  );
+
+  console.log({ isPaswordDirty });
 
   return (
     <Box
@@ -358,6 +401,40 @@ const Profile = ({ sessionUser }: { sessionUser: NonNullable<Session['user']> })
           )}
         </VStack>
       </Flex>
+      {sessionUser.teacher && (
+        <>
+          <Flex my="20px">
+            <Controller
+              name="teachingSubjectIds"
+              control={control}
+              render={({ field: { onChange, value } }) => (
+                <SelectMultiple
+                  placeholder="Select subjects"
+                  isRequired
+                  label="teachingSubjects"
+                  value={value}
+                  options={subjectData}
+                  onChange={onChange}
+                  isInvalid={!!errors.teachingSubjectIds?.message}
+                  formErrorMessage={errors.teachingSubjectIds?.message}
+                />
+              )}
+            />
+          </Flex>
+          <Flex flexDirection="column" gap="10px">
+            {selectedSubjects.map(subject => (
+              <Flex key={subject.id} gap="10px" alignItems="center">
+                <DeleteIcon
+                  color="red"
+                  onClick={removeSubjectHandler.bind(null, subject.id)}
+                  style={{ cursor: 'pointer' }}
+                />
+                <Box>{subject.title} </Box>
+              </Flex>
+            ))}
+          </Flex>
+        </>
+      )}
       <Flex paddingTop={{ base: '36px', md: '40px' }} flexDirection="column" gap={24}>
         <Flex gap="24px" flexDirection={{ base: 'column', lg: 'row' }}>
           <Controller
@@ -413,6 +490,7 @@ const Profile = ({ sessionUser }: { sessionUser: NonNullable<Session['user']> })
               />
             )}
           />
+
           <Controller
             name="address"
             control={control}
@@ -481,10 +559,9 @@ const Profile = ({ sessionUser }: { sessionUser: NonNullable<Session['user']> })
         </Flex>
         <Flex alignItems="flex-end" justifyContent="flex-end">
           <Button
-            width="162px"
             height="53px"
             fontSize="16px"
-            isDisabled={!isDirty}
+            isDisabled={isSubmitting || !isValid || !isDirty}
             isLoading={loading}
             overflow="break-word"
             whiteSpace="normal"
@@ -556,10 +633,9 @@ const Profile = ({ sessionUser }: { sessionUser: NonNullable<Session['user']> })
         </Flex>
         <Flex alignItems="flex-end" justifyContent="flex-end">
           <Button
-            width="162px"
             height="53px"
             fontSize="16px"
-            isDisabled={!isDirty}
+            isDisabled={isSubmitting || !isPaswordDirty}
             isLoading={loading}
             onClick={passwordChangeHandlerSubmit(onPasswordChangeSubmit)}>
             {t('changePassword')}
