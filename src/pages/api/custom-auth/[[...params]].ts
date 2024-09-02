@@ -5,7 +5,6 @@ import {
   ForgotPasswordStep1Validation,
   ForgotPasswordStep2Validation,
   ForgotPasswordStep3Validation,
-  ResendEmailValidation,
   StudentSignUpValidation,
   TeacherSignUpValidation,
 } from '@/utils/validation';
@@ -33,11 +32,6 @@ class AuthHandler {
   @Post('/forgot-password-third-step')
   _forgotPasswordStep3(@Body(ValidationPipe) body: ForgotPasswordStep3Validation) {
     return AuthResolver.forgotPasswordStep3(body);
-  }
-
-  @Post('/resend-email')
-  _resendEmail(@Body(ValidationPipe) body: ResendEmailValidation) {
-    return AuthResolver.resendEmail(body);
   }
 }
 
