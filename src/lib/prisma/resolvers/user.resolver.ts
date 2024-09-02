@@ -11,7 +11,7 @@ import {
 } from '@/utils/validation/user';
 import prisma from '../index';
 import { AWSService } from '../services/AWS.service';
-import { Email } from '../services/Sendgrid.service';
+import { mailService } from '../services/email/mailer.service';
 
 export class UserResolver {
   static async findUserWithEmail(email: string) {
@@ -140,13 +140,7 @@ export class UserResolver {
       },
     });
 
-    await Email.approveUserAccountEmail(user.email, user.firstName)
-      .then(res => {
-        console.log({ approveUserAccountEmail: res });
-      })
-      .catch(err => {
-        console.log({ approveUserAccountEmail: err });
-      });
+    await mailService.approveUserAccountEmail(user.email, user.firstName);
 
     return true;
   }
@@ -306,7 +300,7 @@ export class UserResolver {
       throw new NotFoundException(ERROR_MESSAGES.userNotFound);
     }
 
-    await Email.rejectUserAccountEmail(user.email, user.firstName, message);
+    mailService.rejectUserAccountEmail(user.email, user.firstName, message);
 
     const userAttachment = await prisma.attachment.findFirst({
       where: {
