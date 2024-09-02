@@ -300,7 +300,7 @@ export class UserResolver {
       throw new NotFoundException(ERROR_MESSAGES.userNotFound);
     }
 
-    mailService.rejectUserAccountEmail(user.email, user.firstName, message);
+    await mailService.rejectUserAccountEmail(user.email, user.firstName, message);
 
     const userAttachment = await prisma.attachment.findFirst({
       where: {
