@@ -219,6 +219,7 @@ export class StudentResolver {
         course: {
           select: {
             id: true,
+            facultyId: true,
           },
         },
       },
@@ -228,7 +229,11 @@ export class StudentResolver {
       where: {
         id: studentId,
       },
-      data: { ...data, courseId: courseGroup.course?.id },
+      data: {
+        ...data,
+        courseId: courseGroup.course?.id,
+        facultyId: courseGroup.course?.facultyId,
+      },
     });
   }
 

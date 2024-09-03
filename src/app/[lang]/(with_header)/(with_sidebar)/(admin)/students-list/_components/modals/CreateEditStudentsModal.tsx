@@ -100,7 +100,7 @@ const EditStudentModal: FC<EditStudentModalProps> = ({
               name={name}
               options={courseQueryData.map(course => ({
                 id: course.id,
-                title: course.title,
+                title: `${course.title} (${course.faculty?.title})`,
               }))}
               labelName="course"
               valueLabel="id"
