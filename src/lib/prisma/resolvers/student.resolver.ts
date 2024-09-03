@@ -229,11 +229,7 @@ export class StudentResolver {
       where: {
         id: studentId,
       },
-      data: {
-        ...data,
-        courseId: courseGroup.course?.id,
-        facultyId: courseGroup.course?.facultyId,
-      },
+      data: { ...data, courseId: courseGroup.course.id },
     });
   }
 
