@@ -3,14 +3,12 @@ import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import fs from 'fs';
 import path from 'path';
-import { SortingType } from '@/api/types/common';
 import { CreateEditNonCyclicScheduleValidation } from '@/utils/validation/non-cyclic';
 import {
   AddEditThematicPlanValidation,
   CreateEditScheduleValidation,
   TeacherAttachmentModalValidation,
 } from '@/utils/validation/schedule';
-import { orderBy } from './utils/common';
 import prisma from '..';
 import { AWSService } from '../services/AWS.service';
 
@@ -22,7 +20,8 @@ export class ScheduleResolver {
     skip: number,
     take: number,
     search: string,
-    sorting: SortingType[],
+    sortBy?: string,
+    sortDir?: string,
   ) {
     return Promise.all([
       prisma.schedule.count({
@@ -69,7 +68,18 @@ export class ScheduleResolver {
           availableDays: true,
         },
 
-        orderBy: sorting ? orderBy(sorting) : undefined,
+        orderBy: [
+          {
+            courseGroup: {
+              title: sortDir === 'asc' ? 'asc' : 'desc',
+            },
+          },
+          {
+            subject: {
+              title: sortDir === 'asc' ? 'asc' : 'desc',
+            },
+          },
+        ],
         skip,
         take,
       }),

@@ -1,5 +1,5 @@
 'use client';
-import React, { memo, useCallback, useState } from 'react';
+import React, { Dispatch, memo, SetStateAction, useCallback, useState } from 'react';
 import { TriangleDownIcon, TriangleUpIcon } from '@chakra-ui/icons';
 import {
   Box,
@@ -26,17 +26,15 @@ import {
   flexRender,
   getCoreRowModel,
   getSortedRowModel,
+  SortingState,
   useReactTable,
 } from '@tanstack/react-table';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { ReadonlyURLSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import NoDataFound from '@/components/molecules/NoDataFound';
 import ChevronLeft from '@/icons/chevron_left.svg';
 import ChevronRight from '@/icons/chevron_right.svg';
 import InputSearchIcon from '@/icons/search_icon.svg';
 import { ITEMS_PER_PAGE } from '@/utils/constants/common';
-import { Maybe } from '@/utils/models/common';
 
 export type DataTableProps<T> = {
   title?: string;
@@ -52,6 +50,8 @@ export type DataTableProps<T> = {
   fetchPreviousPage: () => void;
   addNew?: () => void;
   withCheckbox?: boolean;
+  sorting?: SortingState;
+  setSorting?: Dispatch<SetStateAction<SortingState>>;
 };
 
 function SearchTable<T>({
@@ -68,41 +68,25 @@ function SearchTable<T>({
   fetchPreviousPage,
   addNew,
   withCheckbox,
+  sorting,
+  setSorting,
 }: DataTableProps<T>) {
-  const router = useRouter();
-  const pathname = usePathname();
   const [selectedRows, setSelectedRows] = useState<Record<string, boolean>>({});
-  const searchParams: Maybe<ReadonlyURLSearchParams> = useSearchParams();
 
   const { getHeaderGroups, getRowModel } = useReactTable({
     columns,
     data,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
+    onSortingChange: setSorting,
     state: {
+      sorting,
       pagination: {
         pageIndex: 0,
         pageSize: ITEMS_PER_PAGE,
       },
     },
   });
-
-  const sortingHandler = useCallback(
-    (val: any) => {
-      const params = new URLSearchParams(searchParams?.toString());
-      params;
-
-      console.log({ val });
-
-      if (val.column.columnDef.header === 'Status') {
-        const orderBy = params.get('orderBy');
-        router.push(`${pathname}?sortBy=status&orderBy=${orderBy === 'asc' ? 'desc' : 'asc'}`);
-      } else {
-        router.push(pathname!);
-      }
-    },
-    [pathname, router, searchParams],
-  );
 
   const userSearchHandler = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -164,7 +148,11 @@ function SearchTable<T>({
                   return (
                     <Th
                       key={header.id}
-                      onClick={() => sortingHandler(header)}
+                      onClick={
+                        header.column.columnDef.id
+                          ? header.column.getToggleSortingHandler()
+                          : () => {}
+                      }
                       isNumeric={meta?.isNumeric}>
                       {flexRender(header.column.columnDef.header, header.getContext())}
                       <chakra.span pl="4">
