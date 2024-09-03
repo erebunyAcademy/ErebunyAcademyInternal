@@ -33,7 +33,11 @@ class ScheduleHandler {
     @Query('search') search: string,
     @Query('sorting') sorting: SortingType[],
   ) {
-    return ScheduleResolver.list(type, +skip, +take, search, sorting);
+    try {
+      return ScheduleResolver.list(type, +skip, +take, search, sorting);
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   @Post()
