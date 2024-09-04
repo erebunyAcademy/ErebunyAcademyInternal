@@ -35,7 +35,6 @@ class CourseHandler {
     return CourseResolver.getCoursesList();
   }
 
-  @AdminGuard()
   @Get('/faculty/:facultyId')
   getCoursesByFacultyId(@Param('facultyId') facultyId: string) {
     return CourseResolver.getCoursesListByFacultyId(facultyId);
