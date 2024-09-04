@@ -1,4 +1,8 @@
-import { CourseListDataModel, GetCoursesListModel } from '@/utils/models/course';
+import {
+  CourseListDataModel,
+  GetCoursesListByFacultyId,
+  GetCoursesListModel,
+} from '@/utils/models/course';
 import { CreateEditCourseValidation } from '@/utils/validation/courses';
 import $apiClient from '../axiosClient';
 import { QueryParams } from '../types/common';
@@ -29,7 +33,7 @@ export class CourseService {
     return $apiClient.delete<CreateEditCourseValidation>(`/courses/${id}`);
   }
 
-  static getCourseByFacultyId(id: string) {
-    return $apiClient.get(`/courses/faculty/${id}`);
+  static getCourseByFacultyId(id: string): Promise<GetCoursesListByFacultyId> {
+    return $apiClient.get<GetCoursesListByFacultyId>(`/courses/faculty/${id}`);
   }
 }

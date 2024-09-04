@@ -34,7 +34,6 @@ class CourseGroupHandler {
     return CourseGroupResolver.getCourseGroupList();
   }
 
-  @AdminGuard()
   @Get('/courses/:courseId')
   getCourseGroupsByCourseId(@Param('courseId') courseId: string) {
     return CourseGroupResolver.getCourseGroupListByCourseId(courseId);

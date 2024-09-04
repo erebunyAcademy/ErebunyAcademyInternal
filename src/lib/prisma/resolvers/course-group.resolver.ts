@@ -1,8 +1,8 @@
 import { NotFoundException } from 'next-api-decorators';
 import { SortingType } from '@/api/types/common';
 import { CreateEditCourseGroupValidation } from '@/utils/validation/courseGroup';
-import { orderBy } from './utils/common';
 import prisma from '..';
+import { orderBy } from './utils/common';
 
 export class CourseGroupResolver {
   static async list(skip: number, take: number, search: string, sorting: SortingType[]) {
