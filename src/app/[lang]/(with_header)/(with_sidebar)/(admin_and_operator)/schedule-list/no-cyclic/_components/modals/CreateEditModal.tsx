@@ -56,6 +56,7 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
     handleSubmit,
     watch,
     reset,
+    setValue,
     formState: { errors, isValid },
   } = useForm<CreateEditNonCyclicScheduleValidation>({
     resolver,
@@ -94,13 +95,12 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
       closeModal();
     },
   });
-
-  const courseId = watch('subjectId');
+  const subjectId = watch('subjectId');
 
   const { data: courseGroupQueryData } = useQuery<GetCourseGroupsBySubjectId>({
-    queryKey: ['course-group'],
-    queryFn: () => CourseGroupService.getCourseGroupsBySubjectId(courseId),
-    enabled: !!courseId,
+    queryKey: ['course-group', subjectId],
+    queryFn: () => CourseGroupService.getCourseGroupsBySubjectId(subjectId),
+    enabled: !!subjectId,
   });
 
   const { data: subjectList } = useQuery({
@@ -347,7 +347,10 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
               labelName="selectSubject"
               valueLabel="id"
               nameLabel="title"
-              onChange={onChange}
+              onChange={e => {
+                setValue('courseGroupId', '');
+                onChange(e.target.value);
+              }}
               value={value}
               isInvalid={!!errors.subjectId?.message}
               formErrorMessage={errors.subjectId?.message}

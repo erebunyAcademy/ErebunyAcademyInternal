@@ -9,3 +9,7 @@ export type GetCoursesListModel = Prisma.PromiseReturnType<typeof CourseResolver
 export type CourseModel = CourseListModel extends (infer SingleType)[] ? SingleType : never;
 
 export type StudentGradeAdminListModel = Prisma.PromiseReturnType<typeof CourseResolver.list>;
+
+export type GetCoursesListByFacultyId = Prisma.PromiseReturnType<
+  typeof CourseResolver.getCoursesListByFacultyId
+>;
