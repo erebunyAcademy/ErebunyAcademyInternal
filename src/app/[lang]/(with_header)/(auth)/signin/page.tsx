@@ -1,5 +1,5 @@
 'use client';
-import { useLayoutEffect, useEffect } from 'react';
+import { useEffect, useLayoutEffect } from 'react';
 import { Button, Link, useToast, VStack } from '@chakra-ui/react';
 import { classValidatorResolver } from '@hookform/resolvers/class-validator';
 import { useMutation } from '@tanstack/react-query';
