@@ -31,19 +31,6 @@ import { FormInput, Loading, SelectLabel } from '../../atoms';
 
 const resolver = classValidatorResolver(StudentSignUpValidation);
 
-const fetchFormData = async () => {
-  try {
-    const [courseList, courseGroupList, facultyList] = await Promise.all([
-      CourseService.list(),
-      CourseGroupService.list(),
-      FacultyService.list(),
-    ]);
-    return { courseList, courseGroupList, facultyList };
-  } catch {
-    console.error();
-  }
-};
-
 const StudentSignUp = ({ lang }: { lang: Locale }) => {
   const router = useRouter();
   const toast = useToast();
@@ -93,6 +80,8 @@ const StudentSignUp = ({ lang }: { lang: Locale }) => {
   const {
     control,
     handleSubmit,
+    watch,
+    setValue,
     formState: { errors, isValid },
   } = useForm<StudentSignUpValidation>({
     resolver,
@@ -113,15 +102,26 @@ const StudentSignUp = ({ lang }: { lang: Locale }) => {
     },
   });
 
-  const { data } = useQuery({
-    queryKey: ['faculty', 'course', 'course-group'],
-    queryFn: fetchFormData,
+  const facultyId = watch('facultyId');
+  const courseId = watch('courseId');
+
+  const { data: facultyData } = useQuery({
+    queryKey: ['student-faculty-list'],
+    queryFn: FacultyService.list,
   });
 
-  const courseList = (data?.courseList || []).map(course => ({
-    id: course.id,
-    title: `${course.title}`,
-  }));
+  const { data: courseData } = useQuery({
+    queryKey: ['student-course-list', facultyId],
+    queryFn: CourseService.getCourseByFacultyId.bind(null, facultyId),
+    enabled: !!facultyId,
+    initialData: [],
+  });
+
+  const { data: groupData } = useQuery({
+    queryKey: ['student-group-list', courseId],
+    queryFn: CourseGroupService.getCourseGroupByCourseId.bind(null, courseId),
+    enabled: !!courseId,
+  });
 
   const onFileSelect = (e: ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -202,11 +202,15 @@ const StudentSignUp = ({ lang }: { lang: Locale }) => {
               <SelectLabel
                 isRequired
                 name={name}
-                options={data?.facultyList || []}
+                options={facultyData || []}
                 labelName="faculty"
                 valueLabel="id"
                 nameLabel="title"
-                onChange={onChange}
+                onChange={e => {
+                  setValue('courseId', '');
+                  setValue('courseGroupId', '');
+                  onChange(e.target.value);
+                }}
                 value={value}
                 isInvalid={!!errors.facultyId?.message}
                 formErrorMessage={errors.facultyId?.message}
@@ -223,11 +227,14 @@ const StudentSignUp = ({ lang }: { lang: Locale }) => {
               <SelectLabel
                 isRequired
                 name={name}
-                options={courseList}
+                options={courseData}
                 labelName="course"
                 valueLabel="id"
                 nameLabel="title"
-                onChange={onChange}
+                onChange={e => {
+                  setValue('courseGroupId', '');
+                  onChange(e.target.value);
+                }}
                 value={value}
                 isInvalid={!!errors.courseId?.message}
                 formErrorMessage={errors.courseId?.message}
@@ -240,7 +247,7 @@ const StudentSignUp = ({ lang }: { lang: Locale }) => {
             render={({ field: { onChange, value, name } }) => (
               <SelectLabel
                 name={name}
-                options={data?.courseGroupList || []}
+                options={groupData || []}
                 labelName="courseGroup"
                 valueLabel="id"
                 nameLabel="title"

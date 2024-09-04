@@ -97,7 +97,7 @@ export class AcademicRegisterResolver {
                     lessonOfTheDay: +lessonOfTheDay,
                   },
                   include: {
-                    attendanceRecord: true, // Ensure attendanceRecord is included
+                    attendanceRecord: true,
                   },
                 },
               },
@@ -107,18 +107,50 @@ export class AcademicRegisterResolver {
       },
     });
 
-    if (thematicPlanIds.length) {
-      await prisma.thematicPlanDescription.updateMany({
-        where: {
-          id: {
-            in: thematicPlanIds,
+    const thematicPlans = await prisma.thematicPlan.findMany({
+      where: {
+        scheduleId: schedule.id,
+      },
+      select: {
+        thematicPlanDescription: {
+          select: {
+            id: true,
           },
         },
-        data: {
-          isCompleted: true,
+      },
+    });
+
+    const thematicPlanDescriptionIds = thematicPlans
+      .flatMap(themplan => themplan.thematicPlanDescription)
+      .map(({ id }) => id);
+
+    const thematicPlansToSetCompleted = thematicPlanDescriptionIds.filter(thematicPlanid =>
+      thematicPlanIds.includes(thematicPlanid),
+    );
+    const thematicPlansToSetNotCompleted = thematicPlanDescriptionIds.filter(
+      thematicPlanid => !thematicPlanIds.includes(thematicPlanid),
+    );
+
+    await prisma.thematicPlanDescription.updateMany({
+      where: {
+        id: {
+          in: thematicPlansToSetCompleted,
         },
-      });
-    }
+      },
+      data: {
+        isCompleted: true,
+      },
+    });
+    await prisma.thematicPlanDescription.updateMany({
+      where: {
+        id: {
+          in: thematicPlansToSetNotCompleted,
+        },
+      },
+      data: {
+        isCompleted: false,
+      },
+    });
 
     let academicRegister = schedule.academicRegister;
 
@@ -134,7 +166,7 @@ export class AcademicRegisterResolver {
             include: {
               academicRegisterLessons: {
                 include: {
-                  attendanceRecord: true, // Ensure attendanceRecord is included
+                  attendanceRecord: true,
                 },
               },
             },
@@ -199,6 +231,7 @@ export class AcademicRegisterResolver {
         await prisma.attendanceRecord.update({
           where: { id: existingRecord.id },
           data: {
+            academicRegisterDayId: academicRegisterDay.id,
             isPresent: student.isPresent,
             mark: student.mark ? parseInt(student.mark) : null,
           },
@@ -208,6 +241,7 @@ export class AcademicRegisterResolver {
         await prisma.attendanceRecord.create({
           data: {
             studentId: student.id,
+            academicRegisterDayId: academicRegisterDay.id,
             academicRegisterId: academicRegister.id,
             academicRegisterLessonId: academicRegisterLesson.id,
             isPresent: student.isPresent,

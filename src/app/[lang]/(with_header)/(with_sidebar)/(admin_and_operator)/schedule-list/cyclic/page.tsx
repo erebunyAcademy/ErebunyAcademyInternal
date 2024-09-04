@@ -16,7 +16,6 @@ import useDebounce from '@/hooks/useDebounce';
 import { Locale } from '@/i18n';
 import { ITEMS_PER_PAGE } from '@/utils/constants/common';
 import { languagePathHelper } from '@/utils/helpers/language';
-import { QUERY_KEY } from '@/utils/helpers/queryClient';
 import { Maybe } from '@/utils/models/common';
 import { ScheduleSingleModel } from '@/utils/models/schedule';
 import AddEditThematicPlan from './_components/modals/AddEditThematicPlan';
@@ -32,14 +31,24 @@ export default function Schedule({ params }: { params: { lang: Locale } }) {
   const debouncedSearch = useDebounce(search);
   const t = useTranslations();
 
+  console.log({ sorting });
+
   const { data, isLoading, isPlaceholderData, refetch } = useQuery({
-    queryKey: QUERY_KEY.allTeachers(debouncedSearch, page),
+    queryKey: [
+      debouncedSearch,
+      page,
+      sorting.length ? { id: sorting[0].id, desc: sorting[0].desc } : {},
+    ],
     queryFn: () =>
-      ScheduleService.list(ScheduleTypeEnum.CYCLIC, {
-        offset: page === 1 ? 0 : (page - 1) * ITEMS_PER_PAGE,
-        limit: ITEMS_PER_PAGE,
-        search: debouncedSearch,
-      }),
+      ScheduleService.list(
+        ScheduleTypeEnum.CYCLIC,
+        {
+          offset: page === 1 ? 0 : (page - 1) * ITEMS_PER_PAGE,
+          limit: ITEMS_PER_PAGE,
+          search: debouncedSearch,
+        },
+        sorting,
+      ),
   });
 
   const {
@@ -144,50 +153,42 @@ export default function Schedule({ params }: { params: { lang: Locale } }) {
       ),
     }),
     columnHelper.accessor('courseGroup.title', {
-      id: uuidv4(),
+      id: 'courseGroup',
       cell: info => info.getValue(),
       header: t('courseGroup'),
     }),
     columnHelper.accessor('subject.title', {
-      id: uuidv4(),
+      id: 'subject',
       cell: info => info.getValue(),
       header: t('subject'),
     }),
     columnHelper.accessor('title', {
-      id: uuidv4(),
       cell: info => info.getValue(),
       header: t('title'),
     }),
     columnHelper.accessor('description', {
-      id: uuidv4(),
       cell: info => info.getValue(),
       header: t('description'),
     }),
     columnHelper.accessor('totalHours', {
-      id: uuidv4(),
       cell: info => info.getValue(),
       header: t('totalHours'),
     }),
     columnHelper.accessor('examType', {
-      id: uuidv4(),
       cell: info => info.getValue(),
       header: t('examType'),
     }),
     columnHelper.accessor('scheduleTeachers', {
-      id: uuidv4(),
       cell: info =>
         `${info.getValue()[0].teacher?.user.firstName} ${info.getValue()[0].teacher?.user.lastName}`,
       header: t('lecturer'),
     }),
-
     columnHelper.accessor('academicYear', {
-      id: uuidv4(),
       cell: info => info.getValue(),
       header: t('academicYear'),
     }),
 
     columnHelper.accessor('startDayDate', {
-      id: uuidv4(),
       cell: info => {
         const currentDate = dayjs(info.getValue());
         return currentDate.format('YYYY-MM-DD');
@@ -195,7 +196,6 @@ export default function Schedule({ params }: { params: { lang: Locale } }) {
       header: t('startDay'),
     }),
     columnHelper.accessor('endDayDate', {
-      id: uuidv4(),
       cell: info => {
         const currentDate = dayjs(info.getValue());
         return currentDate.format('YYYY-MM-DD');
@@ -203,7 +203,6 @@ export default function Schedule({ params }: { params: { lang: Locale } }) {
       header: t('endDay'),
     }),
     columnHelper.accessor('examDate', {
-      id: uuidv4(),
       cell: info => {
         const currentDate = dayjs(info.getValue());
         return currentDate.format('YYYY-MM-DD');
@@ -211,7 +210,6 @@ export default function Schedule({ params }: { params: { lang: Locale } }) {
       header: t('examDay'),
     }),
     columnHelper.accessor('createdAt', {
-      id: uuidv4(),
       cell: info => dayjs(info.getValue()).format('YYYY-MM-DD'),
       header: t('createdAt'),
     }),

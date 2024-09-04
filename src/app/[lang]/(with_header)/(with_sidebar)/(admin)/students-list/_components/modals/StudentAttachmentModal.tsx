@@ -17,7 +17,15 @@ const StudentAttachmentModal: FC<StudentAttachmentModalProps> = ({
 }) => {
   return (
     <Modal isOpen={isAttachmentModalOpen} onClose={closeAttachmentModal} title="studentAttachment">
-      <Image src={generateAWSUrl(attachmentKey)} height={400} alt="student attachment" />
+      <Image
+        src={generateAWSUrl(attachmentKey)}
+        height={800}
+        width={800}
+        alt="student attachment"
+        style={{
+          objectFit: 'cover',
+        }}
+      />
     </Modal>
   );
 };

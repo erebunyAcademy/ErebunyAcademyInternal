@@ -84,9 +84,9 @@ const CreateExamModal: FC<CreateExamModalProps> = ({ isOpen, onClose, exam, para
     }
   }, [exam, reset]);
 
-  const faculty = watch('facultyId');
-  const course = watch('courseId');
-  const courseGroup = watch('courseGroupId');
+  const facultyId = watch('facultyId');
+  const courseId = watch('courseId');
+  const courseGroupId = watch('courseGroupId');
 
   const { data: facultyQueryData } = useQuery({
     queryKey: ['faculty'],
@@ -94,21 +94,22 @@ const CreateExamModal: FC<CreateExamModalProps> = ({ isOpen, onClose, exam, para
   });
 
   const { data: courseQueryData } = useQuery({
-    queryKey: ['student-grade', faculty],
-    queryFn: () => CourseService.getCourseByFacultyId(faculty),
-    enabled: !!faculty,
+    queryKey: ['student-grade', facultyId],
+    queryFn: () => CourseService.getCourseByFacultyId(facultyId),
+    enabled: !!facultyId,
+    initialData: [],
   });
 
   const { data: courseGroupQueryData } = useQuery({
-    queryKey: ['course-group', courseQueryData, faculty],
-    queryFn: () => CourseGroupService.getCourseGroupByCourseId(course),
-    enabled: !!course,
+    queryKey: ['course-group', courseId],
+    queryFn: () => CourseGroupService.getCourseGroupByCourseId(courseId),
+    enabled: !!courseId,
   });
 
   const { data: studentsData } = useQuery({
-    queryKey: ['students', courseGroup, course, faculty],
-    queryFn: () => StudentService.getStudentsByCourseGroupId(courseGroup),
-    enabled: !!courseGroup,
+    queryKey: ['students', courseGroupId],
+    queryFn: () => StudentService.getStudentsByCourseGroupId(courseGroupId),
+    enabled: !!courseGroupId,
   });
 
   const { mutate: createExamMutation, isPending } = useMutation({
@@ -239,7 +240,7 @@ const CreateExamModal: FC<CreateExamModalProps> = ({ isOpen, onClose, exam, para
                 <SelectLabel
                   isRequired
                   name={name}
-                  options={courseQueryData || []}
+                  options={courseQueryData}
                   labelName="selectCourse"
                   valueLabel="id"
                   nameLabel="title"

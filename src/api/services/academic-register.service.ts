@@ -20,8 +20,8 @@ export class AcademicRegisterService {
     scheduleId: string,
     lessonOfTheDay: string,
     academicRegisterId?: string,
-  ) {
-    return $apiClient.post(`/academic-registers/schedules/${scheduleId}`, input, {
+  ): Promise<boolean> {
+    return $apiClient.post<boolean>(`/academic-registers/schedules/${scheduleId}`, input, {
       params: {
         lessonOfTheDay,
         academicRegisterId,

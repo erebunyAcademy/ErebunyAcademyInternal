@@ -21,12 +21,6 @@ export class CourseResolver {
           id: true,
           title: true,
           description: true,
-          gradeLevel: {
-            select: {
-              id: true,
-              level: true,
-            },
-          },
           faculty: {
             select: {
               id: true,
