@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useLayoutEffect } from 'react';
+import { useCallback, useEffect, useLayoutEffect } from 'react';
 import { Button, Link, useToast, VStack } from '@chakra-ui/react';
 import { classValidatorResolver } from '@hookform/resolvers/class-validator';
 import { useMutation } from '@tanstack/react-query';
@@ -35,24 +35,27 @@ const SignIn = ({ params }: { params: { lang: Locale } }) => {
     resolver,
   });
 
-  const onSubmit: SubmitHandler<SignInFormValidation> = async ({ email, password }) => {
-    try {
-      const res: SignInResponse | undefined = await signIn('credentials', {
-        email,
-        password,
-        callbackUrl: languagePathHelper(params.lang, ROUTE_DASHBOARD),
-        redirect: false,
-      });
-      if (res?.ok && res.url) {
-        router.push(res.url);
-        router.refresh();
-      } else {
-        toast({ title: t(res?.error?.split(': ')[1]), status: 'error' });
+  const onSubmit = useCallback<SubmitHandler<SignInFormValidation>>(
+    async ({ email, password }) => {
+      try {
+        const res: SignInResponse | undefined = await signIn('credentials', {
+          email,
+          password,
+          callbackUrl: languagePathHelper(params.lang, ROUTE_DASHBOARD),
+          redirect: false,
+        });
+        if (res?.ok && res.url) {
+          router.push(res.url);
+          router.refresh();
+        } else {
+          toast({ title: t(res?.error?.split(': ')[1]), status: 'error' });
+        }
+      } catch (error) {
+        toast({ title: t(ERROR_MESSAGES.invalidCredentials), status: 'error' });
       }
-    } catch (error) {
-      toast({ title: t(ERROR_MESSAGES.invalidCredentials), status: 'error' });
-    }
-  };
+    },
+    [params.lang, router, t, toast]
+  );
 
   const { mutate } = useMutation({
     mutationFn: UserService.confirmUserEmail,
