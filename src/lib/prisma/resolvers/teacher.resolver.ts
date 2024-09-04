@@ -2,8 +2,8 @@ import { UserRoleEnum } from '@prisma/client';
 import { ForbiddenException, NotFoundException } from 'next-api-decorators';
 import { User } from 'next-auth';
 import { SortingType } from '@/api/types/common';
-import { orderBy } from './utils/common';
 import prisma from '..';
+import { orderBy } from './utils/common';
 
 export class TeacherResolver {
   static async list(skip: number, take: number, search: string, sorting: SortingType[]) {

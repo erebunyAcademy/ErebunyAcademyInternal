@@ -14,8 +14,8 @@ import {
   StudentSignUpValidation,
   TeacherSignUpValidation,
 } from '@/utils/validation';
-import { UserResolver } from './user.resolver';
 import prisma from '..';
+import { UserResolver } from './user.resolver';
 import { mailService } from '../services/email/mailer.service';
 import { generateRandomNumber } from '../utils/common';
 
