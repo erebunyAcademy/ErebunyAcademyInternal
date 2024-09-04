@@ -15,78 +15,59 @@ import { AWSService } from '../services/AWS.service';
 dayjs.extend(utc);
 
 export class ScheduleResolver {
-  static list(
-    type: ScheduleTypeEnum,
-    skip: number,
-    take: number,
-    search: string,
-    sortBy?: string,
-    sortDir?: string,
-  ) {
-    return Promise.all([
-      prisma.schedule.count({
-        where: {
-          OR: [{ title: { contains: search, mode: 'insensitive' } }],
-          type,
-        },
-      }),
-      prisma.schedule.findMany({
-        where: {
-          OR: [{ title: { contains: search, mode: 'insensitive' } }],
-          type,
-        },
-        include: {
-          thematicPlans: {
-            include: {
-              thematicPlanDescription: true,
-            },
+  static list(type: ScheduleTypeEnum) {
+    return prisma.courseGroup.findMany({
+      include: {
+        schedules: {
+          where: {
+            type,
           },
-          scheduleTeachers: {
-            select: {
-              teacher: {
-                select: {
-                  user: {
-                    select: {
-                      firstName: true,
-                      lastName: true,
+          include: {
+            subject: true,
+            thematicPlans: {
+              include: {
+                thematicPlanDescription: true,
+              },
+            },
+            scheduleTeachers: {
+              select: {
+                teacher: {
+                  select: {
+                    user: {
+                      select: {
+                        firstName: true,
+                        lastName: true,
+                      },
                     },
                   },
                 },
+                teacherId: true,
               },
-              teacherId: true,
             },
-          },
-          attachment: {
-            select: {
-              key: true,
-              title: true,
-              mimetype: true,
+            attachment: {
+              select: {
+                key: true,
+                title: true,
+                mimetype: true,
+              },
             },
+            availableDays: true,
           },
-          subject: true,
-          courseGroup: true,
-          availableDays: true,
         },
-
-        orderBy: [
-          {
-            courseGroup: {
-              title: sortDir === 'asc' ? 'asc' : 'desc',
+        course: {
+          select: {
+            id: true,
+            title: true,
+            faculty: {
+              select: {
+                id: true,
+                title: true,
+              },
             },
           },
-          {
-            subject: {
-              title: sortDir === 'asc' ? 'asc' : 'desc',
-            },
-          },
-        ],
-        skip,
-        take,
-      }),
-    ]).then(([count, schedules]) => ({
-      count,
-      schedules,
-    }));
+        },
+      },
+    });
   }
 
   static async createCyclicThematicPlan(scheduleId: string, data: AddEditThematicPlanValidation) {

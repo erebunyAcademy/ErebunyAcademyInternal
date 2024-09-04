@@ -1,21 +1,16 @@
 'use client';
-import React, { useCallback, useMemo, useState } from 'react';
-import { Button, MenuItem, useDisclosure } from '@chakra-ui/react';
+import React, { useCallback, useState } from 'react';
+import { useDisclosure } from '@chakra-ui/react';
 import { ScheduleTypeEnum } from '@prisma/client';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { createColumnHelper, SortingState } from '@tanstack/react-table';
-import dayjs from 'dayjs';
 import dynamic from 'next/dynamic';
-import Link from 'next/link';
 import { useTranslations } from 'next-intl';
-import { v4 as uuidv4 } from 'uuid';
 import { ScheduleService } from '@/api/services/schedule.service';
-import ActionButtons from '@/components/molecules/ActionButtons';
-import SearchTable from '@/components/organisms/SearchTable';
+import { ExpandableTable } from '@/components/organisms/GroupedDropdownTable';
 import useDebounce from '@/hooks/useDebounce';
 import { Locale } from '@/i18n';
 import { ITEMS_PER_PAGE } from '@/utils/constants/common';
-import { languagePathHelper } from '@/utils/helpers/language';
 import { Maybe } from '@/utils/models/common';
 import { ScheduleSingleModel } from '@/utils/models/schedule';
 import AddEditThematicPlan from './_components/modals/AddEditThematicPlan';
@@ -30,8 +25,6 @@ export default function Schedule({ params }: { params: { lang: Locale } }) {
   const [selectedSchedule, setSelectedSchedule] = useState<Maybe<ScheduleSingleModel>>(null);
   const debouncedSearch = useDebounce(search);
   const t = useTranslations();
-
-  console.log({ sorting });
 
   const { data, isLoading, isPlaceholderData, refetch } = useQuery({
     queryKey: [
@@ -49,6 +42,7 @@ export default function Schedule({ params }: { params: { lang: Locale } }) {
         },
         sorting,
       ),
+    initialData: [],
   });
 
   const {
@@ -89,12 +83,6 @@ export default function Schedule({ params }: { params: { lang: Locale } }) {
     },
   });
 
-  const pageCount = useMemo(() => {
-    if (data?.count) {
-      return Math.ceil(data.count / ITEMS_PER_PAGE);
-    }
-  }, [data?.count]);
-
   const setSearchValue = useCallback(
     (value: string) => {
       if (!!value && page !== 1) {
@@ -108,137 +96,47 @@ export default function Schedule({ params }: { params: { lang: Locale } }) {
   const columnHelper = createColumnHelper<ScheduleSingleModel>();
 
   const columns = [
-    columnHelper.accessor('id', {
-      id: uuidv4(),
-      cell: ({ row }) => (
-        <ActionButtons>
-          <MenuItem
-            color="green"
-            onClick={() => {
-              setSelectedSchedule(row.original);
-              openAddEditThematicPlanModal();
-            }}>
-            {t('addThematicPlan')}
-          </MenuItem>
-          <MenuItem
-            color="green"
-            onClick={() => {
-              setSelectedSchedule(row.original);
-              openCreateEditModal();
-            }}>
-            {t('edit')}
-          </MenuItem>
-          <MenuItem
-            color="red"
-            onClick={() => {
-              setSelectedSchedule(row.original);
-              openDeleteModal();
-            }}>
-            {t('delete')}
-          </MenuItem>
-        </ActionButtons>
-      ),
-      header: t('actions'),
-    }),
-    columnHelper.accessor('id', {
-      id: uuidv4(),
-      header: t('details'),
-      cell: info => (
-        <Button
-          as={Link}
-          href={`${languagePathHelper(params.lang, `/schedules/${info.getValue()}`)}`}
-          variant="link">
-          {t('seeDetails')}
-        </Button>
-      ),
-    }),
-    columnHelper.accessor('courseGroup.title', {
+    columnHelper.accessor('title', {
       id: 'courseGroup',
       cell: info => info.getValue(),
       header: t('courseGroup'),
     }),
-    columnHelper.accessor('subject.title', {
-      id: 'subject',
+    columnHelper.accessor('course.title', {
+      id: 'course',
       cell: info => info.getValue(),
-      header: t('subject'),
+      header: t('course'),
     }),
-    columnHelper.accessor('title', {
+    columnHelper.accessor('course.faculty.title', {
+      id: 'faculty',
       cell: info => info.getValue(),
-      header: t('title'),
+      header: t('faculty'),
     }),
     columnHelper.accessor('description', {
       cell: info => info.getValue(),
       header: t('description'),
     }),
-    columnHelper.accessor('totalHours', {
+  ];
+
+  const subRowColumns = [
+    columnHelper.accessor('schedules.startDayDate', {
+      id: 'lecturer',
       cell: info => info.getValue(),
-      header: t('totalHours'),
-    }),
-    columnHelper.accessor('examType', {
-      cell: info => info.getValue(),
-      header: t('examType'),
-    }),
-    columnHelper.accessor('scheduleTeachers', {
-      cell: info =>
-        `${info.getValue()[0].teacher?.user.firstName} ${info.getValue()[0].teacher?.user.lastName}`,
       header: t('lecturer'),
     }),
-    columnHelper.accessor('academicYear', {
+    columnHelper.accessor('schedules.endDayDate', {
+      id: 'endDate',
       cell: info => info.getValue(),
-      header: t('academicYear'),
-    }),
-
-    columnHelper.accessor('startDayDate', {
-      cell: info => {
-        const currentDate = dayjs(info.getValue());
-        return currentDate.format('YYYY-MM-DD');
-      },
-      header: t('startDay'),
-    }),
-    columnHelper.accessor('endDayDate', {
-      cell: info => {
-        const currentDate = dayjs(info.getValue());
-        return currentDate.format('YYYY-MM-DD');
-      },
-      header: t('endDay'),
-    }),
-    columnHelper.accessor('examDate', {
-      cell: info => {
-        const currentDate = dayjs(info.getValue());
-        return currentDate.format('YYYY-MM-DD');
-      },
-      header: t('examDay'),
-    }),
-    columnHelper.accessor('createdAt', {
-      cell: info => dayjs(info.getValue()).format('YYYY-MM-DD'),
-      header: t('createdAt'),
+      header: t('endDate'),
     }),
   ];
 
   return (
     <>
-      <SearchTable
-        title="cyclicScheduleList"
-        isLoading={isLoading}
-        data={data?.schedules || []}
-        count={data?.count || 0}
-        // @ts-ignore
-        columns={columns}
-        sorting={sorting}
-        search={search}
-        setSorting={setSorting}
-        setSearch={setSearchValue}
-        hasNextPage={useMemo(
-          () => !(!pageCount || page === pageCount || isPlaceholderData),
-          [isPlaceholderData, page, pageCount],
-        )}
-        hasPreviousPage={useMemo(
-          () => !(page === 1 || isPlaceholderData),
-          [isPlaceholderData, page],
-        )}
-        fetchNextPage={useCallback(() => setPage(prev => ++prev), [])}
-        fetchPreviousPage={useCallback(() => setPage(prev => --prev), [])}
-        addNew={openCreateEditModal}
+      <ExpandableTable
+        parentColumns={columns as any}
+        data={data as any}
+        subRowColumns={subRowColumns as any}
+        getSubRows={(row: any) => row.schedules}
       />
 
       {isCreateEditModalOpen && (

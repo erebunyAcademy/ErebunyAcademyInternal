@@ -4,7 +4,7 @@ import { StudentResolver } from '@/lib/prisma/resolvers/student.resolver';
 
 export type ScheduleListDataModel = Prisma.PromiseReturnType<typeof ScheduleResolver.list>;
 
-export type ScheduleListModel = Awaited<ReturnType<typeof ScheduleResolver.list>>['schedules'];
+export type ScheduleListModel = Awaited<ReturnType<typeof ScheduleResolver.list>>;
 
 export type ScheduleSingleModel = ScheduleListModel extends (infer SingleType)[]
   ? SingleType
