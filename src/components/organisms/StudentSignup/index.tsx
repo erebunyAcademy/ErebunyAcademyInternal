@@ -114,6 +114,7 @@ const StudentSignUp = ({ lang }: { lang: Locale }) => {
     queryKey: ['student-course-list', facultyId],
     queryFn: CourseService.getCourseByFacultyId.bind(null, facultyId),
     enabled: !!facultyId,
+    initialData: [],
   });
 
   const { data: groupData } = useQuery({
@@ -121,11 +122,6 @@ const StudentSignUp = ({ lang }: { lang: Locale }) => {
     queryFn: CourseGroupService.getCourseGroupByCourseId.bind(null, courseId),
     enabled: !!courseId,
   });
-
-  const courseList = (courseData || []).map((course: { id: any; title: any }) => ({
-    id: course.id,
-    title: `${course.title}`,
-  }));
 
   const onFileSelect = (e: ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -231,7 +227,7 @@ const StudentSignUp = ({ lang }: { lang: Locale }) => {
               <SelectLabel
                 isRequired
                 name={name}
-                options={courseList}
+                options={courseData}
                 labelName="course"
                 valueLabel="id"
                 nameLabel="title"
