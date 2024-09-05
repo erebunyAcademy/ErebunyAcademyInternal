@@ -68,8 +68,6 @@ const Profile = ({ sessionUser }: { sessionUser: NonNullable<Session['user']> })
     resolver,
   });
 
-  console.log(sessionUser.attachment);
-
   const {
     control: passwordChangeControl,
     handleSubmit: passwordChangeHandlerSubmit,
@@ -313,44 +311,21 @@ const Profile = ({ sessionUser }: { sessionUser: NonNullable<Session['user']> })
             </ChakraButton>
           </Box>
         </Box>
-        <VStack alignItems="flex-start" justifyItems="flex-end">
-          <Box
-            cursor="pointer"
-            position="relative"
-            display="flex"
-            justifyContent="flex-start"
-            alignItems="center"
-            height="22px"
-            ml="5px">
-            <ChakraButton
-              fontWeight={500}
-              height="100%"
-              width="auto"
+        {sessionUser.role === 'STUDENT' && (
+          <VStack alignItems="flex-start" justifyItems="flex-end">
+            <Box
               cursor="pointer"
-              color="#1F1646"
-              backgroundColor="#fff"
-              _hover={{
-                color: '#1F1646',
-                backgroundColor: '#fff',
-              }}
-              _focus={{
-                color: '#1F1646',
-                backgroundColor: '#fff',
-              }}>
-              <Input
-                as="input"
-                name="attachments"
-                type="file"
-                accept="image/*"
-                width="100%"
-                position="absolute"
-                left={0}
-                right={0}
-                bottom={0}
-                opacity={0}
+              position="relative"
+              display="flex"
+              justifyContent="flex-start"
+              alignItems="center"
+              height="22px"
+              ml="5px">
+              <ChakraButton
+                fontWeight={500}
+                height="100%"
+                width="auto"
                 cursor="pointer"
-                onChange={onAttachmentFileSelect}
-                value={localAttachmentImage?.localUrl ? '' : undefined}
                 color="#1F1646"
                 backgroundColor="#fff"
                 _hover={{
@@ -360,46 +335,71 @@ const Profile = ({ sessionUser }: { sessionUser: NonNullable<Session['user']> })
                 _focus={{
                   color: '#1F1646',
                   backgroundColor: '#fff',
-                }}
-              />
-              {t('uploadDocument')}*
-            </ChakraButton>
-          </Box>
-          {attachmentSrc && (
-            <Box
-              position="relative"
-              width="200px"
-              height="150px"
-              borderRadius="8px"
-              ml="30px"
-              overflow="hidden">
-              <Image
-                src={attachmentSrc || ''}
-                alt={localAttachmentImage?.file.name || ''}
-                fill
-                style={{
-                  objectFit: 'contain',
-                }}
-              />
-              <Text
-                position="absolute"
-                top="5px"
-                right="5px"
-                backgroundColor="rgba(0, 0, 0, 0.6)"
-                color="white"
-                borderRadius="50%"
-                width="32px"
-                height="32px"
-                display="flex"
-                alignItems="center"
-                justifyContent="center"
-                cursor="pointer"
-                onClick={handleRemoveImage}>
-                X
-              </Text>
+                }}>
+                <Input
+                  as="input"
+                  name="attachments"
+                  type="file"
+                  accept="image/*"
+                  width="100%"
+                  position="absolute"
+                  left={0}
+                  right={0}
+                  bottom={0}
+                  opacity={0}
+                  cursor="pointer"
+                  onChange={onAttachmentFileSelect}
+                  value={localAttachmentImage?.localUrl ? '' : undefined}
+                  color="#1F1646"
+                  backgroundColor="#fff"
+                  _hover={{
+                    color: '#1F1646',
+                    backgroundColor: '#fff',
+                  }}
+                  _focus={{
+                    color: '#1F1646',
+                    backgroundColor: '#fff',
+                  }}
+                />
+                {t('uploadDocument')}*
+              </ChakraButton>
             </Box>
-          )}
-        </VStack>
+            {attachmentSrc && (
+              <Box
+                position="relative"
+                width="200px"
+                height="150px"
+                borderRadius="8px"
+                ml="30px"
+                overflow="hidden">
+                <Image
+                  src={attachmentSrc || ''}
+                  alt={localAttachmentImage?.file.name || ''}
+                  fill
+                  style={{
+                    objectFit: 'contain',
+                  }}
+                />
+                <Text
+                  position="absolute"
+                  top="5px"
+                  right="5px"
+                  backgroundColor="rgba(0, 0, 0, 0.6)"
+                  color="white"
+                  borderRadius="50%"
+                  width="32px"
+                  height="32px"
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                  cursor="pointer"
+                  onClick={handleRemoveImage}>
+                  X
+                </Text>
+              </Box>
+            )}
+          </VStack>
+        )}
       </Flex>
       {sessionUser.teacher && (
         <>

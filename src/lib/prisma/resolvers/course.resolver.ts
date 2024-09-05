@@ -2,8 +2,8 @@ import { Course } from '@prisma/client';
 import { NotFoundException } from 'next-api-decorators';
 import { SortingType } from '@/api/types/common';
 import { CreateEditCourseValidation } from '@/utils/validation/courses';
-import { orderBy } from './utils/common';
 import prisma from '..';
+import { orderBy } from './utils/common';
 
 export class CourseResolver {
   static async list(skip: number, take: number, search: string, sorting: SortingType[]) {

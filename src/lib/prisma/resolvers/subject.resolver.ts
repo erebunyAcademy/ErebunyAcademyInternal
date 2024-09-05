@@ -2,8 +2,8 @@ import { NotFoundException } from 'next-api-decorators';
 import { User } from 'next-auth';
 import { SortingType } from '@/api/types/common';
 import { CreateEditSubjectValidation } from '@/utils/validation/subject';
-import { orderBy } from './utils/common';
 import prisma from '..';
+import { orderBy } from './utils/common';
 
 export class SubjectResolver {
   static async list(

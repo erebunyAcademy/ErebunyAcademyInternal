@@ -13,10 +13,12 @@ export class AWSService {
   constructor() {
     const options: S3ClientConfig = {
       region: process.env.NEXT_PUBLIC_AWS_REGION,
+      endpoint: process.env.NEXT_PUBLIC_AWS_STORAGE_URL,
       credentials: {
         accessKeyId: process.env.NEXT_PUBLIC_AWS_ACCESS_KEY!,
         secretAccessKey: process.env.NEXT_PUBLIC_AWS_SECRET_KEY!,
       },
+      forcePathStyle: true,
     };
 
     this.s3 = new S3Client(options);
@@ -41,12 +43,13 @@ export class AWSService {
       });
   }
   async deleteAttachment(path: string) {
-    const key = path.substring(path.indexOf('aws.com/') + 8);
+    const Bucket = process.env.NEXT_PUBLIC_AWS_BUCKET_NAME;
+    const key = path.substring(path.indexOf(Bucket + '/') + 8); //TODO: needs to be tested with minio
 
     try {
       await this.s3.send(
         new HeadObjectCommand({
-          Bucket: process.env.AWS_BUCKET_NAME,
+          Bucket,
           Key: key,
         }),
       );
