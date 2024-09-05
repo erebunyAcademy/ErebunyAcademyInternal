@@ -1,48 +1,47 @@
 'use client';
-import React, { useCallback, useMemo, useState } from 'react';
-import { Button, MenuItem, useDisclosure } from '@chakra-ui/react';
+import React, { Fragment, useState } from 'react';
+import { AddIcon, MinusIcon } from '@chakra-ui/icons';
+import {
+  Box,
+  Button,
+  Flex,
+  IconButton,
+  MenuItem,
+  Table,
+  Tbody,
+  Td,
+  Text,
+  Thead,
+  Tr,
+  useDisclosure,
+} from '@chakra-ui/react';
 import { ScheduleTypeEnum } from '@prisma/client';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { createColumnHelper, SortingState } from '@tanstack/react-table';
 import dayjs from 'dayjs';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { ScheduleService } from '@/api/services/schedule.service';
 import ActionButtons from '@/components/molecules/ActionButtons';
-import SearchTable from '@/components/organisms/SearchTable';
-import useDebounce from '@/hooks/useDebounce';
 import { Locale } from '@/i18n';
-import { academicYearListData, ITEMS_PER_PAGE } from '@/utils/constants/common';
 import { languagePathHelper } from '@/utils/helpers/language';
-import { QUERY_KEY } from '@/utils/helpers/queryClient';
 import { Maybe } from '@/utils/models/common';
-import { ScheduleSingleModel } from '@/utils/models/schedule';
+import { ScheduleSingleDataModel } from '@/utils/models/schedule';
 import AddEditThematicPlan from './_components/modals/AddEditThematicPlan';
 
 const DeleteModal = dynamic(() => import('./_components/modals/DeleteModal'));
 const CreateEditModal = dynamic(() => import('./_components/modals/CreateEditModal'));
 
 export default function Schedule({ params }: { params: { lang: Locale } }) {
-  const [sorting, setSorting] = useState<SortingState>([]);
-  const [search, setSearch] = useState('');
-  const [page, setPage] = useState(1);
-  const [selectedSchedule, setSelectedSchedule] = useState<Maybe<ScheduleSingleModel>>(null);
-  const debouncedSearch = useDebounce(search);
+  const [selectedExpandableCourseGroup, setSelectedExpandableCourseGroup] =
+    useState<Maybe<string>>(null);
+  const [selectedSchedule, setSelectedSchedule] = useState<Maybe<ScheduleSingleDataModel>>(null);
   const t = useTranslations();
 
-  const { data, isLoading, isPlaceholderData, refetch } = useQuery({
-    queryKey: QUERY_KEY.allTeachers(debouncedSearch, page),
-    queryFn: () =>
-      ScheduleService.list(
-        ScheduleTypeEnum.NON_CYCLIC,
-        {
-          offset: page === 1 ? 0 : (page - 1) * ITEMS_PER_PAGE,
-          limit: ITEMS_PER_PAGE,
-          search: debouncedSearch,
-        },
-        sorting,
-      ),
+  const { data, refetch } = useQuery({
+    queryKey: ['non_cyclic_list'],
+    queryFn: () => ScheduleService.list(ScheduleTypeEnum.NON_CYCLIC),
+    initialData: [],
   });
 
   const {
@@ -51,7 +50,6 @@ export default function Schedule({ params }: { params: { lang: Locale } }) {
     onClose: closeDeleteModal,
   } = useDisclosure({
     onClose() {
-      refetch();
       setSelectedSchedule(null);
     },
   });
@@ -62,7 +60,6 @@ export default function Schedule({ params }: { params: { lang: Locale } }) {
     onClose: closeCreateEditModal,
   } = useDisclosure({
     onClose() {
-      refetch();
       setSelectedSchedule(null);
     },
   });
@@ -73,7 +70,6 @@ export default function Schedule({ params }: { params: { lang: Locale } }) {
     onClose: closeCreateEditThematicPlanModal,
   } = useDisclosure({
     onClose() {
-      refetch();
       setSelectedSchedule(null);
     },
   });
@@ -82,140 +78,146 @@ export default function Schedule({ params }: { params: { lang: Locale } }) {
     mutationFn: ScheduleService.deleteScheduleById,
     onSuccess() {
       closeDeleteModal();
+      refetch();
     },
   });
 
-  const pageCount = useMemo(() => {
-    if (data?.count) {
-      return Math.ceil(data.count / ITEMS_PER_PAGE);
-    }
-  }, [data?.count]);
-
-  const setSearchValue = useCallback(
-    (value: string) => {
-      if (!!value && page !== 1) {
-        setPage(1);
-      }
-      setSearch(value);
-    },
-    [page],
-  );
-
-  const columnHelper = createColumnHelper<ScheduleSingleModel>();
-
-  const columns = [
-    columnHelper.accessor('id', {
-      cell: ({ row }) => (
-        <ActionButtons>
-          <MenuItem
-            color="green"
-            onClick={() => {
-              setSelectedSchedule(row.original);
-              openAddEditThematicPlanModal();
-            }}>
-            {t('addThematicPlan')}
-          </MenuItem>
-          <MenuItem
-            color="green"
-            onClick={() => {
-              setSelectedSchedule(row.original);
-              openCreateEditModal();
-            }}>
-            {t('edit')}
-          </MenuItem>
-          <MenuItem
-            color="red"
-            onClick={() => {
-              setSelectedSchedule(row.original);
-              openDeleteModal();
-            }}>
-            {t('delete')}
-          </MenuItem>
-        </ActionButtons>
-      ),
-      header: t('actions'),
-    }),
-    columnHelper.accessor('id', {
-      header: t('seeDetails'),
-      cell: info => (
-        <Button
-          as={Link}
-          href={`${languagePathHelper(params.lang, `/schedules/${info.getValue()}`)}`}
-          variant="link">
-          {t('seeDetails')}
-        </Button>
-      ),
-    }),
-    columnHelper.accessor('courseGroup.title', {
-      id: 'courseGroup',
-      cell: info => info.getValue(),
-      header: t('courseGroup'),
-    }),
-    columnHelper.accessor('subject.title', {
-      id: 'subject',
-      cell: info => info.getValue(),
-      header: t('subject'),
-    }),
-    columnHelper.accessor('title', {
-      cell: info => info.getValue(),
-      header: t('title'),
-    }),
-    columnHelper.accessor('description', {
-      cell: info => info.getValue(),
-      header: t('description'),
-    }),
-    columnHelper.accessor('totalHours', {
-      cell: info => info.getValue(),
-      header: t('totalHours'),
-    }),
-    columnHelper.accessor('examType', {
-      cell: info => info.getValue(),
-      header: t('examType'),
-    }),
-    columnHelper.accessor('scheduleTeachers', {
-      cell: info =>
-        `${info.getValue()[0].teacher?.user.firstName} ${info.getValue()[0].teacher?.user.lastName}`,
-      header: t('lecturer'),
-    }),
-
-    columnHelper.accessor('academicYear', {
-      cell: info => {
-        const academicYear = academicYearListData.find(year => year.id === info.getValue());
-        return academicYear?.title;
-      },
-      header: t('academicYear'),
-    }),
-    columnHelper.accessor('createdAt', {
-      cell: info => dayjs(info.getValue()).format('YYYY-MM-DD'),
-      header: t('createdAt'),
-    }),
-  ];
-
   return (
     <>
-      <SearchTable
-        title="notCyclicScheduleList"
-        isLoading={isLoading}
-        data={data?.schedules || []}
-        count={data?.count || 0}
-        // @ts-ignore
-        columns={columns}
-        sorting={sorting}
-        search={search}
-        setSorting={setSorting}
-        setSearch={setSearchValue}
-        hasNextPage={useMemo(
-          () => !(!pageCount || page === pageCount || isPlaceholderData),
-          [isPlaceholderData, page, pageCount],
-        )}
-        hasPreviousPage={useMemo(
-          () => !(page === 1 || isPlaceholderData),
-          [isPlaceholderData, page],
-        )}
-        fetchNextPage={useCallback(() => setPage(prev => ++prev), [])}
-        fetchPreviousPage={useCallback(() => setPage(prev => --prev), [])}
-        addNew={openCreateEditModal}
-      />
+      <Text as="h2" fontSize={24} textAlign="center">
+        {t('notCyclicScheduleList')}
+      </Text>
+      <Flex justifyContent="flex-end">
+        <Button
+          px="12px"
+          py="8px"
+          onClick={openCreateEditModal}
+          overflowWrap="break-word"
+          whiteSpace="normal">
+          {t('addNew')}
+        </Button>
+      </Flex>
+
+      <Table>
+        <Thead>
+          <Tr>
+            <Td>{t('courseGroup')}</Td>
+            <Td>{t('course')}</Td>
+            <Td colSpan={1}>{t('faculty')}</Td>
+          </Tr>
+        </Thead>
+        <Tbody>
+          {data.map(courseGroup => {
+            const isExpandedRow = selectedExpandableCourseGroup === courseGroup.id;
+            return (
+              <Fragment key={courseGroup.id}>
+                <Tr>
+                  <Td>
+                    <Flex alignItems="center" gap={4}>
+                      <IconButton
+                        aria-label="expand"
+                        icon={isExpandedRow ? <MinusIcon /> : <AddIcon />}
+                        onClick={() =>
+                          setSelectedExpandableCourseGroup(isExpandedRow ? null : courseGroup.id)
+                        }
+                      />{' '}
+                      {courseGroup.title}
+                    </Flex>
+                  </Td>
+                  <Td>{courseGroup.course.title}</Td>
+                  <Td>{courseGroup.course.faculty?.title}</Td>
+                </Tr>
+
+                {isExpandedRow && (
+                  <Tr>
+                    <Td colSpan={3} overflowX="auto">
+                      <Box bg="gray.100" width="180%" p={16}>
+                        <Table size="sm" variant="simple">
+                          <Thead>
+                            <Tr>
+                              <Td>{t('actions')}</Td>
+                              <Td>{t('details')}</Td>
+                              <Td>{t('subject')}</Td>
+                              <Td>{t('title')}</Td>
+                              <Td>{t('description')}</Td>
+                              <Td>{t('totalHours')}</Td>
+                              <Td>{t('examType')}</Td>
+                              <Td>{t('lecturer')}</Td>
+                              <Td>{t('academicYear')}</Td>
+                              <Td>{t('createdAt')}</Td>
+                            </Tr>
+                          </Thead>
+                          <Tbody>
+                            {courseGroup.schedules.length ? (
+                              courseGroup.schedules.map(schedule => (
+                                <Tr key={schedule.id}>
+                                  <Td>
+                                    <ActionButtons>
+                                      <MenuItem
+                                        color="green"
+                                        onClick={() => {
+                                          setSelectedSchedule(schedule);
+                                          openAddEditThematicPlanModal();
+                                        }}>
+                                        {t('addThematicPlan')}
+                                      </MenuItem>
+                                      <MenuItem
+                                        color="green"
+                                        onClick={() => {
+                                          setSelectedSchedule(schedule);
+                                          openCreateEditModal();
+                                        }}>
+                                        {t('edit')}
+                                      </MenuItem>
+                                      <MenuItem
+                                        color="red"
+                                        onClick={() => {
+                                          setSelectedSchedule(schedule);
+                                          openDeleteModal();
+                                        }}>
+                                        {t('delete')}
+                                      </MenuItem>
+                                    </ActionButtons>
+                                  </Td>
+                                  <Td>
+                                    <Button
+                                      as={Link}
+                                      href={`${languagePathHelper(params.lang, `/schedules/${schedule.id}`)}`}
+                                      variant="link">
+                                      {t('seeDetails')}
+                                    </Button>
+                                  </Td>
+                                  <Td>{schedule.title}</Td>
+                                  <Td>{schedule.subject.title}</Td>
+                                  <Td>{schedule.description}</Td>
+                                  <Td>{schedule.totalHours}</Td>
+                                  <Td>{schedule.examType}</Td>
+                                  <Td>
+                                    {schedule.scheduleTeachers[0].teacher.user.firstName}{' '}
+                                    {schedule.scheduleTeachers[0].teacher.user.lastName}
+                                  </Td>
+                                  <Td>{schedule.academicYear}</Td>
+                                  <Td>{dayjs(schedule.createdAt).format('YYYY-MM-DD')}</Td>
+                                </Tr>
+                              ))
+                            ) : (
+                              <Tr>
+                                <Td colSpan={8} textAlign="center" verticalAlign="middle">
+                                  No Schedules
+                                </Td>
+                              </Tr>
+                            )}
+                          </Tbody>
+                        </Table>
+                      </Box>
+                    </Td>
+                  </Tr>
+                )}
+              </Fragment>
+            );
+          })}
+        </Tbody>
+      </Table>
 
       {isCreateEditModalOpen && (
         <CreateEditModal
@@ -230,10 +232,11 @@ export default function Schedule({ params }: { params: { lang: Locale } }) {
           isModalOpen={isCreateEditThematicPlanModalIsOpen}
           closeModal={closeCreateEditThematicPlanModal}
           selectedSchedule={selectedSchedule}
+          refetch={refetch}
         />
       )}
 
-      {isDeleteModalOpen && (
+      {isDeleteModalOpen && selectedSchedule && (
         <DeleteModal
           selectedSchedule={selectedSchedule}
           isDeleteModalOpen={isDeleteModalOpen}

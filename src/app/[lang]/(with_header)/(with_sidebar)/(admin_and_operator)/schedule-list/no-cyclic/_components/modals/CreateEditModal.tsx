@@ -25,7 +25,7 @@ import {
 import { generateAWSUrl } from '@/utils/helpers/aws';
 import { Maybe } from '@/utils/models/common';
 import { GetCourseGroupsBySubjectId } from '@/utils/models/courseGroup';
-import { ScheduleSingleModel } from '@/utils/models/schedule';
+import { ScheduleSingleDataModel } from '@/utils/models/schedule';
 import { TeacherDataModel } from '@/utils/models/teachers';
 import { AttachmentValidation } from '@/utils/validation';
 import { CreateEditNonCyclicScheduleValidation } from '@/utils/validation/non-cyclic';
@@ -33,7 +33,7 @@ import { CreateEditNonCyclicScheduleValidation } from '@/utils/validation/non-cy
 type CreateEditModalProps = {
   isModalOpen: boolean;
   closeModal: () => void;
-  selectedSchedule: Maybe<ScheduleSingleModel>;
+  selectedSchedule: Maybe<ScheduleSingleDataModel>;
 };
 
 const resolver = classValidatorResolver(CreateEditNonCyclicScheduleValidation);
@@ -236,7 +236,10 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
   return (
     <Modal
       isOpen={isModalOpen}
-      onClose={closeModal}
+      onClose={() => {
+        closeModal();
+        reset();
+      }}
       isDisabled={!isValid}
       title="notCyclicSchedule"
       size="6xl"

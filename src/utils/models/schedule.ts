@@ -10,6 +10,10 @@ export type ScheduleSingleModel = ScheduleListModel extends (infer SingleType)[]
   ? SingleType
   : never;
 
+export type ScheduleSingleDataModel = ScheduleSingleModel['schedules'] extends (infer SingleType)[]
+  ? SingleType
+  : never;
+
 export type StudentCyclicScheduleListType = Prisma.PromiseReturnType<
   typeof StudentResolver.getStudentCyclicSchedule
 >;

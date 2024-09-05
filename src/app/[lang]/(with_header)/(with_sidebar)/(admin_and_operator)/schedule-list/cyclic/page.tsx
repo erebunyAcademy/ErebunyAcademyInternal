@@ -1,47 +1,46 @@
 'use client';
-import React, { useCallback, useState } from 'react';
-import { useDisclosure } from '@chakra-ui/react';
+import React, { Fragment, useState } from 'react';
+import { AddIcon, MinusIcon } from '@chakra-ui/icons';
+import {
+  Box,
+  Button,
+  Flex,
+  IconButton,
+  MenuItem,
+  Table,
+  Tbody,
+  Td,
+  Text,
+  Thead,
+  Tr,
+  useDisclosure,
+} from '@chakra-ui/react';
 import { ScheduleTypeEnum } from '@prisma/client';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { createColumnHelper, SortingState } from '@tanstack/react-table';
+import dayjs from 'dayjs';
 import dynamic from 'next/dynamic';
+import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { ScheduleService } from '@/api/services/schedule.service';
-import { ExpandableTable } from '@/components/organisms/GroupedDropdownTable';
-import useDebounce from '@/hooks/useDebounce';
+import ActionButtons from '@/components/molecules/ActionButtons';
 import { Locale } from '@/i18n';
-import { ITEMS_PER_PAGE } from '@/utils/constants/common';
+import { languagePathHelper } from '@/utils/helpers/language';
 import { Maybe } from '@/utils/models/common';
-import { ScheduleSingleModel } from '@/utils/models/schedule';
+import { ScheduleSingleDataModel } from '@/utils/models/schedule';
 import AddEditThematicPlan from './_components/modals/AddEditThematicPlan';
 
 const DeleteModal = dynamic(() => import('./_components/modals/DeleteModal'));
 const CreateEditModal = dynamic(() => import('./_components/modals/CreateEditModal'));
 
 export default function Schedule({ params }: { params: { lang: Locale } }) {
-  const [sorting, setSorting] = useState<SortingState>([]);
-  const [search, setSearch] = useState('');
-  const [page, setPage] = useState(1);
-  const [selectedSchedule, setSelectedSchedule] = useState<Maybe<ScheduleSingleModel>>(null);
-  const debouncedSearch = useDebounce(search);
+  const [selectedExpandableCourseGroup, setSelectedExpandableCourseGroup] =
+    useState<Maybe<string>>(null);
+  const [selectedSchedule, setSelectedSchedule] = useState<Maybe<ScheduleSingleDataModel>>(null);
   const t = useTranslations();
 
-  const { data, isLoading, isPlaceholderData, refetch } = useQuery({
-    queryKey: [
-      debouncedSearch,
-      page,
-      sorting.length ? { id: sorting[0].id, desc: sorting[0].desc } : {},
-    ],
-    queryFn: () =>
-      ScheduleService.list(
-        ScheduleTypeEnum.CYCLIC,
-        {
-          offset: page === 1 ? 0 : (page - 1) * ITEMS_PER_PAGE,
-          limit: ITEMS_PER_PAGE,
-          search: debouncedSearch,
-        },
-        sorting,
-      ),
+  const { data, refetch } = useQuery({
+    queryKey: [],
+    queryFn: () => ScheduleService.list(ScheduleTypeEnum.CYCLIC),
     initialData: [],
   });
 
@@ -83,61 +82,147 @@ export default function Schedule({ params }: { params: { lang: Locale } }) {
     },
   });
 
-  const setSearchValue = useCallback(
-    (value: string) => {
-      if (!!value && page !== 1) {
-        setPage(1);
-      }
-      setSearch(value);
-    },
-    [page],
-  );
-
-  const columnHelper = createColumnHelper<ScheduleSingleModel>();
-
-  const columns = [
-    columnHelper.accessor('title', {
-      id: 'courseGroup',
-      cell: info => info.getValue(),
-      header: t('courseGroup'),
-    }),
-    columnHelper.accessor('course.title', {
-      id: 'course',
-      cell: info => info.getValue(),
-      header: t('course'),
-    }),
-    columnHelper.accessor('course.faculty.title', {
-      id: 'faculty',
-      cell: info => info.getValue(),
-      header: t('faculty'),
-    }),
-    columnHelper.accessor('description', {
-      cell: info => info.getValue(),
-      header: t('description'),
-    }),
-  ];
-
-  const subRowColumns = [
-    columnHelper.accessor('schedules.startDayDate', {
-      id: 'lecturer',
-      cell: info => info.getValue(),
-      header: t('lecturer'),
-    }),
-    columnHelper.accessor('schedules.endDayDate', {
-      id: 'endDate',
-      cell: info => info.getValue(),
-      header: t('endDate'),
-    }),
-  ];
-
   return (
     <>
-      <ExpandableTable
-        parentColumns={columns as any}
-        data={data as any}
-        subRowColumns={subRowColumns as any}
-        getSubRows={(row: any) => row.schedules}
-      />
+      <Text as="h2" fontSize={24} textAlign="center">
+        {t('notCyclicScheduleList')}
+      </Text>
+      <Flex justifyContent="flex-end">
+        <Button
+          px="12px"
+          py="8px"
+          onClick={openCreateEditModal}
+          overflowWrap="break-word"
+          whiteSpace="normal">
+          {t('addNew')}
+        </Button>
+      </Flex>
+      <Table>
+        <Thead>
+          <Tr>
+            <Td>{t('courseGroup')}</Td>
+            <Td>{t('course')}</Td>
+            <Td colSpan={1}>{t('faculty')}</Td>
+          </Tr>
+        </Thead>
+        <Tbody>
+          {data.map(courseGroup => {
+            const isExpandedRow = selectedExpandableCourseGroup === courseGroup.id;
+            return (
+              <Fragment key={courseGroup.id}>
+                <Tr>
+                  <Td>
+                    <Flex alignItems="center" gap={4}>
+                      <IconButton
+                        aria-label="expand"
+                        icon={isExpandedRow ? <MinusIcon /> : <AddIcon />}
+                        onClick={() =>
+                          setSelectedExpandableCourseGroup(isExpandedRow ? null : courseGroup.id)
+                        }
+                      />{' '}
+                      {courseGroup.title}
+                    </Flex>
+                  </Td>
+                  <Td>{courseGroup.course.title}</Td>
+                  <Td>{courseGroup.course.faculty?.title}</Td>
+                </Tr>
+
+                {isExpandedRow && (
+                  <Tr>
+                    <Td colSpan={3} overflowX="auto">
+                      <Box bg="gray.100" width="180%" p={16}>
+                        <Table size="sm" variant="simple">
+                          <Thead>
+                            <Tr>
+                              <Td>{t('actions')}</Td>
+                              <Td>{t('details')}</Td>
+                              <Td>{t('subject')}</Td>
+                              <Td>{t('title')}</Td>
+                              <Td>{t('description')}</Td>
+                              <Td>{t('totalHours')}</Td>
+                              <Td>{t('examType')}</Td>
+                              <Td>{t('lecturer')}</Td>
+                              <Td>{t('academicYear')}</Td>
+                              <Td>{t('startDay')}</Td>
+                              <Td>{t('endDay')}</Td>
+                              <Td>{t('examDay')}</Td>
+                              <Td>{t('createdAt')}</Td>
+                            </Tr>
+                          </Thead>
+                          <Tbody>
+                            {courseGroup.schedules.length ? (
+                              courseGroup.schedules.map(schedule => (
+                                <Tr key={schedule.id}>
+                                  <Td>
+                                    <ActionButtons>
+                                      <MenuItem
+                                        color="green"
+                                        onClick={() => {
+                                          setSelectedSchedule(schedule);
+                                          openAddEditThematicPlanModal();
+                                        }}>
+                                        {t('addThematicPlan')}
+                                      </MenuItem>
+                                      <MenuItem
+                                        color="green"
+                                        onClick={() => {
+                                          setSelectedSchedule(schedule);
+                                          openCreateEditModal();
+                                        }}>
+                                        {t('edit')}
+                                      </MenuItem>
+                                      <MenuItem
+                                        color="red"
+                                        onClick={() => {
+                                          setSelectedSchedule(schedule);
+                                          openDeleteModal();
+                                        }}>
+                                        {t('delete')}
+                                      </MenuItem>
+                                    </ActionButtons>
+                                  </Td>
+                                  <Td>
+                                    <Button
+                                      as={Link}
+                                      href={`${languagePathHelper(params.lang, `/schedules/${schedule.id}`)}`}
+                                      variant="link">
+                                      {t('seeDetails')}
+                                    </Button>
+                                  </Td>
+                                  <Td>{schedule.title}</Td>
+                                  <Td>{schedule.subject.title}</Td>
+                                  <Td>{schedule.description}</Td>
+                                  <Td>{schedule.totalHours}</Td>
+                                  <Td>{schedule.examType}</Td>
+                                  <Td>
+                                    {schedule.scheduleTeachers[0].teacher.user.firstName}{' '}
+                                    {schedule.scheduleTeachers[0].teacher.user.lastName}
+                                  </Td>
+                                  <Td>{schedule.academicYear}</Td>
+                                  <Td>{dayjs(schedule.startDayDate).format('YYYY-MM-DD')}</Td>
+                                  <Td>{dayjs(schedule.endDayDate).format('YYYY-MM-DD')}</Td>
+                                  <Td>{dayjs(schedule.examDate).format('YYYY-MM-DD')}</Td>
+                                  <Td>{dayjs(schedule.createdAt).format('YYYY-MM-DD')}</Td>
+                                </Tr>
+                              ))
+                            ) : (
+                              <Tr>
+                                <Td colSpan={8} textAlign="center" verticalAlign="middle">
+                                  No Schedules
+                                </Td>
+                              </Tr>
+                            )}
+                          </Tbody>
+                        </Table>
+                      </Box>
+                    </Td>
+                  </Tr>
+                )}
+              </Fragment>
+            );
+          })}
+        </Tbody>
+      </Table>
 
       {isCreateEditModalOpen && (
         <CreateEditModal
@@ -156,7 +241,7 @@ export default function Schedule({ params }: { params: { lang: Locale } }) {
         />
       )}
 
-      {isDeleteModalOpen && (
+      {isDeleteModalOpen && selectedSchedule && (
         <DeleteModal
           selectedSchedule={selectedSchedule}
           isDeleteModalOpen={isDeleteModalOpen}

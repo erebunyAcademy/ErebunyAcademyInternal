@@ -8,7 +8,7 @@ import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import { ScheduleService } from '@/api/services/schedule.service';
 import { FormInput } from '@/components/atoms';
 import Modal from '@/components/molecules/Modal';
-import { ScheduleSingleModel } from '@/utils/models/schedule';
+import { ScheduleSingleDataModel } from '@/utils/models/schedule';
 import { AddEditThematicPlanValidation } from '@/utils/validation/schedule';
 
 const resolver = classValidatorResolver(AddEditThematicPlanValidation);
@@ -21,7 +21,7 @@ const thematicInitialClass = {
 type AddEditThematicPlanProps = {
   isModalOpen: boolean;
   closeModal: () => void;
-  selectedSchedule: ScheduleSingleModel;
+  selectedSchedule: ScheduleSingleDataModel;
 };
 
 const AddEditThematicPlan: FC<AddEditThematicPlanProps> = ({
