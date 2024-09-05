@@ -19,7 +19,7 @@ import { academicYearListData, scheduleExamType } from '@/utils/constants/common
 import { generateAWSUrl } from '@/utils/helpers/aws';
 import { Maybe } from '@/utils/models/common';
 import { GetCourseGroupsBySubjectId } from '@/utils/models/courseGroup';
-import { ScheduleSingleModel } from '@/utils/models/schedule';
+import { ScheduleSingleDataModel } from '@/utils/models/schedule';
 import { TeacherDataModel } from '@/utils/models/teachers';
 import { AttachmentValidation } from '@/utils/validation';
 import { CreateEditScheduleValidation } from '@/utils/validation/schedule';
@@ -27,7 +27,7 @@ import { CreateEditScheduleValidation } from '@/utils/validation/schedule';
 type CreateEditModalProps = {
   isModalOpen: boolean;
   closeModal: () => void;
-  selectedSchedule: Maybe<ScheduleSingleModel>;
+  selectedSchedule: Maybe<ScheduleSingleDataModel>;
   refetch: () => void;
 };
 

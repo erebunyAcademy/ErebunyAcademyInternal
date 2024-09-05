@@ -1,5 +1,4 @@
 import { ScheduleTypeEnum } from '@prisma/client';
-import { SortingState } from '@tanstack/react-table';
 import { GetScheduleByIdModel, ScheduleListDataModel } from '@/utils/models/schedule';
 import { CreateEditNonCyclicScheduleValidation } from '@/utils/validation/non-cyclic';
 import {
@@ -8,24 +7,12 @@ import {
   TeacherAttachmentModalValidation,
 } from '@/utils/validation/schedule';
 import $apiClient from '../axiosClient';
-import { QueryParams } from '../types/common';
 
 export class ScheduleService {
-  static list(
-    type: ScheduleTypeEnum,
-    params: QueryParams,
-    sorting: SortingState,
-  ): Promise<ScheduleListDataModel> {
+  static list(type: ScheduleTypeEnum): Promise<ScheduleListDataModel> {
     return $apiClient.get<ScheduleListDataModel>('/schedules/list', {
       params: {
-        ...params,
         type,
-        ...(sorting.length > 0
-          ? {
-              sortBy: sorting[0].id,
-              sortDir: sorting[0].desc ? 'desc' : 'asc',
-            }
-          : {}),
       },
     });
   }
