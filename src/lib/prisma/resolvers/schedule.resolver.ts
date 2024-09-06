@@ -17,10 +17,17 @@ dayjs.extend(utc);
 export class ScheduleResolver {
   static list(type: ScheduleTypeEnum) {
     return prisma.courseGroup.findMany({
+      where: {
+        schedules: {
+          some: {
+            type: type,
+          },
+        },
+      },
       include: {
         schedules: {
           where: {
-            type,
+            type: type,
           },
           include: {
             subject: true,
