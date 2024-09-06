@@ -40,9 +40,9 @@ export const weekendDayList = Object.values(WeekDayEnum).map(
   }),
 );
 
-export const periodListData = Array.from({ length: 10 }, (_, i) => ({
+export const periodListData = Array.from({ length: 6 }, (_, i) => ({
   id: i + 1,
-  title: `${i + 1}-${i + 2}`,
+  title: `${i * 2 + 1}-${i * 2 + 2}`,
 }));
 
 export const academicYearListData = Array.from({ length: 5 }, (_, i) => ({
