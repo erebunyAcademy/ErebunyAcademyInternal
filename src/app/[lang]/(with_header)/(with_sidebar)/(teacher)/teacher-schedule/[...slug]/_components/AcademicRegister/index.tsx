@@ -48,6 +48,8 @@ const AcademicRegister: FC<AcademicRegisterProps> = ({ schedule, lang }) => {
   const [lessonOfTheDay, setLessonOfTheDay] = useState('');
   const t = useTranslations();
 
+  console.log({ schedule });
+
   const { data } = useQuery({
     queryFn: AcademicRegisterService.getTeacherAcademicRegisterLessonList.bind(null, schedule.id),
     queryKey: ['lesson-list'],

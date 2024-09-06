@@ -348,6 +348,11 @@ export class AcademicRegisterResolver {
                 schedule: {
                   include: {
                     subject: true,
+                    thematicPlans: {
+                      include: {
+                        thematicPlanDescription: true,
+                      },
+                    },
                   },
                 },
               },

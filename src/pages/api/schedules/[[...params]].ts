@@ -57,7 +57,7 @@ class ScheduleHandler {
     @Param('scheduleId') scheduleId: string,
     @Body(ValidationPipe) input: AddEditThematicPlanValidation,
   ) {
-    return ScheduleResolver.createCyclicThematicPlan(scheduleId, input);
+    return ScheduleResolver.createThematicPlan(scheduleId, input);
   }
 
   @Patch('/:scheduleId/thematic-plan')

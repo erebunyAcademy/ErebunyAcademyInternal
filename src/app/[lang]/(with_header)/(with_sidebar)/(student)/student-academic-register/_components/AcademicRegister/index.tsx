@@ -1,5 +1,5 @@
 'use client';
-import React, { FC, useCallback, useEffect, useState } from 'react';
+import React, { FC, useCallback, useEffect } from 'react';
 import { Box, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
 import { useMutation } from '@tanstack/react-query';
 import dayjs from 'dayjs';
@@ -7,19 +7,14 @@ import { useTranslations } from 'next-intl';
 import { AcademicRegisterService } from '@/api/services/academic-register.service';
 import Calendar from '@/components/atoms/Calendar';
 import { periodListData } from '@/utils/constants/common';
-import { GetStudentAcademicRegisterModel } from '@/utils/models/academic-register';
 
 type AcademicRegisterProps = {};
 
 const AcademicRegister: FC<AcademicRegisterProps> = () => {
-  const [registerData, setRegisterData] = useState<GetStudentAcademicRegisterModel>([]);
   const t = useTranslations();
 
-  const { mutate } = useMutation({
+  const { mutate, data: registerData = [] } = useMutation({
     mutationFn: AcademicRegisterService.getAcademicRegisterData,
-    onSuccess(res) {
-      setRegisterData(res);
-    },
   });
 
   useEffect(() => {
@@ -33,6 +28,8 @@ const AcademicRegister: FC<AcademicRegisterProps> = () => {
     [mutate],
   );
 
+  console.log({ registerData });
+
   return (
     <Box width="100%">
       <Box maxWidth="400px" mt="100px" ml="20px">
@@ -44,6 +41,7 @@ const AcademicRegister: FC<AcademicRegisterProps> = () => {
             <Tr>
               <Th>{t('lessonDay')}</Th>
               <Th>{t('subject')}</Th>
+              <Th>{t('thematicPlans')}</Th>
               <Th>{t('lessonOfTheDay')}</Th>
               <Th>{t('attendanceStatus')}</Th>
               <Th>{t('marks')}</Th>
@@ -60,6 +58,8 @@ const AcademicRegister: FC<AcademicRegisterProps> = () => {
                       </Td>
                     )}
                     <Td>{lesson.academicRegister.schedule.subject.title}</Td>
+                    {/* THEMATIC PLAN MODAL SHOULD OPEN AFTER CLICKING THIS */}
+                    <Td>{lesson.academicRegister.schedule.thematicPlans[0].type}</Td>
                     <Td>
                       {periodListData.find(period => period.id === lesson.lessonOfTheDay)?.title}
                     </Td>
