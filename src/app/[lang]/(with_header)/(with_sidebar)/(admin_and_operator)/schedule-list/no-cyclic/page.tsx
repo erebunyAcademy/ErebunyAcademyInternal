@@ -85,7 +85,7 @@ export default function Schedule({ params }: { params: { lang: Locale } }) {
   return (
     <>
       <Text as="h2" fontSize={24} textAlign="center">
-        {t('cyclicScheduleList')}
+        {t('notCyclicScheduleList')}
       </Text>
       <Flex justifyContent="flex-end">
         <Button
