@@ -25,15 +25,8 @@ import {
 class ScheduleHandler {
   @AdminGuard()
   @Get('/list')
-  _list(
-    @Query('type') type: ScheduleTypeEnum,
-    @Query('offset') skip: string,
-    @Query('limit') take: string,
-    @Query('search') search: string,
-    @Query('sortBy') sortBy: string,
-    @Query('sortDir') sortDir: string,
-  ) {
-    return ScheduleResolver.list(type, +skip, +take, search, sortBy, sortDir);
+  _list(@Query('type') type: ScheduleTypeEnum) {
+    return ScheduleResolver.list(type);
   }
 
   @Post()
