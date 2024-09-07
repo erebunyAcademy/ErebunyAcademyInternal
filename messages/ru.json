@@ -283,5 +283,7 @@
   "noRecord": "Нет записи",
   "noMark": "Нет оценки",
   "lessonDay": "День занятия",
-  "clearAll": "Очистить всё"
+  "clearAll": "Очистить всё",
+  "isCompleted": "Завершено",
+  "seeThematicPlans": "Посмотреть тематические планы"
 }
