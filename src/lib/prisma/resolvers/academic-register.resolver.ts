@@ -390,4 +390,42 @@ export class AcademicRegisterResolver {
       },
     });
   }
+
+  static async getAcademicRegisterByCourseGroupId(courseGroupId: string) {
+    const courseGroup = await prisma.courseGroup.findUniqueOrThrow({
+      where: {
+        id: courseGroupId,
+      },
+    });
+
+    const today = new Date().toISOString().split('T')[0];
+
+    return prisma.academicRegisterDay.findMany({
+      where: {
+        createdAt: {
+          gte: new Date(today + 'T00:00:00.000Z'),
+          lt: new Date(today + 'T23:59:59.999Z'),
+        },
+        academicRegister: {
+          courseGroupId: courseGroup.id,
+        },
+      },
+      include: {
+        academicRegister: {
+          include: {
+            subject: true,
+          },
+        },
+        academicRegisterLessons: {
+          include: {
+            attendanceRecord: {
+              include: {
+                student: true,
+              },
+            },
+          },
+        },
+      },
+    });
+  }
 }

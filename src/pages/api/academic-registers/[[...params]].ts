@@ -11,6 +11,7 @@ import {
 import { User } from 'next-auth';
 import { CurrentUser } from '@/lib/prisma/decorators/current-user.decorator';
 import { exceptionHandler } from '@/lib/prisma/error';
+import { AdminGuard } from '@/lib/prisma/guards/admin';
 import { AcademicRegisterResolver } from '@/lib/prisma/resolvers/academic-register.resolver';
 import { CreateStudentAttentdanceRecordValidation } from '@/utils/validation/academic-register';
 
@@ -51,6 +52,12 @@ class AcademicRegisterHandler {
     @CurrentUser() user: NonNullable<User>,
   ) {
     return AcademicRegisterResolver.getTeacherAcademicRegisterLessonList(scheduleId, user);
+  }
+
+  @Get(`/course-groups/:courseGroupId`)
+  @AdminGuard()
+  getCourseGroupAcademicRegister(@Param('courseGroupId') courseGroupId: string) {
+    return AcademicRegisterResolver.getAcademicRegisterByCourseGroupId(courseGroupId);
   }
 }
 

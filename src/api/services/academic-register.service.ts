@@ -2,6 +2,7 @@ import {
   GetAcademicRegisterLessonListType,
   GetScheduleDataType,
   GetStudentAcademicRegisterModel,
+  StudentAcademicRegisterDataType,
 } from '@/utils/models/academic-register';
 import { CourseGroupAdminListModel } from '@/utils/models/courseGroup';
 import { CreateStudentAttentdanceRecordValidation } from '@/utils/validation/academic-register';
@@ -43,6 +44,14 @@ export class AcademicRegisterService {
   static getTeacherAcademicRegisterLessonList(scheduleId: string) {
     return $apiClient.get<GetAcademicRegisterLessonListType>(
       `/academic-registers/${scheduleId}/lessons`,
+    );
+  }
+
+  static getCourseGroupAcademicRegister(
+    courseGroupId: string,
+  ): Promise<StudentAcademicRegisterDataType> {
+    return $apiClient.get<StudentAcademicRegisterDataType>(
+      `/academic-registers/course-groups/${courseGroupId}`,
     );
   }
 }
