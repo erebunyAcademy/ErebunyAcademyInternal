@@ -49,9 +49,16 @@ export class AcademicRegisterService {
 
   static getCourseGroupAcademicRegister(
     courseGroupId: string,
+    params?: {
+      startDate: Date;
+      endDate: Date;
+    } | null,
   ): Promise<StudentAcademicRegisterDataType> {
     return $apiClient.get<StudentAcademicRegisterDataType>(
       `/academic-registers/course-groups/${courseGroupId}`,
+      {
+        params: params ?? {},
+      },
     );
   }
 }

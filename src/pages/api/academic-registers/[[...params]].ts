@@ -56,8 +56,16 @@ class AcademicRegisterHandler {
 
   @Get(`/course-groups/:courseGroupId`)
   @AdminGuard()
-  getCourseGroupAcademicRegister(@Param('courseGroupId') courseGroupId: string) {
-    return AcademicRegisterResolver.getAcademicRegisterByCourseGroupId(courseGroupId);
+  getCourseGroupAcademicRegister(
+    @Param('courseGroupId') courseGroupId: string,
+    @Query('startDate') startDate?: string,
+    @Query('endDate') endDate?: string,
+  ) {
+    return AcademicRegisterResolver.getAcademicRegisterByCourseGroupId(
+      courseGroupId,
+      startDate,
+      endDate,
+    );
   }
 }
 

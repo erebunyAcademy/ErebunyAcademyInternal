@@ -391,7 +391,11 @@ export class AcademicRegisterResolver {
     });
   }
 
-  static async getAcademicRegisterByCourseGroupId(courseGroupId: string) {
+  static async getAcademicRegisterByCourseGroupId(
+    courseGroupId: string,
+    startDate?: string,
+    endDate?: string,
+  ) {
     const courseGroup = await prisma.courseGroup.findUniqueOrThrow({
       where: {
         id: courseGroupId,
@@ -400,11 +404,24 @@ export class AcademicRegisterResolver {
 
     const today = new Date().toISOString().split('T')[0];
 
+    const effectiveStartDate = startDate
+      ? dayjs(startDate).utc().startOf('day').toDate()
+      : dayjs(today).utc().startOf('day').toDate();
+
+    const effectiveEndDate = endDate
+      ? dayjs(endDate).utc().endOf('day').toDate()
+      : dayjs(startDate || today)
+          .utc()
+          .endOf('day')
+          .toDate();
+
+    console.log({ effectiveStartDate });
+
     return prisma.academicRegisterDay.findMany({
       where: {
         createdAt: {
-          gte: new Date(today + 'T00:00:00.000Z'),
-          lt: new Date(today + 'T23:59:59.999Z'),
+          gte: effectiveStartDate,
+          lt: effectiveEndDate,
         },
         academicRegister: {
           courseGroupId: courseGroup.id,
@@ -420,7 +437,11 @@ export class AcademicRegisterResolver {
           include: {
             attendanceRecord: {
               include: {
-                student: true,
+                student: {
+                  include: {
+                    user: true,
+                  },
+                },
               },
             },
           },
