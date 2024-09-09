@@ -15,8 +15,6 @@ export const languages: Record<Locale, string> = {
 export type Locale = 'en' | 'ru' | 'am';
 
 export default getRequestConfig(async ({ locale }) => {
-
-
   // Validate that the incoming `locale` parameter is valid
   if (!i18n.locales.includes(locale as string)) notFound();
 
