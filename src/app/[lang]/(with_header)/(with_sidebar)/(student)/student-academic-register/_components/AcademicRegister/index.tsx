@@ -27,7 +27,6 @@ type AcademicRegisterProps = {};
 const AcademicRegister: FC<AcademicRegisterProps> = () => {
   const t = useTranslations();
   const [selectedSchedule, setSelectedSchedule] = useState<Maybe<ThematicPlanDataModel[]>>(null);
-  console.log(selectedSchedule, '=====');
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const { mutate, data: registerData = [] } = useMutation({
@@ -45,7 +44,11 @@ const AcademicRegister: FC<AcademicRegisterProps> = () => {
     [mutate],
   );
 
-  console.log({ registerData });
+  const practicalThematicPlan =
+    selectedSchedule && selectedSchedule.find(thematicPlan => thematicPlan.type === 'PRACTICAL');
+
+  const thereoticalThematicPlan =
+    selectedSchedule && selectedSchedule.find(thematicPlan => thematicPlan.type === 'THEORETICAL');
 
   return (
     <>
@@ -121,17 +124,14 @@ const AcademicRegister: FC<AcademicRegisterProps> = () => {
             </Tr>
           </Thead>
           <Tbody>
-            {selectedSchedule
-              ?.filter(plan => plan.type === 'PRACTICAL')
-              .map(plan =>
-                plan.thematicPlanDescription?.map(thematic => (
-                  <Tr key={thematic.id}>
-                    <Td>{thematic.isCompleted ? t('yes') : t('no')}</Td>
-                    <Td>{thematic.title}</Td>
-                    <Td>{thematic.hour}</Td>
-                  </Tr>
-                )),
-              )}
+            {practicalThematicPlan &&
+              practicalThematicPlan.thematicPlanDescriptions.map(plan => (
+                <Tr key={plan.id}>
+                  <Td>{plan.isCompleted ? t('yes') : t('no')}</Td>
+                  <Td>{plan.title}</Td>
+                  <Td>{plan.hour}</Td>
+                </Tr>
+              ))}
           </Tbody>
         </Table>
 
@@ -147,17 +147,14 @@ const AcademicRegister: FC<AcademicRegisterProps> = () => {
             </Tr>
           </Thead>
           <Tbody>
-            {selectedSchedule
-              ?.filter(plan => plan.type === 'THEORETICAL')
-              .map(plan =>
-                plan.thematicPlanDescription?.map(thematic => (
-                  <Tr key={thematic.id}>
-                    <Td>{thematic.isCompleted ? t('yes') : t('no')}</Td>
-                    <Td>{thematic.title}</Td>
-                    <Td>{thematic.hour}</Td>
-                  </Tr>
-                )),
-              )}
+            {thereoticalThematicPlan &&
+              thereoticalThematicPlan.thematicPlanDescriptions.map(plan => (
+                <Tr key={plan.id}>
+                  <Td>{plan.isCompleted ? t('yes') : t('no')}</Td>
+                  <Td>{plan.title}</Td>
+                  <Td>{plan.hour}</Td>
+                </Tr>
+              ))}
           </Tbody>
         </Table>
       </Modal>

@@ -15,7 +15,7 @@ export type GetStudentAcademicRegisterModel = Prisma.PromiseReturnType<
 >;
 
 export interface ThematicPlanDataModel extends ThematicPlan {
-  thematicPlanDescription: ThematicPlanDescription;
+  thematicPlanDescriptions: ThematicPlanDescription[];
 }
 
 export type GetAcademicRegisterLessonListType = Prisma.PromiseReturnType<
