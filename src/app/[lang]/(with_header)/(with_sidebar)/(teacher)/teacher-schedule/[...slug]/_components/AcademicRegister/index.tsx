@@ -291,9 +291,8 @@ const AcademicRegister: FC<AcademicRegisterProps> = ({ schedule, lang }) => {
       <Modal
         isOpen={chooseLessonModalOpen}
         onClose={() => {
-          if (lessonOfTheDay) {
-            closeChooseLessonModal();
-          }
+          closeChooseLessonModal();
+          router.push(`${languagePathHelper(lang, `/teacher-schedule`)}`);
         }}
         isDisabled={!lessonOfTheDay}
         title="lesson"

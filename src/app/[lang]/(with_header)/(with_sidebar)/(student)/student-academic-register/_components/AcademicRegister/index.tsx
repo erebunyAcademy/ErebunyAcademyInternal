@@ -18,6 +18,7 @@ import { useTranslations } from 'next-intl';
 import { AcademicRegisterService } from '@/api/services/academic-register.service';
 import Calendar from '@/components/atoms/Calendar';
 import Modal from '@/components/molecules/Modal';
+import NoDataFound from '@/components/molecules/NoDataFound';
 import { periodListData } from '@/utils/constants/common';
 import { ThematicPlanDataModel } from '@/utils/models/academic-register';
 import { Maybe } from '@/utils/models/common';
@@ -132,6 +133,38 @@ const AcademicRegister: FC<AcademicRegisterProps> = () => {
                   <Td>{plan.hour}</Td>
                 </Tr>
               ))}
+            {registerData.length > 0 ? (
+              registerData.map(day => (
+                <React.Fragment key={day.id}>
+                  {day.academicRegisterLessons.map((lesson, lessonIndex) => (
+                    <Tr key={lesson.id}>
+                      {lessonIndex === 0 && (
+                        <Td rowSpan={day.academicRegisterLessons.length}>
+                          {dayjs(day.createdAt).format('DD/MM/YYYY')}
+                        </Td>
+                      )}
+                      <Td>{lesson.academicRegister.schedule.subject.title}</Td>
+                      <Td>
+                        {periodListData.find(period => period.id === lesson.lessonOfTheDay)?.title}
+                      </Td>
+                      <Td>{lesson.attendanceRecord[0]?.isPresent ? t('present') : t('absent')}</Td>
+                      <Td>
+                        {lesson.attendanceRecord.length > 0 &&
+                        lesson.attendanceRecord[0].mark !== null
+                          ? lesson.attendanceRecord[0].mark
+                          : t('noMark')}
+                      </Td>
+                    </Tr>
+                  ))}
+                </React.Fragment>
+              ))
+            ) : (
+              <Tr height="150px">
+                <Td colSpan={5} textAlign="center" border="none" height="100%">
+                  <NoDataFound />
+                </Td>
+              </Tr>
+            )}
           </Tbody>
         </Table>
 
