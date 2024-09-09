@@ -348,6 +348,11 @@ export class AcademicRegisterResolver {
                 schedule: {
                   include: {
                     subject: true,
+                    thematicPlans: {
+                      include: {
+                        thematicPlanDescription: true,
+                      },
+                    },
                   },
                 },
               },
@@ -380,6 +385,65 @@ export class AcademicRegisterResolver {
           },
           select: {
             lessonOfTheDay: true,
+          },
+        },
+      },
+    });
+  }
+
+  static async getAcademicRegisterByCourseGroupId(
+    courseGroupId: string,
+    startDate?: string,
+    endDate?: string,
+  ) {
+    const courseGroup = await prisma.courseGroup.findUniqueOrThrow({
+      where: {
+        id: courseGroupId,
+      },
+    });
+
+    const today = new Date().toISOString().split('T')[0];
+
+    const effectiveStartDate = startDate
+      ? dayjs(startDate).utc().startOf('day').toDate()
+      : dayjs(today).utc().startOf('day').toDate();
+
+    const effectiveEndDate = endDate
+      ? dayjs(endDate).utc().endOf('day').toDate()
+      : dayjs(startDate || today)
+          .utc()
+          .endOf('day')
+          .toDate();
+
+    console.log({ effectiveStartDate });
+
+    return prisma.academicRegisterDay.findMany({
+      where: {
+        createdAt: {
+          gte: effectiveStartDate,
+          lt: effectiveEndDate,
+        },
+        academicRegister: {
+          courseGroupId: courseGroup.id,
+        },
+      },
+      include: {
+        academicRegister: {
+          include: {
+            subject: true,
+          },
+        },
+        academicRegisterLessons: {
+          include: {
+            attendanceRecord: {
+              include: {
+                student: {
+                  include: {
+                    user: true,
+                  },
+                },
+              },
+            },
           },
         },
       },

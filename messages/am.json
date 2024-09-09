@@ -282,5 +282,7 @@
   "noRecord": "Տվյալներ չկան",
   "noMark": "Գնահատական չկա",
   "lessonDay": "Դասընթացի օր",
-  "clearAll": "Ջնջել բոլորը"
+  "clearAll": "Ջնջել բոլորը",
+  "isCompleted": "Ավարտված է",
+  "seeThematicPlans": "Տեսնել թեմատիկ պլանները"
 }

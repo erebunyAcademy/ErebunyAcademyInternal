@@ -1,4 +1,4 @@
-import { Prisma } from '@prisma/client';
+import { Prisma, ThematicPlan, ThematicPlanDescription } from '@prisma/client';
 import { AcademicRegisterResolver } from '@/lib/prisma/resolvers/academic-register.resolver';
 
 export type GetScheduleDataType = Prisma.PromiseReturnType<typeof AcademicRegisterResolver.list>;
@@ -14,6 +14,14 @@ export type GetStudentAcademicRegisterModel = Prisma.PromiseReturnType<
   typeof AcademicRegisterResolver.getStudentAcademicRegisterdata
 >;
 
+export interface ThematicPlanDataModel extends ThematicPlan {
+  thematicPlanDescriptions: ThematicPlanDescription[];
+}
+
 export type GetAcademicRegisterLessonListType = Prisma.PromiseReturnType<
   typeof AcademicRegisterResolver.getTeacherAcademicRegisterLessonList
+>;
+
+export type StudentAcademicRegisterDataType = Prisma.PromiseReturnType<
+  typeof AcademicRegisterResolver.getAcademicRegisterByCourseGroupId
 >;
