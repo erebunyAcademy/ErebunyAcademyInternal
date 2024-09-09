@@ -32,10 +32,10 @@ export default function Error({
           alignItems="center"
           textAlign="center">
           <Heading fontSize="28px" color="#22222" fontWeight="760" lineHeight="normal">
-            Page not found
+            Something went wrong
           </Heading>
           <Text fontSize="20px" color="#696969" mt="10px">
-            Sorry, we couldn't find the page you're looking for.
+            Please try again later
           </Text>
         </Box>
       </Flex>

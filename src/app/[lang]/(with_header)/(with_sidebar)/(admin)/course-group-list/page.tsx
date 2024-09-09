@@ -99,6 +99,11 @@ const CourseGroup = ({ params }: { params: { lang: Locale } }) => {
       cell: info => info.getValue(),
       header: t('description'),
     }),
+    // columnHelper.accessor('id', {
+    //   id: uuidv4(),
+    //   cell: info => <Link href={`${ROUTE_COURSE_GROUP}/${info.getValue()}/register`}>Journal</Link>,
+    //   header: t('journal'),
+    // }),
     columnHelper.accessor('course.title', {
       id: uuidv4(),
       cell: info => info.getValue(),

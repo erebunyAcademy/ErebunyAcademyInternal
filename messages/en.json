@@ -283,5 +283,7 @@
   "noRecord": "No Record",
   "noMark": "No Mark",
   "lessonDay": "Lesson day",
-  "clearAll": "Clear all"
+  "clearAll": "Clear all",
+  "isCompleted": "Is completed",
+  "seeThematicPlans":"See Thematic Plans"
 }

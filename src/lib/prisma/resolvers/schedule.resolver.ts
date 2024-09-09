@@ -77,8 +77,8 @@ export class ScheduleResolver {
     });
   }
 
-  static async createCyclicThematicPlan(scheduleId: string, data: AddEditThematicPlanValidation) {
-    const cyclicSchedule = await prisma.schedule.findFirstOrThrow({
+  static async createThematicPlan(scheduleId: string, data: AddEditThematicPlanValidation) {
+    const cyclicSchedule = await prisma.schedule.findUniqueOrThrow({
       where: {
         id: scheduleId,
       },
@@ -127,7 +127,7 @@ export class ScheduleResolver {
       where: { scheduleId: schedule.id },
     });
 
-    return ScheduleResolver.createCyclicThematicPlan(schedule.id, data);
+    return ScheduleResolver.createThematicPlan(schedule.id, data);
   }
 
   static async createSchedule(
