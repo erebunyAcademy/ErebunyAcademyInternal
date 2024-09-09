@@ -13,6 +13,7 @@ import SearchTable from '@/components/organisms/SearchTable';
 import useDebounce from '@/hooks/useDebounce';
 import { Locale } from '@/i18n';
 import { ITEMS_PER_PAGE } from '@/utils/constants/common';
+import { ROUTE_COURSE_GROUP } from '@/utils/constants/routes';
 import { languagePathHelper } from '@/utils/helpers/language';
 import { QUERY_KEY } from '@/utils/helpers/queryClient';
 import { Maybe } from '@/utils/models/common';
@@ -98,6 +99,11 @@ const CourseGroup = ({ params }: { params: { lang: Locale } }) => {
       id: uuidv4(),
       cell: info => info.getValue(),
       header: t('description'),
+    }),
+    columnHelper.accessor('id', {
+      id: uuidv4(),
+      cell: info => <Link href={`${ROUTE_COURSE_GROUP}/${info.getValue()}/register`}>Journal</Link>,
+      header: t('journal'),
     }),
     columnHelper.accessor('course.title', {
       id: uuidv4(),
