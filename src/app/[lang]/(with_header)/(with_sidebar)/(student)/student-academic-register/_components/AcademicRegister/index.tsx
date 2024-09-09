@@ -18,7 +18,6 @@ import { useTranslations } from 'next-intl';
 import { AcademicRegisterService } from '@/api/services/academic-register.service';
 import Calendar from '@/components/atoms/Calendar';
 import Modal from '@/components/molecules/Modal';
-import NoDataFound from '@/components/molecules/NoDataFound';
 import { periodListData } from '@/utils/constants/common';
 import { ThematicPlanDataModel } from '@/utils/models/academic-register';
 import { Maybe } from '@/utils/models/common';
@@ -48,7 +47,7 @@ const AcademicRegister: FC<AcademicRegisterProps> = () => {
   const practicalThematicPlan =
     selectedSchedule && selectedSchedule.find(thematicPlan => thematicPlan.type === 'PRACTICAL');
 
-  const thereoticalThematicPlan =
+  const theoreticalThematicPlan =
     selectedSchedule && selectedSchedule.find(thematicPlan => thematicPlan.type === 'THEORETICAL');
 
   return (
@@ -125,50 +124,30 @@ const AcademicRegister: FC<AcademicRegisterProps> = () => {
             </Tr>
           </Thead>
           <Tbody>
-            {practicalThematicPlan &&
-              practicalThematicPlan.thematicPlanDescriptions.map(plan => (
+            {practicalThematicPlan && practicalThematicPlan.thematicPlanDescription.length > 0 ? (
+              practicalThematicPlan.thematicPlanDescription.map(plan => (
                 <Tr key={plan.id}>
                   <Td>{plan.isCompleted ? t('yes') : t('no')}</Td>
                   <Td>{plan.title}</Td>
                   <Td>{plan.hour}</Td>
                 </Tr>
-              ))}
-            {registerData.length > 0 ? (
-              registerData.map(day => (
-                <React.Fragment key={day.id}>
-                  {day.academicRegisterLessons.map((lesson, lessonIndex) => (
-                    <Tr key={lesson.id}>
-                      {lessonIndex === 0 && (
-                        <Td rowSpan={day.academicRegisterLessons.length}>
-                          {dayjs(day.createdAt).format('DD/MM/YYYY')}
-                        </Td>
-                      )}
-                      <Td>{lesson.academicRegister.schedule.subject.title}</Td>
-                      <Td>
-                        {periodListData.find(period => period.id === lesson.lessonOfTheDay)?.title}
-                      </Td>
-                      <Td>{lesson.attendanceRecord[0]?.isPresent ? t('present') : t('absent')}</Td>
-                      <Td>
-                        {lesson.attendanceRecord.length > 0 &&
-                        lesson.attendanceRecord[0].mark !== null
-                          ? lesson.attendanceRecord[0].mark
-                          : t('noMark')}
-                      </Td>
-                    </Tr>
-                  ))}
-                </React.Fragment>
               ))
             ) : (
-              <Tr height="150px">
-                <Td colSpan={5} textAlign="center" border="none" height="100%">
-                  <NoDataFound />
+              <Tr>
+                <Td
+                  colSpan={3}
+                  textAlign="center"
+                  verticalAlign="middle"
+                  color="#718096"
+                  p="10px 0">
+                  {t('noData')}
                 </Td>
               </Tr>
             )}
           </Tbody>
         </Table>
 
-        <Text fontSize="18px" fontWeight={600}>
+        <Text fontSize="18px" fontWeight={600} mt="10px">
           {t('THEORETICAL')}
         </Text>
         <Table variant="simple">
@@ -180,14 +159,27 @@ const AcademicRegister: FC<AcademicRegisterProps> = () => {
             </Tr>
           </Thead>
           <Tbody>
-            {thereoticalThematicPlan &&
-              thereoticalThematicPlan.thematicPlanDescriptions.map(plan => (
+            {theoreticalThematicPlan &&
+            theoreticalThematicPlan.thematicPlanDescription.length > 0 ? (
+              theoreticalThematicPlan.thematicPlanDescription.map(plan => (
                 <Tr key={plan.id}>
                   <Td>{plan.isCompleted ? t('yes') : t('no')}</Td>
                   <Td>{plan.title}</Td>
                   <Td>{plan.hour}</Td>
                 </Tr>
-              ))}
+              ))
+            ) : (
+              <Tr>
+                <Td
+                  colSpan={3}
+                  textAlign="center"
+                  verticalAlign="middle"
+                  color="#718096"
+                  p="10px 0">
+                  {t('noData')}
+                </Td>
+              </Tr>
+            )}
           </Tbody>
         </Table>
       </Modal>
