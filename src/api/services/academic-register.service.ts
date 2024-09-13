@@ -5,7 +5,10 @@ import {
   StudentAcademicRegisterDataType,
 } from '@/utils/models/academic-register';
 import { CourseGroupAdminListModel } from '@/utils/models/courseGroup';
-import { CreateStudentAttentdanceRecordValidation } from '@/utils/validation/academic-register';
+import {
+  CreateStudentAttendanceRecordValidation,
+  UpdateStudentAttendanceRecordsValidation,
+} from '@/utils/validation/academic-register';
 import $apiClient from '../axiosClient';
 
 export class AcademicRegisterService {
@@ -17,7 +20,7 @@ export class AcademicRegisterService {
   }
 
   static createStudentMark(
-    input: CreateStudentAttentdanceRecordValidation,
+    input: CreateStudentAttendanceRecordValidation,
     scheduleId: string,
     lessonOfTheDay: string,
     academicRegisterId?: string,
@@ -60,5 +63,9 @@ export class AcademicRegisterService {
         params: params ?? {},
       },
     );
+  }
+
+  static updateAttendantRecords(input: UpdateStudentAttendanceRecordsValidation) {
+    return $apiClient.put(`/academic-registers/attendant-records`, input);
   }
 }

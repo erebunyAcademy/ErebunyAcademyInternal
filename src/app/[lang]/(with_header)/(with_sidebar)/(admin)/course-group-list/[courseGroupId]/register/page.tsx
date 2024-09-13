@@ -22,14 +22,7 @@ import { AcademicRegisterService } from '@/api/services/academic-register.servic
 import { SelectLabel } from '@/components/atoms';
 import Calendar from '@/components/atoms/Calendar';
 import { markAttendantOptionData } from '@/utils/constants/common';
-
-type StudentAttendanceForm = {
-  students: Array<{
-    id: string;
-    isPresent: boolean;
-    mark: number | null;
-  }>;
-};
+import { UpdateStudentAttendanceRecordsValidation } from '@/utils/validation/academic-register';
 
 const CourseGroupRegister = ({
   params: { courseGroupId },
@@ -57,20 +50,24 @@ const CourseGroupRegister = ({
     watch,
     reset,
     formState: { isDirty },
-  } = useForm<StudentAttendanceForm>({
+  } = useForm<UpdateStudentAttendanceRecordsValidation>({
     defaultValues: {
-      students: [],
+      attendantRecords: [],
     },
   });
 
   const { fields } = useFieldArray({
     control,
-    name: 'students',
+    name: 'attendantRecords',
   });
 
-  const onSubmit = (data: StudentAttendanceForm) => {
-    // Handle submission of student attendance and mark data
-    console.log('Submitted Data: ', data);
+  const { mutate: updateStudentAttendantRecord } = useMutation({
+    mutationFn: AcademicRegisterService.updateAttendantRecords,
+  });
+
+  const onSubmit = (data: UpdateStudentAttendanceRecordsValidation) => {
+    console.log(data);
+    updateStudentAttendantRecord(data);
   };
 
   return (
@@ -108,7 +105,12 @@ const CourseGroupRegister = ({
                         onClick={() => {
                           toggleExpand(lesson.id);
                           reset({
-                            students: lesson.attendanceRecord,
+                            attendantRecords: lesson.attendanceRecord.map(record => ({
+                              id: record.id,
+                              attendantId: record.id,
+                              mark: record.mark ? record.mark.toString() : undefined,
+                              isPresent: record.isPresent,
+                            })),
                           });
                         }}
                       />
@@ -130,7 +132,7 @@ const CourseGroupRegister = ({
                             </Thead>
                             <Tbody>
                               {fields.map((field, index) => {
-                                const isPresent = watch(`students.${index}.isPresent`);
+                                const isPresent = watch(`attendantRecords.${index}.isPresent`);
 
                                 return (
                                   <Tr key={field.id}>
@@ -141,7 +143,7 @@ const CourseGroupRegister = ({
                                     <Td>
                                       <Controller
                                         control={control}
-                                        name={`students.${index}.mark`}
+                                        name={`attendantRecords.${index}.mark`}
                                         render={({ field }) => (
                                           <SelectLabel
                                             isRequired
@@ -151,7 +153,10 @@ const CourseGroupRegister = ({
                                             onChange={e => {
                                               field.onChange(e);
                                               if (e.target.value) {
-                                                setValue(`students.${index}.isPresent`, true);
+                                                setValue(
+                                                  `attendantRecords.${index}.isPresent`,
+                                                  true,
+                                                );
                                               }
                                             }}
                                             value={field.value || ''}
@@ -163,14 +168,17 @@ const CourseGroupRegister = ({
                                     <Td>
                                       <Controller
                                         control={control}
-                                        name={`students.${index}.isPresent`}
+                                        name={`attendantRecords.${index}.isPresent`}
                                         render={({ field }) => (
                                           <Checkbox
                                             isChecked={field.value}
                                             onChange={e => {
                                               field.onChange(e);
                                               if (!e.target.checked) {
-                                                setValue(`students.${index}.mark`, null);
+                                                setValue(
+                                                  `attendantRecords.${index}.mark`,
+                                                  undefined,
+                                                );
                                               }
                                             }}
                                           />
@@ -181,8 +189,10 @@ const CourseGroupRegister = ({
                                       <Button
                                         size="sm"
                                         colorScheme="gray"
-                                        onClick={() => setValue(`students.${index}.mark`, null)}
-                                        isDisabled={!watch(`students.${index}.mark`)}>
+                                        onClick={() =>
+                                          setValue(`attendantRecords.${index}.mark`, undefined)
+                                        }
+                                        isDisabled={!watch(`attendantRecords.${index}.mark`)}>
                                         Cancel
                                       </Button>
                                     </Td>

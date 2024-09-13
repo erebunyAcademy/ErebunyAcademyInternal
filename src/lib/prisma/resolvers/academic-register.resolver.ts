@@ -2,7 +2,10 @@ import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import { ForbiddenException } from 'next-api-decorators';
 import { User } from 'next-auth';
-import { CreateStudentAttentdanceRecordValidation } from '@/utils/validation/academic-register';
+import {
+  CreateStudentAttendanceRecordValidation,
+  UpdateStudentAttendanceRecordsValidation,
+} from '@/utils/validation/academic-register';
 import prisma from '..';
 
 dayjs.extend(utc);
@@ -66,7 +69,7 @@ export class AcademicRegisterResolver {
 
   static async createStudentAddentanceRecord(
     scheduleId: string,
-    data: CreateStudentAttentdanceRecordValidation,
+    data: CreateStudentAttendanceRecordValidation,
     user: NonNullable<User>,
     lessonOfTheDay: string,
   ) {
@@ -448,5 +451,9 @@ export class AcademicRegisterResolver {
         },
       },
     });
+  }
+
+  static async changeAttendanceRecordData(input: UpdateStudentAttendanceRecordsValidation) {
+    console.log(input);
   }
 }
