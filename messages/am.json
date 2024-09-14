@@ -284,5 +284,7 @@
   "lessonDay": "Դասընթացի օր",
   "clearAll": "Ջնջել բոլորը",
   "isCompleted": "Ավարտված է",
-  "seeThematicPlans": "Տեսնել թեմատիկ պլանները"
+  "seeThematicPlans": "Տեսնել թեմատիկ պլանները",
+  "seeDescription": "Տեսնել նկարագրությունը",
+  "addDescription": "Ավելացնել նկարագրություն"
 }

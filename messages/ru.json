@@ -285,5 +285,7 @@
   "lessonDay": "День занятия",
   "clearAll": "Очистить всё",
   "isCompleted": "Завершено",
-  "seeThematicPlans": "Посмотреть тематические планы"
+  "seeThematicPlans": "Посмотреть тематические планы",
+  "seeDescription": "Смотреть описание",
+  "addDescription": "Добавить описание"
 }
