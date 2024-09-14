@@ -560,7 +560,6 @@ export class ScheduleResolver {
   }
 
   static getScheduleById(id: string, lessonOfTheDay?: string) {
-    const todayDayOfWeek = dayjs().utc().day();
     const today = new Date().toISOString().split('T')[0];
 
     return prisma.schedule.findUnique({
@@ -589,11 +588,7 @@ export class ScheduleResolver {
           },
         },
         subject: true,
-        availableDays: {
-          where: {
-            dayOfWeek: todayDayOfWeek - 1,
-          },
-        },
+        availableDays: true,
         courseGroup: {
           include: {
             students: {
