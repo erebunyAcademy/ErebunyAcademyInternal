@@ -65,6 +65,9 @@ const StudentSchedule = ({ params }: { params: { lang: Locale } }) => {
             }}>
             {t('addLinks')}
           </MenuItem>
+          <MenuItem color="green" onClick={() => {}}>
+            {t('addDescription')}
+          </MenuItem>
         </ActionButtons>
       ),
       header: t('actions'),
