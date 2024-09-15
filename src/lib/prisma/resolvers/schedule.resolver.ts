@@ -8,6 +8,7 @@ import {
   AddEditThematicPlanValidation,
   CreateEditScheduleValidation,
   TeacherAttachmentModalValidation,
+  UpdateScheduleByTeacherValidation,
 } from '@/utils/validation/schedule';
 import prisma from '..';
 import { AWSService } from '../services/AWS.service';
@@ -617,6 +618,28 @@ export class ScheduleResolver {
             },
           },
         },
+      },
+    });
+  }
+
+  static async updateScheduleDescription(
+    scheduleId: string,
+    input: UpdateScheduleByTeacherValidation,
+  ) {
+    const { description } = input;
+
+    const existingSchedule = await prisma.schedule.findUniqueOrThrow({
+      where: {
+        id: scheduleId,
+      },
+    });
+
+    return prisma.schedule.update({
+      where: {
+        id: existingSchedule.id,
+      },
+      data: {
+        description,
       },
     });
   }

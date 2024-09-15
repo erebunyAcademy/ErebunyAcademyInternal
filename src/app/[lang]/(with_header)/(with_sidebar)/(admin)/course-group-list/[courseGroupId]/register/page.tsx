@@ -6,6 +6,7 @@ import { useMutation } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { AcademicRegisterService } from '@/api/services/academic-register.service';
 import Calendar from '@/components/atoms/Calendar';
+import { periodListData } from '@/utils/constants/common';
 
 const CourseGroupRegister = ({
   params: { courseGroupId },
@@ -60,7 +61,11 @@ const CourseGroupRegister = ({
                         {dayjs(academicRegisterDay.createdAt).format('DD/MM/YYYY')}
                       </Td>
                     )}
-                    <Td>Lesson {lesson.lessonOfTheDay}</Td>
+                    <Td>
+                      Lesson{' '}
+                      {periodListData.find(period => period.id === lesson.lessonOfTheDay)?.title ||
+                        lesson.lessonOfTheDay}
+                    </Td>
                     <Td>
                       <IconButton
                         aria-label="Expand lesson"
