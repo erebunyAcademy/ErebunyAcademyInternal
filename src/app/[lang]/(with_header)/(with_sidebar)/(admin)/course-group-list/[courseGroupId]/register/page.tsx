@@ -7,6 +7,13 @@ import {
   Checkbox,
   Flex,
   IconButton,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
   Table,
   Tbody,
   Td,
@@ -14,6 +21,7 @@ import {
   Th,
   Thead,
   Tr,
+  useDisclosure,
 } from '@chakra-ui/react';
 import { useMutation } from '@tanstack/react-query';
 import dayjs from 'dayjs';
@@ -21,8 +29,7 @@ import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import { AcademicRegisterService } from '@/api/services/academic-register.service';
 import { SelectLabel } from '@/components/atoms';
 import Calendar from '@/components/atoms/Calendar';
-import { periodListData } from '@/utils/constants/common';
-import { markAttendantOptionData } from '@/utils/constants/common';
+import { markAttendantOptionData, periodListData } from '@/utils/constants/common';
 import { UpdateStudentAttendanceRecordsValidation } from '@/utils/validation/academic-register';
 
 const CourseGroupRegister = ({
@@ -31,6 +38,8 @@ const CourseGroupRegister = ({
   params: { courseGroupId: string };
 }) => {
   const [expandedLesson, setExpandedLesson] = useState<null | string>(null);
+  const [selectedLesson, setSelectedLesson] = useState<any>(null);
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const { data = [], mutate } = useMutation({
     mutationFn: AcademicRegisterService.getCourseGroupAcademicRegister.bind(null, courseGroupId),
@@ -48,8 +57,8 @@ const CourseGroupRegister = ({
     control,
     handleSubmit,
     setValue,
-    watch,
     reset,
+    watch,
     formState: { isDirty },
   } = useForm<UpdateStudentAttendanceRecordsValidation>({
     defaultValues: {
@@ -64,11 +73,27 @@ const CourseGroupRegister = ({
 
   const { mutate: updateStudentAttendantRecord } = useMutation({
     mutationFn: AcademicRegisterService.updateAttendantRecords,
+    onSuccess() {
+      mutate(null);
+    },
   });
 
   const onSubmit = (data: UpdateStudentAttendanceRecordsValidation) => {
-    console.log(data);
     updateStudentAttendantRecord(data);
+    onClose();
+  };
+
+  const openEditModal = (lesson: any) => {
+    setSelectedLesson(lesson);
+    reset({
+      attendantRecords: lesson.attendanceRecord.map((record: any) => ({
+        id: record.id,
+        attendantId: record.id,
+        mark: record.mark ? record.mark.toString() : undefined,
+        isPresent: record.isPresent,
+      })),
+    });
+    onOpen();
   };
 
   return (
@@ -109,16 +134,11 @@ const CourseGroupRegister = ({
                         icon={expandedLesson === lesson.id ? <MinusIcon /> : <AddIcon />}
                         onClick={() => {
                           toggleExpand(lesson.id);
-                          reset({
-                            attendantRecords: lesson.attendanceRecord.map(record => ({
-                              id: record.id,
-                              attendantId: record.id,
-                              mark: record.mark ? record.mark.toString() : undefined,
-                              isPresent: record.isPresent,
-                            })),
-                          });
                         }}
                       />
+                    </Td>
+                    <Td>
+                      <Button onClick={() => openEditModal(lesson)}>Edit</Button>
                     </Td>
                   </Tr>
 
@@ -136,90 +156,19 @@ const CourseGroupRegister = ({
                               </Tr>
                             </Thead>
                             <Tbody>
-                              {fields.map((field, index) => {
-                                const isPresent = watch(`attendantRecords.${index}.isPresent`);
-
-                                return (
-                                  <Tr key={field.id}>
-                                    <Td>
-                                      {lesson.attendanceRecord[index].student.user.firstName}{' '}
-                                      {lesson.attendanceRecord[index].student.user.lastName}
-                                    </Td>
-                                    <Td>
-                                      <Controller
-                                        control={control}
-                                        name={`attendantRecords.${index}.mark`}
-                                        render={({ field }) => (
-                                          <SelectLabel
-                                            isRequired
-                                            options={markAttendantOptionData}
-                                            valueLabel="id"
-                                            nameLabel="title"
-                                            onChange={e => {
-                                              field.onChange(e);
-                                              if (e.target.value) {
-                                                setValue(
-                                                  `attendantRecords.${index}.isPresent`,
-                                                  true,
-                                                );
-                                              }
-                                            }}
-                                            value={field.value || ''}
-                                            isDisabled={!isPresent}
-                                          />
-                                        )}
-                                      />
-                                    </Td>
-                                    <Td>
-                                      <Controller
-                                        control={control}
-                                        name={`attendantRecords.${index}.isPresent`}
-                                        render={({ field }) => (
-                                          <Checkbox
-                                            isChecked={field.value}
-                                            onChange={e => {
-                                              field.onChange(e);
-                                              if (!e.target.checked) {
-                                                setValue(
-                                                  `attendantRecords.${index}.mark`,
-                                                  undefined,
-                                                );
-                                              }
-                                            }}
-                                          />
-                                        )}
-                                      />
-                                    </Td>
-                                    <Td>
-                                      <Button
-                                        size="sm"
-                                        colorScheme="gray"
-                                        onClick={() =>
-                                          setValue(`attendantRecords.${index}.mark`, undefined)
-                                        }
-                                        isDisabled={!watch(`attendantRecords.${index}.mark`)}>
-                                        Cancel
-                                      </Button>
-                                    </Td>
-                                  </Tr>
-                                );
-                              })}
+                              {lesson.attendanceRecord.map(record => (
+                                <Tr key={record.id}>
+                                  <Td>
+                                    {record.student.user.firstName} {record.student.user.lastName}
+                                  </Td>
+                                  <Td>{record.mark || '-'}</Td>
+                                  <Td>{record.isPresent ? 'Present' : 'Absent'}</Td>
+                                </Tr>
+                              ))}
                             </Tbody>
                           </Table>
                         </Box>
                       </Td>
-                    </Tr>
-                  )}
-                  {expandedLesson === lesson.id && (
-                    <Tr>
-                      <Flex justifyContent="space-between" m="20px 0">
-                        <Button colorScheme="red" isDisabled={!isDirty}>
-                          Cancel
-                        </Button>
-                        <Button onClick={handleSubmit(onSubmit)} isDisabled={!isDirty}>
-                          Save
-                        </Button>
-                      </Flex>
                     </Tr>
                   )}
                 </Fragment>
@@ -228,6 +177,91 @@ const CourseGroupRegister = ({
           ))}
         </Tbody>
       </Table>
+
+      <Modal isOpen={isOpen} onClose={onClose} size="3xl">
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Edit Attendance Records</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            {selectedLesson && (
+              <Box>
+                <Table size="sm">
+                  <Thead>
+                    <Tr>
+                      <Th>Student</Th>
+                      <Th>Mark</Th>
+                      <Th>Attendance</Th>
+                    </Tr>
+                  </Thead>
+                  <Tbody>
+                    {fields.map((field, index) => {
+                      const isPresent = watch(`attendantRecords.${index}.isPresent`);
+                      return (
+                        <Tr key={field.id}>
+                          <Td>
+                            {selectedLesson.attendanceRecord[index].student.user.firstName}{' '}
+                            {selectedLesson.attendanceRecord[index].student.user.lastName}
+                          </Td>
+                          <Td>
+                            <Controller
+                              control={control}
+                              name={`attendantRecords.${index}.mark`}
+                              render={({ field }) => (
+                                <SelectLabel
+                                  isRequired
+                                  options={markAttendantOptionData}
+                                  valueLabel="id"
+                                  nameLabel="title"
+                                  onChange={e => {
+                                    field.onChange(e);
+                                    if (e.target.value) {
+                                      setValue(`attendantRecords.${index}.isPresent`, true);
+                                    }
+                                  }}
+                                  value={field.value || ''}
+                                  isDisabled={!isPresent}
+                                />
+                              )}
+                            />
+                          </Td>
+                          <Td>
+                            <Controller
+                              control={control}
+                              name={`attendantRecords.${index}.isPresent`}
+                              render={({ field }) => (
+                                <Checkbox
+                                  isChecked={field.value}
+                                  name={field.name}
+                                  onChange={e => {
+                                    field.onChange(e);
+                                    console.log(e);
+                                    if (!e.target.checked) {
+                                      setValue(`attendantRecords.${index}.mark`, '');
+                                    }
+                                  }}
+                                />
+                              )}
+                            />
+                          </Td>
+                        </Tr>
+                      );
+                    })}
+                  </Tbody>
+                </Table>
+              </Box>
+            )}
+          </ModalBody>
+          <ModalFooter>
+            <Button colorScheme="red" onClick={onClose} mr={3}>
+              Cancel
+            </Button>
+            <Button onClick={handleSubmit(onSubmit)} isDisabled={!isDirty}>
+              Save
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </Flex>
   );
 };

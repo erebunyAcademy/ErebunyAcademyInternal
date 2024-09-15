@@ -34,8 +34,8 @@ export class StudentMarkDataValidation extends BaseAttendanceRecordValidation {
 export class CreateStudentAttendanceRecordValidation {
   @IsArray()
   @ValidateNested({ each: true })
-  @Type(() => StudentMarkDataValidation)
-  students: StudentMarkDataValidation[];
+  @Type(() => BaseAttendanceRecordValidation)
+  students: BaseAttendanceRecordValidation[];
 
   @IsArray()
   @Type(() => String)

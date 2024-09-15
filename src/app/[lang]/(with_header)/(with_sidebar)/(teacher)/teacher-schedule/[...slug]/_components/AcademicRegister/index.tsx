@@ -32,14 +32,14 @@ import { markAttendantOptionData, periodListData } from '@/utils/constants/commo
 import { ROUTE_TEACHER_SCHEDULE } from '@/utils/constants/routes';
 import { languagePathHelper } from '@/utils/helpers/language';
 import { GetScheduleByIdModel } from '@/utils/models/schedule';
-import { CreateStudentAttentdanceRecordValidation } from '@/utils/validation/academic-register';
+import { CreateStudentAttendanceRecordValidation } from '@/utils/validation/academic-register';
 
 type AcademicRegisterProps = {
   schedule: NonNullable<GetScheduleByIdModel>;
   lang: Locale;
 };
 
-const resolver = classValidatorResolver(CreateStudentAttentdanceRecordValidation);
+const resolver = classValidatorResolver(CreateStudentAttendanceRecordValidation);
 
 const AcademicRegister: FC<AcademicRegisterProps> = ({ schedule, lang }) => {
   const router = useRouter();
@@ -66,7 +66,7 @@ const AcademicRegister: FC<AcademicRegisterProps> = ({ schedule, lang }) => {
     watch,
     reset,
     formState: { isValid },
-  } = useForm<CreateStudentAttentdanceRecordValidation>({
+  } = useForm<CreateStudentAttendanceRecordValidation>({
     resolver,
     defaultValues: {
       students: schedule.courseGroup.students.map(student => ({
@@ -81,7 +81,7 @@ const AcademicRegister: FC<AcademicRegisterProps> = ({ schedule, lang }) => {
   const selectedPeriodData = periodListData.find(p => p.id === +(selectedLessonOfTheDay || 0));
 
   const { mutate: createStudentMark } = useMutation({
-    mutationFn: (data: CreateStudentAttentdanceRecordValidation) =>
+    mutationFn: (data: CreateStudentAttendanceRecordValidation) =>
       AcademicRegisterService.createStudentMark(
         data,
         schedule.id,
@@ -167,11 +167,11 @@ const AcademicRegister: FC<AcademicRegisterProps> = ({ schedule, lang }) => {
     }),
   ];
 
-  const onSubmit = (data: CreateStudentAttentdanceRecordValidation) => {
+  const onSubmit = (data: CreateStudentAttendanceRecordValidation) => {
     createStudentMark(data);
   };
 
-  const endLessonSubmitHandler = (data: CreateStudentAttentdanceRecordValidation) => {
+  const endLessonSubmitHandler = (data: CreateStudentAttendanceRecordValidation) => {
     createStudentMark(
       { ...data, isCompletedLesson: true },
       {
@@ -245,7 +245,7 @@ const AcademicRegister: FC<AcademicRegisterProps> = ({ schedule, lang }) => {
                                 setValue(`students.${index}.isPresent`, true);
                               }
                             }}
-                            value={field.value}
+                            value={field.value || ''}
                             isDisabled={!selectedLessonOfTheDay || !isPresent}
                           />
                           <Button

@@ -455,8 +455,18 @@ export class AcademicRegisterResolver {
       },
     });
   }
-
   static async changeAttendanceRecordData(input: UpdateStudentAttendanceRecordsValidation) {
-    console.log(input);
+    const updatePromises = input.attendantRecords.map(record => {
+      return prisma.attendanceRecord.update({
+        where: { id: record.id },
+        data: {
+          isPresent: record.isPresent,
+          mark: record.isPresent ? (record.mark ? +record.mark : undefined) : null,
+        },
+      });
+    });
+
+    await Promise.all(updatePromises);
+    return true;
   }
 }
