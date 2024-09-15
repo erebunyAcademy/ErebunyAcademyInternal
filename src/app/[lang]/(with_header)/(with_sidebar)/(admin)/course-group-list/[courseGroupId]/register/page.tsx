@@ -1,12 +1,29 @@
 'use client';
-import React, { Fragment, memo, useCallback, useEffect, useState } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import { AddIcon, MinusIcon } from '@chakra-ui/icons';
-import { Box, Flex, IconButton, Table, Tbody, Td, Text, Th, Thead, Tr } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  Checkbox,
+  Flex,
+  IconButton,
+  Table,
+  Tbody,
+  Td,
+  Text,
+  Th,
+  Thead,
+  Tr,
+} from '@chakra-ui/react';
 import { useMutation } from '@tanstack/react-query';
 import dayjs from 'dayjs';
+import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import { AcademicRegisterService } from '@/api/services/academic-register.service';
+import { SelectLabel } from '@/components/atoms';
 import Calendar from '@/components/atoms/Calendar';
 import { periodListData } from '@/utils/constants/common';
+import { markAttendantOptionData } from '@/utils/constants/common';
+import { UpdateStudentAttendanceRecordsValidation } from '@/utils/validation/academic-register';
 
 const CourseGroupRegister = ({
   params: { courseGroupId },
@@ -27,12 +44,32 @@ const CourseGroupRegister = ({
     mutate(null);
   }, [mutate]);
 
-  const dateChangeHandler = useCallback(
-    (startDate: Date, endDate: Date) => {
-      mutate({ startDate, endDate });
+  const {
+    control,
+    handleSubmit,
+    setValue,
+    watch,
+    reset,
+    formState: { isDirty },
+  } = useForm<UpdateStudentAttendanceRecordsValidation>({
+    defaultValues: {
+      attendantRecords: [],
     },
-    [mutate],
-  );
+  });
+
+  const { fields } = useFieldArray({
+    control,
+    name: 'attendantRecords',
+  });
+
+  const { mutate: updateStudentAttendantRecord } = useMutation({
+    mutationFn: AcademicRegisterService.updateAttendantRecords,
+  });
+
+  const onSubmit = (data: UpdateStudentAttendanceRecordsValidation) => {
+    console.log(data);
+    updateStudentAttendantRecord(data);
+  };
 
   return (
     <Flex flexDirection="column">
@@ -40,7 +77,7 @@ const CourseGroupRegister = ({
         Journal
       </Text>
       <Box maxWidth="400px" mt="100px" ml="20px">
-        <Calendar selectDateHandler={dateChangeHandler} />
+        <Calendar selectDateHandler={(startDate, endDate) => mutate({ startDate, endDate })} />
       </Box>
       <Table>
         <Thead>
@@ -70,7 +107,17 @@ const CourseGroupRegister = ({
                       <IconButton
                         aria-label="Expand lesson"
                         icon={expandedLesson === lesson.id ? <MinusIcon /> : <AddIcon />}
-                        onClick={() => toggleExpand(lesson.id)}
+                        onClick={() => {
+                          toggleExpand(lesson.id);
+                          reset({
+                            attendantRecords: lesson.attendanceRecord.map(record => ({
+                              id: record.id,
+                              attendantId: record.id,
+                              mark: record.mark ? record.mark.toString() : undefined,
+                              isPresent: record.isPresent,
+                            })),
+                          });
+                        }}
                       />
                     </Td>
                   </Tr>
@@ -85,29 +132,94 @@ const CourseGroupRegister = ({
                                 <Th>Student</Th>
                                 <Th>Mark</Th>
                                 <Th>Attendance</Th>
+                                <Th>Actions</Th>
                               </Tr>
                             </Thead>
                             <Tbody>
-                              {lesson.attendanceRecord.map(attendance => (
-                                <Tr key={attendance.id}>
-                                  <Td>
-                                    {attendance.student.user.firstName}{' '}
-                                    {attendance.student.user.lastName}
-                                  </Td>
-                                  <Td>{attendance.mark ?? 'N/A'}</Td>
-                                  <Td>
-                                    {attendance.isPresent ? (
-                                      <Text color="green.500">Present</Text>
-                                    ) : (
-                                      <Text color="red.500">Absent</Text>
-                                    )}
-                                  </Td>
-                                </Tr>
-                              ))}
+                              {fields.map((field, index) => {
+                                const isPresent = watch(`attendantRecords.${index}.isPresent`);
+
+                                return (
+                                  <Tr key={field.id}>
+                                    <Td>
+                                      {lesson.attendanceRecord[index].student.user.firstName}{' '}
+                                      {lesson.attendanceRecord[index].student.user.lastName}
+                                    </Td>
+                                    <Td>
+                                      <Controller
+                                        control={control}
+                                        name={`attendantRecords.${index}.mark`}
+                                        render={({ field }) => (
+                                          <SelectLabel
+                                            isRequired
+                                            options={markAttendantOptionData}
+                                            valueLabel="id"
+                                            nameLabel="title"
+                                            onChange={e => {
+                                              field.onChange(e);
+                                              if (e.target.value) {
+                                                setValue(
+                                                  `attendantRecords.${index}.isPresent`,
+                                                  true,
+                                                );
+                                              }
+                                            }}
+                                            value={field.value || ''}
+                                            isDisabled={!isPresent}
+                                          />
+                                        )}
+                                      />
+                                    </Td>
+                                    <Td>
+                                      <Controller
+                                        control={control}
+                                        name={`attendantRecords.${index}.isPresent`}
+                                        render={({ field }) => (
+                                          <Checkbox
+                                            isChecked={field.value}
+                                            onChange={e => {
+                                              field.onChange(e);
+                                              if (!e.target.checked) {
+                                                setValue(
+                                                  `attendantRecords.${index}.mark`,
+                                                  undefined,
+                                                );
+                                              }
+                                            }}
+                                          />
+                                        )}
+                                      />
+                                    </Td>
+                                    <Td>
+                                      <Button
+                                        size="sm"
+                                        colorScheme="gray"
+                                        onClick={() =>
+                                          setValue(`attendantRecords.${index}.mark`, undefined)
+                                        }
+                                        isDisabled={!watch(`attendantRecords.${index}.mark`)}>
+                                        Cancel
+                                      </Button>
+                                    </Td>
+                                  </Tr>
+                                );
+                              })}
                             </Tbody>
                           </Table>
                         </Box>
                       </Td>
+                    </Tr>
+                  )}
+                  {expandedLesson === lesson.id && (
+                    <Tr>
+                      <Flex justifyContent="space-between" m="20px 0">
+                        <Button colorScheme="red" isDisabled={!isDirty}>
+                          Cancel
+                        </Button>
+                        <Button onClick={handleSubmit(onSubmit)} isDisabled={!isDirty}>
+                          Save
+                        </Button>
+                      </Flex>
                     </Tr>
                   )}
                 </Fragment>
@@ -120,4 +232,4 @@ const CourseGroupRegister = ({
   );
 };
 
-export default memo(CourseGroupRegister);
+export default CourseGroupRegister;

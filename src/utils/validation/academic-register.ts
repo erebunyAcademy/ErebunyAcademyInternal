@@ -1,6 +1,7 @@
 import 'reflect-metadata';
 import { Type } from 'class-transformer';
 import {
+  ArrayNotEmpty,
   IsArray,
   IsBoolean,
   IsDate,
@@ -10,7 +11,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 
-export class StudentMarkDataValidation {
+class BaseAttendanceRecordValidation {
   @IsString()
   @IsNotEmpty()
   id: string;
@@ -21,10 +22,16 @@ export class StudentMarkDataValidation {
 
   @IsString()
   @IsOptional()
-  mark: string;
+  mark?: string;
 }
 
-export class CreateStudentAttentdanceRecordValidation {
+export class StudentMarkDataValidation extends BaseAttendanceRecordValidation {
+  @IsString()
+  @IsNotEmpty()
+  attendantId: string;
+}
+
+export class CreateStudentAttendanceRecordValidation {
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => StudentMarkDataValidation)
@@ -36,15 +43,22 @@ export class CreateStudentAttentdanceRecordValidation {
 
   @IsBoolean()
   @IsOptional()
-  isCompletedLesson: boolean;
+  isCompletedLesson?: boolean;
 }
 
 export class GetStudentAcademicRegisterDataValidation {
   @IsDate()
   @IsOptional()
-  startDate: Date;
+  startDate?: Date;
 
   @IsDate()
   @IsOptional()
-  endDate: Date;
+  endDate?: Date;
+}
+
+export class UpdateStudentAttendanceRecordsValidation {
+  @ArrayNotEmpty()
+  @ValidateNested({ each: true })
+  @Type(() => StudentMarkDataValidation)
+  attendantRecords: StudentMarkDataValidation[];
 }
