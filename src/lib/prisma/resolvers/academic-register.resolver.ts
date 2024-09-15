@@ -448,6 +448,9 @@ export class AcademicRegisterResolver {
               },
             },
           },
+          orderBy: {
+            lessonOfTheDay: 'asc',
+          },
         },
       },
     });

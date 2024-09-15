@@ -14,6 +14,7 @@ import { ScheduleService } from '@/api/services/schedule.service';
 import { SubjectService } from '@/api/services/subject.service';
 import { TeacherService } from '@/api/services/teacher.service';
 import { FormInput, SelectLabel } from '@/components/atoms';
+import FormTextarea from '@/components/atoms/FormTextarea';
 import Modal from '@/components/molecules/Modal';
 import { academicYearListData, scheduleExamType } from '@/utils/constants/common';
 import { generateAWSUrl } from '@/utils/helpers/aws';
@@ -266,9 +267,8 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
           name="description"
           control={control}
           render={({ field: { onChange, value, name } }) => (
-            <FormInput
+            <FormTextarea
               name={name}
-              type="text"
               formLabelName={t('description')}
               value={value}
               placeholder="enterDescription"

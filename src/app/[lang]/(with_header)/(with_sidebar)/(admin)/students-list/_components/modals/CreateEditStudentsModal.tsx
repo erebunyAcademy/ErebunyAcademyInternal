@@ -7,6 +7,7 @@ import { useTranslations } from 'next-intl';
 import { Controller, useForm } from 'react-hook-form';
 import { CourseGroupService } from '@/api/services/course-group.service';
 import { CourseService } from '@/api/services/courses.service';
+import { FacultyService } from '@/api/services/faculty.service';
 import { StudentService } from '@/api/services/student.service';
 import { SelectLabel } from '@/components/atoms';
 import Modal from '@/components/molecules/Modal';
@@ -43,26 +44,34 @@ const EditStudentModal: FC<EditStudentModalProps> = ({
     defaultValues: {
       courseGroupId: '',
       courseId: '',
+      facultyId: '',
     },
   });
 
+  const facultyId = watch('facultyId');
   const courseId = watch('courseId');
 
   useEffect(() => {
     if (selectedStudent?.student?.courseGroup?.id) {
       reset({
+        facultyId: selectedStudent.student.faculty.id,
         courseId: selectedStudent.student.course.id,
         courseGroupId: selectedStudent.student.courseGroup.id,
       });
     }
   }, [reset, selectedStudent]);
 
-  const { data: courseQueryData } = useQuery({
-    queryKey: ['course-group'],
-    queryFn: CourseService.list.bind(null),
+  const { data: facultyData } = useQuery({
+    queryKey: ['faculties'],
+    queryFn: FacultyService.list.bind(null),
     initialData: [],
   });
-
+  const { data: courseQueryData } = useQuery({
+    queryKey: ['course-list', facultyId],
+    queryFn: CourseService.getCourseByFacultyId.bind(null, facultyId),
+    enabled: !!facultyId,
+    initialData: [],
+  });
   const { data: courseGroupData } = useQuery({
     queryKey: ['course-group', courseId],
     queryFn: () => CourseGroupService.getCourseGroupByCourseId(courseId),
@@ -92,6 +101,30 @@ const EditStudentModal: FC<EditStudentModalProps> = ({
         alignItems="center"
         gap="50px">
         <Controller
+          name="facultyId"
+          control={control}
+          render={({ field: { onChange, value, name } }) => (
+            <SelectLabel
+              isRequired
+              name={name}
+              options={facultyData.map(faculty => ({
+                id: faculty.id,
+                title: faculty?.title,
+              }))}
+              labelName="faculty"
+              valueLabel="id"
+              nameLabel="title"
+              onChange={e => {
+                setValue('courseId', '');
+                onChange(e.target.value);
+              }}
+              value={value}
+              isInvalid={!!errors.courseGroupId?.message}
+              formErrorMessage={errors.courseGroupId?.message}
+            />
+          )}
+        />
+        <Controller
           name="courseId"
           control={control}
           render={({ field: { onChange, value, name } }) => (
@@ -100,7 +133,7 @@ const EditStudentModal: FC<EditStudentModalProps> = ({
               name={name}
               options={courseQueryData.map(course => ({
                 id: course.id,
-                title: `${course.title} (${course.faculty?.title})`,
+                title: course.title,
               }))}
               labelName="course"
               valueLabel="id"

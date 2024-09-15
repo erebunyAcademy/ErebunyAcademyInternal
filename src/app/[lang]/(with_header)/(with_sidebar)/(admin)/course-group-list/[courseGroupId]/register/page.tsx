@@ -22,6 +22,7 @@ import { AcademicRegisterService } from '@/api/services/academic-register.servic
 import { SelectLabel } from '@/components/atoms';
 import Calendar from '@/components/atoms/Calendar';
 import { markAttendantOptionData } from '@/utils/constants/common';
+import { periodListData } from '@/utils/constants/common';
 import { UpdateStudentAttendanceRecordsValidation } from '@/utils/validation/academic-register';
 
 const CourseGroupRegister = ({
@@ -97,7 +98,11 @@ const CourseGroupRegister = ({
                         {dayjs(academicRegisterDay.createdAt).format('DD/MM/YYYY')}
                       </Td>
                     )}
-                    <Td>Lesson {lesson.lessonOfTheDay}</Td>
+                    <Td>
+                      Lesson{' '}
+                      {periodListData.find(period => period.id === lesson.lessonOfTheDay)?.title ||
+                        lesson.lessonOfTheDay}
+                    </Td>
                     <Td>
                       <IconButton
                         aria-label="Expand lesson"
