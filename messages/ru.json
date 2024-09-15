@@ -287,5 +287,6 @@
   "isCompleted": "Завершено",
   "seeThematicPlans": "Посмотреть тематические планы",
   "seeDescription": "Смотреть описание",
-  "addDescription": "Добавить описание"
+  "addDescription": "Добавить описание",
+  "editDescription": "Изменить описание"
 }

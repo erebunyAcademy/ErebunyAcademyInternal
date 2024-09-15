@@ -286,5 +286,6 @@
   "isCompleted": "Ավարտված է",
   "seeThematicPlans": "Տեսնել թեմատիկ պլանները",
   "seeDescription": "Տեսնել նկարագրությունը",
-  "addDescription": "Ավելացնել նկարագրություն"
+  "addDescription": "Ավելացնել նկարագրություն",
+  "editDescription": "Խմբագրել նկարագրությունը"
 }

@@ -287,5 +287,6 @@
   "isCompleted": "Is completed",
   "seeThematicPlans": "See Thematic Plans",
   "seeDescription": "See description",
-  "addDescription":"Add description"
+  "addDescription": "Add description",
+  "editDescription": "Edit description"
 }
