@@ -221,6 +221,7 @@ export default function Schedule({ params }: { params: { lang: Locale } }) {
 
       {isCreateEditModalOpen && (
         <CreateEditModal
+          refetch={refetch}
           isModalOpen={isCreateEditModalOpen}
           closeModal={closeCreateEditModal}
           selectedSchedule={selectedSchedule}

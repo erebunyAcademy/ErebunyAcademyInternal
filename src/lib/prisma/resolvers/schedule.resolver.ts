@@ -8,6 +8,7 @@ import {
   AddEditThematicPlanValidation,
   CreateEditScheduleValidation,
   TeacherAttachmentModalValidation,
+  UpdateScheduleByTeacherValidation,
 } from '@/utils/validation/schedule';
 import prisma from '..';
 import { AWSService } from '../services/AWS.service';
@@ -560,7 +561,6 @@ export class ScheduleResolver {
   }
 
   static getScheduleById(id: string, lessonOfTheDay?: string) {
-    const todayDayOfWeek = dayjs().utc().day();
     const today = new Date().toISOString().split('T')[0];
 
     return prisma.schedule.findUnique({
@@ -589,11 +589,7 @@ export class ScheduleResolver {
           },
         },
         subject: true,
-        availableDays: {
-          where: {
-            dayOfWeek: todayDayOfWeek - 1,
-          },
-        },
+        availableDays: true,
         courseGroup: {
           include: {
             students: {
@@ -622,6 +618,28 @@ export class ScheduleResolver {
             },
           },
         },
+      },
+    });
+  }
+
+  static async updateScheduleDescription(
+    scheduleId: string,
+    input: UpdateScheduleByTeacherValidation,
+  ) {
+    const { description } = input;
+
+    const existingSchedule = await prisma.schedule.findUniqueOrThrow({
+      where: {
+        id: scheduleId,
+      },
+    });
+
+    return prisma.schedule.update({
+      where: {
+        id: existingSchedule.id,
+      },
+      data: {
+        description,
       },
     });
   }

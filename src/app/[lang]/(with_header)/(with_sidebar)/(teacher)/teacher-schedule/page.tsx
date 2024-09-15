@@ -15,16 +15,17 @@ import { Locale } from '@/i18n';
 import { academicYearListData } from '@/utils/constants/common';
 import { ROUTE_TEACHER_SCHEDULE } from '@/utils/constants/routes';
 import { languagePathHelper } from '@/utils/helpers/language';
+import { Maybe } from '@/utils/models/common';
 import { TeacherScheduleListSingleType } from '@/utils/models/teachers';
-import CreateEditAttachment from './[...slug]/_components/AttachmentModal';
+import CreateEditAttachment from './[...slug]/_components/Modals/AttachmentModal';
+import EditDescriptionModal from './[...slug]/_components/Modals/EditDescriptionModal';
 
 const StudentSchedule = ({ params }: { params: { lang: Locale } }) => {
   const router = useRouter();
   const t = useTranslations();
 
-  const [selectedSchedule, setSelectedSchedule] = useState<TeacherScheduleListSingleType | null>(
-    null,
-  );
+  const [selectedSchedule, setSelectedSchedule] =
+    useState<Maybe<TeacherScheduleListSingleType>>(null);
 
   const { data: cyclicData, refetch } = useQuery({
     queryFn: TeacherService.getTeacherSchedules,
@@ -37,6 +38,16 @@ const StudentSchedule = ({ params }: { params: { lang: Locale } }) => {
     onOpen: openAttachmentModal,
     onClose: closeAttachmentModal,
   } = useDisclosure();
+
+  const {
+    isOpen: isEditDescriptionModal,
+    onOpen: openDescriptionModal,
+    onClose: closeDescriptionModal,
+  } = useDisclosure({
+    onClose() {
+      setSelectedSchedule(null);
+    },
+  });
 
   const cyclicColumnHelper = createColumnHelper<TeacherScheduleListSingleType>();
 
@@ -64,6 +75,17 @@ const StudentSchedule = ({ params }: { params: { lang: Locale } }) => {
               }
             }}>
             {t('addLinks')}
+          </MenuItem>
+          <MenuItem
+            color="green"
+            onClick={() => {
+              const schedule = cyclicData.find(schedule => schedule.id === getValue());
+              if (schedule) {
+                setSelectedSchedule(schedule);
+                openDescriptionModal();
+              }
+            }}>
+            {t('addDescription')}
           </MenuItem>
         </ActionButtons>
       ),
@@ -159,6 +181,14 @@ const StudentSchedule = ({ params }: { params: { lang: Locale } }) => {
         <CreateEditAttachment
           isModalOpen={isAttachmentModalOpen}
           closeModal={closeAttachmentModal}
+          selectedSchedule={selectedSchedule}
+          refetch={refetch}
+        />
+      )}
+      {selectedSchedule && (
+        <EditDescriptionModal
+          isOpen={isEditDescriptionModal}
+          onClose={closeDescriptionModal}
           selectedSchedule={selectedSchedule}
           refetch={refetch}
         />

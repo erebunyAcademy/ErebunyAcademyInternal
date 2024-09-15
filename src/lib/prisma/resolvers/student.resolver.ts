@@ -90,6 +90,7 @@ export class StudentResolver {
               id: true,
               faculty: {
                 select: {
+                  id: true,
                   title: true,
                 },
               },

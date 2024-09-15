@@ -15,6 +15,7 @@ import { SubjectService } from '@/api/services/subject.service';
 import { TeacherService } from '@/api/services/teacher.service';
 import { UserService } from '@/api/services/user.service';
 import { FormInput, SelectLabel } from '@/components/atoms';
+import FormTextarea from '@/components/atoms/FormTextarea';
 import Modal from '@/components/molecules/Modal';
 import {
   academicYearListData,
@@ -34,6 +35,7 @@ type CreateEditModalProps = {
   isModalOpen: boolean;
   closeModal: () => void;
   selectedSchedule: Maybe<ScheduleSingleDataModel>;
+  refetch: () => void;
 };
 
 const resolver = classValidatorResolver(CreateEditNonCyclicScheduleValidation);
@@ -47,6 +49,7 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
   isModalOpen,
   closeModal,
   selectedSchedule,
+  refetch,
 }) => {
   const t = useTranslations();
   const [files, setFiles] = useState<Maybe<FileWithLocalUrl[]>>(null);
@@ -93,6 +96,7 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
     onSuccess() {
       reset();
       closeModal();
+      refetch();
     },
   });
   const subjectId = watch('subjectId');
@@ -267,9 +271,8 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
           name="description"
           control={control}
           render={({ field: { onChange, value, name } }) => (
-            <FormInput
+            <FormTextarea
               name={name}
-              type="text"
               formLabelName={t('description')}
               value={value}
               placeholder="enterDescription"

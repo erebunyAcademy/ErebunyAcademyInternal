@@ -5,6 +5,7 @@ import {
   AddEditThematicPlanValidation,
   CreateEditScheduleValidation,
   TeacherAttachmentModalValidation,
+  UpdateScheduleByTeacherValidation,
 } from '@/utils/validation/schedule';
 import $apiClient from '../axiosClient';
 
@@ -57,5 +58,9 @@ export class ScheduleService {
 
   static updateScheduleAttachments(scheduleId: string, input: TeacherAttachmentModalValidation) {
     return $apiClient.patch(`/schedules/${scheduleId}/attachments`, input);
+  }
+
+  static updateScheduleDescription(scheduleId: string, input: UpdateScheduleByTeacherValidation) {
+    return $apiClient.patch(`schedules/${scheduleId}/description`, input);
   }
 }

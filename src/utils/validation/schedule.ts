@@ -134,3 +134,9 @@ export class TeacherAttachmentModalValidation {
   @Type(() => LinkValidation)
   links: LinkValidation[];
 }
+
+export class UpdateScheduleByTeacherValidation {
+  @IsString()
+  @IsNotEmpty()
+  description: string;
+}

@@ -285,5 +285,8 @@
   "lessonDay": "Lesson day",
   "clearAll": "Clear all",
   "isCompleted": "Is completed",
-  "seeThematicPlans":"See Thematic Plans"
+  "seeThematicPlans": "See Thematic Plans",
+  "seeDescription": "See description",
+  "addDescription": "Add description",
+  "editDescription": "Edit description"
 }
