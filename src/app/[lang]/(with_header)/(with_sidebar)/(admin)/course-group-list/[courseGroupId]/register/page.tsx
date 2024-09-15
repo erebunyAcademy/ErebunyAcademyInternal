@@ -21,8 +21,8 @@ import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import { AcademicRegisterService } from '@/api/services/academic-register.service';
 import { SelectLabel } from '@/components/atoms';
 import Calendar from '@/components/atoms/Calendar';
-import { markAttendantOptionData } from '@/utils/constants/common';
 import { periodListData } from '@/utils/constants/common';
+import { markAttendantOptionData } from '@/utils/constants/common';
 import { UpdateStudentAttendanceRecordsValidation } from '@/utils/validation/academic-register';
 
 const CourseGroupRegister = ({
