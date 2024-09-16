@@ -15,6 +15,8 @@ import { SubjectService } from '@/api/services/subject.service';
 import { TeacherService } from '@/api/services/teacher.service';
 import { UserService } from '@/api/services/user.service';
 import { FormInput, SelectLabel } from '@/components/atoms';
+import AutoComplete from '@/components/atoms/AutoComplete';
+import FormTextarea from '@/components/atoms/FormTextarea';
 import Modal from '@/components/molecules/Modal';
 import {
   academicYearListData,
@@ -34,6 +36,7 @@ type CreateEditModalProps = {
   isModalOpen: boolean;
   closeModal: () => void;
   selectedSchedule: Maybe<ScheduleSingleDataModel>;
+  refetch: () => void;
 };
 
 const resolver = classValidatorResolver(CreateEditNonCyclicScheduleValidation);
@@ -47,6 +50,7 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
   isModalOpen,
   closeModal,
   selectedSchedule,
+  refetch,
 }) => {
   const t = useTranslations();
   const [files, setFiles] = useState<Maybe<FileWithLocalUrl[]>>(null);
@@ -93,6 +97,7 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
     onSuccess() {
       reset();
       closeModal();
+      refetch();
     },
   });
   const subjectId = watch('subjectId');
@@ -267,9 +272,8 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
           name="description"
           control={control}
           render={({ field: { onChange, value, name } }) => (
-            <FormInput
+            <FormTextarea
               name={name}
-              type="text"
               formLabelName={t('description')}
               value={value}
               placeholder="enterDescription"
@@ -322,7 +326,7 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
           name="teacherId"
           control={control}
           render={({ field: { onChange, value, name } }) => (
-            <SelectLabel
+            <AutoComplete
               name={name}
               isRequired
               options={teacherListData as any}
@@ -343,7 +347,7 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
           name="subjectId"
           control={control}
           render={({ field: { onChange, value, name } }) => (
-            <SelectLabel
+            <AutoComplete
               isRequired
               name={name}
               options={subjectCourseNameList}
@@ -352,7 +356,7 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
               nameLabel="title"
               onChange={e => {
                 setValue('courseGroupId', '');
-                onChange(e.target.value);
+                onChange(e);
               }}
               value={value}
               isInvalid={!!errors.subjectId?.message}

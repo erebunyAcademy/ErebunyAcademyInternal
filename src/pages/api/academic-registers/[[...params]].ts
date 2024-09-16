@@ -5,6 +5,7 @@ import {
   Get,
   Param,
   Post,
+  Put,
   Query,
   ValidationPipe,
 } from 'next-api-decorators';
@@ -13,7 +14,10 @@ import { CurrentUser } from '@/lib/prisma/decorators/current-user.decorator';
 import { exceptionHandler } from '@/lib/prisma/error';
 import { AdminGuard } from '@/lib/prisma/guards/admin';
 import { AcademicRegisterResolver } from '@/lib/prisma/resolvers/academic-register.resolver';
-import { CreateStudentAttentdanceRecordValidation } from '@/utils/validation/academic-register';
+import {
+  CreateStudentAttendanceRecordValidation,
+  UpdateStudentAttendanceRecordsValidation,
+} from '@/utils/validation/academic-register';
 
 @Catch(exceptionHandler)
 class AcademicRegisterHandler {
@@ -25,7 +29,7 @@ class AcademicRegisterHandler {
   @Post('/schedules/:scheduleId')
   createStudentAddentanceRecord(
     @Param('scheduleId') scheduleId: string,
-    @Body(ValidationPipe) input: CreateStudentAttentdanceRecordValidation,
+    @Body(ValidationPipe) input: CreateStudentAttendanceRecordValidation,
     @CurrentUser() user: NonNullable<User>,
     @Query('lessonOfTheDay') lessonOfTheDay: string,
   ) {
@@ -66,6 +70,11 @@ class AcademicRegisterHandler {
       startDate,
       endDate,
     );
+  }
+
+  @Put('/attendant-records')
+  updateStudentAttendance(@Body(ValidationPipe) input: UpdateStudentAttendanceRecordsValidation) {
+    return AcademicRegisterResolver.changeAttendanceRecordData(input);
   }
 }
 

@@ -15,6 +15,7 @@ import { FacultyService } from '@/api/services/faculty.service';
 import { StudentService } from '@/api/services/student.service';
 import { SubjectService } from '@/api/services/subject.service';
 import { FormInput, SelectLabel } from '@/components/atoms';
+import AutoComplete from '@/components/atoms/AutoComplete';
 import TableCheckbox from '@/components/organisms/TableCheckbox';
 import { Locale } from '@/i18n';
 import { ROUTE_EXAMS } from '@/utils/constants/routes';
@@ -290,7 +291,7 @@ const CreateExamModal: FC<CreateExamModalProps> = ({ isOpen, onClose, exam, para
               name="subjectId"
               control={control}
               render={({ field: { onChange, value, name } }) => (
-                <SelectLabel
+                <AutoComplete
                   isRequired
                   name={name}
                   options={subjectData}

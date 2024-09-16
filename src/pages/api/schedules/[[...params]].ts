@@ -19,6 +19,7 @@ import {
   AddEditThematicPlanValidation,
   CreateEditScheduleValidation,
   TeacherAttachmentModalValidation,
+  UpdateScheduleByTeacherValidation,
 } from '@/utils/validation/schedule';
 
 @Catch(exceptionHandler)
@@ -79,6 +80,14 @@ class ScheduleHandler {
     @Body(ValidationPipe) input: TeacherAttachmentModalValidation,
   ) {
     return ScheduleResolver.createUpdateScheduleAttachment(scheduleId, input);
+  }
+
+  @Patch('/:scheduleId/description')
+  _updateScheduleDescription(
+    @Param('scheduleId') scheduleId: string,
+    @Body(ValidationPipe) input: UpdateScheduleByTeacherValidation,
+  ) {
+    return ScheduleResolver.updateScheduleDescription(scheduleId, input);
   }
 }
 

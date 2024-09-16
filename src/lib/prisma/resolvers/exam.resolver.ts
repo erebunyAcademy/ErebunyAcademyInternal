@@ -89,12 +89,14 @@ export class ExamsResolver {
             },
           },
           examLanguages: {
-            select: {
-              title: true,
-              language: true,
-              testQuestions: {
-                select: {
-                  id: true,
+            include: {
+              examTranslationTests: {
+                include: {
+                  testQuestion: {
+                    include: {
+                      options: true,
+                    },
+                  },
                 },
               },
             },
