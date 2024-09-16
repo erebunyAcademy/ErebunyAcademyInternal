@@ -15,6 +15,7 @@ import { SubjectService } from '@/api/services/subject.service';
 import { TeacherService } from '@/api/services/teacher.service';
 import { UserService } from '@/api/services/user.service';
 import { FormInput, SelectLabel } from '@/components/atoms';
+import AutoComplete from '@/components/atoms/AutoComplete';
 import FormTextarea from '@/components/atoms/FormTextarea';
 import Modal from '@/components/molecules/Modal';
 import {
@@ -325,7 +326,7 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
           name="teacherId"
           control={control}
           render={({ field: { onChange, value, name } }) => (
-            <SelectLabel
+            <AutoComplete
               name={name}
               isRequired
               options={teacherListData as any}
@@ -346,7 +347,7 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
           name="subjectId"
           control={control}
           render={({ field: { onChange, value, name } }) => (
-            <SelectLabel
+            <AutoComplete
               isRequired
               name={name}
               options={subjectCourseNameList}
@@ -355,7 +356,7 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
               nameLabel="title"
               onChange={e => {
                 setValue('courseGroupId', '');
-                onChange(e.target.value);
+                onChange(e);
               }}
               value={value}
               isInvalid={!!errors.subjectId?.message}

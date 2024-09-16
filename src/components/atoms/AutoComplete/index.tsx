@@ -39,7 +39,6 @@ const Autocomplete: FC<AutocompleteProps> = ({
   nameLabel,
   onChange,
   value,
-  placeholder,
   isRequired,
   formHelperText,
   formErrorMessage,
@@ -98,7 +97,7 @@ const Autocomplete: FC<AutocompleteProps> = ({
       <Input
         name={name}
         value={inputValue}
-        placeholder={placeholder}
+        placeholder={t('selectOption')}
         onChange={handleInputChange}
         isDisabled={isDisabled}
         onFocus={onOpen}
