@@ -322,7 +322,7 @@ const CreateEditModal: FC<CreateEditModalProps> = ({
           name="teacherId"
           control={control}
           render={({ field: { onChange, value, name } }) => (
-            <SelectLabel
+            <AutoComplete
               name={name}
               isRequired
               options={teacherListData as any}
