@@ -1,6 +1,6 @@
 'use client';
 import React, { FC, useEffect } from 'react';
-import { Box, Button, Flex, Heading, Stack, useToast } from '@chakra-ui/react';
+import { Box, Button, Flex, Heading, Stack, Text, useToast } from '@chakra-ui/react';
 import { classValidatorResolver } from '@hookform/resolvers/class-validator';
 import { LanguageTypeEnum } from '@prisma/client';
 import { useMutation } from '@tanstack/react-query';
@@ -34,7 +34,7 @@ const CreateEditExam: FC<CreateEditExamProps> = ({
   const t = useTranslations();
   const toast = useToast();
 
-  const { control, handleSubmit, reset } = useForm<ExamValidation>({
+  const { control, handleSubmit, reset, watch } = useForm<ExamValidation>({
     resolver,
     defaultValues: {
       title: examTranslation?.title || '',
@@ -42,6 +42,8 @@ const CreateEditExam: FC<CreateEditExamProps> = ({
       testQuestionIds: (examTranslation?.testQuestions || []).map(({ id }) => id) || [],
     },
   });
+
+  const testQuestionCount = watch('testQuestionIds').length;
 
   useEffect(() => {
     if (examTranslation) {
@@ -183,7 +185,10 @@ const CreateEditExam: FC<CreateEditExamProps> = ({
       </Stack>
 
       <Box my="50px">
-        <Button colorScheme="teal" type="submit" width="50%">
+        <Text>
+          Selected {testQuestionCount} question{testQuestionCount > 1 && 's'}
+        </Text>
+        <Button colorScheme="teal" type="submit" width="50%" isDisabled={!testQuestionCount}>
           {t('createExam')}
         </Button>
       </Box>

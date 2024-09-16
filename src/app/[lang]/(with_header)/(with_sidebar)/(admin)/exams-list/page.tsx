@@ -1,10 +1,12 @@
 'use client';
 import React, { Fragment, useCallback, useMemo, useState } from 'react';
 import {
+  Box,
   Button,
   Divider,
   ListItem,
   MenuItem,
+  Text,
   UnorderedList,
   useDisclosure,
 } from '@chakra-ui/react';
@@ -21,6 +23,7 @@ import { ExamService } from '@/api/services/exam.service';
 import { StudentService } from '@/api/services/student.service';
 import ActionButtons from '@/components/molecules/ActionButtons';
 import Modal from '@/components/molecules/Modal';
+import NoDataFound from '@/components/molecules/NoDataFound';
 import SearchTable from '@/components/organisms/SearchTable';
 import SimpleTable from '@/components/organisms/SimpleTable';
 import useDebounce from '@/hooks/useDebounce';
@@ -54,16 +57,18 @@ export default function ExamsList({
     isOpen: isDeleteModalOpen,
     onOpen: openDeleteModal,
     onClose: closeDeleteModal,
-  } = useDisclosure({
-    onClose() {},
-  });
+  } = useDisclosure();
   const {
     isOpen: isStudentsModalOpen,
     onOpen: openStudentsModal,
     onClose: closeStudentsModal,
-  } = useDisclosure({
-    onClose() {},
-  });
+  } = useDisclosure();
+
+  const {
+    isOpen: testQuestionModalIsOpen,
+    onOpen: openTestQuestionModal,
+    onClose: closeTestQuestionModal,
+  } = useDisclosure();
 
   const {
     isOpen: isCreateEditExamModalIsOpen,
@@ -244,6 +249,20 @@ export default function ExamsList({
       ),
       header: t('students'),
     }),
+    columnHelper.accessor('id', {
+      id: uuidv4(),
+      cell: info => (
+        <Button
+          variant="link"
+          onClick={() => {
+            openTestQuestionModal();
+            setSelectedExam(info.row.original);
+          }}>
+          {t('seeQuestions')}
+        </Button>
+      ),
+      header: t('questions'),
+    }),
     columnHelper.accessor('createdAt', {
       id: uuidv4(),
       cell: info => {
@@ -348,6 +367,40 @@ export default function ExamsList({
       <Modal isOpen={isStudentsModalOpen} onClose={closeStudentsModal} isDeleteVariant>
         <SimpleTable columns={studentsColumns as any} title="students" data={studentsData || []} />
       </Modal>
+
+      {selectedExam && (
+        <Modal isOpen={testQuestionModalIsOpen} onClose={closeTestQuestionModal}>
+          {selectedExam.examLanguages.length > 0 ? (
+            selectedExam.examLanguages.map(examLanguage => (
+              <Box key={examLanguage.id} p={4}>
+                <Text fontWeight="bold" mb={2}>
+                  Language: {examLanguage.language}
+                </Text>
+                {examLanguage.examTranslationTests.length > 0 ? (
+                  <UnorderedList spacing={4}>
+                    {examLanguage.examTranslationTests.map(tr => (
+                      <Box key={tr.id} mb={6}>
+                        <Text fontWeight="semibold" mb={1}>
+                          Question: {tr.testQuestion.title}
+                        </Text>
+                        <UnorderedList styleType="circle" spacing={2}>
+                          {tr.testQuestion.options.map(option => (
+                            <ListItem key={option.id}>{option.title}</ListItem>
+                          ))}
+                        </UnorderedList>
+                      </Box>
+                    ))}
+                  </UnorderedList>
+                ) : (
+                  <NoDataFound />
+                )}
+              </Box>
+            ))
+          ) : (
+            <NoDataFound />
+          )}
+        </Modal>
+      )}
     </>
   );
 }

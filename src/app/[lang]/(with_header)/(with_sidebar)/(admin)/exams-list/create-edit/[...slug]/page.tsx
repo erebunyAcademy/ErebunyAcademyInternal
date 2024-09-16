@@ -19,7 +19,6 @@ const CreateEdit = ({
   params: { slug: string[] };
   searchParams: { language: LanguageTypeEnum };
 }) => {
-  console.log({ params });
   const [examId, subjectId] = params.slug;
   const t = useTranslations();
 
@@ -31,11 +30,13 @@ const CreateEdit = ({
       searchParams.language,
     ),
     enabled: !!subjectId,
+    initialData: [],
   });
 
   const { data } = useQuery<ExamTranslation>({
     queryFn: ExamService.getExamTranslation.bind(null, examId, searchParams.language),
     queryKey: [searchParams.language],
+    initialData: null,
   });
 
   return (
@@ -73,8 +74,8 @@ const CreateEdit = ({
             <CreateEditExam
               examId={examId}
               subjectId={subjectId}
-              testQuestionQueryData={testQuestionQueryData || []}
-              examTranslation={data || null}
+              testQuestionQueryData={testQuestionQueryData}
+              examTranslation={data}
               language={searchParams.language}
             />
           </TabPanel>
@@ -82,8 +83,8 @@ const CreateEdit = ({
             <CreateEditExam
               examId={examId}
               subjectId={subjectId}
-              testQuestionQueryData={testQuestionQueryData || []}
-              examTranslation={data || null}
+              testQuestionQueryData={testQuestionQueryData}
+              examTranslation={data}
               language={searchParams.language}
             />
           </TabPanel>
@@ -91,8 +92,8 @@ const CreateEdit = ({
             <CreateEditExam
               examId={examId}
               subjectId={subjectId}
-              testQuestionQueryData={testQuestionQueryData || []}
-              examTranslation={data || null}
+              testQuestionQueryData={testQuestionQueryData}
+              examTranslation={data}
               language={searchParams.language}
             />
           </TabPanel>
