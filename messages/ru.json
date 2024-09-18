@@ -289,5 +289,6 @@
   "seeDescription": "Смотреть описание",
   "addDescription": "Добавить описание",
   "editDescription": "Изменить описание",
-  "seeQuestions": "Посмотреть вопросы"
+  "seeQuestions": "Посмотреть вопросы",
+  "expand": "Расширять"
 }

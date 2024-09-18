@@ -25,6 +25,7 @@ import {
 } from '@chakra-ui/react';
 import { useMutation } from '@tanstack/react-query';
 import dayjs from 'dayjs';
+import { useTranslations } from 'next-intl';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import { AcademicRegisterService } from '@/api/services/academic-register.service';
 import { SelectLabel } from '@/components/atoms';
@@ -40,6 +41,7 @@ const CourseGroupRegister = ({
   const [expandedLesson, setExpandedLesson] = useState<null | string>(null);
   const [selectedLesson, setSelectedLesson] = useState<any>(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const t = useTranslations();
 
   const { data = [], mutate } = useMutation({
     mutationFn: AcademicRegisterService.getCourseGroupAcademicRegister.bind(null, courseGroupId),
@@ -107,9 +109,11 @@ const CourseGroupRegister = ({
       <Table>
         <Thead>
           <Tr>
-            <Th>Date</Th>
-            <Th>Lesson</Th>
-            <Th>Expand</Th>
+            <Th>{t('lessonDay')}</Th>
+            <Th>{t('lesson')}</Th>
+            <Th>{t('subject')}</Th>
+            <Th>{t('lecturer')}</Th>
+            <Th>{t('expand')}</Th>
           </Tr>
         </Thead>
         <Tbody>
@@ -127,6 +131,14 @@ const CourseGroupRegister = ({
                       Lesson{' '}
                       {periodListData.find(period => period.id === lesson.lessonOfTheDay)?.title ||
                         lesson.lessonOfTheDay}
+                    </Td>
+                    <Td>{lesson.academicRegister.subject.title}</Td>
+                    <Td>
+                      {lesson.academicRegister.schedule.scheduleTeachers.map(({ teacher }) => (
+                        <Text key={teacher.id}>
+                          {teacher.user.firstName} {teacher.user.lastName}{' '}
+                        </Text>
+                      ))}
                     </Td>
                     <Td>
                       <IconButton
