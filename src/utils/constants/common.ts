@@ -50,7 +50,7 @@ export const academicYearListData = Array.from({ length: 5 }, (_, i) => ({
   title: `${new Date().getFullYear() + i}-${new Date().getFullYear() + 1 + i}`,
 }));
 
-export const markAttendantOptionData = Array.from({ length: 20 }, (_, i) => ({
+export const markAttendantOptionData = Array.from({ length: 10 }, (_, i) => ({
   id: i + 1,
   title: `${i + 1}`,
 }));

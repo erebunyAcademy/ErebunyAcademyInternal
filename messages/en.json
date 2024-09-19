@@ -289,5 +289,6 @@
   "seeDescription": "See description",
   "addDescription": "Add description",
   "editDescription": "Edit description",
-  "seeQuestions": "See questions"
+  "seeQuestions": "See questions",
+  "expand": "Expand"
 }

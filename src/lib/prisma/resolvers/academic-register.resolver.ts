@@ -431,13 +431,27 @@ export class AcademicRegisterResolver {
         },
       },
       include: {
-        academicRegister: {
-          include: {
-            subject: true,
-          },
-        },
+        academicRegister: true,
         academicRegisterLessons: {
           include: {
+            academicRegister: {
+              include: {
+                schedule: {
+                  include: {
+                    scheduleTeachers: {
+                      include: {
+                        teacher: {
+                          include: {
+                            user: true,
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+                subject: true,
+              },
+            },
             attendanceRecord: {
               include: {
                 student: {
@@ -455,6 +469,7 @@ export class AcademicRegisterResolver {
       },
     });
   }
+
   static async changeAttendanceRecordData(input: UpdateStudentAttendanceRecordsValidation) {
     const updatePromises = input.attendantRecords.map(record => {
       return prisma.attendanceRecord.update({
