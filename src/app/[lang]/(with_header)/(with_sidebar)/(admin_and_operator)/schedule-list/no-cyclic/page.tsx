@@ -39,7 +39,7 @@ export default function Schedule({ params }: { params: { lang: Locale } }) {
   const t = useTranslations();
 
   const { data, refetch } = useQuery({
-    queryKey: ['non_cyclic_list'],
+    queryKey: [`schedule-${ScheduleTypeEnum.NON_CYCLIC}`],
     queryFn: () => ScheduleService.list(ScheduleTypeEnum.NON_CYCLIC),
     initialData: [],
   });
@@ -182,7 +182,7 @@ export default function Schedule({ params }: { params: { lang: Locale } }) {
                                   <Td>
                                     <Button
                                       as={Link}
-                                      href={`${languagePathHelper(params.lang, `/schedules/${schedule.id}`)}`}
+                                      href={`${languagePathHelper(params.lang, `/schedules/${schedule.id}/${courseGroup.id}`)}`}
                                       variant="link">
                                       {t('seeDetails')}
                                     </Button>
@@ -197,7 +197,7 @@ export default function Schedule({ params }: { params: { lang: Locale } }) {
                                     {schedule.scheduleTeachers[0].teacher.user.lastName}
                                   </Td>
                                   <Td>{schedule.academicYear}</Td>
-                                  <Td>{dayjs(schedule.createdAt).format('YYYY-MM-DD')}</Td>
+                                  <Td>{dayjs(schedule.createdAt).format('DD-MM-YYYY')}</Td>
                                 </Tr>
                               ))
                             ) : (

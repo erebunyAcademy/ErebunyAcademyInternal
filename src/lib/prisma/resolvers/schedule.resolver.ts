@@ -75,6 +75,67 @@ export class ScheduleResolver {
           },
         },
       },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+  }
+
+  static getScheduleCourseGroupList(courseGroupId: string) {
+    return prisma.courseGroup.findUnique({
+      where: {
+        id: courseGroupId,
+      },
+      include: {
+        schedules: {
+          include: {
+            subject: true,
+            thematicPlans: {
+              include: {
+                thematicPlanDescription: true,
+              },
+            },
+            scheduleTeachers: {
+              select: {
+                teacher: {
+                  select: {
+                    user: {
+                      select: {
+                        firstName: true,
+                        lastName: true,
+                      },
+                    },
+                  },
+                },
+                teacherId: true,
+              },
+            },
+            attachment: {
+              select: {
+                key: true,
+                title: true,
+                mimetype: true,
+              },
+            },
+            availableDays: true,
+          },
+          orderBy: {
+            createdAt: 'desc',
+          },
+        },
+        course: {
+          select: {
+            id: true,
+            title: true,
+            faculty: {
+              select: {
+                id: true,
+                title: true,
+              },
+            },
+          },
+        },
+      },
     });
   }
 
@@ -615,6 +676,18 @@ export class ScheduleResolver {
                   },
                 },
               },
+              orderBy: [
+                {
+                  user: {
+                    firstName: 'asc',
+                  },
+                },
+                {
+                  user: {
+                    lastName: 'asc',
+                  },
+                },
+              ],
             },
           },
         },

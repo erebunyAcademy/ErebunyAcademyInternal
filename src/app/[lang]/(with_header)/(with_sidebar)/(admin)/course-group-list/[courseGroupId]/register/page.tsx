@@ -100,10 +100,10 @@ const CourseGroupRegister = ({
 
   return (
     <Flex flexDirection="column">
-      <Text as="h2" fontWeight={800} textAlign="center">
-        Journal
+      <Text as="h2" fontWeight={800} textAlign="center" fontSize="24px">
+        {t('academicRegister')}
       </Text>
-      <Box maxWidth="400px" mt="100px" ml="20px">
+      <Box maxWidth="400px" m="100px 0 30px 20px">
         <Calendar selectDateHandler={(startDate, endDate) => mutate({ startDate, endDate })} />
       </Box>
       <Table>
@@ -150,21 +150,20 @@ const CourseGroupRegister = ({
                       />
                     </Td>
                     <Td>
-                      <Button onClick={() => openEditModal(lesson)}>Edit</Button>
+                      <Button onClick={() => openEditModal(lesson)}>{t('edit')}</Button>
                     </Td>
                   </Tr>
 
                   {expandedLesson === lesson.id && (
                     <Tr>
                       <Td colSpan={3}>
-                        <Box border="1px solid gray" padding={4}>
+                        <Box border="1px solid gray" padding="15px">
                           <Table size="sm">
                             <Thead>
                               <Tr>
-                                <Th>Student</Th>
-                                <Th>Mark</Th>
-                                <Th>Attendance</Th>
-                                <Th>Actions</Th>
+                                <Th>{t('student')}</Th>
+                                <Th>{t('mark')}</Th>
+                                <Th>{t('attendanceStatus')}</Th>
                               </Tr>
                             </Thead>
                             <Tbody>
@@ -174,7 +173,7 @@ const CourseGroupRegister = ({
                                     {record.student.user.firstName} {record.student.user.lastName}
                                   </Td>
                                   <Td>{record.mark || '-'}</Td>
-                                  <Td>{record.isPresent ? 'Present' : 'Absent'}</Td>
+                                  <Td>{record.isPresent ? t('present') : t('absent')}</Td>
                                 </Tr>
                               ))}
                             </Tbody>
@@ -190,10 +189,10 @@ const CourseGroupRegister = ({
         </Tbody>
       </Table>
 
-      <Modal isOpen={isOpen} onClose={onClose} size="3xl">
+      <Modal isOpen={isOpen} onClose={onClose} size="3xl" isCentered>
         <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Edit Attendance Records</ModalHeader>
+        <ModalContent p="15px">
+          <ModalHeader mb="10px">{t('editAttendanceRecords')}</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             {selectedLesson && (
@@ -201,9 +200,9 @@ const CourseGroupRegister = ({
                 <Table size="sm">
                   <Thead>
                     <Tr>
-                      <Th>Student</Th>
-                      <Th>Mark</Th>
-                      <Th>Attendance</Th>
+                      <Th>{t('student')}</Th>
+                      <Th>{t('mark')}</Th>
+                      <Th>{t('attendanceStatus')}</Th>
                     </Tr>
                   </Thead>
                   <Tbody>
@@ -266,10 +265,10 @@ const CourseGroupRegister = ({
           </ModalBody>
           <ModalFooter>
             <Button colorScheme="red" onClick={onClose} mr={3}>
-              Cancel
+              {t('cancel')}
             </Button>
             <Button onClick={handleSubmit(onSubmit)} isDisabled={!isDirty}>
-              Save
+              {t('save')}
             </Button>
           </ModalFooter>
         </ModalContent>

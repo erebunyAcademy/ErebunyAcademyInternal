@@ -152,22 +152,22 @@ const StudentSchedule = ({ params }: { params: { lang: Locale } }) => {
 
     cyclicColumnHelper.accessor('startDayDate', {
       id: uuidv4(),
-      cell: info => (info.getValue() ? dayjs(info.getValue()).format('YYYY-MM-DD') : '-'),
+      cell: info => (info.getValue() ? dayjs(info.getValue()).format('DD-MM-YYYY') : '-'),
       header: t('startDay'),
     }),
     cyclicColumnHelper.accessor('endDayDate', {
       id: uuidv4(),
-      cell: info => (info.getValue() ? dayjs(info.getValue()).format('YYYY-MM-DD') : '-'),
+      cell: info => (info.getValue() ? dayjs(info.getValue()).format('DD-MM-YYYY') : '-'),
       header: t('endDay'),
     }),
     cyclicColumnHelper.accessor('examDate', {
       id: uuidv4(),
-      cell: info => (info.getValue() ? dayjs(info.getValue()).format('YYYY-MM-DD') : '-'),
+      cell: info => (info.getValue() ? dayjs(info.getValue()).format('DD-MM-YYYY') : '-'),
       header: t('examDay'),
     }),
     cyclicColumnHelper.accessor('createdAt', {
       id: uuidv4(),
-      cell: info => dayjs(info.getValue()).format('YYYY-MM-DD'),
+      cell: info => dayjs(info.getValue()).format('DD-MM-YYYY'),
       header: t('createdAt'),
     }),
   ];

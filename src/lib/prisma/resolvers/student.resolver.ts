@@ -114,9 +114,7 @@ export class StudentResolver {
             ? {
                 [sortBy]: orderBy,
               }
-            : {
-                createdAt: 'desc',
-              },
+            : [{ firstName: 'asc' }, { lastName: 'asc' }],
         skip,
         take,
       }),

@@ -290,5 +290,7 @@
   "addDescription": "Добавить описание",
   "editDescription": "Изменить описание",
   "seeQuestions": "Посмотреть вопросы",
-  "expand": "Расширять"
+  "expand": "Расширять",
+  "mark": "Оценка",
+  "editAttendanceRecords": "Редактировать записи посещаемости"
 }

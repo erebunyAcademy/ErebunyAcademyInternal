@@ -126,7 +126,7 @@ export default function Users() {
     }),
     columnHelper.accessor('createdAt', {
       id: uuidv4(),
-      cell: info => dayjs(info.getValue()).format('YYYY-MM-DD'),
+      cell: info => dayjs(info.getValue()).format('DD-MM-YYYY'),
       header: t('createdAt'),
     }),
   ];
