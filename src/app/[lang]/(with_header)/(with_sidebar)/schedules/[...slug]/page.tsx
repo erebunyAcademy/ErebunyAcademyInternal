@@ -16,7 +16,10 @@ const ScheduleItem = async ({ params }: { params: { slug: string[]; lang: Locale
   }
 
   if (courseGroupId) {
-    courseGroupScheduleList = await ScheduleResolver.getScheduleCourseGroupList(courseGroupId);
+    courseGroupScheduleList = await ScheduleResolver.getScheduleCourseGroupList(
+      scheduleId,
+      courseGroupId,
+    );
   }
 
   return (
