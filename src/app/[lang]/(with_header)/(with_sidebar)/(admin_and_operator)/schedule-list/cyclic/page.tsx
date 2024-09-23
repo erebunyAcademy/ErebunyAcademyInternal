@@ -39,7 +39,7 @@ export default function Schedule({ params }: { params: { lang: Locale } }) {
   const t = useTranslations();
 
   const { data, refetch } = useQuery({
-    queryKey: [],
+    queryKey: [`schedule-${ScheduleTypeEnum.CYCLIC}`],
     queryFn: () => ScheduleService.list(ScheduleTypeEnum.CYCLIC),
     initialData: [],
   });
@@ -184,7 +184,7 @@ export default function Schedule({ params }: { params: { lang: Locale } }) {
                                   <Td>
                                     <Button
                                       as={Link}
-                                      href={`${languagePathHelper(params.lang, `/schedules/${schedule.id}`)}`}
+                                      href={`${languagePathHelper(params.lang, `/schedules/${schedule.id}/${courseGroup.id}`)}`}
                                       variant="link">
                                       {t('seeDetails')}
                                     </Button>
