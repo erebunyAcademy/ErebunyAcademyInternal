@@ -75,6 +75,9 @@ export class ScheduleResolver {
           },
         },
       },
+      orderBy: {
+        createdAt: 'desc',
+      },
     });
   }
 
@@ -615,6 +618,18 @@ export class ScheduleResolver {
                   },
                 },
               },
+              orderBy: [
+                {
+                  user: {
+                    firstName: 'asc',
+                  },
+                },
+                {
+                  user: {
+                    lastName: 'asc',
+                  },
+                },
+              ],
             },
           },
         },
