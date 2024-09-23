@@ -330,6 +330,9 @@ export class AcademicRegisterResolver {
 
     return prisma.academicRegisterDay.findMany({
       where: {
+        academicRegister: {
+          courseGroupId: user.student.courseGroup?.id,
+        },
         createdAt: {
           gt: todayStart,
           lt: todayEnd,

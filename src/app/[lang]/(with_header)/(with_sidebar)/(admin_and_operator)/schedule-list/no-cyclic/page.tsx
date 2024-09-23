@@ -197,7 +197,7 @@ export default function Schedule({ params }: { params: { lang: Locale } }) {
                                     {schedule.scheduleTeachers[0].teacher.user.lastName}
                                   </Td>
                                   <Td>{schedule.academicYear}</Td>
-                                  <Td>{dayjs(schedule.createdAt).format('YYYY-MM-DD')}</Td>
+                                  <Td>{dayjs(schedule.createdAt).format('DD-MM-YYYY')}</Td>
                                 </Tr>
                               ))
                             ) : (

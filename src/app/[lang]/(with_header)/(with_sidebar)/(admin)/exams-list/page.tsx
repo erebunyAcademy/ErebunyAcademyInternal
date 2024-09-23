@@ -267,7 +267,7 @@ export default function ExamsList({
       id: uuidv4(),
       cell: info => {
         const currentDate = dayjs(info.getValue());
-        return currentDate.format('YYYY-MM-DD HH:mm');
+        return currentDate.format('DD-MM-YYYY HH:mm');
       },
       header: t('createdAt'),
     }),

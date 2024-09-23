@@ -290,5 +290,7 @@
   "addDescription": "Add description",
   "editDescription": "Edit description",
   "seeQuestions": "See questions",
-  "expand": "Expand"
+  "expand": "Expand",
+  "mark": "Mark",
+  "editAttendanceRecords": "Edit Attendance Records"
 }
