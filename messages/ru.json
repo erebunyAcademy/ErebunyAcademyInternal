@@ -292,5 +292,6 @@
   "seeQuestions": "Посмотреть вопросы",
   "expand": "Расширять",
   "mark": "Оценка",
-  "editAttendanceRecords": "Редактировать записи посещаемости"
+  "editAttendanceRecords": "Редактировать записи посещаемости",
+  "seeSchedules": "Посмотреть расписания"
 }

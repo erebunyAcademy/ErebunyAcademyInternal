@@ -94,14 +94,18 @@ const StudentSchedule = ({ params }: { params: { lang: Locale } }) => {
     cyclicColumnHelper.accessor('id', {
       id: uuidv4(),
       header: t('seeDetails'),
-      cell: info => (
-        <Button
-          as={Link}
-          href={`${languagePathHelper(params.lang, `/schedules/${info.getValue()}`)}`}
-          variant="link">
-          {t('seeDetails')}
-        </Button>
-      ),
+      cell: info => {
+        const schedule = cyclicData.find(schedule => schedule.id === info.getValue());
+        const courseGroupId = schedule?.courseGroup?.id;
+        return (
+          <Button
+            as={Link}
+            href={`${languagePathHelper(params.lang, `/schedules/${info.getValue()}/${courseGroupId}`)}`}
+            variant="link">
+            {t('seeDetails')}
+          </Button>
+        );
+      },
     }),
 
     cyclicColumnHelper.accessor('courseGroup.title', {

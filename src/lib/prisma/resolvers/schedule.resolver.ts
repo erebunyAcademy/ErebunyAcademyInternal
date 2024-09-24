@@ -81,13 +81,18 @@ export class ScheduleResolver {
     });
   }
 
-  static getScheduleCourseGroupList(courseGroupId: string) {
+  static getScheduleCourseGroupList(scheduleId: string, courseGroupId: string) {
     return prisma.courseGroup.findUnique({
       where: {
         id: courseGroupId,
       },
       include: {
         schedules: {
+          where: {
+            id: {
+              not: scheduleId,
+            },
+          },
           include: {
             subject: true,
             thematicPlans: {
@@ -654,6 +659,11 @@ export class ScheduleResolver {
         courseGroup: {
           include: {
             students: {
+              where: {
+                user: {
+                  isAdminVerified: true,
+                },
+              },
               include: {
                 user: {
                   select: {

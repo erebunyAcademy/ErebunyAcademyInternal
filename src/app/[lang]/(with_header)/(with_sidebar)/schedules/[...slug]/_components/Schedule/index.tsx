@@ -35,19 +35,15 @@ const ScheduleDetails = ({
 }: {
   scheduleId: string;
   lang: Locale;
-  courseGroup: Maybe<CourseGroupScheduleList>;
+  courseGroup?: Maybe<CourseGroupScheduleList>;
 }) => {
   const t = useTranslations();
-  const [isExpanded, setIsExpanded] = useState(false); // State to track if content is expanded
+  const [isExpanded, setIsExpanded] = useState(false);
 
   const { data: scheduleData } = useQuery<GetScheduleByIdModel>({
     queryKey: ['cyclic-schedule', scheduleId],
     queryFn: () => ScheduleService.getScheduleById(scheduleId),
   });
-
-  if (!courseGroup) {
-    return <NoDataFound />;
-  }
 
   const toggleExpand = () => {
     setIsExpanded(prev => !prev);
@@ -55,84 +51,86 @@ const ScheduleDetails = ({
 
   return (
     <Flex flexDirection="column" width="100%" mt={100}>
-      <Table size="xl">
-        <Thead>
-          <Tr>
-            <Td>{t('courseGroup')}</Td>
-            <Td>{t('course')}</Td>
-            <Td>{t('faculty')}</Td>
-            <Td>{t('expand')}</Td>
-          </Tr>
-        </Thead>
-        <Tbody>
-          <Tr>
-            <Td>{courseGroup.title}</Td>
-            <Td>{courseGroup.course.title}</Td>
-            <Td>{courseGroup.course.faculty?.title}</Td>
-            <Td>
-              <IconButton
-                aria-label="expand"
-                icon={isExpanded ? <MinusIcon /> : <AddIcon />}
-                onClick={toggleExpand}
-              />
-            </Td>
-          </Tr>
-
-          {isExpanded && (
+      {courseGroup && (
+        <Table size="xl" ml="30px">
+          <Thead>
             <Tr>
-              <Td colSpan={4}>
-                <Box bg="gray.100" p={4}>
-                  <Table size="sm" variant="simple">
-                    <Thead>
-                      <Tr>
-                        <Td>{t('details')}</Td>
-                        <Td>{t('subject')}</Td>
-                        <Td>{t('title')}</Td>
-                        <Td>{t('description')}</Td>
-                        <Td>{t('lecturer')}</Td>
-                        <Td>{t('createdAt')}</Td>
-                      </Tr>
-                    </Thead>
-                    <Tbody>
-                      {courseGroup.schedules.length ? (
-                        courseGroup.schedules.map(schedule => (
-                          <Tr key={schedule.id}>
-                            <Td>
-                              <Button
-                                as="a"
-                                href={languagePathHelper(
-                                  lang,
-                                  `/schedules/${schedule.id}/${courseGroup.id}`,
-                                )}
-                                variant="link">
-                                {t('seeDetails')}
-                              </Button>
-                            </Td>
-                            <Td>{schedule.subject.title}</Td>
-                            <Td>{schedule.title}</Td>
-                            <Td>{schedule.description}</Td>
-                            <Td>
-                              {schedule.scheduleTeachers[0]?.teacher.user.firstName}{' '}
-                              {schedule.scheduleTeachers[0]?.teacher.user.lastName}
-                            </Td>
-                            <Td>{dayjs(schedule.createdAt).format('DD-MM-YYYY')}</Td>
-                          </Tr>
-                        ))
-                      ) : (
-                        <Tr>
-                          <Td colSpan={12} textAlign="center">
-                            {t('noSchedules')}
-                          </Td>
-                        </Tr>
-                      )}
-                    </Tbody>
-                  </Table>
-                </Box>
+              <Td>{t('courseGroup')}</Td>
+              <Td>{t('course')}</Td>
+              <Td>{t('faculty')}</Td>
+              <Td>{t('expand')}</Td>
+            </Tr>
+          </Thead>
+          <Tbody>
+            <Tr>
+              <Td>{courseGroup.title}</Td>
+              <Td>{courseGroup.course.title}</Td>
+              <Td>{courseGroup.course.faculty?.title}</Td>
+              <Td>
+                <IconButton
+                  aria-label="expand"
+                  icon={isExpanded ? <MinusIcon /> : <AddIcon />}
+                  onClick={toggleExpand}
+                />
               </Td>
             </Tr>
-          )}
-        </Tbody>
-      </Table>
+
+            {isExpanded && (
+              <Tr>
+                <Td colSpan={4}>
+                  <Box bg="gray.100" p={4}>
+                    <Table size="sm" variant="simple">
+                      <Thead>
+                        <Tr>
+                          <Td>{t('details')}</Td>
+                          <Td>{t('subject')}</Td>
+                          <Td>{t('title')}</Td>
+                          <Td>{t('description')}</Td>
+                          <Td>{t('lecturer')}</Td>
+                          <Td>{t('createdAt')}</Td>
+                        </Tr>
+                      </Thead>
+                      <Tbody>
+                        {courseGroup.schedules.length ? (
+                          courseGroup.schedules.map(schedule => (
+                            <Tr key={schedule.id}>
+                              <Td>
+                                <Button
+                                  as="a"
+                                  href={languagePathHelper(
+                                    lang,
+                                    `/schedules/${schedule.id}/${courseGroup.id}`,
+                                  )}
+                                  variant="link">
+                                  {t('seeDetails')}
+                                </Button>
+                              </Td>
+                              <Td>{schedule.subject.title}</Td>
+                              <Td>{schedule.title}</Td>
+                              <Td>{schedule.description}</Td>
+                              <Td>
+                                {schedule.scheduleTeachers[0]?.teacher.user.firstName}{' '}
+                                {schedule.scheduleTeachers[0]?.teacher.user.lastName}
+                              </Td>
+                              <Td>{dayjs(schedule.createdAt).format('DD-MM-YYYY')}</Td>
+                            </Tr>
+                          ))
+                        ) : (
+                          <Tr>
+                            <Td colSpan={12} textAlign="center" p="15px 0">
+                              <NoDataFound />
+                            </Td>
+                          </Tr>
+                        )}
+                      </Tbody>
+                    </Table>
+                  </Box>
+                </Td>
+              </Tr>
+            )}
+          </Tbody>
+        </Table>
+      )}
 
       <Box m={{ base: '16px', lg: '40px' }} width="100%">
         <Box fontSize={{ base: '16px', lg: '18px' }} width="100%" color="#1A202C" p="10px">
