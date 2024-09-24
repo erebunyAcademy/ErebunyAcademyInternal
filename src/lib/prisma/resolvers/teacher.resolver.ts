@@ -137,11 +137,9 @@ export class TeacherResolver {
       },
     });
 
-    const teacherId = teacher.id;
-
     const scheduleIds = (
       await prisma.scheduleTeacher.findMany({
-        where: { teacherId: teacherId },
+        where: { teacherId: teacher.id },
         select: {
           scheduleId: true,
         },
