@@ -124,4 +124,55 @@ export class TeacherResolver {
       },
     });
   }
+
+  static async getSelectedTeacherSchedules(selectedTeacherId: string) {
+    if (!selectedTeacherId) {
+      throw new ForbiddenException();
+    }
+
+    const teacher = await prisma.teacher.findUniqueOrThrow({
+      where: { userId: selectedTeacherId },
+      select: {
+        id: true,
+      },
+    });
+
+    const teacherId = teacher.id;
+
+    const scheduleIds = (
+      await prisma.scheduleTeacher.findMany({
+        where: { teacherId: teacherId },
+        select: {
+          scheduleId: true,
+        },
+      })
+    ).reduce((acc: string[], schedule) => {
+      if (schedule.scheduleId) {
+        acc.push(schedule.scheduleId);
+      }
+      return acc;
+    }, [] as string[]);
+
+    return prisma.schedule.findMany({
+      where: {
+        id: {
+          in: scheduleIds,
+        },
+      },
+      include: {
+        subject: true,
+        attachment: true,
+        thematicPlans: {
+          include: {
+            thematicPlanDescription: true,
+          },
+        },
+        courseGroup: {
+          include: {
+            course: true,
+          },
+        },
+      },
+    });
+  }
 }

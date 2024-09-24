@@ -1,4 +1,4 @@
-import { Catch, createHandler, Get, Query } from 'next-api-decorators';
+import { Catch, createHandler, Get, Param, Query } from 'next-api-decorators';
 import { User } from 'next-auth';
 import { SortingType } from '@/api/types/common';
 import { CurrentUser } from '@/lib/prisma/decorators/current-user.decorator';
@@ -30,6 +30,11 @@ class TeachersHandler {
   @Get('/schedules')
   getStudentCyclicSchedule(@CurrentUser() user: NonNullable<User>) {
     return TeacherResolver.getTeacherSchedules(user);
+  }
+
+  @Get('/:selectedTeacherId')
+  getSelectedTeacherSchedule(@Param('selectedTeacherId') selectedTeacherId: string) {
+    return TeacherResolver.getSelectedTeacherSchedules(selectedTeacherId);
   }
 }
 

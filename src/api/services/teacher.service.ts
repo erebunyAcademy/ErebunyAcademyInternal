@@ -18,4 +18,8 @@ export class TeacherService {
   static getTeacherSchedules() {
     return $apiClient.get<TeacherCyclicScheduleListType>('/teachers/schedules');
   }
+
+  static getSelectedTeacherSchedules(selectedTeacherId: string) {
+    return $apiClient.get<TeacherCyclicScheduleListType>(`/teachers/${selectedTeacherId}`);
+  }
 }

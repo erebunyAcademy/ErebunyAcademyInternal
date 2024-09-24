@@ -35,19 +35,15 @@ const ScheduleDetails = ({
 }: {
   scheduleId: string;
   lang: Locale;
-  courseGroup: Maybe<CourseGroupScheduleList>;
+  courseGroup?: Maybe<CourseGroupScheduleList>;
 }) => {
   const t = useTranslations();
-  const [isExpanded, setIsExpanded] = useState(false); // State to track if content is expanded
+  const [isExpanded, setIsExpanded] = useState(false);
 
   const { data: scheduleData } = useQuery<GetScheduleByIdModel>({
     queryKey: ['cyclic-schedule', scheduleId],
     queryFn: () => ScheduleService.getScheduleById(scheduleId),
   });
-
-  if (!courseGroup) {
-    return <NoDataFound />;
-  }
 
   const toggleExpand = () => {
     setIsExpanded(prev => !prev);
@@ -56,7 +52,7 @@ const ScheduleDetails = ({
   return (
     <Flex flexDirection="column" width="100%" mt={100}>
       {courseGroup && (
-        <Table size="xl">
+        <Table size="xl" ml="30px">
           <Thead>
             <Tr>
               <Td>{t('courseGroup')}</Td>
@@ -121,8 +117,8 @@ const ScheduleDetails = ({
                           ))
                         ) : (
                           <Tr>
-                            <Td colSpan={12} textAlign="center">
-                              {t('noSchedules')}
+                            <Td colSpan={12} textAlign="center" p="15px 0">
+                              <NoDataFound />
                             </Td>
                           </Tr>
                         )}
