@@ -456,6 +456,14 @@ export class AcademicRegisterResolver {
               },
             },
             attendanceRecord: {
+              where: {
+                student: {
+                  user: {
+                    isAdminVerified: true,
+                    isVerified: true,
+                  },
+                },
+              },
               include: {
                 student: {
                   include: {

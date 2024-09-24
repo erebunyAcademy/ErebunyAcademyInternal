@@ -14,11 +14,12 @@ const TeacherSchedules = ({
 }: {
   params: { teacherId: string; lang: Locale };
 }) => {
+  const t = useTranslations();
+
   const { data: teacherSchedules } = useQuery({
     queryKey: ['selected-teacher-schedules', teacherId],
     queryFn: () => TeacherService.getSelectedTeacherSchedules(teacherId),
   });
-  const t = useTranslations();
 
   return (
     <TableContainer>
@@ -29,6 +30,8 @@ const TeacherSchedules = ({
         <Thead>
           <Tr>
             <Th>{t('details')}</Th>
+            <Th>{t('faculty')}</Th>
+            <Th>{t('course')}</Th>
             <Th>{t('courseGroupName')}</Th>
             <Th>{t('title')}</Th>
             <Th>{t('totalHours')}</Th>
@@ -46,6 +49,8 @@ const TeacherSchedules = ({
                     {t('seeDetails')}
                   </Button>
                 </Td>
+                <Td>{schedule.courseGroup.course.faculty?.title}</Td>
+                <Td>{schedule.courseGroup.course.title}</Td>
                 <Td>{schedule.courseGroup.title}</Td>
                 <Td>{schedule.title}</Td>
                 <Td>{schedule.totalHours}</Td>

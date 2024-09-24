@@ -167,7 +167,11 @@ export class TeacherResolver {
         },
         courseGroup: {
           include: {
-            course: true,
+            course: {
+              include: {
+                faculty: true,
+              },
+            },
           },
         },
       },

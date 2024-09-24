@@ -142,6 +142,12 @@ export class StudentResolver {
     return prisma.studentExam.findMany({
       where: {
         studentId: user?.student?.id,
+        student: {
+          user: {
+            isAdminVerified: true,
+            isVerified: true,
+          },
+        },
       },
       select: {
         id: true,
@@ -233,7 +239,7 @@ export class StudentResolver {
   }
 
   static async getStudentsInfoByExamId(examId: string) {
-    await prisma.exam.findUniqueOrThrow({
+    const exam = await prisma.exam.findUniqueOrThrow({
       where: {
         id: examId,
       },
@@ -241,7 +247,7 @@ export class StudentResolver {
 
     return prisma.studentExam.findMany({
       where: {
-        examId,
+        examId: exam.id,
       },
       select: {
         student: {
