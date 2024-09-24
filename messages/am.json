@@ -289,5 +289,8 @@
   "addDescription": "Ավելացնել նկարագրություն",
   "editDescription": "Խմբագրել նկարագրությունը",
   "seeQuestions": "Տեսնել հարցերը",
-  "expand": "Ընդլայնել"
+  "expand": "Ընդլայնել",
+  "mark": "Գնահատական",
+  "editAttendanceRecords": "Խմբագրել հաճախումների տվյալները",
+  "seeSchedules": "Տեսնել դասացուցակները"
 }

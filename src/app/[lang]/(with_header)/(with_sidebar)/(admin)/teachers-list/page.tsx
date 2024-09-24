@@ -1,9 +1,10 @@
 'use client';
 import React, { useCallback, useMemo, useState } from 'react';
-import { Box, MenuItem, useDisclosure } from '@chakra-ui/react';
+import { Box, Button, MenuItem, useDisclosure } from '@chakra-ui/react';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { createColumnHelper, SortingState } from '@tanstack/react-table';
 import dayjs from 'dayjs';
+import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { v4 as uuidv4 } from 'uuid';
 import { TeacherService } from '@/api/services/teacher.service';
@@ -11,13 +12,15 @@ import { UserService } from '@/api/services/user.service';
 import ActionButtons from '@/components/molecules/ActionButtons';
 import SearchTable from '@/components/organisms/SearchTable';
 import useDebounce from '@/hooks/useDebounce';
+import { Locale } from '@/i18n';
 import { ITEMS_PER_PAGE } from '@/utils/constants/common';
+import { languagePathHelper } from '@/utils/helpers/language';
 import { QUERY_KEY } from '@/utils/helpers/queryClient';
 import { Maybe } from '@/utils/models/common';
 import { TeacherModelSingle } from '@/utils/models/teachers';
 import RejectMessageModal from './_components/modals/RejectMessageModal';
 
-export default function Users() {
+export default function Users({ params }: { params: { lang: Locale } }) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
@@ -99,6 +102,21 @@ export default function Users() {
       ),
       header: t('actions'),
     }),
+    columnHelper.accessor('id', {
+      id: uuidv4(),
+      cell: info => {
+        const teacherId = info.row.original.id;
+        return (
+          <Button
+            as={Link}
+            href={`${languagePathHelper(params.lang, `/teachers-list/${teacherId}`)}`}
+            variant="link">
+            {t('seeSchedules')}
+          </Button>
+        );
+      },
+      header: t('schedules'),
+    }),
     columnHelper.accessor('firstName', {
       id: uuidv4(),
       cell: info => info.getValue(),
@@ -126,7 +144,7 @@ export default function Users() {
     }),
     columnHelper.accessor('createdAt', {
       id: uuidv4(),
-      cell: info => dayjs(info.getValue()).format('YYYY-MM-DD'),
+      cell: info => dayjs(info.getValue()).format('DD-MM-YYYY'),
       header: t('createdAt'),
     }),
   ];

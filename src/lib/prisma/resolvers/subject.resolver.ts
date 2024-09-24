@@ -52,7 +52,7 @@ export class SubjectResolver {
             },
           },
         },
-        orderBy: sorting ? orderBy(sorting) : undefined,
+        orderBy: sorting ? orderBy(sorting) : { title: 'asc' },
         skip,
         take,
       }),

@@ -73,7 +73,7 @@ const StudentSchedule = ({ params }: { params: { lang: Locale } }) => {
       id: uuidv4(),
       cell: info => {
         const currentDate = dayjs(info.getValue());
-        return currentDate.format('YYYY-MM-DD');
+        return currentDate.format('DD-MM-YYYY');
       },
       header: t('createdAt'),
     }),

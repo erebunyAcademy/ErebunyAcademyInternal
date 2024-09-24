@@ -43,7 +43,7 @@ export class TeacherResolver {
             },
           },
         },
-        orderBy: sorting ? orderBy(sorting) : undefined,
+        orderBy: sorting ? orderBy(sorting) : [{ firstName: 'asc' }, { lastName: 'asc' }],
         skip,
         take,
       }),
@@ -119,6 +119,59 @@ export class TeacherResolver {
         courseGroup: {
           include: {
             course: true,
+          },
+        },
+      },
+    });
+  }
+
+  static async getSelectedTeacherSchedules(selectedTeacherId: string) {
+    if (!selectedTeacherId) {
+      throw new ForbiddenException();
+    }
+
+    const teacher = await prisma.teacher.findUniqueOrThrow({
+      where: { userId: selectedTeacherId },
+      select: {
+        id: true,
+      },
+    });
+
+    const scheduleIds = (
+      await prisma.scheduleTeacher.findMany({
+        where: { teacherId: teacher.id },
+        select: {
+          scheduleId: true,
+        },
+      })
+    ).reduce((acc: string[], schedule) => {
+      if (schedule.scheduleId) {
+        acc.push(schedule.scheduleId);
+      }
+      return acc;
+    }, [] as string[]);
+
+    return prisma.schedule.findMany({
+      where: {
+        id: {
+          in: scheduleIds,
+        },
+      },
+      include: {
+        subject: true,
+        attachment: true,
+        thematicPlans: {
+          include: {
+            thematicPlanDescription: true,
+          },
+        },
+        courseGroup: {
+          include: {
+            course: {
+              include: {
+                faculty: true,
+              },
+            },
           },
         },
       },

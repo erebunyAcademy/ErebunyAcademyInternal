@@ -784,6 +784,12 @@ export class ExamsResolver {
     const studentExams = await prisma.studentExam.findMany({
       where: {
         examId,
+        student: {
+          user: {
+            isAdminVerified: true,
+            isVerified: true,
+          },
+        },
       },
       select: {
         student: {

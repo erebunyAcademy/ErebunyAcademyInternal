@@ -31,3 +31,7 @@ export type StudentNoCyclicScheduleListSingleType =
 export type GetScheduleByIdModel = Prisma.PromiseReturnType<
   typeof ScheduleResolver.getScheduleById
 >;
+
+export type CourseGroupScheduleList = Prisma.PromiseReturnType<
+  typeof ScheduleResolver.getScheduleCourseGroupList
+>;

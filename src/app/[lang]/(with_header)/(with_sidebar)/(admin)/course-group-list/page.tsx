@@ -102,8 +102,15 @@ const CourseGroup = ({ params }: { params: { lang: Locale } }) => {
     }),
     columnHelper.accessor('id', {
       id: uuidv4(),
-      cell: info => <Link href={`${ROUTE_COURSE_GROUP}/${info.getValue()}/register`}>Journal</Link>,
-      header: t('journal'),
+      cell: info => (
+        <Button
+          as={Link}
+          href={`${languagePathHelper(params.lang, `${ROUTE_COURSE_GROUP}/${info.getValue()}/register`)}`}
+          variant="link">
+          {t('openRegister')}
+        </Button>
+      ),
+      header: t('academicRegister'),
     }),
     columnHelper.accessor('course.title', {
       id: uuidv4(),

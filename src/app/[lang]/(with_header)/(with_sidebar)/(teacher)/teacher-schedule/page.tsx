@@ -94,14 +94,18 @@ const StudentSchedule = ({ params }: { params: { lang: Locale } }) => {
     cyclicColumnHelper.accessor('id', {
       id: uuidv4(),
       header: t('seeDetails'),
-      cell: info => (
-        <Button
-          as={Link}
-          href={`${languagePathHelper(params.lang, `/schedules/${info.getValue()}`)}`}
-          variant="link">
-          {t('seeDetails')}
-        </Button>
-      ),
+      cell: info => {
+        const schedule = cyclicData.find(schedule => schedule.id === info.getValue());
+        const courseGroupId = schedule?.courseGroup?.id;
+        return (
+          <Button
+            as={Link}
+            href={`${languagePathHelper(params.lang, `/schedules/${info.getValue()}/${courseGroupId}`)}`}
+            variant="link">
+            {t('seeDetails')}
+          </Button>
+        );
+      },
     }),
 
     cyclicColumnHelper.accessor('courseGroup.title', {
@@ -152,22 +156,22 @@ const StudentSchedule = ({ params }: { params: { lang: Locale } }) => {
 
     cyclicColumnHelper.accessor('startDayDate', {
       id: uuidv4(),
-      cell: info => (info.getValue() ? dayjs(info.getValue()).format('YYYY-MM-DD') : '-'),
+      cell: info => (info.getValue() ? dayjs(info.getValue()).format('DD-MM-YYYY') : '-'),
       header: t('startDay'),
     }),
     cyclicColumnHelper.accessor('endDayDate', {
       id: uuidv4(),
-      cell: info => (info.getValue() ? dayjs(info.getValue()).format('YYYY-MM-DD') : '-'),
+      cell: info => (info.getValue() ? dayjs(info.getValue()).format('DD-MM-YYYY') : '-'),
       header: t('endDay'),
     }),
     cyclicColumnHelper.accessor('examDate', {
       id: uuidv4(),
-      cell: info => (info.getValue() ? dayjs(info.getValue()).format('YYYY-MM-DD') : '-'),
+      cell: info => (info.getValue() ? dayjs(info.getValue()).format('DD-MM-YYYY') : '-'),
       header: t('examDay'),
     }),
     cyclicColumnHelper.accessor('createdAt', {
       id: uuidv4(),
-      cell: info => dayjs(info.getValue()).format('YYYY-MM-DD'),
+      cell: info => dayjs(info.getValue()).format('DD-MM-YYYY'),
       header: t('createdAt'),
     }),
   ];

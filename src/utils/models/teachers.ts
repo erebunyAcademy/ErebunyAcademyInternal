@@ -13,6 +13,10 @@ export type TeacherCyclicScheduleListType = Prisma.PromiseReturnType<
   typeof TeacherResolver.getTeacherSchedules
 >;
 
+export type TeacherScheduleListType = Prisma.PromiseReturnType<
+  typeof TeacherResolver.getSelectedTeacherSchedules
+>;
+
 export type TeacherScheduleListSingleType =
   TeacherCyclicScheduleListType extends (infer SingleType)[] ? SingleType : never;
 

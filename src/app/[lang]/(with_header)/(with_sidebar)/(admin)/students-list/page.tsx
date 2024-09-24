@@ -198,7 +198,7 @@ export default function StudentList({ searchParams }: { searchParams: { courseGr
       id: uuidv4(),
       cell: info => {
         const currentDate = dayjs(info.getValue());
-        return currentDate.format('YYYY-MM-DD');
+        return currentDate.format('DD-MM-YYYY');
       },
       header: t('createdAt'),
     }),
