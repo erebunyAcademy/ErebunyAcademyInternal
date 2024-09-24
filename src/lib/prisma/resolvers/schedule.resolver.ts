@@ -659,6 +659,11 @@ export class ScheduleResolver {
         courseGroup: {
           include: {
             students: {
+              where: {
+                user: {
+                  isAdminVerified: true,
+                },
+              },
               include: {
                 user: {
                   select: {
