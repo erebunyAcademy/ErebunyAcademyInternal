@@ -33,15 +33,23 @@ const AcademicRegister: FC<AcademicRegisterProps> = () => {
     mutationFn: AcademicRegisterService.getAcademicRegisterData,
   });
 
+  const { mutate: fetchStudentAttendanceAbsenceRecord, data = 0 } = useMutation({
+    mutationFn: AcademicRegisterService.getStudentAttendanceAbsence,
+  });
+
+  console.log({ data });
+
   useEffect(() => {
     mutate(null);
-  }, [mutate]);
+    fetchStudentAttendanceAbsenceRecord(null);
+  }, [fetchStudentAttendanceAbsenceRecord, mutate]);
 
   const dateChangeHandler = useCallback(
     (startDate: Date, endDate: Date) => {
       mutate({ startDate, endDate });
+      fetchStudentAttendanceAbsenceRecord({ startDate, endDate });
     },
-    [mutate],
+    [fetchStudentAttendanceAbsenceRecord, mutate],
   );
 
   const practicalThematicPlan =
@@ -56,6 +64,7 @@ const AcademicRegister: FC<AcademicRegisterProps> = () => {
         <Box maxWidth="400px" mt="100px" ml="20px">
           <Calendar selectDateHandler={dateChangeHandler} />
         </Box>
+        <Box textAlign="center">Missing lessons count: {data}</Box>
         <Box maxWidth={{ base: '340px', sm: '670px', lg: '700px', xl: '100%' }} overflow="auto">
           <Table variant="simple" mt="50px">
             <Thead>

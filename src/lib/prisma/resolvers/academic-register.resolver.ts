@@ -316,6 +316,58 @@ export class AcademicRegisterResolver {
     });
   }
 
+  static async getStudentAbsentLessonCount(
+    user: NonNullable<User>,
+    startDate?: string,
+    endDate?: string,
+  ) {
+    const todayStart = dayjs(startDate).utc().startOf('day').toDate();
+    const todayEnd = dayjs(endDate).utc().endOf('day').toDate();
+
+    return prisma.attendanceRecord.count({
+      where: {
+        student: {
+          userId: user.id,
+        },
+        createdAt: {
+          gt: todayStart,
+          lt: todayEnd,
+        },
+        // isPresent: false,
+      },
+    });
+  }
+
+  static async getStudentAbsentDaysCount(
+    user: NonNullable<User>,
+    startDate?: string,
+    endDate?: string,
+  ) {
+    if (!user.student?.id) {
+      throw new ForbiddenException();
+    }
+
+    const todayStart = dayjs(startDate).utc().startOf('day').toDate();
+    const todayEnd = dayjs(endDate).utc().endOf('day').toDate();
+
+    const absentDays = await prisma.attendanceRecord.groupBy({
+      by: ['createdAt'],
+      where: {
+        student: {
+          userId: user.id,
+        },
+        createdAt: {
+          gt: todayStart,
+          lt: todayEnd,
+        },
+        isPresent: false,
+      },
+      _count: true,
+    });
+
+    return absentDays.length;
+  }
+
   static async getStudentAcademicRegisterdata(
     user: NonNullable<User>,
     startDate?: string,
@@ -420,8 +472,6 @@ export class AcademicRegisterResolver {
           .utc()
           .endOf('day')
           .toDate();
-
-    console.log({ effectiveStartDate });
 
     return prisma.academicRegisterDay.findMany({
       where: {

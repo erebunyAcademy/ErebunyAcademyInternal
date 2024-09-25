@@ -66,6 +66,7 @@ const CreateTestQuestions = ({
   const toast = useToast();
   const [excelData, setExcelData] = useState<UploadedExcelData>(null);
 
+  console.log({ language });
   const {
     control,
     watch,
@@ -75,7 +76,7 @@ const CreateTestQuestions = ({
   } = useForm<TestQuestionValidation>({
     resolver,
     defaultValues: {
-      questions: [{ ...initValue, lang: language }],
+      questions: [initValue],
     },
   });
 
@@ -95,7 +96,7 @@ const CreateTestQuestions = ({
   });
 
   const { mutate, isPending } = useMutation<boolean, { message: string }, TestQuestionValidation>({
-    mutationFn: data => TestQuestionService.createTestQuestions(data, subjectId),
+    mutationFn: data => TestQuestionService.createTestQuestions(data, subjectId, language),
   });
 
   const onSubmit: SubmitHandler<TestQuestionValidation> = data => {
@@ -326,7 +327,7 @@ const CreateTestQuestions = ({
               {questionIndex === questionFields.length - 1 && (
                 <Button
                   mt={5}
-                  onClick={() => appendQuestion({ ...initValue, lang: language })}
+                  onClick={() => appendQuestion(initValue)}
                   width="50%"
                   fontSize={{ base: '16px', lg: '20px' }}>
                   {t('addQuestion')}

@@ -13,6 +13,7 @@ import { User } from 'next-auth';
 import { CurrentUser } from '@/lib/prisma/decorators/current-user.decorator';
 import { exceptionHandler } from '@/lib/prisma/error';
 import { AdminGuard } from '@/lib/prisma/guards/admin';
+import { StudentGuard } from '@/lib/prisma/guards/student';
 import { AcademicRegisterResolver } from '@/lib/prisma/resolvers/academic-register.resolver';
 import {
   CreateStudentAttendanceRecordValidation,
@@ -70,6 +71,16 @@ class AcademicRegisterHandler {
       startDate,
       endDate,
     );
+  }
+
+  @Get('/student-attendance')
+  @StudentGuard()
+  getStudentAbsentLessonsCount(
+    @CurrentUser() user: NonNullable<User>,
+    @Query('startDate') startDate?: string,
+    @Query('endDate') endDate?: string,
+  ) {
+    return AcademicRegisterResolver.getStudentAbsentLessonCount(user, startDate, endDate);
   }
 
   @Put('/attendant-records')

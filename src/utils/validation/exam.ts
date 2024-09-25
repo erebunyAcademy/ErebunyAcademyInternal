@@ -1,9 +1,4 @@
-import {
-  ExamStatusEnum,
-  LanguageTypeEnum,
-  TestQuestionLevelEnum,
-  TestQuestionTypeEnum,
-} from '@prisma/client';
+import { ExamStatusEnum, TestQuestionLevelEnum, TestQuestionTypeEnum } from '@prisma/client';
 import { Type } from 'class-transformer';
 import 'reflect-metadata';
 import {
@@ -40,10 +35,6 @@ class Question {
   @IsString()
   @IsNotEmpty({ message: 'Question text is required' })
   title: string;
-
-  @IsEnum(LanguageTypeEnum)
-  @IsNotEmpty({ message: 'Language is required' })
-  lang: LanguageTypeEnum;
 
   @IsArray()
   @ValidateNested({ each: true })
