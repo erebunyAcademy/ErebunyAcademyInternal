@@ -37,8 +37,6 @@ const AcademicRegister: FC<AcademicRegisterProps> = () => {
     mutationFn: AcademicRegisterService.getStudentAttendanceAbsence,
   });
 
-  console.log({ data });
-
   useEffect(() => {
     mutate(null);
     fetchStudentAttendanceAbsenceRecord(null);

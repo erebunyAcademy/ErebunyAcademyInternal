@@ -66,7 +66,6 @@ const CreateTestQuestions = ({
   const toast = useToast();
   const [excelData, setExcelData] = useState<UploadedExcelData>(null);
 
-  console.log({ language });
   const {
     control,
     watch,
