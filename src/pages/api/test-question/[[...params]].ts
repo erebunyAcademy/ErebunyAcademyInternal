@@ -17,12 +17,13 @@ class TestQuestionHandler {
   }
 
   @AdminGuard()
-  @Post('/create/:subjectId')
+  @Post('/create/:subjectId/:lang')
   create(
     @Body(ValidationPipe) body: TestQuestionValidation,
     @Param('subjectId') subjectId: string,
+    @Param('lang') lang: LanguageTypeEnum,
   ) {
-    return TestQuestionResolver.create(body, subjectId);
+    return TestQuestionResolver.create(body, subjectId, lang);
   }
 }
 

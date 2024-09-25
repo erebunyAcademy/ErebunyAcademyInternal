@@ -2,6 +2,7 @@ import {
   GetAcademicRegisterLessonListType,
   GetScheduleDataType,
   GetStudentAcademicRegisterModel,
+  GetStudentAttendanceAbsence,
   StudentAcademicRegisterDataType,
 } from '@/utils/models/academic-register';
 import { CourseGroupAdminListModel } from '@/utils/models/courseGroup';
@@ -48,6 +49,17 @@ export class AcademicRegisterService {
     return $apiClient.get<GetAcademicRegisterLessonListType>(
       `/academic-registers/${scheduleId}/lessons`,
     );
+  }
+
+  static getStudentAttendanceAbsence(
+    params?: {
+      startDate: Date;
+      endDate: Date;
+    } | null,
+  ) {
+    return $apiClient.get<GetStudentAttendanceAbsence>(`/academic-registers/student-attendance`, {
+      params: params ?? {},
+    });
   }
 
   static getCourseGroupAcademicRegister(

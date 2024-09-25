@@ -7,7 +7,11 @@ export class TestQuestionService {
   static getTestQuestionsBySubjectId(subjectId: string, language: LanguageTypeEnum) {
     return $apiClient.get<TestQuestionListModel>(`/test-question/subject/${subjectId}/${language}`);
   }
-  static createTestQuestions(data: TestQuestionValidation, subjectId: string) {
-    return $apiClient.post<boolean>(`/test-question/create/${subjectId}`, data);
+  static createTestQuestions(
+    data: TestQuestionValidation,
+    subjectId: string,
+    lang: LanguageTypeEnum,
+  ) {
+    return $apiClient.post<boolean>(`/test-question/create/${subjectId}/${lang}`, data);
   }
 }
