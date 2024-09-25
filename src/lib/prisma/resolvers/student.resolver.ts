@@ -114,7 +114,9 @@ export class StudentResolver {
             ? {
                 [sortBy]: orderBy,
               }
-            : [{ firstName: 'asc' }, { lastName: 'asc' }],
+            : {
+                createdAt: 'desc',
+              },
         skip,
         take,
       }),
@@ -125,6 +127,7 @@ export class StudentResolver {
       users,
     };
   }
+
   static getStudentById(id: string) {
     return prisma.student
       .findUnique({

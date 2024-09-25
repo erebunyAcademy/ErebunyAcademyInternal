@@ -321,6 +321,7 @@ const CreateTestQuestions = ({
                 control={control}
                 questionIndex={questionIndex}
                 questionType={questionType}
+                watch={watch}
               />
               {questionIndex === questionFields.length - 1 && (
                 <Button
