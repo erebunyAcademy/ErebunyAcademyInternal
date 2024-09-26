@@ -62,7 +62,9 @@ const AcademicRegister: FC<AcademicRegisterProps> = () => {
         <Box maxWidth="400px" mt="100px" ml="20px">
           <Calendar selectDateHandler={dateChangeHandler} />
         </Box>
-        <Box textAlign="center">Missing lessons count: {data}</Box>
+        <Box textAlign="center">
+          {t('absences')}: {data}
+        </Box>
         <Box maxWidth={{ base: '340px', sm: '670px', lg: '700px', xl: '100%' }} overflow="auto">
           <Table variant="simple" mt="50px">
             <Thead>

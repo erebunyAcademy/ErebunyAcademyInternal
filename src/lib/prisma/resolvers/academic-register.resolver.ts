@@ -333,7 +333,7 @@ export class AcademicRegisterResolver {
           gt: todayStart,
           lt: todayEnd,
         },
-        // isPresent: false,
+        isPresent: false,
       },
     });
   }

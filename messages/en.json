@@ -293,5 +293,6 @@
   "expand": "Expand",
   "mark": "Mark",
   "editAttendanceRecords": "Edit Attendance Records",
-  "seeSchedules":"See schedules"
+  "seeSchedules": "See schedules",
+  "absences": "Absences"
 }
