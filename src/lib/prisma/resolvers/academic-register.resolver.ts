@@ -327,23 +327,22 @@ export class AcademicRegisterResolver {
       .endOf('day')
       .toDate();
 
-    return prisma.academicRegisterDay.findMany({
+    return prisma.academicRegisterLesson.count({
       where: {
-        createdAt: {
-          gt: todayStart,
-          lt: todayEnd,
-        },
-        attendanceRecords: {
-          some: {
-            student: {
-              userId: user.id,
+        academicRegisterDay: {
+          createdAt: {
+            gt: todayStart,
+            lt: todayEnd,
+          },
+          attendanceRecords: {
+            some: {
+              student: {
+                userId: user.id,
+              },
+              isPresent: false,
             },
-            isPresent: false,
           },
         },
-      },
-      include: {
-        attendanceRecords: true,
       },
     });
   }
