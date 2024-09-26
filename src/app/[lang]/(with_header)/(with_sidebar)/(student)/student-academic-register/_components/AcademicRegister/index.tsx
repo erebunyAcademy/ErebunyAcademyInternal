@@ -33,7 +33,7 @@ const AcademicRegister: FC<AcademicRegisterProps> = () => {
     mutationFn: AcademicRegisterService.getAcademicRegisterData,
   });
 
-  const { mutate: fetchStudentAttendanceAbsenceRecord, data = 0 } = useMutation({
+  const { mutate: fetchStudentAttendanceAbsenceRecord, data } = useMutation({
     mutationFn: AcademicRegisterService.getStudentAttendanceAbsence,
   });
 
@@ -63,7 +63,11 @@ const AcademicRegister: FC<AcademicRegisterProps> = () => {
           <Calendar selectDateHandler={dateChangeHandler} />
         </Box>
         <Box textAlign="center">
-          {t('absences')}: {data}
+          {t('absences')}:{' '}
+          {
+            (data || []).flatMap(academicRegisterDay => academicRegisterDay.attendanceRecords)
+              .length
+          }
         </Box>
         <Box maxWidth={{ base: '340px', sm: '670px', lg: '700px', xl: '100%' }} overflow="auto">
           <Table variant="simple" mt="50px">
