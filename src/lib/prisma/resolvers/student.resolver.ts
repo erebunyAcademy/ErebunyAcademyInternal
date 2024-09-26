@@ -286,6 +286,9 @@ export class StudentResolver {
         attachment: true,
         subject: true,
       },
+      orderBy: {
+        createdAt: 'desc',
+      },
     });
   }
 }
