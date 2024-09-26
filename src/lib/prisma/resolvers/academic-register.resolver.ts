@@ -322,7 +322,10 @@ export class AcademicRegisterResolver {
     endDate?: string,
   ) {
     const todayStart = dayjs(startDate).utc().startOf('day').toDate();
-    const todayEnd = dayjs(endDate).utc().endOf('day').toDate();
+    const todayEnd = dayjs(endDate || startDate)
+      .utc()
+      .endOf('day')
+      .toDate();
 
     return prisma.academicRegisterDay.findMany({
       where: {
@@ -355,7 +358,10 @@ export class AcademicRegisterResolver {
     }
 
     const todayStart = dayjs(startDate).utc().startOf('day').toDate();
-    const todayEnd = dayjs(endDate).utc().endOf('day').toDate();
+    const todayEnd = dayjs(endDate || startDate)
+      .utc()
+      .endOf('day')
+      .toDate();
 
     return prisma.academicRegisterDay.findMany({
       where: {
