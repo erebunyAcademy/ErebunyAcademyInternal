@@ -76,6 +76,7 @@ export class AcademicRegisterResolver {
     if (!user.teacher?.id) {
       throw new ForbiddenException();
     }
+
     const { students, thematicPlanIds, isCompletedLesson } = data;
 
     const today = new Date().toISOString().split('T')[0];
@@ -144,6 +145,7 @@ export class AcademicRegisterResolver {
         isCompleted: true,
       },
     });
+
     await prisma.thematicPlanDescription.updateMany({
       where: {
         id: {
@@ -209,7 +211,7 @@ export class AcademicRegisterResolver {
         });
 
     if (academicRegisterLesson.isCompletedLesson) {
-      throw new ForbiddenException();
+      throw new ForbiddenException('There is already register lesson');
     }
 
     if (isCompletedLesson) {

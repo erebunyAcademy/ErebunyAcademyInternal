@@ -88,7 +88,6 @@ const AcademicRegister: FC<AcademicRegisterProps> = () => {
                         </Td>
                       )}
                       <Td>{lesson.academicRegister.schedule.subject.title}</Td>
-
                       <Td>
                         <Button
                           variant="link"
@@ -105,7 +104,13 @@ const AcademicRegister: FC<AcademicRegisterProps> = () => {
                       <Td>
                         {periodListData.find(period => period.id === lesson.lessonOfTheDay)?.title}
                       </Td>
-                      <Td>{lesson.attendanceRecord[0]?.isPresent ? t('present') : t('absent')}</Td>
+                      <Td>
+                        {lesson.attendanceRecord.length > 0
+                          ? lesson.attendanceRecord[0]?.isPresent
+                            ? t('present')
+                            : t('absent')
+                          : '-'}
+                      </Td>
                       <Td>
                         {lesson.attendanceRecord.length > 0 &&
                         lesson.attendanceRecord[0].mark !== null
