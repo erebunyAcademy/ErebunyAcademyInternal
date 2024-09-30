@@ -331,11 +331,15 @@ export class AcademicRegisterResolver {
 
     return prisma.academicRegisterLesson.count({
       where: {
+        academicRegister: {
+          courseGroupId: user.student?.courseGroup?.id,
+        },
         academicRegisterDay: {
           createdAt: {
             gt: todayStart,
             lt: todayEnd,
           },
+
           attendanceRecords: {
             some: {
               student: {
@@ -358,20 +362,20 @@ export class AcademicRegisterResolver {
       throw new ForbiddenException();
     }
 
-    const todayStart = dayjs(startDate).utc().startOf('day').toDate();
+    const todayStart = dayjs(startDate).utc().startOf('day').toDate(); // Convert to UTC start of day
     const todayEnd = dayjs(endDate || startDate)
       .utc()
       .endOf('day')
-      .toDate();
+      .toDate(); // Convert to UTC end of day
 
     return prisma.academicRegisterDay.findMany({
       where: {
-        // academicRegister: {
-        //   courseGroupId: user.student.courseGroup?.id,
-        // },
         createdAt: {
-          gt: todayStart,
-          lt: todayEnd,
+          gt: todayStart, // Use the UTC start date
+          lt: todayEnd, // Use the UTC end date
+        },
+        academicRegister: {
+          courseGroupId: user.student?.courseGroup?.id,
         },
       },
       include: {
