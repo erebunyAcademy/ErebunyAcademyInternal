@@ -71,6 +71,12 @@ export class SubjectResolver {
           select: {
             id: true,
             title: true,
+            faculty: {
+              select: {
+                id: true,
+                title: true,
+              },
+            },
           },
         },
       },
