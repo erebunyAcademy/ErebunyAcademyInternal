@@ -51,10 +51,11 @@ const TeacherSignUp = ({ lang }: { lang: Locale }) => {
     () =>
       (subjectList || [])?.map(subject => ({
         id: subject.id,
-        title: subject.title,
+        title: `${subject.title} (${subject.course?.faculty?.title})-(${subject.course?.title})`,
       })),
     [subjectList],
   );
+
   const selectedSubjectIds = watch('teachingSubjectIds');
 
   const selectedSubjects = useMemo(

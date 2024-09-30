@@ -49,7 +49,7 @@ const Profile = ({ sessionUser }: { sessionUser: NonNullable<Session['user']> })
     handleSubmit,
     watch,
     setValue,
-    formState: { errors, isSubmitting, isValid, isDirty },
+    formState: { errors, isSubmitting, isValid },
   } = useForm<UserProfileFormValidation>({
     defaultValues: {
       firstName: sessionUser?.firstName || '',
@@ -194,7 +194,7 @@ const Profile = ({ sessionUser }: { sessionUser: NonNullable<Session['user']> })
     () =>
       (subjectList || [])?.map(subject => ({
         id: subject.id,
-        title: subject.title,
+        title: `${subject.title} (${subject.course?.faculty?.title})-(${subject.course?.title})`,
       })),
     [subjectList],
   );
@@ -561,7 +561,7 @@ const Profile = ({ sessionUser }: { sessionUser: NonNullable<Session['user']> })
           <Button
             height="53px"
             fontSize="16px"
-            isDisabled={isSubmitting || !isValid || !isDirty}
+            isDisabled={isSubmitting || !isValid}
             isLoading={loading}
             overflow="break-word"
             whiteSpace="normal"
