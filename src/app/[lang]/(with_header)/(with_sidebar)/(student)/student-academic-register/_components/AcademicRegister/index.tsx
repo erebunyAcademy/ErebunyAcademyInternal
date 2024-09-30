@@ -105,11 +105,11 @@ const AcademicRegister: FC<AcademicRegisterProps> = () => {
                         {periodListData.find(period => period.id === lesson.lessonOfTheDay)?.title}
                       </Td>
                       <Td>
-                        {lesson.attendanceRecord.length > 0
-                          ? lesson.attendanceRecord[0]?.isPresent
+                        {lesson.attendanceRecord.length === 0
+                          ? '-'
+                          : lesson.attendanceRecord[0]?.isPresent
                             ? t('present')
-                            : t('absent')
-                          : '-'}
+                            : t('absent')}
                       </Td>
                       <Td>
                         {lesson.attendanceRecord.length > 0 &&
