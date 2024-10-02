@@ -19,6 +19,8 @@ import { classValidatorResolver } from '@hookform/resolvers/class-validator';
 import { ScheduleTypeEnum, ThematicPlanDescription } from '@prisma/client';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { createColumnHelper } from '@tanstack/react-table';
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
@@ -34,6 +36,8 @@ import { languagePathHelper } from '@/utils/helpers/language';
 import { GetScheduleByIdModel } from '@/utils/models/schedule';
 import { CreateStudentAttendanceRecordValidation } from '@/utils/validation/academic-register';
 
+dayjs.extend(utc);
+
 type AcademicRegisterProps = {
   schedule: NonNullable<GetScheduleByIdModel>;
   lang: Locale;
@@ -47,8 +51,6 @@ const AcademicRegister: FC<AcademicRegisterProps> = ({ schedule, lang }) => {
   const selectedLessonOfTheDay = searchParams?.get('lessonOfTheDay');
   const [lessonOfTheDay, setLessonOfTheDay] = useState('');
   const t = useTranslations();
-
-  console.log({ schedule });
 
   const { data } = useQuery({
     queryFn: AcademicRegisterService.getTeacherAcademicRegisterLessonList.bind(null, schedule.id),
@@ -182,6 +184,11 @@ const AcademicRegister: FC<AcademicRegisterProps> = ({ schedule, lang }) => {
     );
   };
 
+  const todayDayOfWeek = dayjs().utc().day();
+  const nonCyclicLessonDays = schedule.availableDays.filter(
+    availableDay => availableDay.dayOfWeek + 1 === todayDayOfWeek,
+  );
+
   return (
     <Box width="100%" mt="50px" mx="20px">
       <Text fontSize={{ base: '18px', sm: '24px' }} fontWeight={700} mb="15px">
@@ -307,10 +314,16 @@ const AcademicRegister: FC<AcademicRegisterProps> = ({ schedule, lang }) => {
           isRequired
           options={
             schedule.type === ScheduleTypeEnum.NON_CYCLIC
-              ? schedule.availableDays.map(availableDay => ({
-                  id: availableDay.lessonOfTheDay,
-                  title: `${availableDay.lessonOfTheDay} - ${availableDay.lessonOfTheDay + 1}`,
-                }))
+              ? nonCyclicLessonDays.map(availableDay => {
+                  const lesson = periodListData.find(
+                    lesson => lesson.id === availableDay.lessonOfTheDay,
+                  );
+
+                  return {
+                    id: availableDay.lessonOfTheDay,
+                    title: lesson?.title || '',
+                  };
+                })
               : periodListData
           }
           disabledOptions={data?.academicRegisterLesson?.map(lesson => lesson.lessonOfTheDay)}
