@@ -1,6 +1,6 @@
 'use client';
 import React, { useCallback, useMemo, useState } from 'react';
-import { MenuItem, useDisclosure } from '@chakra-ui/react';
+import { Box, MenuItem, useDisclosure } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import { createColumnHelper, SortingState } from '@tanstack/react-table';
 import dynamic from 'next/dynamic';
@@ -116,6 +116,7 @@ const Faculty = () => {
 
   return (
     <>
+      <Box width="30px" height="30px" bg="pink"></Box>
       <SearchTable
         title="facultyList"
         isLoading={isLoading}
