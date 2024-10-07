@@ -25,7 +25,7 @@ export class TestQuestionResolver {
     });
   }
 
-  static async create(body: TestQuestionValidation, subjectId: string) {
+  static async create(body: TestQuestionValidation, subjectId: string, lang: LanguageTypeEnum) {
     if (!subjectId) {
       throw new BadRequestException('Invalid data');
     }
@@ -40,7 +40,7 @@ export class TestQuestionResolver {
           category: item.category,
           topic: item.topic,
           subTopic: item.subTopic,
-          language: item.lang,
+          language: lang,
           options: {
             createMany: {
               data: item.options.map(el => ({

@@ -75,9 +75,20 @@ export class ScheduleResolver {
           },
         },
       },
-      orderBy: {
-        createdAt: 'desc',
-      },
+      orderBy: [
+        {
+          course: {
+            title: 'asc',
+          },
+        },
+        {
+          course: {
+            faculty: {
+              title: 'asc',
+            },
+          },
+        },
+      ],
     });
   }
 

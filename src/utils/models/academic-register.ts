@@ -25,3 +25,7 @@ export type GetAcademicRegisterLessonListType = Prisma.PromiseReturnType<
 export type StudentAcademicRegisterDataType = Prisma.PromiseReturnType<
   typeof AcademicRegisterResolver.getAcademicRegisterByCourseGroupId
 >;
+
+export type GetStudentAttendanceAbsence = Prisma.PromiseReturnType<
+  typeof AcademicRegisterResolver.getStudentAbsentLessonCount
+>;

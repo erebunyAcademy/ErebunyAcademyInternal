@@ -43,7 +43,7 @@ export class TeacherResolver {
             },
           },
         },
-        orderBy: sorting ? orderBy(sorting) : [{ firstName: 'asc' }, { lastName: 'asc' }],
+        orderBy: sorting ? orderBy(sorting) : undefined,
         skip,
         take,
       }),

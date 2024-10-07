@@ -1,9 +1,9 @@
-import { FC, memo } from 'react';
+import { FC, memo, useCallback } from 'react';
 import { DeleteIcon } from '@chakra-ui/icons';
 import { Box, Button, Checkbox, Flex, Heading, IconButton, Radio, Stack } from '@chakra-ui/react';
 import { TestQuestionTypeEnum } from '@prisma/client';
 import { useTranslations } from 'next-intl';
-import { Control, Controller, useFieldArray } from 'react-hook-form';
+import { Control, Controller, useFieldArray, UseFormWatch } from 'react-hook-form';
 import { FormInput } from '@/components/atoms';
 import { TestQuestionValidation } from '@/utils/validation/exam';
 
@@ -11,21 +11,36 @@ interface AnswersControlProps {
   control: Control<TestQuestionValidation>;
   questionIndex: number;
   questionType: TestQuestionTypeEnum;
+  watch: UseFormWatch<TestQuestionValidation>;
 }
 
-const AnswersControl: FC<AnswersControlProps> = ({ control, questionIndex, questionType }) => {
+const AnswersControl: FC<AnswersControlProps> = ({
+  control,
+  questionIndex,
+  questionType,
+  watch,
+}) => {
   const t = useTranslations();
 
   const { fields, append, remove, update } = useFieldArray({
     control,
+
     name: `questions.${questionIndex}.options`,
   });
 
-  const handleRadioChange = (index: number) => {
-    fields.forEach((field, i) => {
-      update(i, { ...field, isRightAnswer: i === index });
-    });
-  };
+  const handleRadioChange = useCallback(
+    (index: number) => {
+      fields.forEach((field, i) => {
+        const watchedOptionTitle = watch(`questions.${questionIndex}.options.${i}.title`);
+        update(i, {
+          ...field,
+          title: watchedOptionTitle,
+          isRightAnswer: i === index,
+        });
+      });
+    },
+    [fields, questionIndex, update, watch],
+  );
   return (
     <Stack>
       <Heading size="sm">{t('answers')}</Heading>

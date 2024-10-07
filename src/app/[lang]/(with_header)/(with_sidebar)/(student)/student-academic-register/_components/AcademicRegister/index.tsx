@@ -33,15 +33,21 @@ const AcademicRegister: FC<AcademicRegisterProps> = () => {
     mutationFn: AcademicRegisterService.getAcademicRegisterData,
   });
 
+  const { mutate: fetchStudentAttendanceAbsenceRecord, data = 0 } = useMutation({
+    mutationFn: AcademicRegisterService.getStudentAttendanceAbsence,
+  });
+
   useEffect(() => {
     mutate(null);
-  }, [mutate]);
+    fetchStudentAttendanceAbsenceRecord(null);
+  }, [fetchStudentAttendanceAbsenceRecord, mutate]);
 
   const dateChangeHandler = useCallback(
     (startDate: Date, endDate: Date) => {
       mutate({ startDate, endDate });
+      fetchStudentAttendanceAbsenceRecord({ startDate, endDate });
     },
-    [mutate],
+    [fetchStudentAttendanceAbsenceRecord, mutate],
   );
 
   const practicalThematicPlan =
@@ -55,6 +61,9 @@ const AcademicRegister: FC<AcademicRegisterProps> = () => {
       <Box width="100%">
         <Box maxWidth="400px" mt="100px" ml="20px">
           <Calendar selectDateHandler={dateChangeHandler} />
+        </Box>
+        <Box textAlign="center">
+          {t('absences')}: {data}
         </Box>
         <Box maxWidth={{ base: '340px', sm: '670px', lg: '700px', xl: '100%' }} overflow="auto">
           <Table variant="simple" mt="50px">
@@ -79,7 +88,6 @@ const AcademicRegister: FC<AcademicRegisterProps> = () => {
                         </Td>
                       )}
                       <Td>{lesson.academicRegister.schedule.subject.title}</Td>
-
                       <Td>
                         <Button
                           variant="link"
@@ -96,7 +104,13 @@ const AcademicRegister: FC<AcademicRegisterProps> = () => {
                       <Td>
                         {periodListData.find(period => period.id === lesson.lessonOfTheDay)?.title}
                       </Td>
-                      <Td>{lesson.attendanceRecord[0]?.isPresent ? t('present') : t('absent')}</Td>
+                      <Td>
+                        {lesson.attendanceRecord.length === 0
+                          ? '-'
+                          : lesson.attendanceRecord[0]?.isPresent
+                            ? t('present')
+                            : t('absent')}
+                      </Td>
                       <Td>
                         {lesson.attendanceRecord.length > 0 &&
                         lesson.attendanceRecord[0].mark !== null

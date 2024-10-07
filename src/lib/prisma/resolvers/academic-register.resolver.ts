@@ -76,6 +76,7 @@ export class AcademicRegisterResolver {
     if (!user.teacher?.id) {
       throw new ForbiddenException();
     }
+
     const { students, thematicPlanIds, isCompletedLesson } = data;
 
     const today = new Date().toISOString().split('T')[0];
@@ -144,6 +145,7 @@ export class AcademicRegisterResolver {
         isCompleted: true,
       },
     });
+
     await prisma.thematicPlanDescription.updateMany({
       where: {
         id: {
@@ -209,7 +211,7 @@ export class AcademicRegisterResolver {
         });
 
     if (academicRegisterLesson.isCompletedLesson) {
-      throw new ForbiddenException();
+      throw new ForbiddenException('There is already register lesson');
     }
 
     if (isCompletedLesson) {
@@ -316,6 +318,41 @@ export class AcademicRegisterResolver {
     });
   }
 
+  static async getStudentAbsentLessonCount(
+    user: NonNullable<User>,
+    startDate?: string,
+    endDate?: string,
+  ) {
+    const todayStart = dayjs(startDate).utc().startOf('day').toDate();
+    const todayEnd = dayjs(endDate || startDate)
+      .utc()
+      .endOf('day')
+      .toDate();
+
+    return prisma.academicRegisterLesson.count({
+      where: {
+        academicRegister: {
+          courseGroupId: user.student?.courseGroup?.id,
+        },
+        academicRegisterDay: {
+          createdAt: {
+            gt: todayStart,
+            lt: todayEnd,
+          },
+
+          attendanceRecords: {
+            some: {
+              student: {
+                userId: user.id,
+              },
+              isPresent: false,
+            },
+          },
+        },
+      },
+    });
+  }
+
   static async getStudentAcademicRegisterdata(
     user: NonNullable<User>,
     startDate?: string,
@@ -325,17 +362,20 @@ export class AcademicRegisterResolver {
       throw new ForbiddenException();
     }
 
-    const todayStart = dayjs(startDate).utc().startOf('day').toDate();
-    const todayEnd = dayjs(endDate).utc().endOf('day').toDate();
+    const todayStart = dayjs(startDate).utc().startOf('day').toDate(); // Convert to UTC start of day
+    const todayEnd = dayjs(endDate || startDate)
+      .utc()
+      .endOf('day')
+      .toDate(); // Convert to UTC end of day
 
     return prisma.academicRegisterDay.findMany({
       where: {
-        academicRegister: {
-          courseGroupId: user.student.courseGroup?.id,
-        },
         createdAt: {
-          gt: todayStart,
-          lt: todayEnd,
+          gt: todayStart, // Use the UTC start date
+          lt: todayEnd, // Use the UTC end date
+        },
+        academicRegister: {
+          courseGroupId: user.student?.courseGroup?.id,
         },
       },
       include: {
@@ -420,8 +460,6 @@ export class AcademicRegisterResolver {
           .utc()
           .endOf('day')
           .toDate();
-
-    console.log({ effectiveStartDate });
 
     return prisma.academicRegisterDay.findMany({
       where: {

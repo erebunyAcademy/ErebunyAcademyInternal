@@ -1,8 +1,13 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useCallback, useState } from 'react';
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc'; // Import the utc plugin
 import DatePicker from 'react-datepicker';
 import CalendarIcon from '@/icons/calendar.svg';
 import Input from '../Input';
 import 'react-datepicker/dist/react-datepicker.css';
+
+// Extend dayjs with the utc plugin
+dayjs.extend(utc);
 
 type CalendarProps = {
   label?: string;
@@ -10,19 +15,29 @@ type CalendarProps = {
 };
 
 const Calendar: FC<CalendarProps> = ({ selectDateHandler }) => {
-  const [startDate, setStartDate] = useState<any | null>(new Date());
-  const [endDate, setEndDate] = useState<any | null>(null);
+  const [startDate, setStartDate] = useState<Date | undefined>(new Date());
+  const [endDate, setEndDate] = useState<Date | undefined>();
 
-  const onChange = (dates: any) => {
-    const [start, end] = dates;
-    setStartDate(start);
-    setEndDate(end);
-    selectDateHandler(start, end);
-  };
+  const onChange = useCallback(
+    (dates: any) => {
+      let [start, end] = dates;
+      if (start) {
+        start = dayjs(start).utc().toDate();
+      }
+      if (end) {
+        end = dayjs(end).utc().toDate();
+      }
+      setStartDate(start);
+      setEndDate(end);
+      selectDateHandler(start, end);
+    },
+    [selectDateHandler],
+  );
 
   return (
     <DatePicker
-      selected={startDate}
+      dateFormat="dd/MM/yyyy"
+      maxDate={new Date()}
       onChange={onChange}
       startDate={startDate}
       endDate={endDate}

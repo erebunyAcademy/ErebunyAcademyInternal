@@ -13,6 +13,9 @@ import { User } from 'next-auth';
 import { CurrentUser } from '@/lib/prisma/decorators/current-user.decorator';
 import { exceptionHandler } from '@/lib/prisma/error';
 import { AdminGuard } from '@/lib/prisma/guards/admin';
+import { AuthGuard } from '@/lib/prisma/guards/auth';
+import { StudentGuard } from '@/lib/prisma/guards/student';
+import { TeacherGuard } from '@/lib/prisma/guards/teacher';
 import { AcademicRegisterResolver } from '@/lib/prisma/resolvers/academic-register.resolver';
 import {
   CreateStudentAttendanceRecordValidation,
@@ -22,11 +25,13 @@ import {
 @Catch(exceptionHandler)
 class AcademicRegisterHandler {
   @Get('/list')
+  @AuthGuard()
   getCyclicList(@CurrentUser() user: NonNullable<User>) {
     return AcademicRegisterResolver.list(user);
   }
 
   @Post('/schedules/:scheduleId')
+  @TeacherGuard()
   createStudentAddentanceRecord(
     @Param('scheduleId') scheduleId: string,
     @Body(ValidationPipe) input: CreateStudentAttendanceRecordValidation,
@@ -42,6 +47,7 @@ class AcademicRegisterHandler {
   }
 
   @Get()
+  @StudentGuard()
   getAcademicRegisterData(
     @CurrentUser() user: NonNullable<User>,
     @Query('startDate') startDate?: string,
@@ -70,6 +76,16 @@ class AcademicRegisterHandler {
       startDate,
       endDate,
     );
+  }
+
+  @Get('/student-attendance')
+  @StudentGuard()
+  getStudentAbsentLessonsCount(
+    @CurrentUser() user: NonNullable<User>,
+    @Query('startDate') startDate?: string,
+    @Query('endDate') endDate?: string,
+  ) {
+    return AcademicRegisterResolver.getStudentAbsentLessonCount(user, startDate, endDate);
   }
 
   @Put('/attendant-records')
